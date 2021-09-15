@@ -1,15 +1,12 @@
 # @obsidize/tar-browserify
 
-Utilities to enhance and organize complex sets of data on top of simple key/value systems like localStorage.
+Simple utility to pack and unpack small tar files in the browser.
 
-The primary goals of this module are:
+This differs from other [npm tar modules](https://www.npmjs.com/search?q=tar) in that it contains no node-based dependencies like fs or streams.
 
-- to eliminate "loose strings" that tend to accompany complex storage mechanisms
-- to flatten complex data sets into atomic key/value pairs that can be persisted on any synchronous / asynchronous / local / remote transport layers.
+*NOTE:* this module performs all its processing in-memory, so using this with large files is not recommended.
 
-The benefits of this module really kick in for large, complex datasets that may need to persist across multiple transports.
-
-If you just need to save 3 string values to localStorage, you probably don't need this module.
+Pairs well with [pako](https://www.npmjs.com/package/pako) for gzip / unzip.
 
 ## API
 
