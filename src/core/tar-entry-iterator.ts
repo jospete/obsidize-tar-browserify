@@ -34,9 +34,18 @@ export class TarEntryIterator implements IterableIterator<TarEntry> {
 	}
 
 	public initialize(data: Uint8Array | null): this {
-		this.mData = isUint8Array(data) ? Uint8Array.from(data!) : null;
+
+		if (isUint8Array(data)) {
+			this.mData = data!.slice();
+			this.mMaxOffset = this.mData.byteLength;
+
+		} else {
+			this.mData = null;
+			this.mMaxOffset = 0;
+		}
+
 		this.mOffset = 0;
-		this.mMaxOffset = this.mData ? this.mData.byteLength : 0;
+
 		return this;
 	}
 

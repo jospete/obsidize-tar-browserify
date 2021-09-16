@@ -12,20 +12,12 @@ export namespace TarUtility {
 		return typeof value === 'number' && !Number.isNaN(value);
 	}
 
-	export function isString(value: any): boolean {
-		return typeof value === 'string';
-	}
-
 	export function isUint8Array(value: any): boolean {
-		return !!value && (value instanceof Uint8Array);
+		return !!(value && value instanceof Uint8Array);
 	}
 
 	export function clamp(value: number, min: number, max: number): number {
 		return Math.max(min, Math.min(value, max));
-	}
-
-	export function removeTrailingZeros(str: string): string {
-		return isString(str) ? str.replace(/[\u0000\0]+$/, '') : str;
 	}
 
 	export function parseAscii(input: Uint8Array): string {
@@ -36,19 +28,20 @@ export namespace TarUtility {
 		return removeTrailingZeros(parseAscii(input));
 	}
 
+	export function removeTrailingZeros(str: string): string {
+		const pattern = /^([^\\u0000\0]*)[\\u0000\0]*$/;
+		const result = pattern.exec(str);
+		return result ? result[1] : str;
+	}
+
 	export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {
 		if (isNumber(value)) return value;
 		const parsed = parseInt(value, radix);
 		return isNumber(parsed) ? parsed : defaultValue;
 	}
 
-	export function sliceFieldBuffer(field: TarHeaderField, input: Uint8Array, offset: number = 0): Uint8Array {
-		const absoluteOffset = field.offset + offset;
-		return input.slice(absoluteOffset, absoluteOffset + field.size);
-	}
-
 	export function parseAsciiOctalNumberField(input: Uint8Array): number {
-		return parseIntSafe(parseAsciiWithoutTrailingZeros(input).trim(), 8);
+		return parseIntSafe(parseAscii(input).trim(), 8);
 	}
 
 	export function readFieldValue(field: TarHeaderField, input: Uint8Array, offset?: number): any {
@@ -57,6 +50,11 @@ export namespace TarUtility {
 
 	export function isUstarSector(input: Uint8Array, offset: number): boolean {
 		return readFieldValue(TarHeaderFieldDefinition.ustarIndicator(), input, offset) === USTAR_HEADER_SECTOR_TAG;
+	}
+
+	export function sliceFieldBuffer(field: TarHeaderField, input: Uint8Array, offset: number = 0): Uint8Array {
+		const absoluteOffset = field.offset + offset;
+		return input.slice(absoluteOffset, absoluteOffset + field.size);
 	}
 
 	export function advanceSectorOffset(currentOffset: number, maxOffset: number): number {
