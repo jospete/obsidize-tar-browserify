@@ -5,8 +5,8 @@ import { TarHeaderField, TarHeaderFieldDefinition, TarHeaderFieldType } from './
  */
 export namespace TarUtility {
 
-	export const BLOCK_SIZE = 512;
-	export const USTAR_SECTOR_TAG = 'ustar\0';
+	export const SECTOR_SIZE = 512;
+	export const USTAR_HEADER_SECTOR_TAG = 'ustar\0';
 
 	export const parseAscii = (input: Uint8Array): string => {
 		return String.fromCharCode.apply(null, Array.from(input));
@@ -40,12 +40,12 @@ export namespace TarUtility {
 	};
 
 	export const isUstarSector = (input: Uint8Array, offset: number): boolean => {
-		return readFieldValue(TarHeaderFieldDefinition.ustarIndicator(), input, offset) === USTAR_SECTOR_TAG;
+		return readFieldValue(TarHeaderFieldDefinition.ustarIndicator(), input, offset) === USTAR_HEADER_SECTOR_TAG;
 	};
 
 	export const advanceSectorOffset = (currentOffset: number, maxOffset: number): number => {
-		const nextOffsetRaw = Math.round(currentOffset) + BLOCK_SIZE;
-		const diffToBoundary = nextOffsetRaw % BLOCK_SIZE;
+		const nextOffsetRaw = Math.round(currentOffset) + SECTOR_SIZE;
+		const diffToBoundary = nextOffsetRaw % SECTOR_SIZE;
 		return Math.min(maxOffset, nextOffsetRaw - diffToBoundary);
 	};
 
