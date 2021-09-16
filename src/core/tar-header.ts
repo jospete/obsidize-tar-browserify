@@ -18,6 +18,8 @@ export enum TarHeaderLinkIndicatorType {
 }
 
 export interface TarHeader {
+
+	// Legacy Fields
 	fileName: string;
 	fileMode: number;
 	ownerUserId: number;
@@ -27,6 +29,8 @@ export interface TarHeader {
 	headerChecksum: number;
 	linkedFileName: string;
 	typeFlag: TarHeaderLinkIndicatorType;
+
+	// USTAR Fields
 	ustarIndicator: string;
 	ustarVersion: string;
 	ownerUserName: string;
@@ -49,6 +53,7 @@ export interface TarHeaderField {
  */
 export namespace TarHeaderFieldDefinition {
 
+	// Legacy Fields
 	export function fileName(): TarHeaderField { return ({ name: 'fileName', offset: 0, size: 100, type: TarHeaderFieldType.ASCII }) }
 	export function fileMode(): TarHeaderField { return ({ name: 'fileMode', offset: 100, size: 8, type: TarHeaderFieldType.INTEGER_OCTAL }) }
 	export function ownerUserId(): TarHeaderField { return ({ name: 'ownerUserId', offset: 108, size: 8, type: TarHeaderFieldType.INTEGER_OCTAL }) }
