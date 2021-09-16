@@ -1,4 +1,5 @@
-import { TarUtility, TarHeaderFieldDefinition, TarHeader } from './tar-utility';
+import { TarHeaderFieldDefinition, TarHeader } from './tar-header';
+import { TarUtility } from './tar-utility';
 
 const { isUstarSector, advanceSectorOffset, readFieldValue, isNumber } = TarUtility;
 
