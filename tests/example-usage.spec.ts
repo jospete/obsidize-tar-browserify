@@ -7,7 +7,7 @@ const { isUint8Array } = TarUtility;
 
 describe('Example Usage', () => {
 
-	it('works as advertised', async () => {
+	it('works as advertised', () => {
 
 		// 1. Get some tarball file data
 		const tarballUint8 = base64ToUint8Array(tarballSampleBase64);
@@ -16,14 +16,14 @@ describe('Example Usage', () => {
 		const tarball = new Tarball(tarballUint8);
 
 		// 3. Get the entries you are interested in (AKA ignore directory entries)
-		const files = tarball.readAllEntries().filter(entry => entry.isFile());
+		const entries = tarball.readAllEntries().filter(entry => entry.isFile());
 
 		// 4. Do whatever work you need to with the entries
-		expect(files.length).toBe(totalFileCount);
+		expect(entries.length).toBe(totalFileCount);
 
-		for (const file of files) {
-			if (!isUint8Array(file.content)) {
-				fail(`file ${file.getTrimmedFileName()} should have content but it doesn't! -> ${file.content}`);
+		for (const entry of entries) {
+			if (!isUint8Array(entry.content)) {
+				fail(`file ${entry.fileName} should have content but it doesn't! -> ${entry.content}`);
 			}
 		}
 	});

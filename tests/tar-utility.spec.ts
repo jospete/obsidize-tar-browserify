@@ -2,7 +2,7 @@ import { TarHeaderFieldDefinition, TarUtility } from '../src';
 
 import { range } from './util';
 
-const { parseIntSafe, sliceFieldBuffer } = TarUtility;
+const { parseIntSafe, sliceFieldBuffer, removeTrailingZeros } = TarUtility;
 
 describe('TarUtility', () => {
 
@@ -34,6 +34,26 @@ describe('TarUtility', () => {
 			const sliceStart = headerField.offset;
 			const sliceEnd = sliceStart + headerField.size;
 			expect(slicedBuffer).toEqual(buffer.slice(sliceStart, sliceEnd));
+		});
+	});
+
+	describe('removeTrailingZeros', () => {
+
+		it('returns the given value ithout any NULL bytes at the end of it', () => {
+			expect(removeTrailingZeros('test\u0000\u0000\u0000\u0000')).toBe('test');
+		});
+
+		it('does not modify values with no trailing zeros', () => {
+
+			const paths = [
+				'./test/path/to\u0000\u0000/a/file',
+				'\0\u0000./test/path/to\u0000\0/a/file',
+				'./test/path/to/a/file'
+			];
+
+			paths.forEach(path => {
+				expect(removeTrailingZeros(path)).toBe(path);
+			});
 		});
 	});
 });

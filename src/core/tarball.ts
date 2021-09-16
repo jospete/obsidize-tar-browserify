@@ -18,4 +18,9 @@ export class Tarball {
 		this.iterator.initialize(this.buffer);
 		return Array.from(this.iterator);
 	}
+
+	public toJSON(): any {
+		return this.readAllEntries()
+			.map(entry => entry.toJSON());
+	}
 }

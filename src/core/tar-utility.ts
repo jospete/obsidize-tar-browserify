@@ -12,6 +12,10 @@ export namespace TarUtility {
 		return typeof value === 'number' && !Number.isNaN(value);
 	}
 
+	export function isString(value: any): boolean {
+		return typeof value === 'string';
+	}
+
 	export function isUint8Array(value: any): boolean {
 		return !!value && (value instanceof Uint8Array);
 	}
@@ -20,8 +24,16 @@ export namespace TarUtility {
 		return Math.max(min, Math.min(value, max));
 	}
 
+	export function removeTrailingZeros(str: string): string {
+		return isString(str) ? str.replace(/[\u0000\0]+$/, '') : str;
+	}
+
 	export function parseAscii(input: Uint8Array): string {
 		return String.fromCharCode.apply(null, Array.from(input));
+	}
+
+	export function parseAsciiWithoutTrailingZeros(input: Uint8Array): string {
+		return removeTrailingZeros(parseAscii(input));
 	}
 
 	export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {
@@ -36,7 +48,7 @@ export namespace TarUtility {
 	}
 
 	export function parseAsciiOctalNumberField(input: Uint8Array): number {
-		return parseIntSafe(parseAscii(input).trim(), 8);
+		return parseIntSafe(parseAsciiWithoutTrailingZeros(input).trim(), 8);
 	}
 
 	export function readFieldValue(field: TarHeaderField, input: Uint8Array, offset?: number): any {
@@ -59,7 +71,7 @@ export namespace TarUtility {
 				return parseAsciiOctalNumberField(input);
 			case TarHeaderFieldType.ASCII:
 			default:
-				return parseAscii(input);
+				return parseAsciiWithoutTrailingZeros(input);
 		}
 	}
 }

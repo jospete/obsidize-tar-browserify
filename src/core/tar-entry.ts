@@ -12,18 +12,18 @@ export class TarEntry {
 	) {
 	}
 
+	public get fileName(): string {
+		return this.getHeaderField('fileName', '');
+	}
+
 	public getHeaderField(key: keyof TarHeader, defaultValue?: any): any {
-		return (this.header && key in this.header)
+		return (this.header && this.header.hasOwnProperty(key))
 			? (this.header as any)[key]
 			: defaultValue;
 	}
 
 	public getType(): TarHeaderLinkIndicatorType {
 		return this.getHeaderField('typeFlag', TarHeaderLinkIndicatorType.UNKNOWN);
-	}
-
-	public getTrimmedFileName(): string {
-		return this.header.fileName.replace(/\0+$/, '');
 	}
 
 	public isDirectory(): boolean {
@@ -39,5 +39,13 @@ export class TarEntry {
 			default:
 				return false;
 		}
+	}
+
+	public toJSON(): any {
+		const { header } = this;
+		const content = this.content
+			? ('Uint8Array(' + this.content.byteLength + ')')
+			: 'null';
+		return { content, header };
 	}
 }
