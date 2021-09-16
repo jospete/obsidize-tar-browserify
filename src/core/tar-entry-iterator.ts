@@ -2,7 +2,7 @@ import { extractTarEntry } from './extract-tar-entry';
 import { TarUtility } from './tar-utility';
 import { TarEntry } from './tar-entry';
 
-const { clamp } = TarUtility;
+const { clamp, isUint8Array } = TarUtility;
 
 /**
  * Utility for stepping through a given byte buffer and extracting tar files one-at-a-time.
@@ -12,10 +12,6 @@ export class TarEntryIterator implements IterableIterator<TarEntry> {
 	private mData: Uint8Array | null = null;
 	private mOffset: number = 0;
 	private mMaxOffset: number = 0;
-
-	constructor(data: Uint8Array | null = null) {
-		this.initialize(data);
-	}
 
 	[Symbol.iterator](): IterableIterator<TarEntry> {
 		return this;
@@ -33,10 +29,11 @@ export class TarEntryIterator implements IterableIterator<TarEntry> {
 		return !!this.mData && this.bufferOffset < this.bufferLength;
 	}
 
-	public initialize(data: Uint8Array | null): void {
-		this.mData = data ? Uint8Array.from(data) : null;
+	public initialize(data: Uint8Array | null): this {
+		this.mData = isUint8Array(data) ? Uint8Array.from(data!) : null;
 		this.mOffset = 0;
 		this.mMaxOffset = this.mData ? this.mData.byteLength : 0;
+		return this;
 	}
 
 	public next(): IteratorResult<TarEntry> {

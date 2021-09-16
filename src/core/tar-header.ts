@@ -13,37 +13,38 @@ export enum TarHeaderLinkIndicatorType {
 	FIFO = '6',
 	CONTIGUOUS_FILE = '7',
 	GLOBAL_EXTENDED_HEADER = 'g',
-	LOCAL_EXTENDED_HEADER = 'x'
+	LOCAL_EXTENDED_HEADER = 'x',
+	UNKNOWN = 'UNKNOWN'
 }
 
 export interface TarHeader {
 
 	// Legacy Fields
-	fileName: string;
-	fileMode: number;
-	ownerUserId: number;
-	groupUserId: number;
-	fileSize: number;
-	lastModified: number;
-	headerChecksum: number;
-	linkedFileName: string;
-	typeFlag: TarHeaderLinkIndicatorType;
+	readonly fileName: string;
+	readonly fileMode: number;
+	readonly ownerUserId: number;
+	readonly groupUserId: number;
+	readonly fileSize: number;
+	readonly lastModified: number;
+	readonly headerChecksum: number;
+	readonly linkedFileName: string;
+	readonly typeFlag: TarHeaderLinkIndicatorType;
 
 	// USTAR Fields
-	ustarIndicator: string;
-	ustarVersion: string;
-	ownerUserName: string;
-	ownerGroupName: string;
-	deviceMajorNumber: number;
-	deviceMinorNumber: number;
-	fileNamePrefix: string;
+	readonly ustarIndicator: string;
+	readonly ustarVersion: string;
+	readonly ownerUserName: string;
+	readonly ownerGroupName: string;
+	readonly deviceMajorNumber: number;
+	readonly deviceMinorNumber: number;
+	readonly fileNamePrefix: string;
 }
 
 export interface TarHeaderField {
-	name: keyof TarHeader;
-	offset: number;
-	size: number;
-	type: TarHeaderFieldType;
+	readonly name: keyof TarHeader;
+	readonly offset: number;
+	readonly size: number;
+	readonly type: TarHeaderFieldType;
 }
 
 /**

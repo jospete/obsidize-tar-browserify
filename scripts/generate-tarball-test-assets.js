@@ -3,36 +3,9 @@
 const fs = require('fs-extra');
 const tar = require('tar');
 
-function omitLeadingString(leadingString, input) {
-	const index = input.indexOf(leadingString);
-	const result = index < 0 ? input : input.substring(index + leadingString.length);
-	console.log(`omitLeadingString() "${leadingString}" from "${input}" -> ${result}`);
-	return result;
-}
-
-function appendTrailingString(trailingString, input) {
-	const result = input.endsWith(trailingString) ? input : (input + trailingString);
-	console.log(`appendTrailingString() "${trailingString}" to "${input}" -> ${result}`);
-	return result;
-}
-
-function normalizePath(path) {
-	const isDirectory = fs.lstatSync(path).isDirectory();
-	const pathSuffix = isDirectory ? '/' : '';
-	return appendTrailingString(pathSuffix, omitLeadingString('./', path));
-}
-
 async function crawlTarAssets(files) {
-
 	const globby = await import('globby').then(m => m.globby);
-
-	const getFileGlobAt = async (pathGlob) => {
-		const targetPath = normalizePath(pathGlob);
-		const paths = await globby(pathGlob);
-		return paths.map(p => omitLeadingString(targetPath, p));
-	};
-
-	return Promise.all(files.map(f => getFileGlobAt(f)));
+	return Promise.all(files.map(f => globby(f)));
 }
 
 async function readFileFromStream(stream) {
@@ -48,11 +21,14 @@ async function readFileFromStream(stream) {
 
 async function exportTestAsssets(tarballContent, files) {
 
+	const outputPath = './tests/generated/tarball-test-assets.ts';
 	const fileStructures = await crawlTarAssets(files);
 	const tarballSampleBase64 = tarballContent.toString('base64');
-	const outputPath = './tests/generated/tarball-test-assets.ts';
+	const totalFileCount = fileStructures.reduce((count, globPaths) => count + globPaths.length, 0);
 
 	const output = `
+export const totalFileCount = ${totalFileCount};
+
 export const fileStructures = ${JSON.stringify(fileStructures, null, '\t')};
 
 export const tarballSampleBase64 = '${tarballSampleBase64}';

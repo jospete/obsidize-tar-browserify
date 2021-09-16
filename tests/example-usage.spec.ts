@@ -1,45 +1,30 @@
-import { Tarball, TarEntry } from '../src';
+import { Tarball, TarUtility } from '../src';
 
-import { tarballSampleBase64, fileStructures } from './generated/tarball-test-assets';
+import { tarballSampleBase64, totalFileCount } from './generated/tarball-test-assets';
 import { base64ToUint8Array } from './util';
+
+const { isUint8Array } = TarUtility;
 
 describe('Example Usage', () => {
 
 	it('works as advertised', async () => {
 
+		// 1. Get some tarball file data
 		const tarballUint8 = base64ToUint8Array(tarballSampleBase64);
+
+		// 2. Make a tarball with it
 		const tarball = new Tarball(tarballUint8);
-		const files = tarball.readAllEntries();
-		const foundFiles = new Set<TarEntry>();
 
-		for (const subStructure of fileStructures) {
-			for (const path of subStructure) {
+		// 3. Get the entries you are interested in (AKA ignore directory entries)
+		const files = tarball.readAllEntries().filter(entry => entry.isFile());
 
-				const target = files.find(f => f.header.fileName.includes(path));
-
-				if (!target || foundFiles.has(target)) {
-
-					// Force an assertion error so we know which path failed
-					expect(path).toBe(null);
-
-				} else {
-					foundFiles.add(target);
-				}
-			}
-		}
-
-		const missingFiles = [];
+		// 4. Do whatever work you need to with the entries
+		expect(files.length).toBe(totalFileCount);
 
 		for (const file of files) {
-			if (!foundFiles.has(file)) {
-				missingFiles.push(file);
+			if (!isUint8Array(file.content)) {
+				fail(`file ${file.getTrimmedFileName()} should have content but it doesn't! -> ${file.content}`);
 			}
-		}
-
-		if (missingFiles.length > 0) {
-
-			// Force an assertion error so we can see what files are missing
-			expect(missingFiles).toBe(null);
 		}
 	});
 });

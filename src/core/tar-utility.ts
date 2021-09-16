@@ -8,16 +8,20 @@ export namespace TarUtility {
 	export const SECTOR_SIZE = 512;
 	export const USTAR_HEADER_SECTOR_TAG = 'ustar\0';
 
-	export function parseAscii(input: Uint8Array): string {
-		return String.fromCharCode.apply(null, Array.from(input));
-	}
-
 	export function isNumber(value: any): boolean {
 		return typeof value === 'number' && !Number.isNaN(value);
 	}
 
+	export function isUint8Array(value: any): boolean {
+		return !!value && (value instanceof Uint8Array);
+	}
+
 	export function clamp(value: number, min: number, max: number): number {
 		return Math.max(min, Math.min(value, max));
+	}
+
+	export function parseAscii(input: Uint8Array): string {
+		return String.fromCharCode.apply(null, Array.from(input));
 	}
 
 	export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {

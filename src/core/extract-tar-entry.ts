@@ -2,7 +2,7 @@ import { TarHeaderFieldDefinition, TarHeader } from './tar-header';
 import { TarUtility } from './tar-utility';
 import { TarEntry } from './tar-entry';
 
-const { isUstarSector, advanceSectorOffset, readFieldValue, isNumber } = TarUtility;
+const { isUstarSector, advanceSectorOffset, readFieldValue, isNumber, isUint8Array } = TarUtility;
 
 export interface TarEntryExtractionResult {
 	entry: TarEntry | null;
@@ -16,7 +16,7 @@ export interface TarEntryExtractionResult {
 export function extractTarEntry(input: Uint8Array, offset: number = 0): TarEntryExtractionResult {
 
 	// Invalid buffer given, abort
-	if (!input || !(input instanceof Uint8Array)) {
+	if (!isUint8Array(input)) {
 		return { entry: null, nextOffset: offset };
 	}
 
