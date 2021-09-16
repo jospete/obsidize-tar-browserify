@@ -14,7 +14,7 @@ export class Tarball {
 	) {
 	}
 
-	public ReadAllFiles(): TarFile[] {
+	public readAllFiles(): TarFile[] {
 		this.iterator.initialize(this.buffer);
 		return Array.from(this.iterator);
 	}

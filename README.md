@@ -1,6 +1,6 @@
 # @obsidize/tar-browserify
 
-Simple utility to pack and unpack small tar files in the browser.
+Simple utility unpack small tar files in the browser.
 
 This differs from other [npm tar modules](https://www.npmjs.com/search?q=tar) in that it contains no node-based dependencies like fs or streams.
 
