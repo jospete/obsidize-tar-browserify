@@ -8,7 +8,7 @@ export class TarEntry {
 
 	constructor(
 		public readonly header: TarHeader,
-		public readonly content: Uint8Array | null
+		public readonly content: Uint8Array | null = null
 	) {
 	}
 
