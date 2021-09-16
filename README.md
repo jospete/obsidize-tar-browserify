@@ -6,7 +6,9 @@ This differs from other [npm tar modules](https://www.npmjs.com/search?q=tar) in
 
 *NOTE:* this module performs all its processing in-memory, so using this with large files is not recommended.
 
-Pairs well with [pako](https://www.npmjs.com/package/pako) for gzip / unzip.
+Pairs well with these modules:
+- [pako](https://www.npmjs.com/package/pako) for gzip / unzip
+- [path-browserify](https://www.npmjs.com/package/path-browserify) to further process raw file names
 
 ## API
 
