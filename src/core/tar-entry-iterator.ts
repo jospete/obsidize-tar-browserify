@@ -9,9 +9,13 @@ const { clamp, isUint8Array } = TarUtility;
  */
 export class TarEntryIterator implements IterableIterator<TarEntry> {
 
-	private mData: Uint8Array | null = null;
-	private mOffset: number = 0;
-	private mMaxOffset: number = 0;
+	private mData: Uint8Array | null;
+	private mOffset: number;
+	private mMaxOffset: number;
+
+	constructor() {
+		this.initialize(null);
+	}
 
 	[Symbol.iterator](): IterableIterator<TarEntry> {
 		return this;

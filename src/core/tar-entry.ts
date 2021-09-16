@@ -13,7 +13,9 @@ export class TarEntry {
 	}
 
 	public getHeaderField(key: keyof TarHeader, defaultValue?: any): any {
-		return this.header ? (this.header as any)[key] : defaultValue;
+		return (this.header && key in this.header)
+			? (this.header as any)[key]
+			: defaultValue;
 	}
 
 	public getType(): TarHeaderLinkIndicatorType {

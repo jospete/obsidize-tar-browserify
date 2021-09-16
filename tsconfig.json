@@ -8,6 +8,7 @@
     "importHelpers": true,
     "skipLibCheck": true,
     "strict": true,
+    "strictPropertyInitialization": false,
     "module": "ES2015",
     "moduleResolution": "node",
     "outDir": "./dist",

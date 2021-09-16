@@ -21,7 +21,7 @@ export function extractTarEntry(input: Uint8Array, offset: number = 0): TarEntry
 	}
 
 	const maxOffset = input.byteLength;
-	let nextOffset = offset;
+	let nextOffset = Math.max(0, offset);
 
 	// Search for next sector tagged with the ustar indicator
 	while (nextOffset < maxOffset && !isUstarSector(input, nextOffset)) {
