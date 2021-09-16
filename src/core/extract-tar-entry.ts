@@ -5,25 +5,32 @@ import { TarEntry } from './tar-entry';
 const { isUstarSector, advanceSectorOffset, readFieldValue, isNumber } = TarUtility;
 
 export interface TarEntryExtractionResult {
-	file: TarEntry | null;
+	entry: TarEntry | null;
 	nextOffset: number;
 }
 
-export function extractTarEntry(input: Uint8Array, currentOffset: number, maxOffset: number): TarEntryExtractionResult {
+/**
+ * Searches through the given input buffer for the next tar entry, starting at the given offset.
+ * 
+ */
+export function extractTarEntry(input: Uint8Array, offset: number = 0): TarEntryExtractionResult {
 
-	let offset = currentOffset;
+	// Invalid buffer given, abort
+	if (!input || !(input instanceof Uint8Array)) {
+		return { entry: null, nextOffset: offset };
+	}
+
+	const maxOffset = input.byteLength;
+	let nextOffset = offset;
 
 	// Search for next sector tagged with the ustar indicator
-	while (offset < maxOffset && !isUstarSector(input, offset)) {
-		offset = advanceSectorOffset(offset, maxOffset);
+	while (nextOffset < maxOffset && !isUstarSector(input, nextOffset)) {
+		nextOffset = advanceSectorOffset(nextOffset, maxOffset);
 	}
 
 	// We finished the search and did not find a ustar indicator, so no file to extract
-	if (offset >= maxOffset) {
-		return {
-			file: null,
-			nextOffset: offset
-		};
+	if (nextOffset >= maxOffset) {
+		return { entry: null, nextOffset };
 	}
 
 	const headerFields = TarHeaderFieldDefinition.orderedSet();
@@ -32,12 +39,12 @@ export function extractTarEntry(input: Uint8Array, currentOffset: number, maxOff
 	// Read all the header fields from the sector and parse/store their values
 	headerFields.forEach(field => {
 		Object.assign(header, {
-			[field.name]: readFieldValue(field, input, offset)
+			[field.name]: readFieldValue(field, input, nextOffset)
 		});
 	});
 
 	// Advance to the data of the file
-	offset = advanceSectorOffset(offset, maxOffset);
+	nextOffset = advanceSectorOffset(nextOffset, maxOffset);
 
 	const { fileSize } = header;
 
@@ -46,15 +53,14 @@ export function extractTarEntry(input: Uint8Array, currentOffset: number, maxOff
 	// If we read a legitimate file size...
 	if (isNumber(fileSize) && fileSize > 0) {
 
-		const fileEndOffset = offset + fileSize;
+		const fileEndOffset = nextOffset + fileSize;
 
 		// Read the file content and advance the offset
-		content = input.slice(offset, fileEndOffset);
-		offset = advanceSectorOffset(fileEndOffset, maxOffset);
+		content = input.slice(nextOffset, fileEndOffset);
+		nextOffset = advanceSectorOffset(fileEndOffset, maxOffset);
 	}
 
-	return {
-		file: new TarEntry(header, content),
-		nextOffset: offset
-	};
+	const entry = new TarEntry(header, content);
+
+	return { entry, nextOffset };
 }

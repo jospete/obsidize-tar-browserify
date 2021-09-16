@@ -16,6 +16,10 @@ export namespace TarUtility {
 		return typeof value === 'number' && !Number.isNaN(value);
 	}
 
+	export function clamp(value: number, min: number, max: number): number {
+		return Math.max(min, Math.min(value, max));
+	}
+
 	export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {
 		if (isNumber(value)) return value;
 		const parsed = parseInt(value, radix);

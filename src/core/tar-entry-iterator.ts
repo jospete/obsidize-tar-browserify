@@ -1,5 +1,8 @@
 import { extractTarEntry } from './extract-tar-entry';
+import { TarUtility } from './tar-utility';
 import { TarEntry } from './tar-entry';
+
+const { clamp } = TarUtility;
 
 /**
  * Utility for stepping through a given byte buffer and extracting tar files one-at-a-time.
@@ -42,10 +45,10 @@ export class TarEntryIterator implements IterableIterator<TarEntry> {
 			return { value: null, done: true };
 		}
 
-		const { file, nextOffset } = extractTarEntry(this.mData!, this.bufferOffset, this.bufferLength);
-		this.mOffset = Math.min(this.bufferLength, Math.max(this.bufferOffset, nextOffset));
+		const { entry, nextOffset } = extractTarEntry(this.mData!, this.bufferOffset);
+		this.mOffset = clamp(nextOffset, this.bufferOffset, this.bufferLength);
 
-		const value = file!;
+		const value = entry!;
 		const done = !this.canAdvanceOffset();
 
 		return { value, done };
