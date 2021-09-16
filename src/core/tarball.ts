@@ -1,5 +1,5 @@
-import { TarFile } from './tar-file';
-import { TarIterator } from './tar-iterator';
+import { TarEntry } from './tar-entry';
+import { TarEntryIterator } from './tar-entry-iterator';
 
 /**
  * High-level wrapper for a blob of uint8 data.
@@ -7,14 +7,14 @@ import { TarIterator } from './tar-iterator';
  */
 export class Tarball {
 
-	private readonly iterator = new TarIterator();
+	private readonly iterator = new TarEntryIterator();
 
 	constructor(
 		public readonly buffer: Uint8Array
 	) {
 	}
 
-	public readAllFiles(): TarFile[] {
+	public readAllEntries(): TarEntry[] {
 		this.iterator.initialize(this.buffer);
 		return Array.from(this.iterator);
 	}

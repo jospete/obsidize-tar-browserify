@@ -1,9 +1,10 @@
-import { TarFile } from './tar-file';
+import { extractTarEntry } from './extract-tar-entry';
+import { TarEntry } from './tar-entry';
 
 /**
  * Utility for stepping through a given byte buffer and extracting tar files one-at-a-time.
  */
-export class TarIterator implements IterableIterator<TarFile> {
+export class TarEntryIterator implements IterableIterator<TarEntry> {
 
 	private mData: Uint8Array | null = null;
 	private mOffset: number = 0;
@@ -13,11 +14,11 @@ export class TarIterator implements IterableIterator<TarFile> {
 		this.initialize(data);
 	}
 
-	[Symbol.iterator](): IterableIterator<TarFile> {
+	[Symbol.iterator](): IterableIterator<TarEntry> {
 		return this;
 	}
 
-	public get offset(): number {
+	public get bufferOffset(): number {
 		return this.mOffset;
 	}
 
@@ -26,7 +27,7 @@ export class TarIterator implements IterableIterator<TarFile> {
 	}
 
 	public canAdvanceOffset(): boolean {
-		return !!this.mData && this.offset < this.bufferLength;
+		return !!this.mData && this.bufferOffset < this.bufferLength;
 	}
 
 	public initialize(data: Uint8Array | null): void {
@@ -35,14 +36,14 @@ export class TarIterator implements IterableIterator<TarFile> {
 		this.mMaxOffset = this.mData ? this.mData.byteLength : 0;
 	}
 
-	public next(): IteratorResult<TarFile> {
+	public next(): IteratorResult<TarEntry> {
 
 		if (!this.canAdvanceOffset()) {
 			return { value: null, done: true };
 		}
 
-		const { file, nextOffset } = TarFile.extractNextFile(this.mData!, this.offset, this.bufferLength);
-		this.mOffset = Math.min(this.bufferLength, Math.max(this.offset, nextOffset));
+		const { file, nextOffset } = extractTarEntry(this.mData!, this.bufferOffset, this.bufferLength);
+		this.mOffset = Math.min(this.bufferLength, Math.max(this.bufferOffset, nextOffset));
 
 		const value = file!;
 		const done = !this.canAdvanceOffset();

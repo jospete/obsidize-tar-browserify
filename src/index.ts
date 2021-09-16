@@ -1,4 +1,6 @@
-export { TarFile, TarFileExtractionResult } from './core/tar-file';
+export { TarEntryExtractionResult, extractTarEntry } from './core/extract-tar-entry';
+export { TarEntryIterator } from './core/tar-entry-iterator';
+export { TarEntry } from './core/tar-entry';
 export {
 	TarHeader,
 	TarHeaderField,
@@ -6,6 +8,5 @@ export {
 	TarHeaderFieldType,
 	TarHeaderLinkIndicatorType
 } from './core/tar-header';
-export { TarIterator } from './core/tar-iterator';
 export { TarUtility } from './core/tar-utility';
 export { Tarball } from './core/tarball';

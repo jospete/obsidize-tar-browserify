@@ -28,11 +28,7 @@ export namespace TarUtility {
 	}
 
 	export function parseAsciiOctalNumberField(input: Uint8Array): number {
-		return parseIntSafe(parseAscii(input), 8);
-	}
-
-	export function parseNumberField(input: Uint8Array): number {
-		return new DataView(input).getFloat64(0);
+		return parseIntSafe(parseAscii(input).trim(), 8);
 	}
 
 	export function readFieldValue(field: TarHeaderField, input: Uint8Array, offset?: number): any {
@@ -51,12 +47,11 @@ export namespace TarUtility {
 
 	export function parseFieldValueByType(fieldType: TarHeaderFieldType, input: Uint8Array): any {
 		switch (fieldType) {
-			case TarHeaderFieldType.ASCII:
-				return parseAscii(input);
 			case TarHeaderFieldType.INTEGER_OCTAL:
 				return parseAsciiOctalNumberField(input);
+			case TarHeaderFieldType.ASCII:
 			default:
-				return parseNumberField(input);
+				return parseAscii(input);
 		}
 	}
 }
