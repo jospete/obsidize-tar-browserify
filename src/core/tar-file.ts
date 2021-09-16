@@ -52,7 +52,7 @@ export class TarFile {
 
 		const { fileSize } = header;
 
-		let buffer: Uint8Array | null = null;
+		let content: Uint8Array | null = null;
 
 		// If we read a legitimate file size...
 		if (isNumber(fileSize) && fileSize > 0) {
@@ -60,12 +60,12 @@ export class TarFile {
 			const fileEndOffset = offset + fileSize;
 
 			// Read the file content and advance the offset
-			buffer = input.slice(offset, fileEndOffset);
+			content = input.slice(offset, fileEndOffset);
 			offset = advanceSectorOffset(fileEndOffset, maxOffset);
 		}
 
 		return {
-			file: new TarFile(header, buffer),
+			file: new TarFile(header, content),
 			nextOffset: offset
 		};
 	}
