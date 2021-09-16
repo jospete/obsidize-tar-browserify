@@ -25,7 +25,7 @@ export class TarIterator implements IterableIterator<TarFile> {
 		return this.mMaxOffset;
 	}
 
-	public hasNext(): boolean {
+	public canAdvanceOffset(): boolean {
 		return !!this.mData && this.offset < this.bufferLength;
 	}
 
@@ -37,7 +37,7 @@ export class TarIterator implements IterableIterator<TarFile> {
 
 	public next(): IteratorResult<TarFile> {
 
-		if (!this.hasNext()) {
+		if (!this.canAdvanceOffset()) {
 			return { value: null, done: true };
 		}
 
@@ -45,7 +45,7 @@ export class TarIterator implements IterableIterator<TarFile> {
 		this.mOffset = Math.min(this.bufferLength, Math.max(this.offset, nextOffset));
 
 		const value = file!;
-		const done = !this.hasNext();
+		const done = !this.canAdvanceOffset();
 
 		return { value, done };
 	}
