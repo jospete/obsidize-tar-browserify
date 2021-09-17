@@ -1,5 +1,8 @@
 import { TarEntry } from './tar-entry';
 import { TarEntryIterator } from './tar-entry-iterator';
+import { TarUtility } from './tar-utility';
+
+const { isUint8Array } = TarUtility;
 
 /**
  * High-level wrapper for a blob of uint8 data.
@@ -20,7 +23,7 @@ export class Tarball {
 	}
 
 	public toJSON(): any {
-		return this.readAllEntries()
-			.map(entry => entry.toJSON());
+		const byteCount = isUint8Array(this.buffer) ? this.buffer.byteLength : 0;
+		return `Tarball <${byteCount} bytes>`;
 	}
 }

@@ -33,6 +33,12 @@ export class TarEntryIterator implements IterableIterator<TarEntry> {
 		return !!this.mData && this.bufferOffset < this.bufferLength;
 	}
 
+	public toJSON(): any {
+		const { bufferOffset, bufferLength } = this;
+		const canAdvanceOffset = this.canAdvanceOffset();
+		return { bufferOffset, bufferLength, canAdvanceOffset };
+	}
+
 	public initialize(data: Uint8Array | null): this {
 
 		if (isUint8Array(data)) {

@@ -29,7 +29,7 @@ export namespace TarUtility {
 	}
 
 	export function removeTrailingZeros(str: string): string {
-		const pattern = /^([^\\u0000\0]*)[\\u0000\0]*$/;
+		const pattern = /^([^\u0000\0]*)[\u0000\0]*$/;
 		const result = pattern.exec(str);
 		return result ? result[1] : str;
 	}
@@ -67,9 +67,11 @@ export namespace TarUtility {
 		switch (fieldType) {
 			case TarHeaderFieldType.INTEGER_OCTAL:
 				return parseAsciiOctalNumberField(input);
+			case TarHeaderFieldType.ASCII_TRIMMED:
+				return parseAsciiWithoutTrailingZeros(input);
 			case TarHeaderFieldType.ASCII:
 			default:
-				return parseAsciiWithoutTrailingZeros(input);
+				return parseAscii(input);
 		}
 	}
 }

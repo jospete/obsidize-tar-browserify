@@ -34,6 +34,8 @@ export class TarEntry {
 		const flag = this.getType();
 		switch (flag) {
 			case TarHeaderLinkIndicatorType.NORMAL_FILE:
+			case TarHeaderLinkIndicatorType.NORMAL_FILE_ALT1:
+			case TarHeaderLinkIndicatorType.NORMAL_FILE_ALT2:
 			case TarHeaderLinkIndicatorType.CONTIGUOUS_FILE:
 				return true;
 			default:
@@ -42,10 +44,14 @@ export class TarEntry {
 	}
 
 	public toJSON(): any {
+
 		const { header } = this;
+		const isFile = this.isFile();
+		const isDirectory = this.isDirectory();
 		const content = this.content
 			? ('Uint8Array(' + this.content.byteLength + ')')
 			: 'null';
-		return { content, header };
+
+		return { content, isFile, isDirectory, header };
 	}
 }
