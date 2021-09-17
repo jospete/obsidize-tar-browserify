@@ -33,8 +33,18 @@ export enum TarHeaderFieldType {
  * (see "Type flag field" in wiki)
  * 
  * https://en.wikipedia.org/wiki/Tar_(computing)
+ * 
+ * Special notes from the wiki:
+ * 'A'–'Z' - Vendor specific extensions (POSIX.1-1988)
+ * All other values	- Reserved for future standardization
  */
 export enum TarHeaderLinkIndicatorType {
+
+	/**
+	 * Special local indicator for this module to indicate a parse failure
+	 */
+	UNKNOWN = 'UNKNOWN',
+
 	NORMAL_FILE = '0',
 	NORMAL_FILE_ALT1 = '\0',
 	NORMAL_FILE_ALT2 = '',
@@ -45,9 +55,16 @@ export enum TarHeaderLinkIndicatorType {
 	DIRECTORY = '5',
 	FIFO = '6',
 	CONTIGUOUS_FILE = '7',
+
+	/**
+	 * Global extended header with meta data (POSIX.1-2001)
+	 */
 	GLOBAL_EXTENDED_HEADER = 'g',
+
+	/**
+	 * Extended header with meta data for the next file in the archive (POSIX.1-2001)
+	 */
 	LOCAL_EXTENDED_HEADER = 'x',
-	UNKNOWN = 'UNKNOWN'
 }
 
 /**
