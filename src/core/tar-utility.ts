@@ -8,6 +8,8 @@ export namespace TarUtility {
 	export const SECTOR_SIZE = 512;
 	export const USTAR_HEADER_SECTOR_TAG = 'ustar\0';
 
+	// -------------------- Common Utils -------------------------
+
 	export function isNumber(value: any): boolean {
 		return typeof value === 'number' && !Number.isNaN(value);
 	}
@@ -20,36 +22,10 @@ export namespace TarUtility {
 		return Math.max(min, Math.min(value, max));
 	}
 
-	export function parseAscii(input: Uint8Array): string {
-		return String.fromCharCode.apply(null, Array.from(input));
-	}
-
-	export function parseAsciiWithoutTrailingZeros(input: Uint8Array): string {
-		return removeTrailingZeros(parseAscii(input));
-	}
-
-	export function removeTrailingZeros(str: string): string {
-		const pattern = /^([^\u0000\0]*)[\u0000\0]*$/;
-		const result = pattern.exec(str);
-		return result ? result[1] : str;
-	}
-
 	export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {
 		if (isNumber(value)) return value;
 		const parsed = parseInt(value, radix);
 		return isNumber(parsed) ? parsed : defaultValue;
-	}
-
-	export function parseAsciiOctalNumberField(input: Uint8Array): number {
-		return parseIntSafe(parseAscii(input).trim(), 8);
-	}
-
-	export function readFieldValue(field: TarHeaderField, input: Uint8Array, offset?: number): any {
-		return parseFieldValueByType(field.type, sliceFieldBuffer(field, input, offset));
-	}
-
-	export function isUstarSector(input: Uint8Array, offset: number): boolean {
-		return readFieldValue(TarHeaderFieldDefinition.ustarIndicator(), input, offset) === USTAR_HEADER_SECTOR_TAG;
 	}
 
 	export function sliceFieldBuffer(field: TarHeaderField, input: Uint8Array, offset: number = 0): Uint8Array {
@@ -63,12 +39,46 @@ export namespace TarUtility {
 		return Math.min(maxOffset, nextOffsetRaw - diffToBoundary);
 	}
 
+	export function removeTrailingZeros(str: string): string {
+		const pattern = /^([^\u0000\0]*)[\u0000\0]*$/;
+		const result = pattern.exec(str);
+		return result ? result[1] : str;
+	}
+
+	// -------------------- Header Field Parsers -------------------------
+
+	export function isUstarSector(input: Uint8Array, offset: number): boolean {
+		return readFieldValue(TarHeaderFieldDefinition.ustarIndicator(), input, offset) === USTAR_HEADER_SECTOR_TAG;
+	}
+
+	export function readFieldValue(field: TarHeaderField, input: Uint8Array, offset?: number): any {
+		return parseFieldValueByType(field.type, sliceFieldBuffer(field, input, offset));
+	}
+
+	export function parseAscii(input: Uint8Array): string {
+		return String.fromCharCode.apply(null, Array.from(input));
+	}
+
+	export function parseAsciiTrimmed(input: Uint8Array): string {
+		return removeTrailingZeros(parseAscii(input));
+	}
+
+	export function parseIntegerOctalAscii(input: Uint8Array): string {
+		return parseAsciiTrimmed(input).trim();
+	}
+
+	export function parseIntegerOctal(input: Uint8Array): number {
+		return parseIntSafe(parseIntegerOctalAscii(input), 8);
+	}
+
 	export function parseFieldValueByType(fieldType: TarHeaderFieldType, input: Uint8Array): any {
 		switch (fieldType) {
 			case TarHeaderFieldType.INTEGER_OCTAL:
-				return parseAsciiOctalNumberField(input);
+				return parseIntegerOctal(input);
+			case TarHeaderFieldType.INTEGER_OCTAL_ASCII:
+				return parseIntegerOctalAscii(input);
 			case TarHeaderFieldType.ASCII_TRIMMED:
-				return parseAsciiWithoutTrailingZeros(input);
+				return parseAsciiTrimmed(input);
 			case TarHeaderFieldType.ASCII:
 			default:
 				return parseAscii(input);

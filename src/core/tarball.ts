@@ -5,12 +5,15 @@ import { TarUtility } from './tar-utility';
 const { isUint8Array } = TarUtility;
 
 /**
+ * Main entry point for reading tarballs.
+ * 
+ * 
  * High-level wrapper for a blob of uint8 data.
  * See TarIterator for more granular options.
  */
 export class Tarball {
 
-	private readonly iterator = new TarEntryIterator();
+	private readonly iterator: TarEntryIterator = new TarEntryIterator();
 
 	constructor(
 		public readonly buffer: Uint8Array

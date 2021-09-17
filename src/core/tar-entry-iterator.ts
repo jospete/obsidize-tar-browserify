@@ -6,6 +6,10 @@ const { clamp, isUint8Array } = TarUtility;
 
 /**
  * Utility for stepping through a given byte buffer and extracting tar files one-at-a-time.
+ * 
+ * Call the initialize() the Uint8Array data of a tar file, and then either:
+ * A) step through the files using next() manually, or
+ * B) get all the files at once with Array.from()
  */
 export class TarEntryIterator implements IterableIterator<TarEntry> {
 

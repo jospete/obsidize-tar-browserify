@@ -9,6 +9,8 @@ describe('Example Usage', () => {
 
 	it('works as advertised', () => {
 
+		// NOTE: You can view the full API here -> https://jospete.github.io/obsidize-tar-browserify/
+
 		// 1. Get some tarball file data
 		const tarballUint8 = base64ToUint8Array(tarballSampleBase64);
 
@@ -22,6 +24,9 @@ describe('Example Usage', () => {
 		expect(entries.length).toBe(totalFileCount);
 
 		for (const entry of entries) {
+
+			console.log(entry.fileName + ' = ', entry.toJSON());
+
 			if (!isUint8Array(entry.content)) {
 				fail(`file ${entry.fileName} should have content but it doesn't! -> ${entry.content}`);
 			}

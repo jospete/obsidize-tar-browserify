@@ -10,10 +10,24 @@ Pairs well with these modules:
 - [pako](https://www.npmjs.com/package/pako) for gzip / unzip
 - [path-browserify](https://www.npmjs.com/package/path-browserify) to further process raw file names
 
-## API
+## Installation
 
-Source documentation can be found [here](https://jospete.github.io/obsidize-tar-browserify/)
+- npm:
+
+```bash
+npm install --save @obsidize/tar-browserify
+```
+
+- git:
+
+```bash
+npm install --save git+https://github.com/jospete/obsidize-tar-browserify.git
+```
 
 ## Usage
 
 See the [Example Usage Spec](https://github.com/jospete/obsidize-tar-browserify/blob/master/tests/example-usage.spec.ts) to get a general feel for what this module can do.
+
+## API
+
+Source documentation can be found [here](https://jospete.github.io/obsidize-tar-browserify/)
