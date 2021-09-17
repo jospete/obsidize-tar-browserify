@@ -21,10 +21,8 @@ export class Tarball {
 	}
 
 	public static from(entries: TarEntry[]): Uint8Array {
-		const buffers = toArray(entries)
-			.filter(v => TarEntry.isTarEntry(v))
-			.map(v => v.toUint8Array());
-		return concatUint8Arrays(buffers);
+		const safeEntries = toArray(entries).filter(v => TarEntry.isTarEntry(v));
+		return concatUint8Arrays(safeEntries.map(e => e.toUint8Array()));
 	}
 
 	public readAllEntries(): TarEntry[] {

@@ -41,10 +41,6 @@ export namespace TarUtility {
 		return isNumber(parsed) ? parsed : defaultValue;
 	}
 
-	export function sizeOfUint8Array(value: any, defaultValue: number = 0): number {
-		return isUint8Array(value) ? value.byteLength : defaultValue;
-	}
-
 	export function sliceFieldBuffer(field: TarHeaderField, input: Uint8Array, offset: number = 0): Uint8Array {
 		const absoluteOffset = field.offset + offset;
 		return input.slice(absoluteOffset, absoluteOffset + field.size);
@@ -60,6 +56,22 @@ export namespace TarUtility {
 		const pattern = /^([^\u0000\0]*)[\u0000\0]*$/;
 		const result = pattern.exec(str);
 		return result ? result[1] : str;
+	}
+
+	export function padBytesEnd(bytes: number[], targetSize: number, padValue: number = 0): number[] {
+
+		const result = toArray(bytes);
+		const currentLength = result.length;
+
+		if (currentLength >= targetSize) {
+			return result.slice(0, targetSize);
+		}
+
+		for (let i = currentLength; i < targetSize; i++) {
+			result.push(padValue);
+		}
+
+		return result;
 	}
 
 	export function createFixedSizeUint8Array(bytes: number[], size: number, padValue: number = 0): Uint8Array {
@@ -80,7 +92,7 @@ export namespace TarUtility {
 	export function concatUint8Arrays(arrays: Uint8Array[]): Uint8Array {
 
 		const safeArrays = toArray(arrays).filter(v => isUint8Array(v));
-		const totalLength = safeArrays.reduce((acc: number, arr: Uint8Array) => acc + arr.byteLength, 0);
+		const totalLength = safeArrays.reduce((acc: number, arr: Uint8Array) => acc + arr.length, 0);
 		const safeTotalLength = Math.max(0, totalLength);
 		const result = new Uint8Array(safeTotalLength);
 
@@ -92,7 +104,7 @@ export namespace TarUtility {
 
 		for (const array of safeArrays) {
 
-			const size = array.byteLength;
+			const size = array.length;
 			if (size <= 0) continue;
 
 			result.set(array, offset);
@@ -144,17 +156,15 @@ export namespace TarUtility {
 
 	// -------------------- Header Field Encoders -------------------------
 
-	export function unparseAsciiFixed(input: string, byteCount: number): Uint8Array {
-		const bytes = parseCharCodes(input);
-		return createFixedSizeUint8Array(bytes, byteCount);
+	export function unparseAsciiFixed(input: string, byteCount: number): number[] {
+		return padBytesEnd(parseCharCodes(input), byteCount);
 	}
 
-	export function unparseIntegerOctalField(value: number, byteCount: number): Uint8Array {
-		const bytes = parseCharCodes(parseIntSafe(value).toString(8));
-		return createFixedSizeUint8Array(bytes, byteCount);
+	export function unparseIntegerOctalField(value: number, byteCount: number): number[] {
+		return padBytesEnd(parseCharCodes(parseIntSafe(value).toString(8)), byteCount);
 	}
 
-	export function unparseFieldValue(field: TarHeaderField, input: any): Uint8Array {
+	export function unparseFieldValue(field: TarHeaderField, input: any): number[] {
 		const { type, size } = field;
 		switch (type) {
 			case TarHeaderFieldType.INTEGER_OCTAL:
