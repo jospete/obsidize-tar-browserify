@@ -61,7 +61,7 @@
 				<a href="#obsidizetar-browserify" id="obsidizetar-browserify" style="color: inherit; text-decoration: none;">
 					<h1>@obsidize/tar-browserify</h1>
 				</a>
-				<p>Simple utility to pack and unpack small tar files in the browser.</p>
+				<p>Simple utility unpack small tar files in the browser.</p>
 				<p>This differs from other <a href="https://www.npmjs.com/search?q=tar">npm tar modules</a> in that it contains no node-based dependencies like fs or streams.</p>
 				<p><em>NOTE:</em> this module performs all its processing in-memory, so using this with large files is not recommended.</p>
 				<p>Pairs well with these modules:</p>
@@ -102,22 +102,25 @@
 						<a href="enums/TarHeaderLinkIndicatorType.html" class="tsd-kind-icon">Tar<wbr>Header<wbr>Link<wbr>Indicator<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="classes/TarFile.html" class="tsd-kind-icon">Tar<wbr>File</a>
+						<a href="classes/TarEntry.html" class="tsd-kind-icon">Tar<wbr>Entry</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="classes/TarIterator.html" class="tsd-kind-icon">Tar<wbr>Iterator</a>
+						<a href="classes/TarEntryIterator.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Iterator</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/Tarball.html" class="tsd-kind-icon">Tarball</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="interfaces/TarFileExtractionResult.html" class="tsd-kind-icon">Tar<wbr>File<wbr>Extraction<wbr>Result</a>
+						<a href="interfaces/TarEntryExtractionResult.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Extraction<wbr>Result</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/TarHeader.html" class="tsd-kind-icon">Tar<wbr>Header</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/TarHeaderField.html" class="tsd-kind-icon">Tar<wbr>Header<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#extractTarEntry" class="tsd-kind-icon">extract<wbr>Tar<wbr>Entry</a>
 					</li>
 				</ul>
 			</nav>
@@ -138,9 +141,6 @@
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
 			</ul>
 		</div>
 	</div>

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>TarFileExtractionResult | @obsidize/tar-browserify</title>
+	<title>TarEntryExtractionResult | @obsidize/tar-browserify</title>
 	<meta name="description" content="Documentation for @obsidize/tar-browserify">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,10 +55,10 @@
 					<a href="../modules.html">@obsidize/tar-browserify</a>
 				</li>
 				<li>
-					<a href="TarFileExtractionResult.html">TarFileExtractionResult</a>
+					<a href="TarEntryExtractionResult.html">TarEntryExtractionResult</a>
 				</li>
 			</ul>
-			<h1>Interface TarFileExtractionResult</h1>
+			<h1>Interface TarEntryExtractionResult</h1>
 		</div>
 	</div>
 </header>
@@ -69,7 +69,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">TarFileExtractionResult</span>
+						<span class="target">TarEntryExtractionResult</span>
 					</li>
 				</ul>
 			</section>
@@ -80,8 +80,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="TarFileExtractionResult.html#file" class="tsd-kind-icon">file</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="TarFileExtractionResult.html#nextOffset" class="tsd-kind-icon">next<wbr>Offset</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="TarEntryExtractionResult.html#entry" class="tsd-kind-icon">entry</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="TarEntryExtractionResult.html#nextOffset" class="tsd-kind-icon">next<wbr>Offset</a></li>
 							</ul>
 						</section>
 					</div>
@@ -90,12 +90,12 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="file" class="tsd-anchor"></a>
-					<h3>file</h3>
-					<div class="tsd-signature tsd-kind-icon">file<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../classes/TarFile.html" class="tsd-signature-type" data-tsd-kind="Class">TarFile</a></div>
+					<a name="entry" class="tsd-anchor"></a>
+					<h3>entry</h3>
+					<div class="tsd-signature tsd-kind-icon">entry<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../classes/TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-file.ts#L7">core/tar-file.ts:7</a></li>
+							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/extract-tar-entry.ts#L8">core/extract-tar-entry.ts:8</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -105,7 +105,7 @@
 					<div class="tsd-signature tsd-kind-icon">next<wbr>Offset<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-file.ts#L8">core/tar-file.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/extract-tar-entry.ts#L9">core/extract-tar-entry.ts:9</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -128,10 +128,10 @@
 						<a href="../enums/TarHeaderLinkIndicatorType.html" class="tsd-kind-icon">Tar<wbr>Header<wbr>Link<wbr>Indicator<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="../classes/TarFile.html" class="tsd-kind-icon">Tar<wbr>File</a>
+						<a href="../classes/TarEntry.html" class="tsd-kind-icon">Tar<wbr>Entry</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="../classes/TarIterator.html" class="tsd-kind-icon">Tar<wbr>Iterator</a>
+						<a href="../classes/TarEntryIterator.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Iterator</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="../classes/Tarball.html" class="tsd-kind-icon">Tarball</a>
@@ -139,13 +139,13 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="TarFileExtractionResult.html" class="tsd-kind-icon">Tar<wbr>File<wbr>Extraction<wbr>Result</a>
+						<a href="TarEntryExtractionResult.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Extraction<wbr>Result</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="TarFileExtractionResult.html#file" class="tsd-kind-icon">file</a>
+								<a href="TarEntryExtractionResult.html#entry" class="tsd-kind-icon">entry</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="TarFileExtractionResult.html#nextOffset" class="tsd-kind-icon">next<wbr>Offset</a>
+								<a href="TarEntryExtractionResult.html#nextOffset" class="tsd-kind-icon">next<wbr>Offset</a>
 							</li>
 						</ul>
 					</li>
@@ -156,6 +156,9 @@
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="TarHeaderField.html" class="tsd-kind-icon">Tar<wbr>Header<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#extractTarEntry" class="tsd-kind-icon">extract<wbr>Tar<wbr>Entry</a>
 					</li>
 				</ul>
 			</nav>
@@ -176,9 +179,6 @@
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
 			</ul>
 		</div>
 	</div>

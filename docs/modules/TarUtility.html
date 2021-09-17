@@ -79,22 +79,25 @@
 						<section class="tsd-index-section ">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-variable tsd-parent-kind-namespace"><a href="TarUtility.html#BLOCK_SIZE" class="tsd-kind-icon">BLOCK_<wbr>SIZE</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-namespace"><a href="TarUtility.html#USTAR_SECTOR_TAG" class="tsd-kind-icon">USTAR_<wbr>SECTOR_<wbr>TAG</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-namespace"><a href="TarUtility.html#SECTOR_SIZE" class="tsd-kind-icon">SECTOR_<wbr>SIZE</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-namespace"><a href="TarUtility.html#USTAR_HEADER_SECTOR_TAG" class="tsd-kind-icon">USTAR_<wbr>HEADER_<wbr>SECTOR_<wbr>TAG</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#advanceSectorOffset" class="tsd-kind-icon">advance<wbr>Sector<wbr>Offset</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#clamp" class="tsd-kind-icon">clamp</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#isNumber" class="tsd-kind-icon">is<wbr>Number</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#isUint8Array" class="tsd-kind-icon">is<wbr>Uint8<wbr>Array</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#isUstarSector" class="tsd-kind-icon">is<wbr>Ustar<wbr>Sector</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#parseAscii" class="tsd-kind-icon">parse<wbr>Ascii</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#parseAsciiOctalNumberField" class="tsd-kind-icon">parse<wbr>Ascii<wbr>Octal<wbr>Number<wbr>Field</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#parseAsciiWithoutTrailingZeros" class="tsd-kind-icon">parse<wbr>Ascii<wbr>Without<wbr>Trailing<wbr>Zeros</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#parseFieldValueByType" class="tsd-kind-icon">parse<wbr>Field<wbr>Value<wbr>ByType</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#parseIntSafe" class="tsd-kind-icon">parse<wbr>Int<wbr>Safe</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#parseNumberField" class="tsd-kind-icon">parse<wbr>Number<wbr>Field</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#readFieldValue" class="tsd-kind-icon">read<wbr>Field<wbr>Value</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#removeTrailingZeros" class="tsd-kind-icon">remove<wbr>Trailing<wbr>Zeros</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarUtility.html#sliceFieldBuffer" class="tsd-kind-icon">slice<wbr>Field<wbr>Buffer</a></li>
 							</ul>
 						</section>
@@ -104,22 +107,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Variables</h2>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-namespace">
-					<a name="BLOCK_SIZE" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> BLOCK_<wbr>SIZE</h3>
-					<div class="tsd-signature tsd-kind-icon">BLOCK_<wbr>SIZE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">512</span><span class="tsd-signature-symbol"> = 512</span></div>
+					<a name="SECTOR_SIZE" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> SECTOR_<wbr>SIZE</h3>
+					<div class="tsd-signature tsd-kind-icon">SECTOR_<wbr>SIZE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">512</span><span class="tsd-signature-symbol"> = 512</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-utility.ts#L8">core/tar-utility.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L8">core/tar-utility.ts:8</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-namespace">
-					<a name="USTAR_SECTOR_TAG" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> USTAR_<wbr>SECTOR_<wbr>TAG</h3>
-					<div class="tsd-signature tsd-kind-icon">USTAR_<wbr>SECTOR_<wbr>TAG<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;ustar\u0000&quot;</span><span class="tsd-signature-symbol"> = &#x27;ustar\0&#x27;</span></div>
+					<a name="USTAR_HEADER_SECTOR_TAG" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> USTAR_<wbr>HEADER_<wbr>SECTOR_<wbr>TAG</h3>
+					<div class="tsd-signature tsd-kind-icon">USTAR_<wbr>HEADER_<wbr>SECTOR_<wbr>TAG<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;ustar\u0000&quot;</span><span class="tsd-signature-symbol"> = &#x27;ustar\0&#x27;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-utility.ts#L9">core/tar-utility.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L9">core/tar-utility.ts:9</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -128,7 +131,7 @@
 				<h2>Functions</h2>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
 					<a name="advanceSectorOffset" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> advance<wbr>Sector<wbr>Offset</h3>
+					<h3>advance<wbr>Sector<wbr>Offset</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
 						<li class="tsd-signature tsd-kind-icon">advance<wbr>Sector<wbr>Offset<span class="tsd-signature-symbol">(</span>currentOffset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, maxOffset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
@@ -136,7 +139,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-utility.ts#L46">core/tar-utility.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L60">core/tar-utility.ts:60</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -153,8 +156,37 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="clamp" class="tsd-anchor"></a>
+					<h3>clamp</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">clamp<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, min<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, max<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L19">core/tar-utility.ts:19</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>min: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>max: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
 					<a name="isNumber" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> is<wbr>Number</h3>
+					<h3>is<wbr>Number</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
 						<li class="tsd-signature tsd-kind-icon">is<wbr>Number<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
@@ -162,7 +194,30 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-utility.ts#L15">core/tar-utility.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L11">core/tar-utility.ts:11</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="isUint8Array" class="tsd-anchor"></a>
+					<h3>is<wbr>Uint8<wbr>Array</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Uint8<wbr>Array<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L15">core/tar-utility.ts:15</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -177,7 +232,7 @@
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
 					<a name="isUstarSector" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> is<wbr>Ustar<wbr>Sector</h3>
+					<h3>is<wbr>Ustar<wbr>Sector</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
 						<li class="tsd-signature tsd-kind-icon">is<wbr>Ustar<wbr>Sector<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
@@ -185,7 +240,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-utility.ts#L42">core/tar-utility.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L51">core/tar-utility.ts:51</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -203,7 +258,7 @@
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
 					<a name="parseAscii" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> parse<wbr>Ascii</h3>
+					<h3>parse<wbr>Ascii</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
 						<li class="tsd-signature tsd-kind-icon">parse<wbr>Ascii<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
@@ -211,7 +266,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-utility.ts#L11">core/tar-utility.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L23">core/tar-utility.ts:23</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -226,7 +281,7 @@
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
 					<a name="parseAsciiOctalNumberField" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> parse<wbr>Ascii<wbr>Octal<wbr>Number<wbr>Field</h3>
+					<h3>parse<wbr>Ascii<wbr>Octal<wbr>Number<wbr>Field</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
 						<li class="tsd-signature tsd-kind-icon">parse<wbr>Ascii<wbr>Octal<wbr>Number<wbr>Field<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
@@ -234,7 +289,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-utility.ts#L30">core/tar-utility.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L43">core/tar-utility.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -248,8 +303,31 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="parseAsciiWithoutTrailingZeros" class="tsd-anchor"></a>
+					<h3>parse<wbr>Ascii<wbr>Without<wbr>Trailing<wbr>Zeros</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Ascii<wbr>Without<wbr>Trailing<wbr>Zeros<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L27">core/tar-utility.ts:27</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>input: <span class="tsd-signature-type">Uint8Array</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
 					<a name="parseFieldValueByType" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> parse<wbr>Field<wbr>Value<wbr>ByType</h3>
+					<h3>parse<wbr>Field<wbr>Value<wbr>ByType</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
 						<li class="tsd-signature tsd-kind-icon">parse<wbr>Field<wbr>Value<wbr>ByType<span class="tsd-signature-symbol">(</span>fieldType<span class="tsd-signature-symbol">: </span><a href="../enums/TarHeaderFieldType.html" class="tsd-signature-type" data-tsd-kind="Enumeration">TarHeaderFieldType</a>, input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
@@ -257,7 +335,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-utility.ts#L52">core/tar-utility.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L66">core/tar-utility.ts:66</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -275,7 +353,7 @@
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
 					<a name="parseIntSafe" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> parse<wbr>Int<wbr>Safe</h3>
+					<h3>parse<wbr>Int<wbr>Safe</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
 						<li class="tsd-signature tsd-kind-icon">parse<wbr>Int<wbr>Safe<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, radix<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, defaultValue<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
@@ -283,7 +361,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-utility.ts#L19">core/tar-utility.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L37">core/tar-utility.ts:37</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -303,31 +381,8 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
-					<a name="parseNumberField" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> parse<wbr>Number<wbr>Field</h3>
-					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
-						<li class="tsd-signature tsd-kind-icon">parse<wbr>Number<wbr>Field<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-utility.ts#L34">core/tar-utility.ts:34</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>input: <span class="tsd-signature-type">Uint8Array</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
 					<a name="readFieldValue" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> read<wbr>Field<wbr>Value</h3>
+					<h3>read<wbr>Field<wbr>Value</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
 						<li class="tsd-signature tsd-kind-icon">read<wbr>Field<wbr>Value<span class="tsd-signature-symbol">(</span>field<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a>, input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
@@ -335,7 +390,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-utility.ts#L38">core/tar-utility.ts:38</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L47">core/tar-utility.ts:47</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -355,8 +410,31 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="removeTrailingZeros" class="tsd-anchor"></a>
+					<h3>remove<wbr>Trailing<wbr>Zeros</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>Trailing<wbr>Zeros<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L31">core/tar-utility.ts:31</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>str: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
 					<a name="sliceFieldBuffer" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> slice<wbr>Field<wbr>Buffer</h3>
+					<h3>slice<wbr>Field<wbr>Buffer</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
 						<li class="tsd-signature tsd-kind-icon">slice<wbr>Field<wbr>Buffer<span class="tsd-signature-symbol">(</span>field<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a>, input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span></li>
 					</ul>
@@ -364,7 +442,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8e576ab/src/core/tar-utility.ts#L25">core/tar-utility.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-utility.ts#L55">core/tar-utility.ts:55</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -402,16 +480,22 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-variable tsd-parent-kind-namespace">
-						<a href="TarUtility.html#BLOCK_SIZE" class="tsd-kind-icon">BLOCK_<wbr>SIZE</a>
+						<a href="TarUtility.html#SECTOR_SIZE" class="tsd-kind-icon">SECTOR_<wbr>SIZE</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-namespace">
-						<a href="TarUtility.html#USTAR_SECTOR_TAG" class="tsd-kind-icon">USTAR_<wbr>SECTOR_<wbr>TAG</a>
+						<a href="TarUtility.html#USTAR_HEADER_SECTOR_TAG" class="tsd-kind-icon">USTAR_<wbr>HEADER_<wbr>SECTOR_<wbr>TAG</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="TarUtility.html#advanceSectorOffset" class="tsd-kind-icon">advance<wbr>Sector<wbr>Offset</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarUtility.html#clamp" class="tsd-kind-icon">clamp</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="TarUtility.html#isNumber" class="tsd-kind-icon">is<wbr>Number</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarUtility.html#isUint8Array" class="tsd-kind-icon">is<wbr>Uint8<wbr>Array</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="TarUtility.html#isUstarSector" class="tsd-kind-icon">is<wbr>Ustar<wbr>Sector</a>
@@ -423,16 +507,19 @@
 						<a href="TarUtility.html#parseAsciiOctalNumberField" class="tsd-kind-icon">parse<wbr>Ascii<wbr>Octal<wbr>Number<wbr>Field</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarUtility.html#parseAsciiWithoutTrailingZeros" class="tsd-kind-icon">parse<wbr>Ascii<wbr>Without<wbr>Trailing<wbr>Zeros</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="TarUtility.html#parseFieldValueByType" class="tsd-kind-icon">parse<wbr>Field<wbr>Value<wbr>ByType</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="TarUtility.html#parseIntSafe" class="tsd-kind-icon">parse<wbr>Int<wbr>Safe</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
-						<a href="TarUtility.html#parseNumberField" class="tsd-kind-icon">parse<wbr>Number<wbr>Field</a>
+						<a href="TarUtility.html#readFieldValue" class="tsd-kind-icon">read<wbr>Field<wbr>Value</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
-						<a href="TarUtility.html#readFieldValue" class="tsd-kind-icon">read<wbr>Field<wbr>Value</a>
+						<a href="TarUtility.html#removeTrailingZeros" class="tsd-kind-icon">remove<wbr>Trailing<wbr>Zeros</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="TarUtility.html#sliceFieldBuffer" class="tsd-kind-icon">slice<wbr>Field<wbr>Buffer</a>
@@ -456,9 +543,6 @@
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
 			</ul>
 		</div>
 	</div>
