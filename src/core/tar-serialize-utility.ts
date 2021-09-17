@@ -76,8 +76,8 @@ export namespace TarSerializeUtility {
 
 				if (fieldMaxOffset > resultSize) continue;
 
-				const fieldBufferValue = unparseFieldValue(field, sanitizedHeader[name]);
-				result.set(fieldBufferValue, offset);
+				const valueBytes = unparseFieldValue(field, sanitizedHeader[name]);
+				result.set(valueBytes, offset);
 				maxContentOffset = Math.max(maxContentOffset, fieldMaxOffset);
 			}
 		}

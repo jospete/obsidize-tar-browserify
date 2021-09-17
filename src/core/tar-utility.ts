@@ -156,15 +156,25 @@ export namespace TarUtility {
 
 	// -------------------- Header Field Encoders -------------------------
 
-	export function unparseAsciiFixed(input: string, byteCount: number): number[] {
-		return padBytesEnd(parseCharCodes(input), byteCount);
+	export function unparseAsciiFixed(input: string, byteCount: number): Uint8Array {
+		return createFixedSizeUint8Array(parseCharCodes(input), byteCount);
 	}
 
-	export function unparseIntegerOctalField(value: number, byteCount: number): number[] {
-		return padBytesEnd(parseCharCodes(parseIntSafe(value).toString(8)), byteCount);
+	export function unparseIntegerOctalField(value: number, byteCount: number): Uint8Array {
+
+		// NOTE: Octal strings in tar files are front-padded with zeroes and have one space at the end
+
+		const maxOctalLength = byteCount - 1;
+
+		const valueOctalStr = parseIntSafe(value)
+			.toString(8)
+			.substring(0, maxOctalLength)
+			.padStart(maxOctalLength, '0');
+
+		return unparseAsciiFixed(valueOctalStr + '\0', byteCount);
 	}
 
-	export function unparseFieldValue(field: TarHeaderField, input: any): number[] {
+	export function unparseFieldValue(field: TarHeaderField, input: any): Uint8Array {
 		const { type, size } = field;
 		switch (type) {
 			case TarHeaderFieldType.INTEGER_OCTAL:
