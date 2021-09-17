@@ -10,4 +10,4 @@ const tarball = new Tarball(Buffer.from(tarballSampleBase64, 'base64'));
 const entries = tarball.readAllEntries();
 
 fs.mkdirpSync('./tmp');
-fs.writeFileSync('./tmp/tarball-metadata.txt', JSON.stringify(entries, null, '\t'), 'utf-8');
+fs.writeFileSync('./tmp/tarball-serialize-test.tar', Buffer.from(Tarball.from(entries)));
