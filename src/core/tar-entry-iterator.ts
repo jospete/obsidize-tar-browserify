@@ -1,8 +1,9 @@
-import { extractTarEntry } from './extract-tar-entry';
+import { TarDeserializeUtility } from './tar-deserialize-utility';
 import { TarUtility } from './tar-utility';
 import { TarEntry } from './tar-entry';
 
 const { clamp, isUint8Array } = TarUtility;
+const { extractTarEntry } = TarDeserializeUtility;
 
 /**
  * Utility for stepping through a given byte buffer and extracting tar files one-at-a-time.

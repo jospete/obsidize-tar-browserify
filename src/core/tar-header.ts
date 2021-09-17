@@ -56,24 +56,24 @@ export enum TarHeaderLinkIndicatorType {
 export interface TarHeader {
 
 	// Legacy Fields
-	readonly fileName: string;
-	readonly fileMode: string;
-	readonly ownerUserId: string;
-	readonly groupUserId: string;
-	readonly fileSize: number;
-	readonly lastModified: number;
-	readonly headerChecksum: number;
-	readonly linkedFileName: string;
-	readonly typeFlag: TarHeaderLinkIndicatorType;
+	fileName: string;
+	fileMode: string;
+	ownerUserId: string;
+	groupUserId: string;
+	fileSize: number;
+	lastModified: number;
+	headerChecksum: number;
+	linkedFileName: string;
+	typeFlag: TarHeaderLinkIndicatorType;
 
 	// USTAR Fields
-	readonly ustarIndicator: string;
-	readonly ustarVersion: string;
-	readonly ownerUserName: string;
-	readonly ownerGroupName: string;
-	readonly deviceMajorNumber: number;
-	readonly deviceMinorNumber: number;
-	readonly fileNamePrefix: string;
+	ustarIndicator: string;
+	ustarVersion: string;
+	ownerUserName: string;
+	ownerGroupName: string;
+	deviceMajorNumber: number;
+	deviceMinorNumber: number;
+	fileNamePrefix: string;
 }
 
 /**

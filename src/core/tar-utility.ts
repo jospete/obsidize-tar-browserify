@@ -1,12 +1,13 @@
 import { TarHeaderField, TarHeaderFieldDefinition, TarHeaderFieldType } from './tar-header';
 
 /**
- * Helper lambda functions for parsing tarball content.
+ * Helper lambda functions for transforming tarball content.
  */
 export namespace TarUtility {
 
 	export const SECTOR_SIZE = 512;
-	export const USTAR_HEADER_SECTOR_TAG = 'ustar\0';
+	export const USTAR_INDICATOR_VALUE = 'ustar\0';
+	export const USTAR_VERSION_VALUE = '00';
 
 	// -------------------- Common Utils -------------------------
 
@@ -18,14 +19,30 @@ export namespace TarUtility {
 		return !!(value && value instanceof Uint8Array);
 	}
 
+	export function toString(value: any): string {
+		return value + '';
+	}
+
+	export function toArray<T>(value: T[]): T[] {
+		return [].slice.call(value);
+	}
+
 	export function clamp(value: number, min: number, max: number): number {
 		return Math.max(min, Math.min(value, max));
+	}
+
+	export function parseCharCodes(str: string): number[] {
+		return toString(str).split('').map(c => c.charCodeAt(0));
 	}
 
 	export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {
 		if (isNumber(value)) return value;
 		const parsed = parseInt(value, radix);
 		return isNumber(parsed) ? parsed : defaultValue;
+	}
+
+	export function sizeOfUint8Array(value: any, defaultValue: number = 0): number {
+		return isUint8Array(value) ? value.byteLength : defaultValue;
 	}
 
 	export function sliceFieldBuffer(field: TarHeaderField, input: Uint8Array, offset: number = 0): Uint8Array {
@@ -45,10 +62,50 @@ export namespace TarUtility {
 		return result ? result[1] : str;
 	}
 
+	export function createFixedSizeUint8Array(bytes: number[], size: number, padValue: number = 0): Uint8Array {
+
+		const valueByteCount = bytes.length;
+		const result = new Uint8Array(size);
+		const safeBytes = valueByteCount <= size ? bytes : toArray(bytes).slice(0, size);
+
+		result.set(safeBytes, 0);
+
+		if (valueByteCount < size) {
+			result.fill(padValue, valueByteCount, size);
+		}
+
+		return result;
+	}
+
+	export function concatUint8Arrays(arrays: Uint8Array[]): Uint8Array {
+
+		const safeArrays = toArray(arrays).filter(v => isUint8Array(v));
+		const totalLength = safeArrays.reduce((acc: number, arr: Uint8Array) => acc + arr.byteLength, 0);
+		const safeTotalLength = Math.max(0, totalLength);
+		const result = new Uint8Array(safeTotalLength);
+
+		if (safeTotalLength <= 0) {
+			return result;
+		}
+
+		let offset = 0;
+
+		for (const array of safeArrays) {
+
+			const size = array.byteLength;
+			if (size <= 0) continue;
+
+			result.set(array, offset);
+			offset += size;
+		}
+
+		return result;
+	}
+
 	// -------------------- Header Field Parsers -------------------------
 
 	export function isUstarSector(input: Uint8Array, offset: number): boolean {
-		return readFieldValue(TarHeaderFieldDefinition.ustarIndicator(), input, offset) === USTAR_HEADER_SECTOR_TAG;
+		return readFieldValue(TarHeaderFieldDefinition.ustarIndicator(), input, offset) === USTAR_INDICATOR_VALUE;
 	}
 
 	export function readFieldValue(field: TarHeaderField, input: Uint8Array, offset?: number): any {
@@ -82,6 +139,31 @@ export namespace TarUtility {
 			case TarHeaderFieldType.ASCII:
 			default:
 				return parseAscii(input);
+		}
+	}
+
+	// -------------------- Header Field Encoders -------------------------
+
+	export function unparseAsciiFixed(input: string, byteCount: number): Uint8Array {
+		const bytes = parseCharCodes(input);
+		return createFixedSizeUint8Array(bytes, byteCount);
+	}
+
+	export function unparseIntegerOctalField(value: number, byteCount: number): Uint8Array {
+		const bytes = parseCharCodes(parseIntSafe(value).toString(8));
+		return createFixedSizeUint8Array(bytes, byteCount);
+	}
+
+	export function unparseFieldValue(field: TarHeaderField, input: any): Uint8Array {
+		const { type, size } = field;
+		switch (type) {
+			case TarHeaderFieldType.INTEGER_OCTAL:
+				return unparseIntegerOctalField(input, size);
+			case TarHeaderFieldType.INTEGER_OCTAL_ASCII:
+			case TarHeaderFieldType.ASCII_TRIMMED:
+			case TarHeaderFieldType.ASCII:
+			default:
+				return unparseAsciiFixed(input, size);
 		}
 	}
 }

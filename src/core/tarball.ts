@@ -1,8 +1,8 @@
-import { TarEntry } from './tar-entry';
 import { TarEntryIterator } from './tar-entry-iterator';
 import { TarUtility } from './tar-utility';
+import { TarEntry } from './tar-entry';
 
-const { isUint8Array } = TarUtility;
+const { isUint8Array, concatUint8Arrays, toArray } = TarUtility;
 
 /**
  * Main entry point for reading tarballs.
@@ -18,6 +18,13 @@ export class Tarball {
 	constructor(
 		public readonly buffer: Uint8Array
 	) {
+	}
+
+	public static from(entries: TarEntry[]): Uint8Array {
+		const buffers = toArray(entries)
+			.filter(v => TarEntry.isTarEntry(v))
+			.map(v => v.toUint8Array());
+		return concatUint8Arrays(buffers);
 	}
 
 	public readAllEntries(): TarEntry[] {

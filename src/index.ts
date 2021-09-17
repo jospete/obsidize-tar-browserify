@@ -1,4 +1,4 @@
-export { TarEntryExtractionResult, extractTarEntry } from './core/extract-tar-entry';
+export { TarDeserializeUtility } from './core/tar-deserialize-utility';
 export { TarEntryIterator } from './core/tar-entry-iterator';
 export { TarEntry } from './core/tar-entry';
 export {
@@ -8,5 +8,6 @@ export {
 	TarHeaderFieldType,
 	TarHeaderLinkIndicatorType
 } from './core/tar-header';
+export { TarSerializeUtility } from './core/tar-serialize-utility';
 export { TarUtility } from './core/tar-utility';
 export { Tarball } from './core/tarball';

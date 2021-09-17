@@ -1,4 +1,7 @@
 import { TarHeader, TarHeaderLinkIndicatorType } from './tar-header';
+import { TarSerializeUtility } from './tar-serialize-utility';
+
+const { createTarEntryBuffer } = TarSerializeUtility;
 
 /**
  * Container for metadata and content of a tarball entry.
@@ -15,6 +18,10 @@ export class TarEntry {
 		public readonly header: TarHeader,
 		public readonly content: Uint8Array | null = null
 	) {
+	}
+
+	public static isTarEntry(v: any): boolean {
+		return !!(v && v instanceof TarEntry);
 	}
 
 	public get fileName(): string {
@@ -46,6 +53,10 @@ export class TarEntry {
 			default:
 				return false;
 		}
+	}
+
+	public toUint8Array(): Uint8Array {
+		return createTarEntryBuffer(this.header, this.content!);
 	}
 
 	public toJSON(): any {

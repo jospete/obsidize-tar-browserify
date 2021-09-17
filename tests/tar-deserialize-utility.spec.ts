@@ -1,4 +1,6 @@
-import { extractTarEntry } from '../src';
+import { TarDeserializeUtility } from '../src';
+
+const { extractTarEntry } = TarDeserializeUtility;
 
 describe('extractTarEntry', () => {
 
