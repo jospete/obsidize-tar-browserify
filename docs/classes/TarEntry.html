@@ -68,9 +68,14 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Extraction result containing the tar header and file content.
-						Note that the content may be null if the header file size is not a positive integer.</p>
+						<p>Container for metadata and content of a tarball entry.</p>
 					</div>
+					<p>Here, we consider an &quot;entry&quot; to be a tuple of:</p>
+					<ol>
+						<li>The parsed USTAR header sector content (AKA TarHeader)</li>
+						<li>The aggregate of the proceeding file content sectors, based on the header&#39;s file size attribute</li>
+					</ol>
+					<p>NOTE: You can extract instances of this from raw Uint8Array instances using extractTarEntry()</p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -129,7 +134,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-entry.ts#L9">core/tar-entry.ts:9</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/60f5176/src/core/tar-entry.ts#L14">core/tar-entry.ts:14</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -175,7 +180,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-entry.ts#L15">core/tar-entry.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/60f5176/src/core/tar-entry.ts#L20">core/tar-entry.ts:20</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -195,7 +200,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-entry.ts#L19">core/tar-entry.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/60f5176/src/core/tar-entry.ts#L24">core/tar-entry.ts:24</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -221,7 +226,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-entry.ts#L25">core/tar-entry.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/60f5176/src/core/tar-entry.ts#L30">core/tar-entry.ts:30</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../enums/TarHeaderLinkIndicatorType.html" class="tsd-signature-type" data-tsd-kind="Enumeration">TarHeaderLinkIndicatorType</a></h4>
@@ -238,7 +243,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-entry.ts#L29">core/tar-entry.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/60f5176/src/core/tar-entry.ts#L34">core/tar-entry.ts:34</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -255,7 +260,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-entry.ts#L33">core/tar-entry.ts:33</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/60f5176/src/core/tar-entry.ts#L38">core/tar-entry.ts:38</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -272,7 +277,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d9fa31b/src/core/tar-entry.ts#L46">core/tar-entry.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/60f5176/src/core/tar-entry.ts#L51">core/tar-entry.ts:51</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
