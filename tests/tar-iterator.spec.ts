@@ -9,4 +9,9 @@ describe('TarEntryIterator', () => {
 		expect(value).toBeFalsy();
 		expect(done).toBe(true);
 	});
+
+	it('can safely be stringified', () => {
+		const iterator = new TarEntryIterator();
+		expect(() => JSON.stringify(iterator)).not.toThrowError();
+	});
 });
