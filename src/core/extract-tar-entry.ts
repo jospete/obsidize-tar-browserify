@@ -4,6 +4,9 @@ import { TarEntry } from './tar-entry';
 
 const { isUstarSector, advanceSectorOffset, readFieldValue, isNumber, isUint8Array } = TarUtility;
 
+/**
+ * Output result type when extractTarEntry() is called.
+ */
 export interface TarEntryExtractionResult {
 	entry: TarEntry | null;
 	nextOffset: number;
@@ -11,7 +14,7 @@ export interface TarEntryExtractionResult {
 
 /**
  * Searches through the given input buffer for the next tar entry, starting at the given offset.
- * 
+ * Does not modify the input buffer.
  */
 export function extractTarEntry(input: Uint8Array, offset: number = 0): TarEntryExtractionResult {
 

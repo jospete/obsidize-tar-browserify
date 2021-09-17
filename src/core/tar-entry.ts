@@ -1,8 +1,13 @@
 import { TarHeader, TarHeaderLinkIndicatorType } from './tar-header';
 
 /**
- * Extraction result containing the tar header and file content.
- * Note that the content may be null if the header file size is not a positive integer.
+ * Container for metadata and content of a tarball entry.
+ * 
+ * Here, we consider an "entry" to be a tuple of:
+ * 1. The parsed USTAR header sector content (AKA TarHeader)
+ * 2. The aggregate of the proceeding file content sectors, based on the header's file size attribute
+ * 
+ * NOTE: You can extract instances of this from raw Uint8Array instances using extractTarEntry()
  */
 export class TarEntry {
 
