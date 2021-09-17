@@ -47,9 +47,26 @@ export namespace TarUtility {
 	}
 
 	export function advanceSectorOffset(currentOffset: number, maxOffset: number): number {
-		const nextOffsetRaw = Math.round(currentOffset) + SECTOR_SIZE;
+		return Math.min(maxOffset, advanceSectorOffsetUnclamped(currentOffset));
+	}
+
+	export function advanceSectorOffsetUnclamped(currentOffset: number): number {
+
+		const intVal = Math.round(currentOffset);
+		const nextOffsetRaw = intVal + SECTOR_SIZE;
 		const diffToBoundary = nextOffsetRaw % SECTOR_SIZE;
-		return Math.min(maxOffset, nextOffsetRaw - diffToBoundary);
+
+		return nextOffsetRaw - diffToBoundary;
+	}
+
+	export function roundUpSectorOffset(currentOffset: number): number {
+
+		const intVal = Math.round(currentOffset);
+		const diffToBoundary = intVal % SECTOR_SIZE;
+
+		if (diffToBoundary <= 0) return intVal;
+
+		return intVal + (SECTOR_SIZE - diffToBoundary);
 	}
 
 	export function removeTrailingZeros(str: string): string {

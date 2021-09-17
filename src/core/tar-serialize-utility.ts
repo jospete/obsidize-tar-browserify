@@ -7,13 +7,24 @@ const {
 	USTAR_VERSION_VALUE,
 	isUint8Array,
 	unparseFieldValue,
-	concatUint8Arrays
+	concatUint8Arrays,
+	roundUpSectorOffset
 } = TarUtility;
 
 /**
  * Collection of utility functions for generating a single unified tar buffer.
  */
 export namespace TarSerializeUtility {
+
+	/**
+	 * Creates the static content that goes at the end of the tar file.
+	 */
+	export function createTarFileEndingSectors(): Uint8Array {
+		const size = SECTOR_SIZE * 2;
+		const result = new Uint8Array(size);
+		result.fill(0, 0, size);
+		return result;
+	}
 
 	/**
 	 * Generates a single unified tar buffer that can be written out as a *.tar file.
@@ -25,6 +36,9 @@ export namespace TarSerializeUtility {
 		]);
 	}
 
+	/**
+	 * Overwrites the USTAR properties in the header with static content, per the wiki.
+	 */
 	export function ensureTarHeaderIsUstarFormat(header: TarHeader): TarHeader {
 		const { ustarIndicator, ustarVersion } = TarHeaderFieldDefinition;
 		return Object.assign(header, {
@@ -41,11 +55,10 @@ export namespace TarSerializeUtility {
 		if (!isUint8Array(content)) return content;
 
 		const contentSize = content.byteLength;
-		const sectorGap = contentSize % SECTOR_SIZE;
+		const resultSize = roundUpSectorOffset(contentSize);
 
-		if (sectorGap === 0) return content;
+		if (resultSize === contentSize) return content;
 
-		const resultSize = contentSize + sectorGap;
 		const result = new Uint8Array(resultSize);
 
 		result.set(content, 0);
