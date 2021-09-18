@@ -1,5 +1,5 @@
-import { TarDeserializeUtility } from './tar-deserialize-utility';
-import { TarUtility } from './tar-utility';
+import { TarDeserializeUtility } from '../common/tar-deserialize-utility';
+import { TarUtility } from '../common/tar-utility';
 import { TarEntry } from './tar-entry';
 
 const { clamp, isUint8Array } = TarUtility;

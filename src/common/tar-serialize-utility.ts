@@ -1,4 +1,4 @@
-import { TarHeader, TarHeaderFieldDefinition } from './tar-header';
+import { TarHeader, TarHeaderFieldDefinition, TarHeaderField, TarHeaderFieldType } from './tar-header';
 import { TarUtility } from './tar-utility';
 
 const {
@@ -6,9 +6,11 @@ const {
 	USTAR_INDICATOR_VALUE,
 	USTAR_VERSION_VALUE,
 	isUint8Array,
-	unparseFieldValue,
+	asciiToBytes,
 	concatUint8Arrays,
-	roundUpSectorOffset
+	roundUpSectorOffset,
+	createFixedSizeUint8Array,
+	parseIntSafe
 } = TarUtility;
 
 /**
@@ -45,6 +47,37 @@ export namespace TarSerializeUtility {
 			[ustarIndicator().name]: USTAR_INDICATOR_VALUE,
 			[ustarVersion().name]: USTAR_VERSION_VALUE
 		});
+	}
+
+	export function unparseAsciiFixed(input: string, byteCount: number): Uint8Array {
+		return createFixedSizeUint8Array(asciiToBytes(input), byteCount);
+	}
+
+	export function unparseIntegerOctalField(value: number, byteCount: number): Uint8Array {
+
+		// NOTE: Octal strings in tar files are front-padded with zeroes and have one space at the end
+
+		const maxOctalLength = byteCount - 1;
+
+		const valueOctalStr = parseIntSafe(value)
+			.toString(8)
+			.substring(0, maxOctalLength)
+			.padStart(maxOctalLength, '0');
+
+		return unparseAsciiFixed(valueOctalStr + '\0', byteCount);
+	}
+
+	export function unparseFieldValue(field: TarHeaderField, input: any): Uint8Array {
+		const { type, size } = field;
+		switch (type) {
+			case TarHeaderFieldType.INTEGER_OCTAL:
+				return unparseIntegerOctalField(input, size);
+			case TarHeaderFieldType.INTEGER_OCTAL_ASCII:
+			case TarHeaderFieldType.ASCII_TRIMMED:
+			case TarHeaderFieldType.ASCII:
+			default:
+				return unparseAsciiFixed(input, size);
+		}
 	}
 
 	/**

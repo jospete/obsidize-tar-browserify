@@ -1,6 +1,7 @@
-import { TarSerializeUtility } from './tar-serialize-utility';
+import { TarSerializeUtility } from '../common/tar-serialize-utility';
+import { TarUtility } from '../common/tar-utility';
+
 import { TarEntryIterator } from './tar-entry-iterator';
-import { TarUtility } from './tar-utility';
 import { TarEntry } from './tar-entry';
 
 const { isUint8Array, concatUint8Arrays, toArray } = TarUtility;

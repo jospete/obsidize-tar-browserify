@@ -67,6 +67,22 @@ export enum TarHeaderLinkIndicatorType {
 	LOCAL_EXTENDED_HEADER = 'x',
 }
 
+export function isTarHeaderLinkIndicatorTypeDirectory(type: TarHeaderLinkIndicatorType | string): boolean {
+	return type === TarHeaderLinkIndicatorType.DIRECTORY;
+}
+
+export function isTarHeaderLinkIndicatorTypeFile(type: TarHeaderLinkIndicatorType | string): boolean {
+	switch (type) {
+		case TarHeaderLinkIndicatorType.NORMAL_FILE:
+		case TarHeaderLinkIndicatorType.NORMAL_FILE_ALT1:
+		case TarHeaderLinkIndicatorType.NORMAL_FILE_ALT2:
+		case TarHeaderLinkIndicatorType.CONTIGUOUS_FILE:
+			return true;
+		default:
+			return false;
+	}
+}
+
 /**
  * Core definition for options parsed from a header tar sector.
  */
@@ -77,19 +93,19 @@ export interface TarHeader {
 	fileMode: string;
 	ownerUserId: string;
 	groupUserId: string;
-	fileSize: number;
-	lastModified: number;
-	headerChecksum: number;
+	fileSize: string;
+	lastModified: string;
+	headerChecksum: string;
 	linkedFileName: string;
-	typeFlag: TarHeaderLinkIndicatorType;
+	typeFlag: TarHeaderLinkIndicatorType | string;
 
 	// USTAR Fields
 	ustarIndicator: string;
 	ustarVersion: string;
 	ownerUserName: string;
 	ownerGroupName: string;
-	deviceMajorNumber: number;
-	deviceMinorNumber: number;
+	deviceMajorNumber: string;
+	deviceMinorNumber: string;
 	fileNamePrefix: string;
 }
 
@@ -131,6 +147,30 @@ export namespace TarHeaderFieldDefinition {
 	export function deviceMajorNumber(): TarHeaderField { return ({ name: 'deviceMajorNumber', offset: 329, size: 8, type: TarHeaderFieldType.INTEGER_OCTAL }) }
 	export function deviceMinorNumber(): TarHeaderField { return ({ name: 'deviceMinorNumber', offset: 337, size: 8, type: TarHeaderFieldType.INTEGER_OCTAL }) }
 	export function fileNamePrefix(): TarHeaderField { return ({ name: 'fileNamePrefix', offset: 345, size: 155, type: TarHeaderFieldType.ASCII_TRIMMED }) }
+
+	const fieldsByName: { [key in (keyof TarHeader)]: () => TarHeaderField } = {
+		fileName,
+		fileMode,
+		ownerUserId,
+		groupUserId,
+		fileSize,
+		lastModified,
+		headerChecksum,
+		typeFlag,
+		linkedFileName,
+		ustarIndicator,
+		ustarVersion,
+		ownerUserName,
+		ownerGroupName,
+		deviceMajorNumber,
+		deviceMinorNumber,
+		fileNamePrefix
+	};
+
+	export function getFieldDefinition(fieldName: keyof TarHeader): TarHeaderField | undefined {
+		const target = fieldsByName[fieldName];
+		return target ? target() : undefined;
+	}
 
 	export function orderedSet(): TarHeaderField[] {
 		return [

@@ -7,7 +7,7 @@ const { isUint8Array } = TarUtility;
 
 describe('TarSerializeUtility', () => {
 
-	it('performs the inverse operations of the deserialization utilities', () => {
+	xit('performs the inverse operations of the deserialization utilities', () => {
 
 		const tarUint8 = base64ToUint8Array(tarballSampleBase64);
 

@@ -1,8 +1,21 @@
-import { TarHeaderFieldDefinition, TarHeader } from './tar-header';
+import { TarHeaderFieldDefinition, TarHeader, TarHeaderField, TarHeaderFieldType } from './tar-header';
 import { TarUtility } from './tar-utility';
-import { TarEntry } from './tar-entry';
+import { TarEntry } from '../core/tar-entry';
 
-const { isUstarSector, advanceSectorOffset, readFieldValue, isNumber, isUint8Array } = TarUtility;
+const {
+	USTAR_INDICATOR_VALUE,
+	advanceSectorOffset,
+	removeTrailingZeros,
+	parseIntSafe,
+	isNumber,
+	toString,
+	isUint8Array,
+	sliceFieldAscii
+} = TarUtility;
+
+const {
+	ustarIndicator
+} = TarHeaderFieldDefinition;
 
 /**
  * Output result type when extractTarEntry() is called.
@@ -16,6 +29,28 @@ export interface TarEntryExtractionResult {
  * Collection of utility functions for parsing a tar buffer.
  */
 export namespace TarDeserializeUtility {
+
+	export function parseOctalIntSafe(value: string): number {
+		return parseIntSafe(toString(value).trim(), 8);
+	}
+
+	export function isUstarSector(input: Uint8Array, offset: number): boolean {
+		return sliceFieldAscii(ustarIndicator(), input, offset) === USTAR_INDICATOR_VALUE;
+	}
+
+	export function parseFieldValue(field: TarHeaderField, value: string): any {
+		const { type } = field;
+		switch (type) {
+			case TarHeaderFieldType.INTEGER_OCTAL:
+				return parseOctalIntSafe(value);
+			case TarHeaderFieldType.INTEGER_OCTAL_ASCII:
+			case TarHeaderFieldType.ASCII_TRIMMED:
+				return removeTrailingZeros(toString(value).trim());
+			case TarHeaderFieldType.ASCII:
+			default:
+				return value;
+		}
+	}
 
 	/**
 	 * Searches through the given input buffer for the next tar entry, starting at the given offset.
@@ -47,7 +82,7 @@ export namespace TarDeserializeUtility {
 		// Read all the header fields from the sector and parse/store their values
 		headerFields.forEach(field => {
 			Object.assign(header, {
-				[field.name]: readFieldValue(field, input, nextOffset)
+				[field.name]: sliceFieldAscii(field, input, nextOffset)
 			});
 		});
 
@@ -55,13 +90,14 @@ export namespace TarDeserializeUtility {
 		nextOffset = advanceSectorOffset(nextOffset, maxOffset);
 
 		const { fileSize } = header;
+		const parsedFileSize = parseOctalIntSafe(fileSize);
 
 		let content: Uint8Array | null = null;
 
 		// If we read a legitimate file size...
-		if (isNumber(fileSize) && fileSize > 0) {
+		if (isNumber(parsedFileSize) && parsedFileSize > 0) {
 
-			const fileEndOffset = nextOffset + fileSize;
+			const fileEndOffset = nextOffset + parsedFileSize;
 
 			// Read the file content and advance the offset
 			content = input.slice(nextOffset, fileEndOffset);

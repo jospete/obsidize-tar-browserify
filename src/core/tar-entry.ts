@@ -1,7 +1,17 @@
-import { TarHeader, TarHeaderLinkIndicatorType } from './tar-header';
-import { TarSerializeUtility } from './tar-serialize-utility';
+import {
+	TarHeader,
+	TarHeaderFieldDefinition,
+	TarHeaderLinkIndicatorType,
+	isTarHeaderLinkIndicatorTypeDirectory,
+	isTarHeaderLinkIndicatorTypeFile
+} from '../common/tar-header';
 
+import { TarDeserializeUtility } from '../common/tar-deserialize-utility';
+import { TarSerializeUtility } from '../common/tar-serialize-utility';
+
+const { getFieldDefinition } = TarHeaderFieldDefinition;
 const { createTarEntryBuffer } = TarSerializeUtility;
+const { parseFieldValue } = TarDeserializeUtility;
 
 /**
  * Container for metadata and content of a tarball entry.
@@ -25,34 +35,35 @@ export class TarEntry {
 	}
 
 	public get fileName(): string {
-		return this.getHeaderField('fileName', '');
+		return this.getParsedHeaderFieldValue('fileName', '');
 	}
 
-	public getHeaderField(key: keyof TarHeader, defaultValue?: any): any {
+	public get fileSize(): number {
+		return this.getParsedHeaderFieldValue('fileSize', 0);
+	}
+
+	public getType(): TarHeaderLinkIndicatorType {
+		return this.getHeaderFieldValue('typeFlag', TarHeaderLinkIndicatorType.UNKNOWN);
+	}
+
+	public isDirectory(): boolean {
+		return isTarHeaderLinkIndicatorTypeDirectory(this.getType());
+	}
+
+	public isFile(): boolean {
+		return isTarHeaderLinkIndicatorTypeFile(this.getType());
+	}
+
+	public getHeaderFieldValue(key: keyof TarHeader, defaultValue?: any): any {
 		return (this.header && this.header.hasOwnProperty(key))
 			? (this.header as any)[key]
 			: defaultValue;
 	}
 
-	public getType(): TarHeaderLinkIndicatorType {
-		return this.getHeaderField('typeFlag', TarHeaderLinkIndicatorType.UNKNOWN);
-	}
-
-	public isDirectory(): boolean {
-		return this.getType() === TarHeaderLinkIndicatorType.DIRECTORY;
-	}
-
-	public isFile(): boolean {
-		const flag = this.getType();
-		switch (flag) {
-			case TarHeaderLinkIndicatorType.NORMAL_FILE:
-			case TarHeaderLinkIndicatorType.NORMAL_FILE_ALT1:
-			case TarHeaderLinkIndicatorType.NORMAL_FILE_ALT2:
-			case TarHeaderLinkIndicatorType.CONTIGUOUS_FILE:
-				return true;
-			default:
-				return false;
-		}
+	public getParsedHeaderFieldValue(key: keyof TarHeader, defaultValue?: any): any {
+		const field = getFieldDefinition(key);
+		const rawValue = this.getHeaderFieldValue(key);
+		return (field && rawValue) ? parseFieldValue(field, rawValue) : defaultValue;
 	}
 
 	public toUint8Array(): Uint8Array {
@@ -61,13 +72,20 @@ export class TarEntry {
 
 	public toJSON(): any {
 
-		const { header } = this;
+		const { header, fileName, fileSize } = this;
 		const isFile = this.isFile();
 		const isDirectory = this.isDirectory();
 		const content = this.content
 			? ('Uint8Array(' + this.content.byteLength + ')')
 			: 'null';
 
-		return { content, isFile, isDirectory, header };
+		return {
+			content,
+			fileName,
+			fileSize,
+			isFile,
+			isDirectory,
+			header
+		};
 	}
 }

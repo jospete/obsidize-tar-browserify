@@ -1,4 +1,4 @@
-import { TarHeaderField, TarHeaderFieldDefinition, TarHeaderFieldType } from './tar-header';
+import { TarHeaderField } from './tar-header';
 
 /**
  * Helper lambda functions for transforming tarball content.
@@ -8,8 +8,6 @@ export namespace TarUtility {
 	export const SECTOR_SIZE = 512;
 	export const USTAR_INDICATOR_VALUE = 'ustar\0';
 	export const USTAR_VERSION_VALUE = '00';
-
-	// -------------------- Common Utils -------------------------
 
 	export function isNumber(value: any): boolean {
 		return typeof value === 'number' && !Number.isNaN(value);
@@ -31,7 +29,11 @@ export namespace TarUtility {
 		return Math.max(min, Math.min(value, max));
 	}
 
-	export function parseCharCodes(str: string): number[] {
+	export function bytesToAscii(bytes: number[]): string {
+		return String.fromCharCode.apply(null, bytes);
+	}
+
+	export function asciiToBytes(str: string): number[] {
 		return toString(str).split('').map(c => c.charCodeAt(0));
 	}
 
@@ -46,8 +48,18 @@ export namespace TarUtility {
 		return input.slice(absoluteOffset, absoluteOffset + field.size);
 	}
 
+	export function sliceFieldAscii(field: TarHeaderField, input: Uint8Array, offset?: number): string {
+		return bytesToAscii(Array.from(sliceFieldBuffer(field, input, offset)));
+	}
+
 	export function advanceSectorOffset(currentOffset: number, maxOffset: number): number {
 		return Math.min(maxOffset, advanceSectorOffsetUnclamped(currentOffset));
+	}
+
+	export function removeTrailingZeros(str: string): string {
+		const pattern = /^([^\u0000\0]*)[\u0000\0]*$/;
+		const result = pattern.exec(str);
+		return result ? result[1] : str;
 	}
 
 	export function advanceSectorOffsetUnclamped(currentOffset: number): number {
@@ -64,15 +76,11 @@ export namespace TarUtility {
 		const intVal = Math.round(currentOffset);
 		const diffToBoundary = intVal % SECTOR_SIZE;
 
-		if (diffToBoundary <= 0) return intVal;
+		if (diffToBoundary > 0) {
+			return intVal + (SECTOR_SIZE - diffToBoundary);
+		}
 
-		return intVal + (SECTOR_SIZE - diffToBoundary);
-	}
-
-	export function removeTrailingZeros(str: string): string {
-		const pattern = /^([^\u0000\0]*)[\u0000\0]*$/;
-		const result = pattern.exec(str);
-		return result ? result[1] : str;
+		return intVal;
 	}
 
 	export function padBytesEnd(bytes: number[], targetSize: number, padValue: number = 0): number[] {
@@ -129,78 +137,5 @@ export namespace TarUtility {
 		}
 
 		return result;
-	}
-
-	// -------------------- Header Field Parsers -------------------------
-
-	export function isUstarSector(input: Uint8Array, offset: number): boolean {
-		return readFieldValue(TarHeaderFieldDefinition.ustarIndicator(), input, offset) === USTAR_INDICATOR_VALUE;
-	}
-
-	export function readFieldValue(field: TarHeaderField, input: Uint8Array, offset?: number): any {
-		return parseFieldValueByType(field.type, sliceFieldBuffer(field, input, offset));
-	}
-
-	export function parseAscii(input: Uint8Array): string {
-		return String.fromCharCode.apply(null, Array.from(input));
-	}
-
-	export function parseAsciiTrimmed(input: Uint8Array): string {
-		return removeTrailingZeros(parseAscii(input));
-	}
-
-	export function parseIntegerOctalAscii(input: Uint8Array): string {
-		return parseAsciiTrimmed(input).trim();
-	}
-
-	export function parseIntegerOctal(input: Uint8Array): number {
-		return parseIntSafe(parseIntegerOctalAscii(input), 8);
-	}
-
-	export function parseFieldValueByType(fieldType: TarHeaderFieldType, input: Uint8Array): any {
-		switch (fieldType) {
-			case TarHeaderFieldType.INTEGER_OCTAL:
-				return parseIntegerOctal(input);
-			case TarHeaderFieldType.INTEGER_OCTAL_ASCII:
-				return parseIntegerOctalAscii(input);
-			case TarHeaderFieldType.ASCII_TRIMMED:
-				return parseAsciiTrimmed(input);
-			case TarHeaderFieldType.ASCII:
-			default:
-				return parseAscii(input);
-		}
-	}
-
-	// -------------------- Header Field Encoders -------------------------
-
-	export function unparseAsciiFixed(input: string, byteCount: number): Uint8Array {
-		return createFixedSizeUint8Array(parseCharCodes(input), byteCount);
-	}
-
-	export function unparseIntegerOctalField(value: number, byteCount: number): Uint8Array {
-
-		// NOTE: Octal strings in tar files are front-padded with zeroes and have one space at the end
-
-		const maxOctalLength = byteCount - 1;
-
-		const valueOctalStr = parseIntSafe(value)
-			.toString(8)
-			.substring(0, maxOctalLength)
-			.padStart(maxOctalLength, '0');
-
-		return unparseAsciiFixed(valueOctalStr + '\0', byteCount);
-	}
-
-	export function unparseFieldValue(field: TarHeaderField, input: any): Uint8Array {
-		const { type, size } = field;
-		switch (type) {
-			case TarHeaderFieldType.INTEGER_OCTAL:
-				return unparseIntegerOctalField(input, size);
-			case TarHeaderFieldType.INTEGER_OCTAL_ASCII:
-			case TarHeaderFieldType.ASCII_TRIMMED:
-			case TarHeaderFieldType.ASCII:
-			default:
-				return unparseAsciiFixed(input, size);
-		}
 	}
 }
