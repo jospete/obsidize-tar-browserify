@@ -44,8 +44,9 @@ export namespace TarDeserializeUtility {
 			case TarHeaderFieldType.INTEGER_OCTAL:
 				return parseOctalIntSafe(value);
 			case TarHeaderFieldType.INTEGER_OCTAL_ASCII:
-			case TarHeaderFieldType.ASCII_TRIMMED:
 				return removeTrailingZeros(toString(value).trim());
+			case TarHeaderFieldType.ASCII_TRIMMED:
+				return removeTrailingZeros(value);
 			case TarHeaderFieldType.ASCII:
 			default:
 				return value;
