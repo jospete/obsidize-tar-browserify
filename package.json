@@ -29,8 +29,8 @@
     "docs": "typedoc ./src/index.ts --out ./docs",
     "docs:open": "open-cli \".\\docs\\index.html\"",
     "generate:tar:assets": "ts-node ./scripts/generate-tarball-test-assets.js",
-    "generate:tar:json": "ts-node -O {\\\"module\\\":\\\"commonjs\\\"} ./scripts/generate-tar-example-json.ts",
-    "generate:tar:output": "ts-node -O {\\\"module\\\":\\\"commonjs\\\"} ./scripts/generate-tar-example-file.ts"
+    "generate:tar:json": "npm run rebuild && node ./scripts/generate-tar-example-json.js",
+    "generate:tar:output": "npm run rebuild && node ./scripts/generate-tar-example-file.js"
   },
   "repository": {
     "type": "git",

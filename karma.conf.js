@@ -6,6 +6,9 @@ module.exports = function (config) {
 			'src/**/*.ts',
 			'tests/**/*.ts'
 		],
+		exclude: [
+			'scripts/**/*'
+		],
 		preprocessors: {
 			'**/*.ts': 'karma-typescript'
 		},
