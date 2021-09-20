@@ -13,12 +13,12 @@ const {
 	parseIntSafe,
 	isUint8Array,
 	bytesToAscii,
-	createFixedSizeUint8Array,
-	asciiToBytes
+	toString
 } = TarUtility;
 
 const {
 	ustarIndicator,
+	ustarVersion,
 	headerChecksum
 } = TarHeaderFieldDefinition;
 
@@ -26,9 +26,6 @@ const {
  * Common pure functions for serializing and deserializing tar header content.
  */
 export namespace TarHeaderUtility {
-
-	export const USTAR_INDICATOR_VALUE = 'ustar\0';
-	export const USTAR_VERSION_VALUE = '00';
 
 	export function parseOctalIntSafe(value: string): number {
 		return parseIntSafe(removeTrailingZeros(value).trim(), 8);
@@ -44,7 +41,8 @@ export namespace TarHeaderUtility {
 	}
 
 	export function isUstarSector(input: Uint8Array, offset?: number): boolean {
-		return sliceFieldAscii(ustarIndicator(), input, offset) === USTAR_INDICATOR_VALUE;
+		const field = ustarIndicator();
+		return sliceFieldAscii(field, input, offset) === field.constantValue;
 	}
 
 	export function decodeLastModifiedTime(headerValue: number): number {
@@ -53,28 +51,6 @@ export namespace TarHeaderUtility {
 
 	export function encodeLastModifiedTime(timestamp: number): number {
 		return Math.floor(timestamp / 1000);
-	}
-
-	export function generateFieldChecksum(fieldValue: Uint8Array): number {
-		return fieldValue.reduce((a, b) => a + b, 0);
-	}
-
-	export function unparseAsciiFixed(input: string, byteCount: number): Uint8Array {
-		return createFixedSizeUint8Array(asciiToBytes(input), byteCount);
-	}
-
-	export function unparseIntegerOctalField(value: number, byteCount: number): Uint8Array {
-
-		// NOTE: Octal strings in tar files are front-padded with zeroes and have one space at the end
-
-		const maxOctalLength = byteCount - 1;
-
-		const valueOctalStr = parseIntSafe(value)
-			.toString(8)
-			.substring(0, maxOctalLength)
-			.padStart(maxOctalLength, '0');
-
-		return unparseAsciiFixed(valueOctalStr + '\0', byteCount);
 	}
 
 	export function sanitizeHeaderValues(header: TarHeader): TarHeader {
@@ -87,8 +63,8 @@ export namespace TarHeaderUtility {
 			lastModified: encodeLastModifiedTime(Date.now()),
 			headerChecksum: ''.padEnd(headerChecksum().size, ' '),
 			typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE,
-			ustarIndicator: USTAR_INDICATOR_VALUE,
-			ustarVersion: USTAR_VERSION_VALUE,
+			ustarIndicator: ustarIndicator().constantValue,
+			ustarVersion: ustarVersion().constantValue,
 			ownerUserName: '',
 			ownerGroupName: ''
 		};
@@ -146,42 +122,68 @@ export namespace TarHeaderUtility {
 		return result;
 	}
 
-	export function encodeFieldValue(field: TarHeaderField, input: any): Uint8Array {
-		const { type, size } = field;
-		switch (type) {
-			case TarHeaderFieldType.INTEGER_OCTAL:
-				return unparseIntegerOctalField(input, size);
-			case TarHeaderFieldType.ASCII_PADDED:
-			case TarHeaderFieldType.ASCII:
-			default:
-				return unparseAsciiFixed(input, size);
-		}
+	// ---- Tar Header Creation ----
+
+	function generateFieldChecksum(fieldValue: Uint8Array): number {
+		return fieldValue.reduce((a, b) => a + b, 0);
 	}
 
-	/**
-	 * Encodes the fields of the given header into a header sector.
-	 */
-	export function generateHeaderSector(header: TarHeader): Uint8Array {
+	function serializeFieldValue(field: TarHeaderField, value: any): Uint8Array {
+		return stringToUint8(serializeFieldValueToString(field, value));
+	}
 
-		const resultSize = SECTOR_SIZE;
-		const result = new Uint8Array(resultSize);
-		const fields = TarHeaderFieldDefinition.orderedSet();
-		const safeHeader = sanitizeHeaderValues(header);
+	function padIntegerOctal(value: number, maxLength: number): string {
+		return value.toString(8).padStart(maxLength, '0');
+	}
 
-		let maxContentOffset = 0;
+	function stringToUint8(str: string): Uint8Array {
 
-		for (const field of fields) {
+		const result = new Uint8Array(str.length)
 
-			const { name, offset, size } = field;
-			const fieldMaxOffset = offset + size;
-
-			if (fieldMaxOffset > resultSize) continue;
-
-			const valueBytes = encodeFieldValue(field, safeHeader[name]);
-			result.set(valueBytes, offset);
-			maxContentOffset = Math.max(maxContentOffset, fieldMaxOffset);
+		for (let i = 0; i < str.length; i++) {
+			result[i] = str.charCodeAt(i);
 		}
 
 		return result;
+	}
+
+	function serializeFieldValueToString(field: TarHeaderField, value: any): string {
+
+		const { constantValue, size } = field;
+
+		if (constantValue && !value) {
+			return toString(constantValue);
+		}
+
+		if (field.type === TarHeaderFieldType.INTEGER_OCTAL) {
+			// USTAR docs indicate that value length needs to be 1 less than actual field size
+			return padIntegerOctal(value, size - 1);
+		}
+
+		return toString(value);
+	}
+
+	export function generateTarHeaderBuffer(file: any): Uint8Array {
+
+		const headerSize = SECTOR_SIZE;
+		const headerBuffer = new Uint8Array(headerSize);
+		const checksumField = TarHeaderFieldDefinition.headerChecksum();
+
+		let checksum = 0;
+
+		TarHeaderFieldDefinition.orderedSet().forEach(field => {
+
+			const { name, offset } = field;
+
+			if (name === checksumField.name || !(name in file)) return;
+
+			const valueBuffer = serializeFieldValue(field, file[name]);
+			headerBuffer.set(valueBuffer, offset);
+			checksum += generateFieldChecksum(valueBuffer);
+		});
+
+		headerBuffer.set(serializeFieldValue(checksumField, checksum), checksumField.offset);
+
+		return headerBuffer;
 	}
 }

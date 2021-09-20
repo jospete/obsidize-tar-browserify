@@ -1,15 +1,12 @@
 import { TarHeaderExtractionResult } from './tar-header-extraction-result';
-import { TarHeaderFieldDefinition } from './tar-header-field-definition'
-import { TarHeaderFieldType } from './tar-header-field-type';
 import { TarHeaderUtility } from './tar-header-utility';
-import { TarHeaderField } from './tar-header-field';
 import { TarUtility } from './tar-utility';
 import { TarHeader } from './tar-header';
 
 const {
 	findNextUstarSectorOffset,
 	extractHeader,
-	generateHeaderSector
+	generateTarHeaderBuffer
 } = TarHeaderUtility;
 
 const {
@@ -102,21 +99,6 @@ export namespace TarEntryUtility {
 		return { header, content, byteLength };
 	}
 
-	function padIntegerOctal(value: number, maxLength: number): string {
-		return value.toString(8).padStart(maxLength, '0');
-	}
-
-	function stringToUint8(str: string): Uint8Array {
-
-		const result = new Uint8Array(str.length)
-
-		for (let i = 0; i < str.length; i++) {
-			result[i] = str.charCodeAt(i);
-		}
-
-		return result;
-	}
-
 	function normalizeFileContent(file: any) {
 
 		if (typeof file.content === 'string') {
@@ -139,55 +121,6 @@ export namespace TarEntryUtility {
 		};
 
 		return Object.assign(defaultValues, file);
-	}
-
-	function generateBufferChecksum(buffer: Uint8Array): number {
-		return buffer.reduce((a, b) => a + b, 0);
-	}
-
-	function serializeFieldValueToString(field: TarHeaderField, value: any): string {
-
-		const { constant, size } = field;
-
-		if (constant && !value) {
-			return constant;
-		}
-
-		if (field.type === TarHeaderFieldType.INTEGER_OCTAL) {
-			// USTAR docs indicate that value length needs to be 1 less than actual field size
-			return padIntegerOctal(value, size - 1);
-		}
-
-		return toString(value);
-	}
-
-	function serializeFieldValue(field: TarHeaderField, value: any): Uint8Array {
-		return stringToUint8(serializeFieldValueToString(field, value));
-	}
-
-	function generateTarHeaderBuffer(file: any): Uint8Array {
-
-		const headerSize = SECTOR_SIZE;
-		const headerBuffer = new Uint8Array(headerSize);
-		const checksumField = TarHeaderFieldDefinition.headerChecksum();
-
-		let checksum = 0;
-
-		TarHeaderFieldDefinition.orderedSet().forEach(field => {
-
-			const { name, offset } = field;
-
-			if (name === checksumField.name || !(name in file)) return;
-
-			const valueBuffer = serializeFieldValue(field, file[name]);
-			headerBuffer.set(valueBuffer, offset);
-			checksum += generateBufferChecksum(valueBuffer);
-		});
-
-
-		headerBuffer.set(serializeFieldValue(checksumField, checksum), checksumField.offset);
-
-		return headerBuffer;
 	}
 
 	function generateFileTarBuffer(file: any): Uint8Array {
