@@ -1,5 +1,5 @@
-import { TarUtility } from '../common/tar-utility';
 import { TarEntryUtility } from '../common/tar-entry-utility';
+import { TarUtility } from '../common/tar-utility';
 import { TarEntry } from './tar-entry';
 
 const { clamp, isUint8Array } = TarUtility;

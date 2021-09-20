@@ -12,4 +12,5 @@ export interface TarHeaderField {
 	readonly offset: number;
 	readonly size: number;
 	readonly type: TarHeaderFieldType;
+	constant?: string;
 }

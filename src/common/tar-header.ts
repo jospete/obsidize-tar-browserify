@@ -4,8 +4,6 @@ import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
  * Core content parsed from a tar header sector.
  */
 export interface TarHeader {
-
-	// Legacy Fields
 	fileName: string;
 	fileMode: string;
 	ownerUserId: number;
@@ -15,8 +13,6 @@ export interface TarHeader {
 	headerChecksum: string;
 	linkedFileName: string;
 	typeFlag: TarHeaderLinkIndicatorType | string;
-
-	// USTAR Fields
 	ustarIndicator: string;
 	ustarVersion: string;
 	ownerUserName: string;
@@ -24,4 +20,5 @@ export interface TarHeader {
 	deviceMajorNumber: string;
 	deviceMinorNumber: string;
 	fileNamePrefix: string;
+	padding: string;
 }
