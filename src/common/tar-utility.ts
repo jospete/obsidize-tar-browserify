@@ -1,13 +1,9 @@
-import { TarHeaderField } from './tar-header';
-
 /**
- * Helper lambda functions for transforming tarball content.
+ * Common pure functions for transforming tarball content.
  */
 export namespace TarUtility {
 
 	export const SECTOR_SIZE = 512;
-	export const USTAR_INDICATOR_VALUE = 'ustar\0';
-	export const USTAR_VERSION_VALUE = '00';
 
 	export function isNumber(value: any): boolean {
 		return typeof value === 'number' && !Number.isNaN(value);
@@ -43,44 +39,22 @@ export namespace TarUtility {
 		return isNumber(parsed) ? parsed : defaultValue;
 	}
 
-	export function sliceFieldBuffer(field: TarHeaderField, input: Uint8Array, offset: number = 0): Uint8Array {
-		const absoluteOffset = field.offset + offset;
-		return input.slice(absoluteOffset, absoluteOffset + field.size);
-	}
-
-	export function sliceFieldAscii(field: TarHeaderField, input: Uint8Array, offset?: number): string {
-		return bytesToAscii(Array.from(sliceFieldBuffer(field, input, offset)));
-	}
-
 	export function advanceSectorOffset(currentOffset: number, maxOffset: number): number {
 		return Math.min(maxOffset, advanceSectorOffsetUnclamped(currentOffset));
+	}
+
+	export function advanceSectorOffsetUnclamped(currentOffset: number): number {
+		return roundUpSectorOffset(currentOffset + SECTOR_SIZE);
+	}
+
+	export function roundUpSectorOffset(currentOffset: number): number {
+		return Math.ceil(currentOffset / SECTOR_SIZE) * SECTOR_SIZE;
 	}
 
 	export function removeTrailingZeros(str: string): string {
 		const pattern = /^([^\u0000\0]*)[\u0000\0]*$/;
 		const result = pattern.exec(str);
 		return result ? result[1] : str;
-	}
-
-	export function advanceSectorOffsetUnclamped(currentOffset: number): number {
-
-		const intVal = Math.round(currentOffset);
-		const nextOffsetRaw = intVal + SECTOR_SIZE;
-		const diffToBoundary = nextOffsetRaw % SECTOR_SIZE;
-
-		return nextOffsetRaw - diffToBoundary;
-	}
-
-	export function roundUpSectorOffset(currentOffset: number): number {
-
-		const intVal = Math.round(currentOffset);
-		const diffToBoundary = intVal % SECTOR_SIZE;
-
-		if (diffToBoundary > 0) {
-			return intVal + (SECTOR_SIZE - diffToBoundary);
-		}
-
-		return intVal;
 	}
 
 	export function padBytesEnd(bytes: number[], targetSize: number, padValue: number = 0): number[] {

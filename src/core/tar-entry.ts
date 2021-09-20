@@ -1,17 +1,16 @@
+import { TarHeaderFieldDefinition } from '../common/tar-header-field-definition';
+import { TarHeaderExtractionResult } from '../common/tar-header-extraction-result';
+import { TarEntryUtility } from '../common/tar-entry-utility';
+import { TarHeader } from '../common/tar-header';
+
 import {
-	TarHeader,
-	TarHeaderFieldDefinition,
 	TarHeaderLinkIndicatorType,
 	isTarHeaderLinkIndicatorTypeDirectory,
 	isTarHeaderLinkIndicatorTypeFile
-} from '../common/tar-header';
-
-import { TarDeserializeUtility } from '../common/tar-deserialize-utility';
-import { TarSerializeUtility } from '../common/tar-serialize-utility';
+} from '../common/tar-header-link-indicator-type';
 
 const { getFieldDefinition } = TarHeaderFieldDefinition;
-const { createTarEntryBuffer } = TarSerializeUtility;
-const { parseFieldValue } = TarDeserializeUtility;
+const { createTarEntryBuffer } = TarEntryUtility;
 
 /**
  * Container for metadata and content of a tarball entry.
@@ -25,7 +24,7 @@ const { parseFieldValue } = TarDeserializeUtility;
 export class TarEntry {
 
 	constructor(
-		public readonly header: TarHeader,
+		public readonly header: TarHeaderExtractionResult,
 		public readonly content: Uint8Array | null = null
 	) {
 	}
@@ -55,7 +54,7 @@ export class TarEntry {
 	}
 
 	public getHeaderFieldValue(key: keyof TarHeader, defaultValue?: any): any {
-		return (this.header && this.header.hasOwnProperty(key))
+		return (this.header && key in this.header)
 			? (this.header as any)[key]
 			: defaultValue;
 	}

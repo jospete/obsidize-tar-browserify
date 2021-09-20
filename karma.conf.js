@@ -3,11 +3,11 @@ module.exports = function (config) {
 		basePath: '',
 		frameworks: ['jasmine', 'karma-typescript'],
 		files: [
-			'src/**/*.ts',
-			'tests/**/*.ts'
+			'./src/**/*.ts',
+			'./tests/**/*.ts'
 		],
 		exclude: [
-			'scripts/**/*'
+			'./scripts/**/*'
 		],
 		preprocessors: {
 			'**/*.ts': 'karma-typescript'

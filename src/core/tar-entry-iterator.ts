@@ -1,9 +1,9 @@
-import { TarDeserializeUtility } from '../common/tar-deserialize-utility';
 import { TarUtility } from '../common/tar-utility';
+import { TarEntryUtility } from '../common/tar-entry-utility';
 import { TarEntry } from './tar-entry';
 
 const { clamp, isUint8Array } = TarUtility;
-const { extractTarEntry } = TarDeserializeUtility;
+const { extractTarEntryMetadata } = TarEntryUtility;
 
 /**
  * Utility for stepping through a given byte buffer and extracting tar files one-at-a-time.
@@ -66,10 +66,16 @@ export class TarEntryIterator implements IterableIterator<TarEntry> {
 			return { value: null, done: true };
 		}
 
-		const { entry, nextOffset } = extractTarEntry(this.mData!, this.bufferOffset);
-		this.mOffset = clamp(nextOffset, this.bufferOffset, this.bufferLength);
+		const metadata = extractTarEntryMetadata(this.mData!, this.bufferOffset);
 
-		const value = entry!;
+		if (!metadata) {
+			return { value: null, done: true };
+		}
+
+		const { header, content, byteLength } = metadata;
+		this.mOffset = clamp(byteLength + this.bufferOffset, this.bufferOffset, this.bufferLength);
+
+		const value = new TarEntry(header, content);
 		const done = !this.canAdvanceOffset();
 
 		return { value, done };
