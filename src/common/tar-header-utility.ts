@@ -27,23 +27,7 @@ const {
  */
 export namespace TarHeaderUtility {
 
-	export function parseOctalIntSafe(value: string): number {
-		return parseIntSafe(removeTrailingZeros(value).trim(), 8);
-	}
-
-	export function sliceFieldBuffer(field: TarHeaderField, input: Uint8Array, offset: number = 0): Uint8Array {
-		const absoluteOffset = field.offset + offset;
-		return input.slice(absoluteOffset, absoluteOffset + field.size);
-	}
-
-	export function sliceFieldAscii(field: TarHeaderField, input: Uint8Array, offset?: number): string {
-		return bytesToAscii(Array.from(sliceFieldBuffer(field, input, offset)));
-	}
-
-	export function isUstarSector(input: Uint8Array, offset?: number): boolean {
-		const field = ustarIndicator();
-		return sliceFieldAscii(field, input, offset) === field.constantValue;
-	}
+	// ---------------- Tar Header Common ----------------
 
 	export function decodeLastModifiedTime(headerValue: number): number {
 		return Math.floor(headerValue) * 1000;
@@ -96,6 +80,26 @@ export namespace TarHeaderUtility {
 		return nextOffset;
 	}
 
+	// ---------------- Tar Header Extraction ----------------
+
+	export function parseOctalIntSafe(value: string): number {
+		return parseIntSafe(removeTrailingZeros(value).trim(), 8);
+	}
+
+	export function sliceFieldBuffer(field: TarHeaderField, input: Uint8Array, offset: number = 0): Uint8Array {
+		const absoluteOffset = field.offset + offset;
+		return input.slice(absoluteOffset, absoluteOffset + field.size);
+	}
+
+	export function sliceFieldAscii(field: TarHeaderField, input: Uint8Array, offset?: number): string {
+		return bytesToAscii(Array.from(sliceFieldBuffer(field, input, offset)));
+	}
+
+	export function isUstarSector(input: Uint8Array, offset?: number): boolean {
+		const field = ustarIndicator();
+		return sliceFieldAscii(field, input, offset) === field.constantValue;
+	}
+
 	export function decodeFieldValue(field: TarHeaderField, value: string): any {
 		const { type } = field;
 		switch (type) {
@@ -122,7 +126,7 @@ export namespace TarHeaderUtility {
 		return result;
 	}
 
-	// ---- Tar Header Creation ----
+	// ---------------- Tar Header Creation ----------------
 
 	function generateFieldChecksum(fieldValue: Uint8Array): number {
 		return fieldValue.reduce((a, b) => a + b, 0);
@@ -133,12 +137,13 @@ export namespace TarHeaderUtility {
 	}
 
 	function padIntegerOctal(value: number, maxLength: number): string {
-		return value.toString(8).padStart(maxLength, '0');
+		return parseIntSafe(value).toString(8).padStart(maxLength, '0');
 	}
 
 	function stringToUint8(str: string): Uint8Array {
 
-		const result = new Uint8Array(str.length)
+		str = toString(str);
+		const result = new Uint8Array(str.length);
 
 		for (let i = 0; i < str.length; i++) {
 			result[i] = str.charCodeAt(i);
@@ -163,7 +168,7 @@ export namespace TarHeaderUtility {
 		return toString(value);
 	}
 
-	export function generateTarHeaderBuffer(file: any): Uint8Array {
+	export function generateHeaderBuffer(file: any): Uint8Array {
 
 		const headerSize = SECTOR_SIZE;
 		const headerBuffer = new Uint8Array(headerSize);

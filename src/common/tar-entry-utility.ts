@@ -6,7 +6,7 @@ import { TarHeader } from './tar-header';
 const {
 	findNextUstarSectorOffset,
 	extractHeader,
-	generateTarHeaderBuffer
+	generateHeaderBuffer
 } = TarHeaderUtility;
 
 const {
@@ -37,25 +37,6 @@ export namespace TarEntryUtility {
 		const size = SECTOR_SIZE * 2;
 		const result = new Uint8Array(size);
 		result.fill(0, 0, size);
-		return result;
-	}
-
-	/**
-	 * Generates a single unified tar buffer that can be written out as a *.tar file.
-	 */
-	export function createTarEntryBuffer(header: TarHeader, content: Uint8Array): Uint8Array {
-
-		const headerSize = SECTOR_SIZE;
-		const contentSize = isUint8Array(content) ? content.byteLength : 0;
-		const totalSize = roundUpSectorOffset(headerSize + contentSize);
-		const result = new Uint8Array(totalSize);
-
-		result.set(generateHeaderSector(header), 0);
-
-		if (contentSize > 0) {
-			result.set(content, headerSize);
-		}
-
 		return result;
 	}
 
@@ -123,11 +104,11 @@ export namespace TarEntryUtility {
 		return Object.assign(defaultValues, file);
 	}
 
-	function generateFileTarBuffer(file: any): Uint8Array {
+	function generateEntryBuffer(file: any): Uint8Array {
 
 		const safeFile = normalizeFileContent(file);
 		const fileSize = roundUpSectorOffset(safeFile.size);
-		const headerBuffer = generateTarHeaderBuffer(safeFile);
+		const headerBuffer = generateHeaderBuffer(safeFile);
 		const headerSize = headerBuffer.byteLength;
 		const fileTarBuffer = new Uint8Array(headerSize + fileSize);
 
@@ -137,9 +118,9 @@ export namespace TarEntryUtility {
 		return fileTarBuffer;
 	}
 
-	function appendFileTarBuffer(accumulatedBuffer: Uint8Array, file: any): Uint8Array {
+	function appendEntryBuffer(accumulatedBuffer: Uint8Array, file: any): Uint8Array {
 
-		const fileTarBuffer = generateFileTarBuffer(file);
+		const fileTarBuffer = generateEntryBuffer(file);
 		const accumulatedSize = accumulatedBuffer.byteLength;
 		const combined = new Uint8Array(accumulatedSize + fileTarBuffer.byteLength);
 
@@ -149,7 +130,7 @@ export namespace TarEntryUtility {
 		return combined;
 	}
 
-	function generateCompositeTarBuffer(files: any[]): Uint8Array {
-		return files.reduce(appendFileTarBuffer, new Uint8Array(0));
+	export function generateCompositeTarBuffer(files: any[]): Uint8Array {
+		return files.reduce(appendEntryBuffer, new Uint8Array(0));
 	}
 }
