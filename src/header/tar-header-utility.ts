@@ -5,18 +5,6 @@ import { TarHeaderFieldType } from './tar-header-field-type';
 import { TarHeaderField } from './tar-header-field';
 import { TarHeader } from './tar-header';
 
-const {
-	SECTOR_SIZE,
-	advanceSectorOffset,
-	removeTrailingZeros,
-	parseIntSafe,
-	isUint8Array,
-	bytesToAscii,
-	uint8ArrayToAscii,
-	asciiToUint8Array,
-	toString
-} = TarUtility;
-
 export interface TarHeaderFieldExtractionResult<T> {
 	field: TarHeaderField;
 	bytes: Uint8Array;
@@ -43,7 +31,7 @@ export namespace TarHeaderUtility {
 	}
 
 	export function sliceFieldAscii(field: TarHeaderField, input: Uint8Array, offset?: number): string {
-		return bytesToAscii(Array.from(sliceFieldBuffer(field, input, offset)));
+		return TarUtility.bytesToAscii(Array.from(sliceFieldBuffer(field, input, offset)));
 	}
 
 	export function sliceFieldBuffer(field: TarHeaderField, input: Uint8Array, offset: number = 0): Uint8Array {
@@ -81,7 +69,7 @@ export namespace TarHeaderUtility {
 	 */
 	export function findNextUstarSectorOffset(input: Uint8Array, offset: number = 0): number {
 
-		if (!isUint8Array(input)) {
+		if (!TarUtility.isUint8Array(input)) {
 			return -1;
 		}
 
@@ -89,7 +77,7 @@ export namespace TarHeaderUtility {
 		let nextOffset = Math.max(0, offset);
 
 		while (nextOffset < maxOffset && !isUstarSector(input, nextOffset)) {
-			nextOffset = advanceSectorOffset(nextOffset, maxOffset);
+			nextOffset = TarUtility.advanceSectorOffset(nextOffset, maxOffset);
 		}
 
 		if (nextOffset >= maxOffset) {
@@ -102,12 +90,12 @@ export namespace TarHeaderUtility {
 	// ---------------- Extraction Utilities ----------------
 
 	export function parseOctalIntSafe(value: string): number {
-		return parseIntSafe(removeTrailingZeros(value).trim(), 8);
+		return TarUtility.parseIntSafe(TarUtility.removeTrailingZeros(value).trim(), 8);
 	}
 
 	export function parseFieldValue(field: TarHeaderField, bufferValue: Uint8Array): any {
 
-		let result = decodeFieldValue(field, uint8ArrayToAscii(bufferValue));
+		let result = decodeFieldValue(field, TarUtility.uint8ArrayToAscii(bufferValue));
 
 		if (field && field.name === TarHeaderFieldDefinition.lastModified().name) {
 			result = decodeLastModifiedTime(result);
@@ -126,7 +114,7 @@ export namespace TarHeaderUtility {
 			case TarHeaderFieldType.INTEGER_OCTAL:
 				return parseOctalIntSafe(value);
 			case TarHeaderFieldType.ASCII_PADDED:
-				return removeTrailingZeros(value);
+				return TarUtility.removeTrailingZeros(value);
 			case TarHeaderFieldType.ASCII:
 			default:
 				return value;
@@ -178,11 +166,11 @@ export namespace TarHeaderUtility {
 	}
 
 	export function padIntegerOctal(value: number, maxLength: number): string {
-		return parseIntSafe(value).toString(8).padStart(maxLength, '0');
+		return TarUtility.parseIntSafe(value).toString(8).padStart(maxLength, '0');
 	}
 
 	export function serializeFieldValue(field: TarHeaderField, value: any): Uint8Array {
-		return asciiToUint8Array(serializeFieldValueToString(field, value));
+		return TarUtility.asciiToUint8Array(serializeFieldValueToString(field, value));
 	}
 
 	export function serializeFieldValueToString(field: TarHeaderField, value: any): string {
@@ -192,7 +180,7 @@ export namespace TarHeaderUtility {
 			return padIntegerOctal(value, field.size - 1);
 		}
 
-		return toString(value);
+		return TarUtility.toString(value);
 	}
 
 	export function expandHeaderToExtractionResult(input: Partial<TarHeader>): TarHeaderExtractionResult {
@@ -217,7 +205,7 @@ export namespace TarHeaderUtility {
 	 */
 	export function generateHeaderBuffer(header: Partial<TarHeader>): Uint8Array {
 
-		const headerSize = SECTOR_SIZE;
+		const headerSize = TarUtility.SECTOR_SIZE;
 		const headerBuffer = new Uint8Array(headerSize);
 		const checksumField = TarHeaderFieldDefinition.headerChecksum();
 		const normalizedHeader = normalizeHeaderValues(header);

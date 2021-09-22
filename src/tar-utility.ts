@@ -17,12 +17,32 @@ export namespace TarUtility {
 		return value + '';
 	}
 
-	export function toArray<T>(value: T[]): T[] {
-		return [].slice.call(value);
-	}
-
 	export function clamp(value: number, min: number, max: number): number {
 		return Math.max(min, Math.min(value, max));
+	}
+
+	export function advanceSectorOffset(currentOffset: number, maxOffset: number): number {
+		return Math.min(maxOffset, advanceSectorOffsetUnclamped(currentOffset));
+	}
+
+	export function advanceSectorOffsetUnclamped(currentOffset: number): number {
+		return roundUpSectorOffset(currentOffset + SECTOR_SIZE);
+	}
+
+	export function roundUpSectorOffset(currentOffset: number): number {
+		return Math.ceil(currentOffset / SECTOR_SIZE) * SECTOR_SIZE;
+	}
+
+	export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {
+		if (isNumber(value)) return value;
+		const parsed = parseInt(value, radix);
+		return isNumber(parsed) ? parsed : defaultValue;
+	}
+
+	export function removeTrailingZeros(str: string): string {
+		const pattern = /^([^\u0000\0]*)[\u0000\0]*$/;
+		const result = pattern.exec(str);
+		return result ? result[1] : str;
 	}
 
 	export function bytesToAscii(input: number[]): string {
@@ -38,30 +58,36 @@ export namespace TarUtility {
 	}
 
 	export function asciiToUint8Array(input: string): Uint8Array {
-		return Uint8Array.from(asciiToBytes(input));
+
+		input = toString(input);
+
+		const size = input.length;
+		const result = new Uint8Array(size);
+
+		for (let i = 0; i < size; i++) {
+			result[i] = input.charCodeAt(i);
+		}
+
+		return result;
 	}
 
-	export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {
-		if (isNumber(value)) return value;
-		const parsed = parseInt(value, radix);
-		return isNumber(parsed) ? parsed : defaultValue;
-	}
+	export function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {
 
-	export function advanceSectorOffset(currentOffset: number, maxOffset: number): number {
-		return Math.min(maxOffset, advanceSectorOffsetUnclamped(currentOffset));
-	}
+		if (!isUint8Array(a)) {
+			return b;
+		}
 
-	export function advanceSectorOffsetUnclamped(currentOffset: number): number {
-		return roundUpSectorOffset(currentOffset + SECTOR_SIZE);
-	}
+		if (!isUint8Array(b)) {
+			return a;
+		}
 
-	export function roundUpSectorOffset(currentOffset: number): number {
-		return Math.ceil(currentOffset / SECTOR_SIZE) * SECTOR_SIZE;
-	}
+		const aLength = a.byteLength;
+		const bLength = b.byteLength;
+		const result = new Uint8Array(aLength + bLength);
 
-	export function removeTrailingZeros(str: string): string {
-		const pattern = /^([^\u0000\0]*)[\u0000\0]*$/;
-		const result = pattern.exec(str);
-		return result ? result[1] : str;
+		result.set(a, 0);
+		result.set(b, aLength);
+
+		return result;
 	}
 }

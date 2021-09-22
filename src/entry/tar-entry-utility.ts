@@ -1,14 +1,6 @@
 import { TarHeaderExtractionResult, TarHeaderUtility, TarHeader } from '../header';
 import { TarUtility } from '../tar-utility';
 
-const {
-	SECTOR_SIZE,
-	isNumber,
-	isUint8Array,
-	advanceSectorOffset,
-	roundUpSectorOffset
-} = TarUtility;
-
 export interface TarEntryMetadata {
 	header: TarHeaderExtractionResult;
 	content?: Uint8Array | null;
@@ -34,7 +26,7 @@ export namespace TarEntryUtility {
 	 */
 	export function extractEntryMetadata(input: Uint8Array, offset: number = 0): TarEntryMetadata | null {
 
-		if (!isUint8Array(input)) {
+		if (!TarUtility.isUint8Array(input)) {
 			return null;
 		}
 
@@ -49,15 +41,15 @@ export namespace TarEntryUtility {
 		const fileSize = header.fileSize ? header.fileSize.value : null;
 
 		let content: Uint8Array | null = null;
-		let byteLength = SECTOR_SIZE;
+		let byteLength = TarUtility.SECTOR_SIZE;
 
-		if (isNumber(fileSize) && fileSize > 0) {
+		if (TarUtility.isNumber(fileSize) && fileSize > 0) {
 
-			const contentOffset = advanceSectorOffset(ustarSectorOffset, maxOffset);
+			const contentOffset = TarUtility.advanceSectorOffset(ustarSectorOffset, maxOffset);
 			const fileEndOffset = contentOffset + fileSize;
 
 			content = input.slice(contentOffset, fileEndOffset);
-			byteLength += roundUpSectorOffset(fileSize);
+			byteLength += TarUtility.roundUpSectorOffset(fileSize);
 		}
 
 		return { header, content, byteLength };
@@ -66,24 +58,14 @@ export namespace TarEntryUtility {
 	// ---------------- Creation Utilities ----------------
 
 	export function generateCompositeBuffer(files: TarEntryAttributes[]): Uint8Array {
-		return files.reduce(appendEntryBuffer, new Uint8Array(0));
+		const combinedWithoutEndPadding = files.reduce(appendEntryBuffer, new Uint8Array(0));
+		const paddingBuffer = new Uint8Array(TarUtility.SECTOR_SIZE * 2);
+		return TarUtility.concatUint8Arrays(combinedWithoutEndPadding, paddingBuffer);
 	}
 
 	export function appendEntryBuffer(accumulatedBuffer: Uint8Array, attrs: TarEntryAttributes): Uint8Array {
-
 		const fileTarBuffer = generateEntryBuffer(attrs);
-
-		if (!isUint8Array(fileTarBuffer)) {
-			return accumulatedBuffer;
-		}
-
-		const accumulatedSize = accumulatedBuffer.byteLength;
-		const combined = new Uint8Array(accumulatedSize + fileTarBuffer!.byteLength);
-
-		combined.set(accumulatedBuffer, 0);
-		combined.set(fileTarBuffer!, accumulatedSize);
-
-		return combined;
+		return TarUtility.concatUint8Arrays(accumulatedBuffer, fileTarBuffer!);
 	}
 
 	export function generateEntryBuffer(attrs: TarEntryAttributes): Uint8Array | null {
@@ -100,15 +82,6 @@ export namespace TarEntryUtility {
 		}
 
 		const headerBuffer = TarHeaderUtility.generateHeaderBuffer(header);
-		const headerSize = headerBuffer.byteLength;
-		const fileTarBuffer = new Uint8Array(headerSize + contentSize);
-
-		fileTarBuffer.set(headerBuffer, 0);
-
-		if (contentSize > 0) {
-			fileTarBuffer.set(content!, headerSize);
-		}
-
-		return fileTarBuffer;
+		return TarUtility.concatUint8Arrays(headerBuffer, content!);
 	}
 }
