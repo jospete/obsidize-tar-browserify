@@ -2,15 +2,17 @@ import {
 	TarHeader,
 	TarHeaderUtility,
 	TarHeaderLinkIndicatorType,
-	TarHeaderExtractionResult,
 	isTarHeaderLinkIndicatorTypeDirectory,
 	isTarHeaderLinkIndicatorTypeFile,
-	TarHeaderFieldExtractionResult
+	TarHeaderFieldExtractionResult,
+	TarHeaderExtractionResult
 } from '../header';
 
 import {
-	TarEntryAttributes
-} from '../entry';
+	TarEntryUtility,
+	TarEntryAttributes,
+	TarEntryMetadata
+} from './tar-entry-utility';
 
 /**
  * Container for metadata and content of a tarball entry.
@@ -24,8 +26,7 @@ import {
 export class TarEntry {
 
 	constructor(
-		public readonly header: TarHeaderExtractionResult,
-		public readonly content: Uint8Array | null = null
+		protected readonly metadata: TarEntryMetadata
 	) {
 	}
 
@@ -33,9 +34,26 @@ export class TarEntry {
 		return !!(v && v instanceof TarEntry);
 	}
 
-	public static from(header: Partial<TarHeader>, content?: Uint8Array): TarEntry {
-		const safeHeader = TarHeaderUtility.expandHeaderToExtractionResult(header);
-		return new TarEntry(safeHeader, content);
+	public static from(attrs: Partial<TarHeader>, content?: Uint8Array): TarEntry {
+		const header = TarHeaderUtility.expandHeaderToExtractionResult(attrs);
+		return new TarEntry({ header, content, byteLength: -1 });
+	}
+
+	public static tryParse(input: Uint8Array, offset?: number): TarEntry | null {
+		const metadata = TarEntryUtility.extractEntryMetadata(input, offset);
+		return metadata ? new TarEntry(metadata) : null;
+	}
+
+	public get header(): TarHeaderExtractionResult {
+		return this.metadata.header;
+	}
+
+	public get content(): Uint8Array | null | undefined {
+		return this.metadata.content;
+	}
+
+	public get byteLength(): number {
+		return this.metadata.byteLength!;
 	}
 
 	public get fileName(): string {
@@ -67,6 +85,10 @@ export class TarEntry {
 		return (this.header && key in this.header)
 			? (this.header as any)[key]
 			: undefined;
+	}
+
+	public toUint8Array(): Uint8Array {
+		return TarEntryUtility.generateEntryBuffer(this.toAttributes())!;
 	}
 
 	public toAttributes(): TarEntryAttributes {

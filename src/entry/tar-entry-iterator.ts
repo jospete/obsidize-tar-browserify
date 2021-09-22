@@ -1,5 +1,4 @@
 import { TarUtility } from '../tar-utility';
-import { TarEntryUtility } from './tar-entry-utility';
 import { TarEntry } from './tar-entry';
 
 /**
@@ -63,16 +62,19 @@ export class TarEntryIterator implements IterableIterator<TarEntry> {
 			return { value: null, done: true };
 		}
 
-		const metadata = TarEntryUtility.extractEntryMetadata(this.mData!, this.bufferOffset);
+		const entry = TarEntry.tryParse(this.mData!, this.bufferOffset);
 
-		if (!metadata) {
+		if (!entry) {
 			return { value: null, done: true };
 		}
 
-		const { header, content, byteLength } = metadata;
-		this.mOffset = TarUtility.clamp(byteLength + this.bufferOffset, this.bufferOffset, this.bufferLength);
+		this.mOffset = TarUtility.clamp(
+			entry.byteLength + this.bufferOffset,
+			this.bufferOffset,
+			this.bufferLength
+		);
 
-		const value = new TarEntry(header, content);
+		const value = entry;
 		const done = !this.canAdvanceOffset();
 
 		return { value, done };

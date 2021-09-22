@@ -1,4 +1,5 @@
 import { TarEntry, TarHeaderLinkIndicatorType } from '../src';
+
 import { range } from './util';
 
 describe('TarEntry', () => {
@@ -18,7 +19,17 @@ describe('TarEntry', () => {
 	it('can safely be stringified', () => {
 		const directory = new TarEntry(null);
 		expect(() => JSON.stringify(directory)).not.toThrowError();
-		const fileWithContent = new TarEntry(null, Uint8Array.from(range(100)));
+		const fileWithContent = new TarEntry({ header: null, content: Uint8Array.from(range(100)) });
 		expect(() => JSON.stringify(fileWithContent)).not.toThrowError();
+	});
+
+	describe('tryParse()', () => {
+
+		it('attempts to extract an entry from the given buffer', async () => {
+			const originalEntry = TarEntry.from({ fileName: 'Test File' }, new Uint8Array(100));
+			const entryBuffer = originalEntry.toUint8Array();
+			const reparse = TarEntry.tryParse(entryBuffer);
+			expect(originalEntry).toEqual(reparse!);
+		});
 	});
 });

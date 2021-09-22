@@ -4,7 +4,7 @@ import { TarUtility } from '../tar-utility';
 export interface TarEntryMetadata {
 	header: TarHeaderExtractionResult;
 	content?: Uint8Array | null;
-	byteLength: number;
+	byteLength?: number;
 }
 
 export interface TarEntryAttributes {
