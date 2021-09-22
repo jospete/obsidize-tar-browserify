@@ -195,6 +195,22 @@ export namespace TarHeaderUtility {
 		return toString(value);
 	}
 
+	export function expandHeaderToExtractionResult(input: Partial<TarHeader>): TarHeaderExtractionResult {
+
+		const normalizedHeader = normalizeHeaderValues(input);
+
+		const result: TarHeaderExtractionResult = {} as any;
+
+		TarHeaderFieldDefinition.orderedSet().forEach(field => {
+			const { name } = field;
+			const value = (normalizedHeader as any)[name];
+			const bytes = serializeFieldValue(field, value);
+			result[name] = { field, bytes, value };
+		});
+
+		return result;
+	}
+
 	/**
 	 * Creates a USTAR sector buffer using the given header values.
 	 * NOTE: missing fields will be auto-populated with the fields from normalizeHeaderValues()

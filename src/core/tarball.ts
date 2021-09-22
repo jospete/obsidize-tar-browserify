@@ -19,7 +19,8 @@ export class Tarball {
 	}
 
 	public static from(entries: TarEntry[]): Uint8Array {
-		const entryAttrs = TarUtility.toArray(entries).map(e => e.toAttributes());
+		const validEntries = TarUtility.toArray(entries).filter(v => TarEntry.isTarEntry(v));
+		const entryAttrs = validEntries.map(e => e.toAttributes());
 		return TarEntryUtility.generateCompositeBuffer(entryAttrs);
 	}
 
