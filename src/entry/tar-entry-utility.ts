@@ -46,11 +46,6 @@ export namespace TarEntryUtility {
 
 		const maxOffset = input.byteLength;
 		const header = TarHeaderUtility.extractHeaderContent(input, ustarSectorOffset);
-
-		if (!header) {
-			return null;
-		}
-
 		const fileSize = header.fileSize ? header.fileSize.value : null;
 
 		let content: Uint8Array | null = null;

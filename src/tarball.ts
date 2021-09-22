@@ -1,4 +1,4 @@
-import { TarEntry, TarEntryUtility, TarEntryIterator } from './entry';
+import { TarEntry, TarEntryUtility, TarEntryIterator, TarEntryAttributes } from './entry';
 import { TarUtility } from './tar-utility';
 
 /**
@@ -17,10 +17,9 @@ export class Tarball {
 	) {
 	}
 
-	public static from(entries: TarEntry[]): Uint8Array {
-		const validEntries = TarUtility.toArray(entries).filter(v => TarEntry.isTarEntry(v));
-		const entryAttrs = validEntries.map(e => e.toAttributes());
-		return TarEntryUtility.generateCompositeBuffer(entryAttrs);
+	public static from(entries: TarEntryAttributes[]): Uint8Array {
+		const safeEntries = TarUtility.toArray(entries).filter(v => !!v);
+		return TarEntryUtility.generateCompositeBuffer(safeEntries);
 	}
 
 	public readAllEntries(): TarEntry[] {

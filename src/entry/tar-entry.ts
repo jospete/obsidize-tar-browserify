@@ -33,6 +33,11 @@ export class TarEntry {
 		return !!(v && v instanceof TarEntry);
 	}
 
+	public static from(header: Partial<TarHeader>, content?: Uint8Array): TarEntry {
+		const safeHeader = TarHeaderUtility.expandHeaderToExtractionResult(header);
+		return new TarEntry(safeHeader, content);
+	}
+
 	public get fileName(): string {
 		return this.getParsedHeaderFieldValue('fileName', '');
 	}

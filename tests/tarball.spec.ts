@@ -14,4 +14,14 @@ describe('Tarball', () => {
 		const tarball = new Tarball(null);
 		expect(() => JSON.stringify(tarball)).not.toThrowError();
 	});
+
+	describe('from()', () => {
+
+		xit('creates a tarball from the given entries', async () => {
+			const sampleUint8 = base64ToUint8Array(tarballSampleBase64);
+			const tarball = new Tarball(sampleUint8);
+			const outputUint8 = Tarball.from(tarball.readAllEntries().map(e => e.toAttributes()));
+			expect(outputUint8).toEqual(sampleUint8);
+		});
+	});
 });

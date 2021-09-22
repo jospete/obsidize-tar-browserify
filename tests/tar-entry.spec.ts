@@ -1,13 +1,12 @@
-import { TarEntry, TarHeaderLinkIndicatorType, TarHeaderUtility } from '../src';
+import { TarEntry, TarHeaderLinkIndicatorType } from '../src';
 import { range } from './util';
 
 describe('TarEntry', () => {
 
 	it('has an option to check if an entry is a directory', () => {
-		const metadata = TarHeaderUtility.expandHeaderToExtractionResult({
+		const directory = TarEntry.from({
 			typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
 		});
-		const directory = new TarEntry(metadata);
 		expect(directory.isDirectory()).toBe(true);
 	});
 
