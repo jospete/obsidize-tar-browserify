@@ -1,8 +1,6 @@
-import { TarHeaderFieldDefinition, TarUtility } from '../src';
+import { TarUtility } from '../src';
 
-import { range } from './util';
-
-const { parseIntSafe, sliceFieldBuffer, removeTrailingZeros } = TarUtility;
+const { parseIntSafe, removeTrailingZeros } = TarUtility;
 
 describe('TarUtility', () => {
 
@@ -22,18 +20,6 @@ describe('TarUtility', () => {
 
 		it('leaves already-numeric numbers unaffected', () => {
 			expect(parseIntSafe(100, 10, 42)).toBe(100);
-		});
-	});
-
-	describe('sliceFieldBuffer', () => {
-
-		it('defaults to offset zero when no offset is provided', () => {
-			const buffer = Uint8Array.from(range(0x1FF));
-			const headerField = TarHeaderFieldDefinition.fileSize();
-			const slicedBuffer = sliceFieldBuffer(headerField, buffer);
-			const sliceStart = headerField.offset;
-			const sliceEnd = sliceStart + headerField.size;
-			expect(slicedBuffer).toEqual(buffer.slice(sliceStart, sliceEnd));
 		});
 	});
 

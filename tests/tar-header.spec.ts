@@ -4,6 +4,6 @@ describe('TarHeader', () => {
 
 	it('is a collection of header metadata options to streamline tar header parsing', () => {
 		const fileNameMetadata = TarHeaderFieldDefinition.fileName();
-		expect(fileNameMetadata.type).toBe(TarHeaderFieldType.ASCII_TRIMMED);
+		expect(fileNameMetadata.type).toBe(TarHeaderFieldType.ASCII_PADDED);
 	});
 });

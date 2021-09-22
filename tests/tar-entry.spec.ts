@@ -10,7 +10,7 @@ describe('TarEntry', () => {
 
 	it('has an option to safely load header values and provide a fallback value if necessary', () => {
 		const directory = new TarEntry(null);
-		expect(directory.getHeaderFieldValue('fileMode', 1234)).toBe(1234);
+		expect(directory.getParsedHeaderFieldValue('fileMode', 1234)).toBe(1234);
 	});
 
 	it('can safely be stringified', () => {
