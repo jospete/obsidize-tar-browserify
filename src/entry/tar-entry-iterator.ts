@@ -1,5 +1,6 @@
-import { TarEntryUtility, TarEntry } from '../entry';
 import { TarUtility } from '../tar-utility';
+import { TarEntryUtility } from './tar-entry-utility';
+import { TarEntry } from './tar-entry';
 
 /**
  * Utility for stepping through a given byte buffer and extracting tar files one-at-a-time.

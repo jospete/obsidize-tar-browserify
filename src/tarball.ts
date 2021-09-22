@@ -1,6 +1,5 @@
-import { TarEntry, TarEntryUtility } from '../entry';
-import { TarEntryIterator } from './tar-entry-iterator';
-import { TarUtility } from '../tar-utility';
+import { TarEntry, TarEntryUtility, TarEntryIterator } from './entry';
+import { TarUtility } from './tar-utility';
 
 /**
  * Main entry point for reading tarballs.
