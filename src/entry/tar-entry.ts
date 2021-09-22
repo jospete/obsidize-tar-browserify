@@ -1,5 +1,5 @@
 import { TarHeaderFieldDefinition, TarHeaderExtractionResult, TarHeader } from '../header';
-import { TarEntryUtility } from '../common/tar-entry-utility';
+import { TarEntryUtility } from './tar-entry-utility';
 
 import {
 	TarHeaderLinkIndicatorType,

@@ -32,7 +32,7 @@ export namespace TarHeaderFieldDefinition {
 	export function fileNamePrefix(): TarHeaderField { return ({ name: 'fileNamePrefix', offset: 345, size: 155, type: TarHeaderFieldType.ASCII }) }
 	export function padding(): TarHeaderField { return ({ name: 'padding', offset: 500, size: 12, type: TarHeaderFieldType.ASCII, constantValue: '000000000000' }) }
 
-	const fieldsByName: { [key in (keyof TarHeader)]: () => TarHeaderField } = {
+	const fieldsByName: { [key in keyof TarHeader]: () => TarHeaderField } = {
 		fileName,
 		fileMode,
 		ownerUserId,

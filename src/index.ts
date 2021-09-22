@@ -11,8 +11,8 @@ export {
 } from './header/tar-header';
 
 export { TarSerializeUtility } from './common/tar-serialize-utility';
-export { TarUtility } from './common/tar-utility';
+export { TarUtility } from './tar-utility';
 
 export { TarEntryIterator } from './core/tar-entry-iterator';
-export { TarEntry } from './core/tar-entry';
+export { TarEntry } from './entry/tar-entry';
 export { Tarball } from './core/tarball';

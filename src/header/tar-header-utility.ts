@@ -1,10 +1,9 @@
+import { TarUtility } from '../tar-utility';
 import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
 import { TarHeaderFieldDefinition } from './tar-header-field-definition';
-import { TarHeaderExtractionResult } from './tar-header-extraction-result';
 import { TarHeaderFieldType } from './tar-header-field-type';
 import { TarHeaderField } from './tar-header-field';
 import { TarHeader } from './tar-header';
-import { TarUtility } from '../common/tar-utility';
 
 const {
 	SECTOR_SIZE,
@@ -13,21 +12,27 @@ const {
 	parseIntSafe,
 	isUint8Array,
 	bytesToAscii,
+	uint8ArrayToAscii,
+	asciiToUint8Array,
 	toString
 } = TarUtility;
 
-const {
-	ustarIndicator,
-	ustarVersion,
-	headerChecksum
-} = TarHeaderFieldDefinition;
+export interface TarHeaderFieldExtractionResult<T> {
+	field: TarHeaderField;
+	bytes: Uint8Array;
+	value: T;
+}
+
+export type TarHeaderExtractionResult = {
+	[key in keyof TarHeader]: TarHeaderFieldExtractionResult<any>;
+};
 
 /**
  * Common pure functions for serializing and deserializing tar header content.
  */
 export namespace TarHeaderUtility {
 
-	// ---------------- Tar Header Common ----------------
+	// ---------------- Common Utilities ----------------
 
 	export function decodeLastModifiedTime(headerValue: number): number {
 		return Math.floor(headerValue) * 1000;
@@ -37,7 +42,21 @@ export namespace TarHeaderUtility {
 		return Math.floor(timestamp / 1000);
 	}
 
-	export function sanitizeHeaderValues(header: TarHeader): TarHeader {
+	export function sliceFieldAscii(field: TarHeaderField, input: Uint8Array, offset?: number): string {
+		return bytesToAscii(Array.from(sliceFieldBuffer(field, input, offset)));
+	}
+
+	export function sliceFieldBuffer(field: TarHeaderField, input: Uint8Array, offset: number = 0): Uint8Array {
+		const absoluteOffset = field.offset + offset;
+		return input.slice(absoluteOffset, absoluteOffset + field.size);
+	}
+
+	export function isUstarSector(input: Uint8Array, offset?: number): boolean {
+		const field = TarHeaderFieldDefinition.ustarIndicator();
+		return sliceFieldAscii(field, input, offset) === field.constantValue;
+	}
+
+	export function normalizeHeaderValues(header: Partial<TarHeader>): TarHeader {
 
 		const defaultValues: Partial<TarHeader> = {
 			fileMode: '777',
@@ -45,15 +64,15 @@ export namespace TarHeaderUtility {
 			ownerUserId: 0,
 			fileSize: 0,
 			lastModified: encodeLastModifiedTime(Date.now()),
-			headerChecksum: ''.padEnd(headerChecksum().size, ' '),
 			typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE,
-			ustarIndicator: ustarIndicator().constantValue,
-			ustarVersion: ustarVersion().constantValue,
+			ustarIndicator: TarHeaderFieldDefinition.ustarIndicator().constantValue,
+			ustarVersion: TarHeaderFieldDefinition.ustarVersion().constantValue,
 			ownerUserName: '',
-			ownerGroupName: ''
+			ownerGroupName: '',
+			padding: TarHeaderFieldDefinition.padding().constantValue
 		};
 
-		return Object.assign(defaultValues, header);
+		return Object.assign(defaultValues, header) as TarHeader;
 	}
 
 	/**
@@ -80,29 +99,30 @@ export namespace TarHeaderUtility {
 		return nextOffset;
 	}
 
-	// ---------------- Tar Header Extraction ----------------
+	// ---------------- Extraction Utilities ----------------
 
 	export function parseOctalIntSafe(value: string): number {
 		return parseIntSafe(removeTrailingZeros(value).trim(), 8);
 	}
 
-	export function sliceFieldBuffer(field: TarHeaderField, input: Uint8Array, offset: number = 0): Uint8Array {
-		const absoluteOffset = field.offset + offset;
-		return input.slice(absoluteOffset, absoluteOffset + field.size);
-	}
+	export function parseFieldValue(field: TarHeaderField, bufferValue: Uint8Array): any {
 
-	export function sliceFieldAscii(field: TarHeaderField, input: Uint8Array, offset?: number): string {
-		return bytesToAscii(Array.from(sliceFieldBuffer(field, input, offset)));
-	}
+		let result = decodeFieldValue(field, uint8ArrayToAscii(bufferValue));
 
-	export function isUstarSector(input: Uint8Array, offset?: number): boolean {
-		const field = ustarIndicator();
-		return sliceFieldAscii(field, input, offset) === field.constantValue;
+		if (field && field.name === TarHeaderFieldDefinition.lastModified().name) {
+			result = decodeLastModifiedTime(result);
+		}
+
+		return result;
 	}
 
 	export function decodeFieldValue(field: TarHeaderField, value: string): any {
-		const { type } = field;
-		switch (type) {
+
+		if (!field) {
+			return value;
+		}
+
+		switch (field.type) {
 			case TarHeaderFieldType.INTEGER_OCTAL:
 				return parseOctalIntSafe(value);
 			case TarHeaderFieldType.ASCII_PADDED:
@@ -113,66 +133,78 @@ export namespace TarHeaderUtility {
 		}
 	}
 
-	export function extractHeader(input: Uint8Array, offset: number = 0): TarHeaderExtractionResult {
+	/**
+	 * Extracts all known header fields from the given input buffer, at the given offset.
+	 * 
+	 * NOTE: this does not check if the buffer at the given offset is actually a ustar sector, and
+	 * it is up to the caller to make this check.
+	 */
+	export function extractHeaderContent(input: Uint8Array, offset: number = 0): TarHeaderExtractionResult {
 
 		const result: TarHeaderExtractionResult = {} as any;
 
 		TarHeaderFieldDefinition.orderedSet().forEach(field => {
 			const bytes = sliceFieldBuffer(field, input, offset);
-			const value = decodeFieldValue(field, bytesToAscii(Array.from(bytes)));
+			const value = parseFieldValue(field, bytes);
 			result[field.name] = { field, bytes, value };
 		});
 
 		return result;
 	}
 
-	// ---------------- Tar Header Creation ----------------
-
-	function generateFieldChecksum(fieldValue: Uint8Array): number {
-		return fieldValue.reduce((a, b) => a + b, 0);
+	function copyHeaderValue(key: string, input: TarHeaderExtractionResult, output: TarHeader): void {
+		const metadata: TarHeaderFieldExtractionResult<any> = (input as any)[key];
+		const value = metadata ? metadata.value : undefined;
+		if (value) (output as any)[key] = value;
 	}
 
-	function serializeFieldValue(field: TarHeaderField, value: any): Uint8Array {
-		return stringToUint8(serializeFieldValueToString(field, value));
-	}
+	export function flattenHeaderExtractionResult(input: TarHeaderExtractionResult): TarHeader {
 
-	function padIntegerOctal(value: number, maxLength: number): string {
-		return parseIntSafe(value).toString(8).padStart(maxLength, '0');
-	}
+		const result = {} as TarHeader;
 
-	function stringToUint8(str: string): Uint8Array {
-
-		str = toString(str);
-		const result = new Uint8Array(str.length);
-
-		for (let i = 0; i < str.length; i++) {
-			result[i] = str.charCodeAt(i);
+		if (input) {
+			Object.keys(input).forEach(key => {
+				copyHeaderValue(key, input, result);
+			});
 		}
 
 		return result;
 	}
 
-	function serializeFieldValueToString(field: TarHeaderField, value: any): string {
+	// ---------------- Creation Utilities ----------------
 
-		const { constantValue, size } = field;
+	export function generateFieldChecksum(fieldValue: Uint8Array): number {
+		return fieldValue ? fieldValue.reduce((a, b) => a + b, 0) : 0;
+	}
 
-		if (constantValue && !value) {
-			return toString(constantValue);
-		}
+	export function padIntegerOctal(value: number, maxLength: number): string {
+		return parseIntSafe(value).toString(8).padStart(maxLength, '0');
+	}
 
-		if (field.type === TarHeaderFieldType.INTEGER_OCTAL) {
+	export function serializeFieldValue(field: TarHeaderField, value: any): Uint8Array {
+		return asciiToUint8Array(serializeFieldValueToString(field, value));
+	}
+
+	export function serializeFieldValueToString(field: TarHeaderField, value: any): string {
+
+		if (field && field.type === TarHeaderFieldType.INTEGER_OCTAL) {
 			// USTAR docs indicate that value length needs to be 1 less than actual field size
-			return padIntegerOctal(value, size - 1);
+			return padIntegerOctal(value, field.size - 1);
 		}
 
 		return toString(value);
 	}
 
-	export function generateHeaderBuffer(file: any): Uint8Array {
+	/**
+	 * Creates a USTAR sector buffer using the given header values.
+	 * NOTE: missing fields will be auto-populated with the fields from normalizeHeaderValues()
+	 */
+	export function generateHeaderBuffer(header: Partial<TarHeader>): Uint8Array {
 
 		const headerSize = SECTOR_SIZE;
 		const headerBuffer = new Uint8Array(headerSize);
 		const checksumField = TarHeaderFieldDefinition.headerChecksum();
+		const normalizedHeader = normalizeHeaderValues(header);
 
 		let checksum = 0;
 
@@ -180,10 +212,11 @@ export namespace TarHeaderUtility {
 
 			const { name, offset } = field;
 
-			if (name === checksumField.name || !(name in file)) return;
+			if (name === checksumField.name) return;
 
-			const valueBuffer = serializeFieldValue(field, file[name]);
+			const valueBuffer = serializeFieldValue(field, normalizedHeader[name]);
 			headerBuffer.set(valueBuffer, offset);
+
 			checksum += generateFieldChecksum(valueBuffer);
 		});
 

@@ -1,6 +1,6 @@
-import { TarEntryUtility } from '../common/tar-entry-utility';
-import { TarUtility } from '../common/tar-utility';
-import { TarEntry } from './tar-entry';
+import { TarEntryUtility } from '../entry/tar-entry-utility';
+import { TarUtility } from '../tar-utility';
+import { TarEntry } from '../entry/tar-entry';
 
 const { clamp, isUint8Array } = TarUtility;
 const { extractTarEntryMetadata } = TarEntryUtility;
