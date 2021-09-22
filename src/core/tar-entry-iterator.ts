@@ -1,9 +1,5 @@
-import { TarEntryUtility } from '../entry/tar-entry-utility';
+import { TarEntryUtility, TarEntry } from '../entry';
 import { TarUtility } from '../tar-utility';
-import { TarEntry } from '../entry/tar-entry';
-
-const { clamp, isUint8Array } = TarUtility;
-const { extractTarEntryMetadata } = TarEntryUtility;
 
 /**
  * Utility for stepping through a given byte buffer and extracting tar files one-at-a-time.
@@ -46,7 +42,7 @@ export class TarEntryIterator implements IterableIterator<TarEntry> {
 
 	public initialize(data: Uint8Array | null): this {
 
-		if (isUint8Array(data)) {
+		if (TarUtility.isUint8Array(data)) {
 			this.mData = data!.slice();
 			this.mMaxOffset = this.mData.byteLength;
 
@@ -66,14 +62,14 @@ export class TarEntryIterator implements IterableIterator<TarEntry> {
 			return { value: null, done: true };
 		}
 
-		const metadata = extractTarEntryMetadata(this.mData!, this.bufferOffset);
+		const metadata = TarEntryUtility.extractEntryMetadata(this.mData!, this.bufferOffset);
 
 		if (!metadata) {
 			return { value: null, done: true };
 		}
 
 		const { header, content, byteLength } = metadata;
-		this.mOffset = clamp(byteLength + this.bufferOffset, this.bufferOffset, this.bufferLength);
+		this.mOffset = TarUtility.clamp(byteLength + this.bufferOffset, this.bufferOffset, this.bufferLength);
 
 		const value = new TarEntry(header, content);
 		const done = !this.canAdvanceOffset();

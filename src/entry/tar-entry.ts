@@ -1,14 +1,16 @@
-import { TarHeaderFieldDefinition, TarHeaderExtractionResult, TarHeader } from '../header';
-import { TarEntryUtility } from './tar-entry-utility';
+import {
+	TarHeader,
+	TarHeaderUtility,
+	TarHeaderLinkIndicatorType,
+	TarHeaderExtractionResult,
+	isTarHeaderLinkIndicatorTypeDirectory,
+	isTarHeaderLinkIndicatorTypeFile,
+	TarHeaderFieldExtractionResult
+} from '../header';
 
 import {
-	TarHeaderLinkIndicatorType,
-	isTarHeaderLinkIndicatorTypeDirectory,
-	isTarHeaderLinkIndicatorTypeFile
-} from '../header/tar-header-link-indicator-type';
-
-const { getFieldDefinition } = TarHeaderFieldDefinition;
-const { createTarEntryBuffer } = TarEntryUtility;
+	TarEntryAttributes
+} from '../entry';
 
 /**
  * Container for metadata and content of a tarball entry.
@@ -40,7 +42,7 @@ export class TarEntry {
 	}
 
 	public getType(): TarHeaderLinkIndicatorType {
-		return this.getHeaderFieldValue('typeFlag', TarHeaderLinkIndicatorType.UNKNOWN);
+		return this.getParsedHeaderFieldValue('typeFlag', TarHeaderLinkIndicatorType.UNKNOWN);
 	}
 
 	public isDirectory(): boolean {
@@ -51,20 +53,22 @@ export class TarEntry {
 		return isTarHeaderLinkIndicatorTypeFile(this.getType());
 	}
 
-	public getHeaderFieldValue(key: keyof TarHeader, defaultValue?: any): any {
+	public getParsedHeaderFieldValue<T>(key: keyof TarHeader, defaultValue?: T): T {
+		const metadata = this.getHeaderFieldMetadata(key);
+		return (metadata ? metadata.value : defaultValue) as T;
+	}
+
+	public getHeaderFieldMetadata<T>(key: keyof TarHeader): TarHeaderFieldExtractionResult<T> | undefined {
 		return (this.header && key in this.header)
 			? (this.header as any)[key]
-			: defaultValue;
+			: undefined;
 	}
 
-	public getParsedHeaderFieldValue(key: keyof TarHeader, defaultValue?: any): any {
-		const field = getFieldDefinition(key);
-		const rawValue = this.getHeaderFieldValue(key);
-		return (field && rawValue) ? parseFieldValue(field, rawValue) : defaultValue;
-	}
-
-	public toUint8Array(): Uint8Array {
-		return createTarEntryBuffer(this.header, this.content!);
+	public toAttributes(): TarEntryAttributes {
+		return {
+			header: TarHeaderUtility.flattenHeaderExtractionResult(this.header),
+			content: this.content
+		};
 	}
 
 	public toJSON(): any {
@@ -73,7 +77,7 @@ export class TarEntry {
 		const isFile = this.isFile();
 		const isDirectory = this.isDirectory();
 		const content = this.content
-			? ('Uint8Array(' + this.content.byteLength + ')')
+			? ('Uint8Array[' + this.content.byteLength + ']')
 			: 'null';
 
 		return {
