@@ -4,7 +4,8 @@ import { TarUtility } from '../tar-utility';
 export interface TarEntryMetadata {
 	header: TarHeaderExtractionResult;
 	content?: Uint8Array | null;
-	byteLength?: number;
+	start?: number;
+	end?: number;
 }
 
 export interface TarEntryAttributes {
@@ -41,7 +42,7 @@ export namespace TarEntryUtility {
 		const fileSize = header.fileSize ? header.fileSize.value : null;
 
 		let content: Uint8Array | null = null;
-		let byteLength = TarUtility.SECTOR_SIZE;
+		let end = TarUtility.SECTOR_SIZE;
 
 		if (TarUtility.isNumber(fileSize) && fileSize > 0) {
 
@@ -49,10 +50,10 @@ export namespace TarEntryUtility {
 			const fileEndOffset = contentOffset + fileSize;
 
 			content = input.slice(contentOffset, fileEndOffset);
-			byteLength += TarUtility.roundUpSectorOffset(fileSize);
+			end = TarUtility.roundUpSectorOffset(fileEndOffset);
 		}
 
-		return { header, content, byteLength };
+		return { header, content, start: ustarSectorOffset, end };
 	}
 
 	// ---------------- Creation Utilities ----------------

@@ -36,7 +36,7 @@ export class TarEntry {
 
 	public static from(attrs: Partial<TarHeader>, content?: Uint8Array): TarEntry {
 		const header = TarHeaderUtility.expandHeaderToExtractionResult(attrs);
-		return new TarEntry({ header, content, byteLength: -1 });
+		return new TarEntry({ header, content });
 	}
 
 	public static tryParse(input: Uint8Array, offset?: number): TarEntry | null {
@@ -52,8 +52,16 @@ export class TarEntry {
 		return this.metadata.content;
 	}
 
+	public get startOffset(): number {
+		return this.metadata.start!;
+	}
+
+	public get endOffset(): number {
+		return this.metadata.end!;
+	}
+
 	public get byteLength(): number {
-		return this.metadata.byteLength!;
+		return this.endOffset - this.startOffset;
 	}
 
 	public get fileName(): string {
