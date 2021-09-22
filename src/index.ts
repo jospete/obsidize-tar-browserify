@@ -8,7 +8,7 @@ export {
 	TarHeaderLinkIndicatorType,
 	isTarHeaderLinkIndicatorTypeDirectory,
 	isTarHeaderLinkIndicatorTypeFile
-} from './common/tar-header';
+} from './header/tar-header';
 
 export { TarSerializeUtility } from './common/tar-serialize-utility';
 export { TarUtility } from './common/tar-utility';

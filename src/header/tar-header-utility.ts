@@ -4,7 +4,7 @@ import { TarHeaderExtractionResult } from './tar-header-extraction-result';
 import { TarHeaderFieldType } from './tar-header-field-type';
 import { TarHeaderField } from './tar-header-field';
 import { TarHeader } from './tar-header';
-import { TarUtility } from './tar-utility';
+import { TarUtility } from '../common/tar-utility';
 
 const {
 	SECTOR_SIZE,

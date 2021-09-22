@@ -1,13 +1,11 @@
-import { TarHeaderFieldDefinition } from '../common/tar-header-field-definition';
-import { TarHeaderExtractionResult } from '../common/tar-header-extraction-result';
+import { TarHeaderFieldDefinition, TarHeaderExtractionResult, TarHeader } from '../header';
 import { TarEntryUtility } from '../common/tar-entry-utility';
-import { TarHeader } from '../common/tar-header';
 
 import {
 	TarHeaderLinkIndicatorType,
 	isTarHeaderLinkIndicatorTypeDirectory,
 	isTarHeaderLinkIndicatorTypeFile
-} from '../common/tar-header-link-indicator-type';
+} from '../header/tar-header-link-indicator-type';
 
 const { getFieldDefinition } = TarHeaderFieldDefinition;
 const { createTarEntryBuffer } = TarEntryUtility;

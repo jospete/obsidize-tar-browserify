@@ -30,7 +30,19 @@ export namespace TarUtility {
 	}
 
 	export function asciiToBytes(str: string): number[] {
-		return toString(str).split('').map(c => c.charCodeAt(0));
+
+		str = toString(str);
+		const result: number[] = [];
+
+		for (let i = 0; i < str.length; i++) {
+			result[i] = str.charCodeAt(i);
+		}
+
+		return result;
+	}
+
+	export function uint8ArrayToAscii(input: Uint8Array): string {
+
 	}
 
 	export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {

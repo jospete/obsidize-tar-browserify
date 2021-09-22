@@ -1,7 +1,5 @@
-import { TarHeaderExtractionResult } from './tar-header-extraction-result';
-import { TarHeaderUtility } from './tar-header-utility';
+import { TarHeaderExtractionResult, TarHeaderUtility } from '../header';
 import { TarUtility } from './tar-utility';
-import { TarHeader } from './tar-header';
 
 const {
 	findNextUstarSectorOffset,
@@ -12,7 +10,6 @@ const {
 const {
 	SECTOR_SIZE,
 	isNumber,
-	toString,
 	isUint8Array,
 	advanceSectorOffset,
 	roundUpSectorOffset

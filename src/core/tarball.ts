@@ -1,11 +1,9 @@
-import { TarSerializeUtility } from '../common/tar-serialize-utility';
 import { TarUtility } from '../common/tar-utility';
 
 import { TarEntryIterator } from './tar-entry-iterator';
 import { TarEntry } from './tar-entry';
 
 const { isUint8Array, concatUint8Arrays, toArray } = TarUtility;
-const { createTarFileEndingSectors } = TarSerializeUtility;
 
 /**
  * Main entry point for reading tarballs.
