@@ -73,20 +73,15 @@ export namespace TarUtility {
 
 	export function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {
 
-		if (!isUint8Array(a)) {
-			return b;
-		}
-
-		if (!isUint8Array(b)) {
-			return a;
-		}
+		if (!isUint8Array(a)) return b;
+		if (!isUint8Array(b)) return a;
 
 		const aLength = a.byteLength;
 		const bLength = b.byteLength;
 		const result = new Uint8Array(aLength + bLength);
 
-		result.set(a, 0);
-		result.set(b, aLength);
+		if (aLength > 0) result.set(a, 0);
+		if (bLength > 0) result.set(b, aLength);
 
 		return result;
 	}
