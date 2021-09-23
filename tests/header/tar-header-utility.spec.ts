@@ -1,6 +1,6 @@
-import { TarHeaderFieldDefinition, TarHeaderUtility } from '../src';
+import { TarHeaderFieldDefinition, TarHeaderUtility } from '../../src';
 
-import { range } from './util';
+import { range } from '../util';
 
 const { sliceFieldBuffer } = TarHeaderUtility;
 

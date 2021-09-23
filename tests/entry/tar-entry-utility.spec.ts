@@ -1,10 +1,10 @@
-import { TarEntryUtility } from '../src';
+import { TarEntryUtility } from '../../src';
+
+const { extractEntryMetadata } = TarEntryUtility;
 
 describe('TarEntryUtility', () => {
 
 	describe('extractEntryMetadata', () => {
-
-		const { extractEntryMetadata } = TarEntryUtility;
 
 		it('returns null when bad input is given', () => {
 			expect(extractEntryMetadata(null)).toBe(null);

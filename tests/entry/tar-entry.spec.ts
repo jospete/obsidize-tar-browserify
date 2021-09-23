@@ -1,6 +1,6 @@
-import { TarEntry, TarHeaderLinkIndicatorType } from '../src';
+import { TarEntry, TarHeaderLinkIndicatorType } from '../../src';
 
-import { range } from './util';
+import { range } from '../util';
 
 describe('TarEntry', () => {
 

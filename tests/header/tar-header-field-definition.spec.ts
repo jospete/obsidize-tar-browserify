@@ -1,4 +1,4 @@
-import { TarHeaderFieldDefinition, TarHeaderFieldType } from '../src';
+import { TarHeaderFieldDefinition, TarHeaderFieldType } from '../../src';
 
 describe('TarHeaderFieldDefinition', () => {
 
