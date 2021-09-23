@@ -1,11 +1,15 @@
 import { TarHeaderExtractionResult, TarHeaderUtility, TarHeader } from '../header';
 import { TarUtility } from '../tar-utility';
 
+export interface TarEntryContentMetadata {
+	value?: Uint8Array | null;
+	start: number;
+	end: number;
+}
+
 export interface TarEntryMetadata {
 	header: TarHeaderExtractionResult;
-	content?: Uint8Array | null;
-	start?: number;
-	end?: number;
+	content: TarEntryContentMetadata;
 }
 
 export interface TarEntryAttributes {
@@ -20,6 +24,23 @@ export interface TarEntryAttributes {
 export namespace TarEntryUtility {
 
 	// ---------------- Extraction Utilities ----------------
+
+	export function wrapEntryContentMetadata(input: Uint8Array | null | undefined): TarEntryContentMetadata {
+
+		let value = input;
+		let end = TarUtility.isUint8Array(value) ? value!.byteLength : 0;
+
+		const start = 0;
+		const sectorPadding = TarUtility.roundUpSectorOffset(end);
+
+		if (sectorPadding > 0) {
+			end += sectorPadding;
+			value = new Uint8Array(end);
+			value.set(input!, 0);
+		}
+
+		return { value, start, end };
+	}
 
 	/**
 	 * Searches through the given input buffer for the next tar entry, starting at the given offset.
@@ -40,20 +61,17 @@ export namespace TarEntryUtility {
 		const maxOffset = input.byteLength;
 		const header = TarHeaderUtility.extractHeaderContent(input, ustarSectorOffset);
 		const fileSize = header.fileSize ? header.fileSize.value : null;
+		const start = TarUtility.advanceSectorOffset(ustarSectorOffset, maxOffset);
 
-		let content: Uint8Array | null = null;
-		let end = TarUtility.SECTOR_SIZE;
+		let value: Uint8Array | null = null;
+		let end = start;
 
 		if (TarUtility.isNumber(fileSize) && fileSize > 0) {
-
-			const contentOffset = TarUtility.advanceSectorOffset(ustarSectorOffset, maxOffset);
-			const fileEndOffset = contentOffset + fileSize;
-
-			content = input.slice(contentOffset, fileEndOffset);
-			end = TarUtility.roundUpSectorOffset(fileEndOffset);
+			end = TarUtility.roundUpSectorOffset(start + fileSize);
+			value = input.slice(start, end);
 		}
 
-		return { header, content, start: ustarSectorOffset, end };
+		return { header, content: { value, start, end } };
 	}
 
 	// ---------------- Creation Utilities ----------------

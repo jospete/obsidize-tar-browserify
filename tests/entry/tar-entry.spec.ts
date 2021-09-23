@@ -19,7 +19,7 @@ describe('TarEntry', () => {
 	it('can safely be stringified', () => {
 		const directory = new TarEntry(null);
 		expect(() => JSON.stringify(directory)).not.toThrowError();
-		const fileWithContent = new TarEntry({ header: null, content: Uint8Array.from(range(100)) });
+		const fileWithContent = TarEntry.from(null, Uint8Array.from(range(100)));
 		expect(() => JSON.stringify(fileWithContent)).not.toThrowError();
 	});
 

@@ -34,8 +34,9 @@ export class TarEntry {
 		return !!(v && v instanceof TarEntry);
 	}
 
-	public static from(attrs: Partial<TarHeader>, content?: Uint8Array): TarEntry {
+	public static from(attrs: Partial<TarHeader>, bytes?: Uint8Array): TarEntry {
 		const header = TarHeaderUtility.expandHeaderToExtractionResult(attrs);
+		const content = TarEntryUtility.wrapEntryContentMetadata(bytes);
 		return new TarEntry({ header, content });
 	}
 
@@ -49,15 +50,15 @@ export class TarEntry {
 	}
 
 	public get content(): Uint8Array | null | undefined {
-		return this.metadata.content;
+		return this.metadata.content.value;
 	}
 
 	public get startOffset(): number {
-		return this.metadata.start!;
+		return this.metadata.content.start;
 	}
 
 	public get endOffset(): number {
-		return this.metadata.end!;
+		return this.metadata.content.end;
 	}
 
 	public get byteLength(): number {
