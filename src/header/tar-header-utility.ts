@@ -20,6 +20,8 @@ export type TarHeaderExtractionResult = {
  */
 export namespace TarHeaderUtility {
 
+	export const HEADER_SIZE = TarUtility.SECTOR_SIZE;
+
 	// ---------------- Common Utilities ----------------
 
 	export function decodeLastModifiedTime(headerValue: number): number {
@@ -35,6 +37,7 @@ export namespace TarHeaderUtility {
 	}
 
 	export function sliceFieldBuffer(field: TarHeaderField, input: Uint8Array, offset: number = 0): Uint8Array {
+		if (!field || !TarUtility.isUint8Array(input)) return new Uint8Array(0);
 		const absoluteOffset = field.offset + offset;
 		return input.slice(absoluteOffset, absoluteOffset + field.size);
 	}
@@ -203,10 +206,9 @@ export namespace TarHeaderUtility {
 	 * Creates a USTAR sector buffer using the given header values.
 	 * NOTE: missing fields will be auto-populated with the fields from normalizeHeaderValues()
 	 */
-	export function generateHeaderBuffer(header: Partial<TarHeader>): Uint8Array {
+	export function generateHeaderBuffer(header: Partial<TarHeader> | null): Uint8Array {
 
-		const headerSize = TarUtility.SECTOR_SIZE;
-		const headerBuffer = new Uint8Array(headerSize);
+		const headerBuffer = new Uint8Array(HEADER_SIZE);
 		const checksumField = TarHeaderFieldDefinition.headerChecksum();
 		const normalizedHeader = sanitizeHeader(header);
 
