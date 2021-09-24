@@ -72,8 +72,10 @@ export namespace TarHeaderUtility {
 	 */
 	export function findNextUstarSectorOffset(input: Uint8Array, offset: number = 0): number {
 
+		const NOT_FOUND = -1;
+
 		if (!TarUtility.isUint8Array(input)) {
-			return -1;
+			return NOT_FOUND;
 		}
 
 		const maxOffset = input.byteLength;
@@ -87,7 +89,7 @@ export namespace TarHeaderUtility {
 			return nextOffset;
 		}
 
-		return -1;
+		return NOT_FOUND;
 	}
 
 	// ---------------- Extraction Utilities ----------------
@@ -143,23 +145,19 @@ export namespace TarHeaderUtility {
 		return result;
 	}
 
-	function copyHeaderValue(key: string, input: TarHeaderExtractionResult, output: TarHeader): void {
-		const metadata: TarHeaderFieldExtractionResult<any> = (input as any)[key];
-		const value = metadata ? metadata.value : undefined;
-		if (value) (output as any)[key] = value;
-	}
-
 	export function flattenHeaderExtractionResult(input: TarHeaderExtractionResult): TarHeader {
 
 		const result = {} as TarHeader;
 
 		if (input) {
 			Object.keys(input).forEach(key => {
-				copyHeaderValue(key, input, result);
+				const metadata: TarHeaderFieldExtractionResult<any> = (input as any)[key];
+				const value = metadata ? metadata.value : undefined;
+				if (TarUtility.isDefined(value)) (result as any)[key] = value;
 			});
 		}
 
-		return result;
+		return sanitizeHeader(result);
 	}
 
 	// ---------------- Creation Utilities ----------------
