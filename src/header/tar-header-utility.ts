@@ -83,11 +83,11 @@ export namespace TarHeaderUtility {
 			nextOffset = TarUtility.advanceSectorOffset(nextOffset, maxOffset);
 		}
 
-		if (nextOffset >= maxOffset) {
-			return -1;
+		if (nextOffset < maxOffset) {
+			return nextOffset;
 		}
 
-		return nextOffset;
+		return -1;
 	}
 
 	// ---------------- Extraction Utilities ----------------

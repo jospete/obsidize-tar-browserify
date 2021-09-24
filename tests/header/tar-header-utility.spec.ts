@@ -1,4 +1,4 @@
-import { TarHeaderFieldDefinition, TarHeaderLinkIndicatorType, TarHeaderUtility } from '../../src';
+import { TarHeaderFieldDefinition, TarHeaderLinkIndicatorType, TarHeaderUtility, TarUtility } from '../../src';
 
 import { range } from '../util';
 
@@ -73,6 +73,36 @@ describe('TarHeaderUtility', () => {
 			expect(header).not.toBeFalsy();
 			expect(header.fileMode).toBe('777');
 			expect(header.typeFlag).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
+		});
+	});
+
+	describe('findNextUstarSectorOffset()', () => {
+
+		it('returns the offset of the next header sector', () => {
+			const testHeaderBuffer = TarHeaderUtility.generateHeaderBuffer(null);
+			expect(TarHeaderUtility.findNextUstarSectorOffset(testHeaderBuffer)).toBe(0);
+		});
+
+		it('returns -1 when there is no ustar sector in the given scope', () => {
+			expect(TarHeaderUtility.findNextUstarSectorOffset(null)).toBe(-1);
+		});
+
+		it('uses the given offset when it is provided', () => {
+
+			const padLength = TarUtility.SECTOR_SIZE * 2;
+			const paddingBuffer = new Uint8Array(padLength);
+			const testHeaderBuffer = TarHeaderUtility.generateHeaderBuffer(null);
+			const combinedBuffer = TarUtility.concatUint8Arrays(paddingBuffer, testHeaderBuffer);
+
+			expect(TarHeaderUtility.findNextUstarSectorOffset(combinedBuffer)).toBe(padLength);
+			expect(TarHeaderUtility.findNextUstarSectorOffset(combinedBuffer, padLength)).toBe(padLength);
+			expect(TarHeaderUtility.findNextUstarSectorOffset(combinedBuffer, combinedBuffer.byteLength - 10)).toBe(-1);
+		});
+
+		it('snaps negative offsets to zero', () => {
+			const testHeaderBuffer = TarHeaderUtility.generateHeaderBuffer(null);
+			expect(TarHeaderUtility.findNextUstarSectorOffset(testHeaderBuffer, -1)).toBe(0);
+			expect(TarHeaderUtility.findNextUstarSectorOffset(testHeaderBuffer, -123456)).toBe(0);
 		});
 	});
 });
