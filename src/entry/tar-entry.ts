@@ -14,6 +14,8 @@ import {
 	TarEntryMetadata
 } from './tar-entry-utility';
 
+import { TarUtility } from '../tar-utility';
+
 /**
  * Container for metadata and content of a tarball entry.
  * 
@@ -25,9 +27,12 @@ import {
  */
 export class TarEntry {
 
+	protected readonly metadata: TarEntryMetadata;
+
 	constructor(
-		protected readonly metadata: TarEntryMetadata
+		metadata: TarEntryMetadata
 	) {
+		this.metadata = TarEntryUtility.sanitizeTarEntryMetadata(metadata);
 	}
 
 	public static isTarEntry(v: any): boolean {
@@ -87,7 +92,7 @@ export class TarEntry {
 
 	public getParsedHeaderFieldValue<T>(key: keyof TarHeader, defaultValue?: T): T {
 		const metadata = this.getHeaderFieldMetadata(key);
-		return (metadata ? metadata.value : defaultValue) as T;
+		return (metadata && TarUtility.isDefined(metadata.value) ? metadata.value : defaultValue) as T;
 	}
 
 	public getHeaderFieldMetadata<T>(key: keyof TarHeader): TarHeaderFieldExtractionResult<T> | undefined {

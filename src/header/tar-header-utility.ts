@@ -44,7 +44,7 @@ export namespace TarHeaderUtility {
 		return sliceFieldAscii(field, input, offset) === field.constantValue;
 	}
 
-	export function normalizeHeaderValues(header: Partial<TarHeader>): TarHeader {
+	export function sanitizeHeader(header: Partial<TarHeader> | null): TarHeader {
 
 		const defaultValues: Partial<TarHeader> = {
 			fileMode: '777',
@@ -60,7 +60,7 @@ export namespace TarHeaderUtility {
 			padding: TarHeaderFieldDefinition.padding().constantValue
 		};
 
-		return Object.assign(defaultValues, header) as TarHeader;
+		return Object.assign(defaultValues, (header || {})) as TarHeader;
 	}
 
 	/**
@@ -183,9 +183,9 @@ export namespace TarHeaderUtility {
 		return TarUtility.toString(value);
 	}
 
-	export function expandHeaderToExtractionResult(input: Partial<TarHeader>): TarHeaderExtractionResult {
+	export function expandHeaderToExtractionResult(input: Partial<TarHeader> | null): TarHeaderExtractionResult {
 
-		const normalizedHeader = normalizeHeaderValues(input);
+		const normalizedHeader = sanitizeHeader(input);
 
 		const result: TarHeaderExtractionResult = {} as any;
 
@@ -208,7 +208,7 @@ export namespace TarHeaderUtility {
 		const headerSize = TarUtility.SECTOR_SIZE;
 		const headerBuffer = new Uint8Array(headerSize);
 		const checksumField = TarHeaderFieldDefinition.headerChecksum();
-		const normalizedHeader = normalizeHeaderValues(header);
+		const normalizedHeader = sanitizeHeader(header);
 
 		let checksum = 0;
 

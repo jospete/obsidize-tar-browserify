@@ -23,6 +23,15 @@ export interface TarEntryAttributes {
  */
 export namespace TarEntryUtility {
 
+	// ---------------- Common Utilities ----------------
+
+	export function sanitizeTarEntryMetadata(value: TarEntryMetadata): TarEntryMetadata {
+		let { header, content } = (value || {});
+		if (!header) header = TarHeaderUtility.expandHeaderToExtractionResult(null);
+		if (!content) content = wrapEntryContentMetadata(null);
+		return { header, content };
+	}
+
 	// ---------------- Extraction Utilities ----------------
 
 	export function wrapEntryContentMetadata(input: Uint8Array | null | undefined): TarEntryContentMetadata {

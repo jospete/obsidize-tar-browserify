@@ -5,6 +5,14 @@ export namespace TarUtility {
 
 	export const SECTOR_SIZE = 512;
 
+	export function isUndefined(value: any): boolean {
+		return typeof value === 'undefined';
+	}
+
+	export function isDefined(value: any): boolean {
+		return !isUndefined(value);
+	}
+
 	export function isNumber(value: any): boolean {
 		return typeof value === 'number' && !Number.isNaN(value);
 	}
