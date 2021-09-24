@@ -108,5 +108,27 @@ describe('TarHeaderUtility', () => {
 
 	describe('parseOctalIntSafe()', () => {
 
+		it('translates the given octal string into a number', () => {
+			expect(TarHeaderUtility.parseOctalIntSafe('777')).toBe(parseInt('777', 8));
+		});
+
+		it('removes trailing zeroes and white space', () => {
+			expect(TarHeaderUtility.parseOctalIntSafe('0000777 \0\0\0\0')).toBe(parseInt('777', 8));
+		});
+
+		it('returns a default value when the given input cannot be parsed to a number', () => {
+			expect(TarHeaderUtility.parseOctalIntSafe(null)).toBe(0);
+		});
+	});
+
+	describe('parseFieldValue()', () => {
+
+		it('interprets the given value based on the given field metadata', () => {
+			const valueOctal = '777';
+			const value = parseInt(valueOctal, 8);
+			const field = TarHeaderFieldDefinition.fileMode();
+			const fieldValue = TarHeaderUtility.serializeFieldValue(field, value);
+			expect(TarHeaderUtility.parseFieldValue(field, fieldValue)).toBe(value);
+		});
 	});
 });

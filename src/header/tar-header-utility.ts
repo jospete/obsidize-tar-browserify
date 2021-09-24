@@ -169,7 +169,7 @@ export namespace TarHeaderUtility {
 	}
 
 	export function padIntegerOctal(value: number, maxLength: number): string {
-		return TarUtility.parseIntSafe(value).toString(8).padStart(maxLength, '0');
+		return TarUtility.parseIntSafe(value, 8).toString(8).padStart(maxLength, '0');
 	}
 
 	export function serializeFieldValue(field: TarHeaderField, value: any): Uint8Array {
