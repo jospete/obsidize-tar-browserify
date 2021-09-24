@@ -34,7 +34,7 @@ export namespace TarUtility {
 	}
 
 	export function advanceSectorOffsetUnclamped(currentOffset: number): number {
-		return roundUpSectorOffset(currentOffset + SECTOR_SIZE);
+		return (1 + Math.floor(currentOffset / SECTOR_SIZE)) * SECTOR_SIZE;
 	}
 
 	export function roundUpSectorOffset(currentOffset: number): number {
@@ -77,6 +77,10 @@ export namespace TarUtility {
 		}
 
 		return result;
+	}
+
+	export function concatManyUint8Arrays(...arrays: Uint8Array[]): Uint8Array {
+		return Array.from(arrays).reduce(concatUint8Arrays, new Uint8Array(0));
 	}
 
 	export function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {

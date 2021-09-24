@@ -103,13 +103,26 @@ export namespace TarEntryUtility {
 		}
 
 		const { header, content } = attrs;
-		const contentSize = content ? content.byteLength : 0;
+
+		let contentSize = 0;
+		let paddedContent = content!;
+
+		if (TarUtility.isUint8Array(content)) {
+			contentSize = content!.byteLength;
+		}
+
+		const paddedContentSize = TarUtility.roundUpSectorOffset(contentSize);
+
+		if (contentSize > 0 && paddedContentSize > contentSize) {
+			const paddingByteCount = paddedContentSize - contentSize;
+			paddedContent = TarUtility.concatUint8Arrays(content!, new Uint8Array(paddingByteCount));
+		}
 
 		if (header) {
 			header.fileSize = contentSize;
 		}
 
 		const headerBuffer = TarHeaderUtility.generateHeaderBuffer(header);
-		return TarUtility.concatUint8Arrays(headerBuffer, content!);
+		return TarUtility.concatUint8Arrays(headerBuffer, paddedContent);
 	}
 }

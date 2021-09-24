@@ -165,7 +165,7 @@ export namespace TarHeaderUtility {
 	// ---------------- Creation Utilities ----------------
 
 	export function generateFieldChecksum(fieldValue: Uint8Array): number {
-		return fieldValue ? fieldValue.reduce((a, b) => a + b, 0) : 0;
+		return TarUtility.isUint8Array(fieldValue) ? fieldValue.reduce((a, b) => a + b, 0) : 0;
 	}
 
 	export function padIntegerOctal(value: number, maxLength: number): string {

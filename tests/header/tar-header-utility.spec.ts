@@ -105,4 +105,8 @@ describe('TarHeaderUtility', () => {
 			expect(TarHeaderUtility.findNextUstarSectorOffset(testHeaderBuffer, -123456)).toBe(0);
 		});
 	});
+
+	describe('parseOctalIntSafe()', () => {
+
+	});
 });
