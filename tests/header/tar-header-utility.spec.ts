@@ -130,5 +130,40 @@ describe('TarHeaderUtility', () => {
 			const fieldValue = TarHeaderUtility.serializeFieldValue(field, value);
 			expect(TarHeaderUtility.parseFieldValue(field, fieldValue)).toBe(value);
 		});
+
+		it('decodes mtime values to proper Date timestamps', () => {
+			const now = TarHeaderUtility.decodeLastModifiedTime(TarHeaderUtility.encodeLastModifiedTime(Date.now()));
+			const field = TarHeaderFieldDefinition.lastModified();
+			const fieldValue = TarHeaderUtility.serializeFieldValue(field, now);
+			expect(TarHeaderUtility.parseFieldValue(field, fieldValue)).toBe(now);
+		});
+	});
+
+	describe('decodeFieldValue()', () => {
+
+		it('returns the given value when the field is not defined', () => {
+			expect(TarHeaderUtility.decodeFieldValue(null, 'test')).toBe('test');
+		});
+
+		it('properly decodes integer octal values', () => {
+			const fileSize = 1234;
+			const field = TarHeaderFieldDefinition.fileSize();
+			const fieldValue = TarHeaderUtility.serializeFieldValue(field, fileSize);
+			expect(TarHeaderUtility.parseFieldValue(field, fieldValue)).toBe(fileSize);
+		});
+
+		it('properly decodes ascii values', () => {
+			const value = TarHeaderLinkIndicatorType.NORMAL_FILE;
+			const field = TarHeaderFieldDefinition.typeFlag();
+			const fieldValue = TarHeaderUtility.serializeFieldValue(field, value);
+			expect(TarHeaderUtility.parseFieldValue(field, fieldValue)).toBe(value);
+		});
+
+		it('properly decodes padded ascii values', () => {
+			const value = 'Test File Name.txt';
+			const field = TarHeaderFieldDefinition.fileName();
+			const fieldValue = TarHeaderUtility.serializeFieldValue(field, value);
+			expect(TarHeaderUtility.parseFieldValue(field, fieldValue)).toBe(value);
+		});
 	});
 });

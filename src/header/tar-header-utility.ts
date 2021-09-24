@@ -178,12 +178,16 @@ export namespace TarHeaderUtility {
 
 	export function serializeFieldValueToString(field: TarHeaderField, value: any): string {
 
-		if (field && field.type === TarHeaderFieldType.INTEGER_OCTAL) {
-			// USTAR docs indicate that value length needs to be 1 less than actual field size
-			return padIntegerOctal(value, field.size - 1);
+		if (!field || field.type !== TarHeaderFieldType.INTEGER_OCTAL) {
+			return TarUtility.toString(value);
 		}
 
-		return TarUtility.toString(value);
+		if (field.name === TarHeaderFieldDefinition.lastModified().name) {
+			value = encodeLastModifiedTime(value);
+		}
+
+		// USTAR docs indicate that value length needs to be 1 less than actual field size
+		return padIntegerOctal(value, field.size - 1);
 	}
 
 	export function expandHeaderToExtractionResult(input: Partial<TarHeader> | null): TarHeaderExtractionResult {
