@@ -26,7 +26,7 @@
     "release:publish": "run-s git:publish dist:publish",
     "release:prepare:patch": "npm run release:prepare -- --release-as patch",
     "bump": "run-s release:prepare:patch release:test release:publish",
-    "docs": "typedoc ./src/index.ts --out ./docs",
+    "docs": "typedoc ./src/index.ts --out ./docs --excludePrivate",
     "docs:open": "open-cli \".\\docs\\index.html\"",
     "generate:tar:assets": "ts-node ./scripts/generate-tarball-test-assets.js",
     "generate:tar:json": "npm run rebuild && node ./scripts/generate-tar-example-json.js",

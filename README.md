@@ -26,6 +26,12 @@ npm install --save git+https://github.com/jospete/obsidize-tar-browserify.git
 
 ## Usage
 
+### Example
+
+```typescript
+import {Tarball} from '@obsidize/tar-browserify';
+```
+
 See the [Example Usage Spec](https://github.com/jospete/obsidize-tar-browserify/blob/master/tests/example-usage.spec.ts) to get a general feel for what this module can do.
 
 ## API
