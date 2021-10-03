@@ -106,18 +106,18 @@ describe('TarHeaderUtility', () => {
 		});
 	});
 
-	describe('parseOctalIntSafe()', () => {
+	describe('deserializeIntegerOctalFromString()', () => {
 
 		it('translates the given octal string into a number', () => {
-			expect(TarHeaderUtility.parseOctalIntSafe('777')).toBe(parseInt('777', 8));
+			expect(TarHeaderUtility.deserializeIntegerOctalFromString('777')).toBe(parseInt('777', 8));
 		});
 
 		it('removes trailing zeroes and white space', () => {
-			expect(TarHeaderUtility.parseOctalIntSafe('0000777 \0\0\0\0')).toBe(parseInt('777', 8));
+			expect(TarHeaderUtility.deserializeIntegerOctalFromString('0000777 \0\0\0\0')).toBe(parseInt('777', 8));
 		});
 
 		it('returns a default value when the given input cannot be parsed to a number', () => {
-			expect(TarHeaderUtility.parseOctalIntSafe(null)).toBe(0);
+			expect(TarHeaderUtility.deserializeIntegerOctalFromString(null)).toBe(0);
 		});
 	});
 
@@ -128,42 +128,14 @@ describe('TarHeaderUtility', () => {
 			const value = parseInt(valueOctal, 8);
 			const field = TarHeaderFieldDefinition.fileMode();
 			const fieldValue = TarHeaderUtility.serializeFieldValue(field, value);
-			expect(TarHeaderUtility.parseFieldValue(field, fieldValue)).toBe(value);
+			expect(TarHeaderUtility.deserializeFieldValue(field, fieldValue)).toBe(value);
 		});
 
 		it('decodes mtime values to proper Date timestamps', () => {
 			const now = TarHeaderUtility.decodeLastModifiedTime(TarHeaderUtility.encodeLastModifiedTime(Date.now()));
 			const field = TarHeaderFieldDefinition.lastModified();
 			const fieldValue = TarHeaderUtility.serializeFieldValue(field, now);
-			expect(TarHeaderUtility.parseFieldValue(field, fieldValue)).toBe(now);
-		});
-	});
-
-	describe('decodeFieldValue()', () => {
-
-		it('returns the given value when the field is not defined', () => {
-			expect(TarHeaderUtility.decodeFieldValue(null, 'test')).toBe('test');
-		});
-
-		it('properly decodes integer octal values', () => {
-			const fileSize = 1234;
-			const field = TarHeaderFieldDefinition.fileSize();
-			const fieldValue = TarHeaderUtility.serializeFieldValue(field, fileSize);
-			expect(TarHeaderUtility.parseFieldValue(field, fieldValue)).toBe(fileSize);
-		});
-
-		it('properly decodes ascii values', () => {
-			const value = TarHeaderLinkIndicatorType.NORMAL_FILE;
-			const field = TarHeaderFieldDefinition.typeFlag();
-			const fieldValue = TarHeaderUtility.serializeFieldValue(field, value);
-			expect(TarHeaderUtility.parseFieldValue(field, fieldValue)).toBe(value);
-		});
-
-		it('properly decodes padded ascii values', () => {
-			const value = 'Test File Name.txt';
-			const field = TarHeaderFieldDefinition.fileName();
-			const fieldValue = TarHeaderUtility.serializeFieldValue(field, value);
-			expect(TarHeaderUtility.parseFieldValue(field, fieldValue)).toBe(value);
+			expect(TarHeaderUtility.deserializeFieldValue(field, fieldValue)).toBe(now);
 		});
 	});
 });

@@ -3,8 +3,6 @@ import { Tarball, TarUtility } from '../src';
 import { tarballSampleBase64, totalFileCount } from './generated/tarball-test-assets';
 import { base64ToUint8Array } from './util';
 
-const { isUint8Array } = TarUtility;
-
 describe('Example Usage', () => {
 
 	it('works as advertised', () => {
@@ -27,7 +25,7 @@ describe('Example Usage', () => {
 
 			console.log(entry.fileName + ' = ', entry.toJSON());
 
-			if (!isUint8Array(entry.content)) {
+			if (!TarUtility.isUint8Array(entry.content)) {
 				fail(`file ${entry.fileName} should have content but it doesn't! -> ${entry.content}`);
 			}
 		}

@@ -25,6 +25,14 @@ export namespace TarUtility {
 		return value + '';
 	}
 
+	export function encodeString(value: string): Uint8Array {
+		return new TextEncoder().encode(toString(value));
+	}
+
+	export function decodeString(value: Uint8Array): string {
+		return isUint8Array(value) ? new TextDecoder().decode(value) : '';
+	}
+
 	export function clamp(value: number, min: number, max: number): number {
 		return Math.max(min, Math.min(value, max));
 	}
@@ -42,13 +50,13 @@ export namespace TarUtility {
 	}
 
 	export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {
-		if (isNumber(value)) return value;
+		if (isNumber(value)) return Math.floor(value);
 		const parsed = parseInt(value, radix);
 		return isNumber(parsed) ? parsed : defaultValue;
 	}
 
 	export function removeTrailingZeros(str: string): string {
-		const pattern = /^([^\u0000\0]*)[\u0000\0]*$/;
+		const pattern = /^([^\0]*)[\0]*$/;
 		const result = pattern.exec(str);
 		return result ? result[1] : str;
 	}

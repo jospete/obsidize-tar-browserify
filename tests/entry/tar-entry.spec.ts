@@ -26,7 +26,7 @@ describe('TarEntry', () => {
 
 	describe('tryParse()', () => {
 
-		xit('attempts to extract an entry from the given buffer', async () => {
+		it('attempts to extract an entry from the given buffer', async () => {
 			const originalEntry = TarEntry.from({ fileName: 'Test File' }, new Uint8Array(100));
 			const entryBuffer = originalEntry.toUint8Array();
 			const reparse = TarEntry.tryParse(entryBuffer);

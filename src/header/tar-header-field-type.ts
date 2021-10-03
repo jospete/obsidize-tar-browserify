@@ -14,7 +14,7 @@ export enum TarHeaderFieldType {
 	 * @example
 	 * 'Test File Name.txt\0\0\0\0\0\0\0....'
 	 */
-	ASCII_PADDED = 'ASCII_PADDED',
+	ASCII_PADDED_END = 'ASCII_PADDED_END',
 
 	/**
 	 * Bytes interpreted as a padded ascii octal number (i.e. ascii in range ['0' - '7']).
@@ -23,5 +23,11 @@ export enum TarHeaderFieldType {
 	 * @example
 	 * '0000232 ' // (equates to decimal 1234)
 	 */
-	INTEGER_OCTAL = 'INTEGER_OCTAL'
+	INTEGER_OCTAL = 'INTEGER_OCTAL',
+
+	/**
+	 * Special flavor of an integer octal that also transforms the 
+	 * value by 1000x to add the milliseconds frame for a Date value.
+	 */
+	INTEGER_OCTAL_TIMESTAMP = 'INTEGER_OCTAL_TIMESTAMP'
 }

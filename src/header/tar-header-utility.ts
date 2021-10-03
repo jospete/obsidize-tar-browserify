@@ -15,21 +15,78 @@ export type TarHeaderExtractionResult = {
 	[key in keyof TarHeader]: TarHeaderFieldExtractionResult<any>;
 };
 
+interface FieldTransform<T> {
+	serialize(input: T, field: TarHeaderField): Uint8Array;
+	deserialize(input: Uint8Array, field: TarHeaderField): T;
+}
+
 /**
  * Common pure functions for serializing and deserializing tar header content.
  */
 export namespace TarHeaderUtility {
 
+	export const OCTAL_RADIX = 8;
 	export const HEADER_SIZE = TarUtility.SECTOR_SIZE;
+
+	const fieldTypeTransformMap: { [key: string]: FieldTransform<any> } = {
+		[TarHeaderFieldType.ASCII]: {
+			serialize: TarUtility.encodeString,
+			deserialize: TarUtility.decodeString
+		},
+		[TarHeaderFieldType.ASCII_PADDED_END]: {
+			serialize: TarUtility.encodeString,
+			deserialize: deserializeAsciiPaddedField
+		},
+		[TarHeaderFieldType.INTEGER_OCTAL]: {
+			serialize: serializeIntegerOctal,
+			deserialize: deserializeIntegerOctal
+		},
+		[TarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP]: {
+			serialize: serializeIntegerOctalTimestamp,
+			deserialize: deserializeIntegerOctalTimestamp
+		}
+	};
 
 	// ---------------- Common Utilities ----------------
 
 	export function decodeLastModifiedTime(headerValue: number): number {
-		return Math.floor(headerValue) * 1000;
+		return Math.floor(TarUtility.parseIntSafe(headerValue)) * 1000;
 	}
 
 	export function encodeLastModifiedTime(timestamp: number): number {
-		return Math.floor(timestamp / 1000);
+		return Math.floor(TarUtility.parseIntSafe(timestamp) / 1000);
+	}
+
+	export function deserializeAsciiPaddedField(value: Uint8Array): string {
+		return TarUtility.removeTrailingZeros(TarUtility.decodeString(value));
+	}
+
+	export function deserializeIntegerOctalFromString(input: string): number {
+		return TarUtility.parseIntSafe(input, OCTAL_RADIX);
+	}
+
+	export function deserializeIntegerOctal(input: Uint8Array): number {
+		return TarUtility.parseIntSafe(TarUtility.decodeString(input), OCTAL_RADIX);
+	}
+
+	export function serializeIntegerOctal(value: number, field: TarHeaderField): Uint8Array {
+		const { size } = (field || {});
+		// USTAR docs indicate that value length needs to be 1 less than actual field size
+		return TarUtility.encodeString(serializeIntegerOctalToString(value, size - 1));
+	}
+
+	export function serializeIntegerOctalToString(value: number, maxLength: number): string {
+		return TarUtility.parseIntSafe(value, OCTAL_RADIX)
+			.toString(OCTAL_RADIX)
+			.padStart(maxLength, '0');
+	}
+
+	export function serializeIntegerOctalTimestamp(value: number, field: TarHeaderField): Uint8Array {
+		return serializeIntegerOctal(encodeLastModifiedTime(value), field);
+	}
+
+	export function deserializeIntegerOctalTimestamp(value: Uint8Array): number {
+		return decodeLastModifiedTime(deserializeIntegerOctal(value));
 	}
 
 	export function sliceFieldAscii(field: TarHeaderField, input: Uint8Array, offset?: number): string {
@@ -94,36 +151,10 @@ export namespace TarHeaderUtility {
 
 	// ---------------- Extraction Utilities ----------------
 
-	export function parseOctalIntSafe(value: string): number {
-		return TarUtility.parseIntSafe(TarUtility.removeTrailingZeros(value).trim(), 8);
-	}
-
-	export function parseFieldValue(field: TarHeaderField, bufferValue: Uint8Array): any {
-
-		let result = decodeFieldValue(field, TarUtility.uint8ArrayToAscii(bufferValue));
-
-		if (field && field.name === TarHeaderFieldDefinition.lastModified().name) {
-			result = decodeLastModifiedTime(result);
-		}
-
-		return result;
-	}
-
-	export function decodeFieldValue(field: TarHeaderField, value: string): any {
-
-		if (!field) {
-			return value;
-		}
-
-		switch (field.type) {
-			case TarHeaderFieldType.INTEGER_OCTAL:
-				return parseOctalIntSafe(value);
-			case TarHeaderFieldType.ASCII_PADDED:
-				return TarUtility.removeTrailingZeros(value);
-			case TarHeaderFieldType.ASCII:
-			default:
-				return value;
-		}
+	export function deserializeFieldValue(field: TarHeaderField, input: Uint8Array): any {
+		const { type } = (field || {});
+		const transform: FieldTransform<any> = fieldTypeTransformMap[type];
+		return transform ? transform.deserialize(input, field) : undefined;
 	}
 
 	/**
@@ -138,7 +169,7 @@ export namespace TarHeaderUtility {
 
 		TarHeaderFieldDefinition.orderedSet().forEach(field => {
 			const bytes = sliceFieldBuffer(field, input, offset);
-			const value = parseFieldValue(field, bytes);
+			const value = deserializeFieldValue(field, bytes);
 			result[field.name] = { field, bytes, value };
 		});
 
@@ -166,26 +197,10 @@ export namespace TarHeaderUtility {
 		return TarUtility.isUint8Array(fieldValue) ? fieldValue.reduce((a, b) => a + b, 0) : 0;
 	}
 
-	export function padIntegerOctal(value: number, maxLength: number): string {
-		return TarUtility.parseIntSafe(value, 8).toString(8).padStart(maxLength, '0');
-	}
-
-	export function serializeFieldValue(field: TarHeaderField, value: any): Uint8Array {
-		return TarUtility.asciiToUint8Array(serializeFieldValueToString(field, value));
-	}
-
-	export function serializeFieldValueToString(field: TarHeaderField, value: any): string {
-
-		if (!field || field.type !== TarHeaderFieldType.INTEGER_OCTAL) {
-			return TarUtility.toString(value);
-		}
-
-		if (field.name === TarHeaderFieldDefinition.lastModified().name) {
-			value = encodeLastModifiedTime(value);
-		}
-
-		// USTAR docs indicate that value length needs to be 1 less than actual field size
-		return padIntegerOctal(value, field.size - 1);
+	export function serializeFieldValue(field: TarHeaderField, input: any): Uint8Array {
+		const { type } = (field || {});
+		const transform: FieldTransform<any> = fieldTypeTransformMap[type];
+		return transform ? transform.serialize(input, field) : new Uint8Array(0);
 	}
 
 	export function expandHeaderToExtractionResult(input: Partial<TarHeader> | null): TarHeaderExtractionResult {
