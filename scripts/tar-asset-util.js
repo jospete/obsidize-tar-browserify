@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const sampleTarPath = './dev-assets/tarball-sample/output/node-tar-sample.tar';
 
 const readTarSample = () => {
-	fs.readFileSync(sampleTarPath);
+	return fs.readFileSync(sampleTarPath);
 };
 
 module.exports.readTarSample = readTarSample;
