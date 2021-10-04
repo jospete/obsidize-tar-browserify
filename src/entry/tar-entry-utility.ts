@@ -34,18 +34,21 @@ export namespace TarEntryUtility {
 
 	// ---------------- Extraction Utilities ----------------
 
-	export function wrapEntryContentMetadata(input: Uint8Array | null | undefined): TarEntryContentMetadata {
+	export function wrapEntryContentMetadata(input: Uint8Array | null | undefined, headerOffset: number = 0): TarEntryContentMetadata {
 
-		let value = input;
-		let end = TarUtility.isUint8Array(value) ? value!.byteLength : 0;
+		const isInputValid = TarUtility.isUint8Array(input);
+		const start = Math.max(0, headerOffset) + TarHeaderUtility.HEADER_SIZE;
 
-		const start = 0;
+		let value = isInputValid ? input! : new Uint8Array(0);
+		const valueLength = value.byteLength;
+
+		let end = start + valueLength;
 		const sectorPadding = TarUtility.roundUpSectorOffset(end);
 
 		if (sectorPadding > 0) {
 			end += sectorPadding;
-			value = new Uint8Array(end);
-			value.set(input!, 0);
+			value = new Uint8Array(valueLength + sectorPadding);
+			if (isInputValid) value.set(input!, 0);
 		}
 
 		return { value, start, end };
@@ -86,9 +89,14 @@ export namespace TarEntryUtility {
 	// ---------------- Creation Utilities ----------------
 
 	export function generateCompositeBuffer(files: TarEntryAttributes[]): Uint8Array {
-		const combinedWithoutEndPadding = files.reduce(appendEntryBuffer, new Uint8Array(0));
-		const paddingBuffer = new Uint8Array(TarUtility.SECTOR_SIZE * 2);
-		return TarUtility.concatUint8Arrays(combinedWithoutEndPadding, paddingBuffer);
+		return files.reduce(appendEntryBuffer, new Uint8Array(0));
+	}
+
+	export function generatePaddedCompositeBuffer(files: TarEntryAttributes[]): Uint8Array {
+		return TarUtility.concatUint8Arrays(
+			generateCompositeBuffer(files),
+			new Uint8Array(TarUtility.SECTOR_SIZE * 2)
+		);
 	}
 
 	export function appendEntryBuffer(accumulatedBuffer: Uint8Array, attrs: TarEntryAttributes): Uint8Array {

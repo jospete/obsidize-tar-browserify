@@ -39,15 +39,15 @@ export class TarEntry {
 		return !!(v && v instanceof TarEntry);
 	}
 
+	public static tryParse(input: Uint8Array, offset?: number): TarEntry | null {
+		const metadata = TarEntryUtility.extractEntryMetadata(input, offset);
+		return metadata ? new TarEntry(metadata) : null;
+	}
+
 	public static from(attrs: Partial<TarHeader>, bytes?: Uint8Array): TarEntry {
 		const header = TarHeaderUtility.expandHeaderToExtractionResult(attrs);
 		const content = TarEntryUtility.wrapEntryContentMetadata(bytes);
 		return new TarEntry({ header, content });
-	}
-
-	public static tryParse(input: Uint8Array, offset?: number): TarEntry | null {
-		const metadata = TarEntryUtility.extractEntryMetadata(input, offset);
-		return metadata ? new TarEntry(metadata) : null;
 	}
 
 	public get header(): TarHeaderExtractionResult {
@@ -92,7 +92,9 @@ export class TarEntry {
 
 	public getParsedHeaderFieldValue<T>(key: keyof TarHeader, defaultValue?: T): T {
 		const metadata = this.getHeaderFieldMetadata(key);
-		return (metadata && TarUtility.isDefined(metadata.value) ? metadata.value : defaultValue) as T;
+		return (metadata && TarUtility.isDefined(metadata.value)
+			? metadata.value
+			: defaultValue) as T;
 	}
 
 	public getHeaderFieldMetadata<T>(key: keyof TarHeader): TarHeaderFieldExtractionResult<T> | undefined {

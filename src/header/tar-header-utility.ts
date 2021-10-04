@@ -80,7 +80,7 @@ export namespace TarHeaderUtility {
 	}
 
 	export function serializeIntegerOctalToString(value: number, maxLength: number): string {
-		return TarUtility.parseIntSafe(value, OCTAL_RADIX)
+		return TarUtility.parseIntSafe(value)
 			.toString(OCTAL_RADIX)
 			.padStart(maxLength, '0');
 	}
@@ -174,7 +174,9 @@ export namespace TarHeaderUtility {
 	export function deserializeFieldValue(field: TarHeaderField, input: Uint8Array): any {
 		const { type } = (field || {});
 		const transform: FieldTransform<any> = fieldTypeTransformMap[type];
-		return transform ? transform.deserialize(input, field) : undefined;
+		return transform && TarUtility.isUint8Array(input)
+			? transform.deserialize(input, field)
+			: undefined;
 	}
 
 	/**
@@ -218,9 +220,16 @@ export namespace TarHeaderUtility {
 	}
 
 	export function serializeFieldValue(field: TarHeaderField, input: any): Uint8Array {
-		const { type } = (field || {});
+
+		const { type, size } = (field || {});
 		const transform: FieldTransform<any> = fieldTypeTransformMap[type];
-		return transform ? transform.serialize(input, field) : new Uint8Array(0);
+		const result = new Uint8Array(size);
+
+		if (transform && TarUtility.isDefined(input)) {
+			result.set(transform.serialize(input, field), 0);
+		}
+
+		return result;
 	}
 
 	export function expandHeaderToExtractionResult(input: Partial<TarHeader> | null): TarHeaderExtractionResult {

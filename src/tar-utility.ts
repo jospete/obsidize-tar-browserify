@@ -17,6 +17,10 @@ export namespace TarUtility {
 		return typeof value === 'number' && !Number.isNaN(value);
 	}
 
+	export function optDefined<T>(value: T, defaultValue: T): T {
+		return isDefined(value) ? value : defaultValue;
+	}
+
 	export function isUint8Array(value: any): boolean {
 		return !!(value && value instanceof Uint8Array);
 	}
