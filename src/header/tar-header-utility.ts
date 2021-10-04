@@ -27,6 +27,7 @@ export namespace TarHeaderUtility {
 
 	export const OCTAL_RADIX = 8;
 	export const HEADER_SIZE = TarUtility.SECTOR_SIZE;
+	export const FILE_MODE_DEFAULT = parseIntOctal('777');
 
 	const fieldTypeTransformMap: { [key: string]: FieldTransform<any> } = {
 		[TarHeaderFieldType.ASCII]: {
@@ -110,8 +111,8 @@ export namespace TarHeaderUtility {
 
 	export function sanitizeHeader(header: Partial<TarHeader> | null): TarHeader {
 
-		if (header && header.lastModified) {
-			header.lastModified = sanitizeTimestamp(header.lastModified);
+		if (header && TarUtility.isNumber(header.lastModified)) {
+			header.lastModified = sanitizeTimestamp(header.lastModified!);
 		}
 
 		return Object.assign(getDefaultHeaderValues(), (header || {})) as TarHeader;
@@ -120,7 +121,7 @@ export namespace TarHeaderUtility {
 	export function getDefaultHeaderValues(): TarHeader {
 		return {
 			fileName: '',
-			fileMode: parseIntOctal('777'),
+			fileMode: FILE_MODE_DEFAULT,
 			groupUserId: 0,
 			ownerUserId: 0,
 			fileSize: 0,
@@ -219,6 +220,11 @@ export namespace TarHeaderUtility {
 		return TarUtility.isUint8Array(fieldValue) ? fieldValue.reduce((a, b) => a + b, 0) : 0;
 	}
 
+	export function expandHeaderFieldToExtractionResult<T>(field: TarHeaderField, value: T): TarHeaderFieldExtractionResult<T> {
+		const bytes = serializeFieldValue(field, value);
+		return { field, bytes, value };
+	}
+
 	export function serializeFieldValue(field: TarHeaderField, input: any): Uint8Array {
 
 		const { type, size } = (field || {});
@@ -232,48 +238,50 @@ export namespace TarHeaderUtility {
 		return result;
 	}
 
-	export function expandHeaderToExtractionResult(input: Partial<TarHeader> | null): TarHeaderExtractionResult {
-
-		const normalizedHeader = sanitizeHeader(input);
-
-		const result: TarHeaderExtractionResult = {} as any;
-
-		TarHeaderFieldDefinition.orderedSet().forEach(field => {
-			const { name } = field;
-			const value = (normalizedHeader as any)[name];
-			const bytes = serializeFieldValue(field, value);
-			result[name] = { field, bytes, value };
-		});
-
-		return result;
-	}
-
 	/**
 	 * Creates a USTAR sector buffer using the given header values.
-	 * NOTE: missing fields will be auto-populated with the fields from normalizeHeaderValues()
+	 * NOTE: missing fields will be auto-populated with the defaults via sanitizeHeader()
 	 */
 	export function generateHeaderBuffer(header: Partial<TarHeader> | null): Uint8Array {
 
 		const headerBuffer = new Uint8Array(HEADER_SIZE);
+		const extracted = expandHeaderToExtractionResult(header);
+
+		for (const metadata of Object.values(extracted)) {
+			headerBuffer.set(metadata.bytes, metadata.field.offset);
+		}
+
+		return headerBuffer;
+	}
+
+	export function expandHeaderToExtractionResult(input: Partial<TarHeader> | null): TarHeaderExtractionResult {
+
+		const result: TarHeaderExtractionResult = {} as any;
 		const checksumField = TarHeaderFieldDefinition.headerChecksum();
-		const normalizedHeader = sanitizeHeader(header);
+		const normalizedHeader = sanitizeHeader(input);
 
 		let checksum = 0;
 
 		TarHeaderFieldDefinition.orderedSet().forEach(field => {
 
-			const { name, offset } = field;
-
+			const { name } = field;
 			if (name === checksumField.name) return;
 
-			const valueBuffer = serializeFieldValue(field, normalizedHeader[name]);
-			headerBuffer.set(valueBuffer, offset);
+			const value = (normalizedHeader as any)[name];
+			const bytes = serializeFieldValue(field, value);
+			result[name] = { field, bytes, value };
 
-			checksum += generateFieldChecksum(valueBuffer);
+			checksum += generateFieldChecksum(bytes);
 		});
 
-		headerBuffer.set(serializeFieldValue(checksumField, checksum), checksumField.offset);
+		const checksumBytes = serializeFieldValue(checksumField, checksum);
 
-		return headerBuffer;
+		result[checksumField.name] = {
+			field: checksumField,
+			bytes: checksumBytes,
+			value: checksum
+		};
+
+		return result;
 	}
 }

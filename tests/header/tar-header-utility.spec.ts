@@ -94,7 +94,7 @@ describe('TarHeaderUtility', () => {
 		it('populates missing fields with sensible defaults', () => {
 			const header = TarHeaderUtility.sanitizeHeader(null);
 			expect(header).not.toBeFalsy();
-			expect(header.fileMode).toBe(TarHeaderUtility.parseIntOctal('777'));
+			expect(header.fileMode).toBe(TarHeaderUtility.FILE_MODE_DEFAULT);
 			expect(header.typeFlag).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
 		});
 	});
@@ -129,7 +129,7 @@ describe('TarHeaderUtility', () => {
 		});
 	});
 
-	describe('deserializeIntegerOctalFromString()', () => {
+	describe('parseIntOctal()', () => {
 
 		it('translates the given octal string into a number', () => {
 			expect(TarHeaderUtility.parseIntOctal('777')).toBe(parseInt('777', 8));
@@ -144,7 +144,7 @@ describe('TarHeaderUtility', () => {
 		});
 	});
 
-	describe('parseFieldValue()', () => {
+	describe('serializeFieldValue()', () => {
 
 		it('interprets the given value based on the given field metadata', () => {
 			const valueOctal = '777';
@@ -160,5 +160,21 @@ describe('TarHeaderUtility', () => {
 			const fieldValue = TarHeaderUtility.serializeFieldValue(field, now);
 			expect(TarHeaderUtility.deserializeFieldValue(field, fieldValue)).toBe(now);
 		});
+	});
+
+	describe('deserializeFieldValue()', () => {
+
+		const defaultHeader = TarHeaderUtility.expandHeaderToExtractionResult(null);
+
+		for (const [propertyName, metadata] of Object.entries(defaultHeader)) {
+
+			const serialized = TarHeaderUtility.serializeFieldValue(metadata.field, metadata.value);
+			const deserialized = TarHeaderUtility.deserializeFieldValue(metadata.field, serialized);
+
+			it('mirrors the serializer functions for "' + propertyName + '"', () => {
+				expect(serialized).toEqual(metadata.bytes);
+				expect(deserialized).toEqual(metadata.value);
+			});
+		}
 	});
 });

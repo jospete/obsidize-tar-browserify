@@ -53,6 +53,10 @@ export namespace TarUtility {
 		return Math.ceil(currentOffset / SECTOR_SIZE) * SECTOR_SIZE;
 	}
 
+	export function getSectorOffsetDelta(currentOffset: number): number {
+		return roundUpSectorOffset(currentOffset) - currentOffset;
+	}
+
 	export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {
 		if (isNumber(value)) return Math.floor(value);
 		const parsed = parseInt(value, radix);
