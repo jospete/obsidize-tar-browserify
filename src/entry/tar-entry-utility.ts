@@ -1,4 +1,4 @@
-import { TarHeaderFieldDefinition, TarHeaderExtractionResult, TarHeaderUtility, TarHeader } from '../header';
+import { TarHeaderExtractionResult, TarHeaderUtility, TarHeader } from '../header';
 import { TarUtility } from '../tar-utility';
 
 export interface TarEntryContentMetadata {

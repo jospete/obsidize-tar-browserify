@@ -17,7 +17,7 @@ describe('Tarball', () => {
 
 	describe('from()', () => {
 
-		xit('creates a tarball from the given entries', async () => {
+		it('creates a tarball from the given entries', async () => {
 			const sampleUint8 = base64ToUint8Array(tarballSampleBase64);
 			const tarball = new Tarball(sampleUint8);
 			const entries = tarball.readAllEntries();
