@@ -49,19 +49,23 @@ export namespace TarHeaderUtility {
 
 	// ---------------- Common Utilities ----------------
 
-	export function decodeLastModifiedTime(headerValue: number): number {
+	export function decodeTimestamp(headerValue: number): number {
 		return Math.floor(TarUtility.parseIntSafe(headerValue)) * 1000;
 	}
 
-	export function encodeLastModifiedTime(timestamp: number): number {
+	export function encodeTimestamp(timestamp: number): number {
 		return Math.floor(TarUtility.parseIntSafe(timestamp) / 1000);
+	}
+
+	export function sanitizeTimestamp(timestamp: number): number {
+		return decodeTimestamp(encodeTimestamp(timestamp));
 	}
 
 	export function deserializeAsciiPaddedField(value: Uint8Array): string {
 		return TarUtility.removeTrailingZeros(TarUtility.decodeString(value));
 	}
 
-	export function deserializeIntegerOctalFromString(input: string): number {
+	export function parseIntOctal(input: string): number {
 		return TarUtility.parseIntSafe(input, OCTAL_RADIX);
 	}
 
@@ -82,11 +86,11 @@ export namespace TarHeaderUtility {
 	}
 
 	export function serializeIntegerOctalTimestamp(value: number, field: TarHeaderField): Uint8Array {
-		return serializeIntegerOctal(encodeLastModifiedTime(value), field);
+		return serializeIntegerOctal(encodeTimestamp(value), field);
 	}
 
 	export function deserializeIntegerOctalTimestamp(value: Uint8Array): number {
-		return decodeLastModifiedTime(deserializeIntegerOctal(value));
+		return decodeTimestamp(deserializeIntegerOctal(value));
 	}
 
 	export function sliceFieldAscii(field: TarHeaderField, input: Uint8Array, offset?: number): string {
@@ -106,21 +110,33 @@ export namespace TarHeaderUtility {
 
 	export function sanitizeHeader(header: Partial<TarHeader> | null): TarHeader {
 
-		const defaultValues: Partial<TarHeader> = {
-			fileMode: '777',
+		if (header && header.lastModified) {
+			header.lastModified = sanitizeTimestamp(header.lastModified);
+		}
+
+		return Object.assign(getDefaultHeaderValues(), (header || {})) as TarHeader;
+	}
+
+	export function getDefaultHeaderValues(): TarHeader {
+		return {
+			fileName: '',
+			fileMode: parseIntOctal('777'),
 			groupUserId: 0,
 			ownerUserId: 0,
 			fileSize: 0,
-			lastModified: encodeLastModifiedTime(Date.now()),
+			lastModified: sanitizeTimestamp(Date.now()),
+			headerChecksum: 0,
+			linkedFileName: '',
 			typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE,
 			ustarIndicator: TarHeaderFieldDefinition.ustarIndicator().constantValue,
 			ustarVersion: TarHeaderFieldDefinition.ustarVersion().constantValue,
 			ownerUserName: '',
 			ownerGroupName: '',
+			deviceMajorNumber: '00',
+			deviceMinorNumber: '00',
+			fileNamePrefix: '',
 			padding: TarHeaderFieldDefinition.padding().constantValue
 		};
-
-		return Object.assign(defaultValues, (header || {})) as TarHeader;
 	}
 
 	/**
@@ -150,6 +166,10 @@ export namespace TarHeaderUtility {
 	}
 
 	// ---------------- Extraction Utilities ----------------
+
+	export function extractHeader(input: Uint8Array, offset?: number): TarHeader {
+		return flattenHeaderExtractionResult(extractHeaderContent(input, offset));
+	}
 
 	export function deserializeFieldValue(field: TarHeaderField, input: Uint8Array): any {
 		const { type } = (field || {});

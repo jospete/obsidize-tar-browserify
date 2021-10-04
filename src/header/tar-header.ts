@@ -5,12 +5,12 @@ import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
  */
 export interface TarHeader {
 	fileName: string;
-	fileMode: string;
+	fileMode: number;
 	ownerUserId: number;
 	groupUserId: number;
 	fileSize: number;
 	lastModified: number;
-	headerChecksum: string;
+	headerChecksum: number;
 	linkedFileName: string;
 	typeFlag: TarHeaderLinkIndicatorType | string;
 	ustarIndicator: string;

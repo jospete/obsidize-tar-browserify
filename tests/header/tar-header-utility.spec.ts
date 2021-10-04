@@ -7,25 +7,48 @@ const staticDateTimeEncoded = 1632419077;
 
 describe('TarHeaderUtility', () => {
 
+	it('consistently encodes and decodes the same header buffer', () => {
+
+		const header1 = TarHeaderUtility.sanitizeHeader({
+			fileName: 'Test File.txt',
+			fileSize: 50000,
+			fileMode: 450
+		});
+
+		const headerBuffer1 = TarHeaderUtility.generateHeaderBuffer(header1);
+		expect(TarUtility.isUint8Array(headerBuffer1)).toBe(true);
+		expect(headerBuffer1.byteLength).toBe(TarHeaderUtility.HEADER_SIZE);
+
+		const header2 = TarHeaderUtility.extractHeader(headerBuffer1);
+		const headerBuffer2 = TarHeaderUtility.generateHeaderBuffer(header2);
+		expect(headerBuffer2).toEqual(headerBuffer1);
+
+		// We should be able to serialize and deserialize the same header multiple times without any data loss.
+		const header3 = TarHeaderUtility.extractHeader(headerBuffer2);
+		expect(header3.fileName).toBe(header1.fileName);
+		expect(header3.fileSize).toBe(header1.fileSize);
+		expect(header3.fileMode).toBe(header1.fileMode);
+	});
+
 	describe('decodeLastModifiedTime()', () => {
 
 		it('converts the encoded value to a valid date time', () => {
-			expect(TarHeaderUtility.decodeLastModifiedTime(staticDateTimeEncoded)).toBe(staticDateTime);
+			expect(TarHeaderUtility.decodeTimestamp(staticDateTimeEncoded)).toBe(staticDateTime);
 		});
 
 		it('floors floating point values', () => {
-			expect(TarHeaderUtility.decodeLastModifiedTime(staticDateTimeEncoded + 0.9)).toBe(staticDateTime);
+			expect(TarHeaderUtility.decodeTimestamp(staticDateTimeEncoded + 0.9)).toBe(staticDateTime);
 		});
 	});
 
 	describe('encodeLastModifiedTime()', () => {
 
 		it('encodes the value to a serializable mtime', () => {
-			expect(TarHeaderUtility.encodeLastModifiedTime(staticDateTime)).toBe(staticDateTimeEncoded);
+			expect(TarHeaderUtility.encodeTimestamp(staticDateTime)).toBe(staticDateTimeEncoded);
 		});
 
 		it('floors floating point values', () => {
-			expect(TarHeaderUtility.encodeLastModifiedTime(staticDateTime + 0.9)).toBe(staticDateTimeEncoded);
+			expect(TarHeaderUtility.encodeTimestamp(staticDateTime + 0.9)).toBe(staticDateTimeEncoded);
 		});
 	});
 
@@ -71,7 +94,7 @@ describe('TarHeaderUtility', () => {
 		it('populates missing fields with sensible defaults', () => {
 			const header = TarHeaderUtility.sanitizeHeader(null);
 			expect(header).not.toBeFalsy();
-			expect(header.fileMode).toBe('777');
+			expect(header.fileMode).toBe(TarHeaderUtility.parseIntOctal('777'));
 			expect(header.typeFlag).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
 		});
 	});
@@ -109,15 +132,15 @@ describe('TarHeaderUtility', () => {
 	describe('deserializeIntegerOctalFromString()', () => {
 
 		it('translates the given octal string into a number', () => {
-			expect(TarHeaderUtility.deserializeIntegerOctalFromString('777')).toBe(parseInt('777', 8));
+			expect(TarHeaderUtility.parseIntOctal('777')).toBe(parseInt('777', 8));
 		});
 
 		it('removes trailing zeroes and white space', () => {
-			expect(TarHeaderUtility.deserializeIntegerOctalFromString('0000777 \0\0\0\0')).toBe(parseInt('777', 8));
+			expect(TarHeaderUtility.parseIntOctal('0000777 \0\0\0\0')).toBe(parseInt('777', 8));
 		});
 
 		it('returns a default value when the given input cannot be parsed to a number', () => {
-			expect(TarHeaderUtility.deserializeIntegerOctalFromString(null)).toBe(0);
+			expect(TarHeaderUtility.parseIntOctal(null)).toBe(0);
 		});
 	});
 
@@ -132,7 +155,7 @@ describe('TarHeaderUtility', () => {
 		});
 
 		it('decodes mtime values to proper Date timestamps', () => {
-			const now = TarHeaderUtility.decodeLastModifiedTime(TarHeaderUtility.encodeLastModifiedTime(Date.now()));
+			const now = TarHeaderUtility.decodeTimestamp(TarHeaderUtility.encodeTimestamp(Date.now()));
 			const field = TarHeaderFieldDefinition.lastModified();
 			const fieldValue = TarHeaderUtility.serializeFieldValue(field, now);
 			expect(TarHeaderUtility.deserializeFieldValue(field, fieldValue)).toBe(now);
