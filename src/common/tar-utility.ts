@@ -22,6 +22,10 @@ export namespace TarUtility {
 
 	export const SECTOR_SIZE = 512;
 
+	export function noop<T>(value?: T): T {
+		return value as any;
+	}
+
 	export function isUndefined(value: any): boolean {
 		return typeof value === 'undefined';
 	}
@@ -116,9 +120,9 @@ export namespace TarUtility {
 	 */
 	export async function findInAsyncUint8Array(
 		target: AsyncUint8Array,
-		offset: number,
-		stepSize: number,
-		predicate: (value: Uint8Array, offset: number, target: AsyncUint8Array) => boolean
+		offset: number = 0,
+		stepSize: number = 1,
+		predicate?: (value: Uint8Array, offset: number, target: AsyncUint8Array) => boolean
 	): Promise<AsyncUint8ArraySearchResult | null> {
 
 		if (!target) {
@@ -132,14 +136,14 @@ export namespace TarUtility {
 			return null;
 		}
 
-		const blockSize = clamp(stepSize, SECTOR_SIZE, maxLength) * TarUtility.SECTOR_SIZE;
+		const blockSize = clamp(stepSize, 1, SECTOR_SIZE) * TarUtility.SECTOR_SIZE;
 
-		if (!predicate) predicate = () => true;
+		if (!predicate) predicate = noop as any;
 
 		let cursor = offset;
 		let result: Uint8Array = await target.read(cursor, blockSize);
 
-		while (cursor < maxLength && !predicate(result, cursor, target)) {
+		while (cursor < maxLength && !predicate!(result, cursor, target)) {
 			cursor += blockSize;
 			result = await target.read(cursor, blockSize);
 		}

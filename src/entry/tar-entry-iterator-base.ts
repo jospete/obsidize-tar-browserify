@@ -9,6 +9,10 @@ export class TarEntryIteratorBase {
 	private mOffset: number = 0;
 	private mSize: number = 0;
 
+	protected get defaultIteratorResult(): IteratorResult<TarEntry> {
+		return { value: null, done: true };
+	}
+
 	public get bufferOffset(): number {
 		return this.mOffset;
 	}

@@ -1,4 +1,4 @@
-import { AsyncUint8Array } from '../common';
+import { TarUtility, AsyncUint8Array } from '../common';
 import { TarEntry } from './tar-entry';
 import { TarEntryIteratorBase } from './tar-entry-iterator-base';
 
@@ -28,7 +28,7 @@ export class AsyncTarEntryIterator extends TarEntryIteratorBase implements Async
 		onNextEntry?: TarEntryDelegate
 	): Promise<TarEntry[]> {
 
-		if (!onNextEntry) onNextEntry = () => null;
+		if (!onNextEntry) onNextEntry = TarUtility.noop;
 
 		const iterator = new AsyncTarEntryIterator();
 		const result: TarEntry[] = [];
@@ -47,6 +47,12 @@ export class AsyncTarEntryIterator extends TarEntryIteratorBase implements Async
 		return this;
 	}
 
+	public async next(): Promise<IteratorResult<TarEntry>> {
+		return this.canAdvanceOffset()
+			? this.consumeIteratorResult(await TarEntry.tryParseAsync(this.mData!, this.bufferOffset))
+			: this.defaultIteratorResult;
+	}
+
 	public async initialize(data: AsyncUint8Array | null): Promise<void> {
 
 		if (data) {
@@ -59,15 +65,5 @@ export class AsyncTarEntryIterator extends TarEntryIteratorBase implements Async
 		}
 
 		this.bufferOffset = 0;
-	}
-
-	public async next(): Promise<IteratorResult<TarEntry>> {
-
-		if (!this.canAdvanceOffset()) {
-			return { value: null, done: true };
-		}
-
-		const entry = await TarEntry.tryParseAsync(this.mData!, this.bufferOffset);
-		return this.consumeIteratorResult(entry);
 	}
 }

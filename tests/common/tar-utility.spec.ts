@@ -1,4 +1,5 @@
 import { TarUtility } from '../../src';
+import { MockAsyncUint8Array } from '../mocks/mock-async-uint8array';
 
 describe('TarUtility', () => {
 
@@ -95,6 +96,17 @@ describe('TarUtility', () => {
 			let result: Uint8Array;
 			expect(() => result = TarUtility.concatUint8Arrays(a, b)).not.toThrowError();
 			expect(result.byteLength).toBe(0);
+		});
+	});
+
+	describe('findInAsyncUint8Array()', () => {
+
+		it('returns the first slice when a predicate is not given', async () => {
+			const a = null;
+			const buffer = new Uint8Array(1024);
+			const asyncBuffer = new MockAsyncUint8Array(buffer);
+			const result = await TarUtility.findInAsyncUint8Array(asyncBuffer);
+			expect(result.value.byteLength).toBe(512);
 		});
 	});
 });

@@ -22,6 +22,12 @@ export class TarEntryIterator extends TarEntryIteratorBase implements IterableIt
 		return this;
 	}
 
+	public next(): IteratorResult<TarEntry> {
+		return this.canAdvanceOffset()
+			? this.consumeIteratorResult(TarEntry.tryParse(this.mData!, this.bufferOffset))
+			: this.defaultIteratorResult;
+	}
+
 	public initialize(data: Uint8Array | null): void {
 
 		if (TarUtility.isUint8Array(data)) {
@@ -34,15 +40,5 @@ export class TarEntryIterator extends TarEntryIteratorBase implements IterableIt
 		}
 
 		this.bufferOffset = 0;
-	}
-
-	public next(): IteratorResult<TarEntry> {
-
-		if (!this.canAdvanceOffset()) {
-			return { value: null, done: true };
-		}
-
-		const entry = TarEntry.tryParse(this.mData!, this.bufferOffset);
-		return this.consumeIteratorResult(entry);
 	}
 }
