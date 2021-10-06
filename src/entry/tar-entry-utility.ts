@@ -1,8 +1,9 @@
-import { TarUtility } from '../common';
+import { TarUtility, AsyncUint8Array } from '../common';
 import { TarHeaderExtractionResult, TarHeaderUtility, TarHeader } from '../header';
 
 export interface TarEntryMetadata {
 	header: TarHeaderExtractionResult;
+	offset: number;
 	content?: Uint8Array | null;
 }
 
@@ -21,24 +22,50 @@ export namespace TarEntryUtility {
 
 	export function sanitizeTarEntryMetadata(value: TarEntryMetadata): TarEntryMetadata {
 
-		let { header, content } = (value || {});
+		let { header, content, offset } = (value || {});
 
 		if (!header) header = TarHeaderUtility.expandHeaderToExtractionResult(null);
 		if (!content) content = null;
+		if (!offset) offset = 0;
 
 		const contentLength = TarUtility.sizeofUint8Array(content);
 
 		// The fileSize field metadata must always be in sync between the content and the header
-		if (header.fileSize.value !== contentLength) {
+		if (header.fileSize.value !== contentLength && contentLength > 0) {
 			const headerAttrs = TarHeaderUtility.flattenHeaderExtractionResult(header);
 			headerAttrs.fileSize = contentLength;
 			header = TarHeaderUtility.expandHeaderToExtractionResult(headerAttrs);
 		}
 
-		return { header, content };
+		return { header, content, offset };
 	}
 
 	// ---------------- Extraction Utilities ----------------
+
+	/**
+	 * Searches through the given AsyncUint8Array for the next available tar entry from the given offset.
+	 * 
+	 * NOTE: Unlike extractEntryMetadata(), this does not try to load the file content into memory and
+	 * assumes that the entry may be a file that is too large to load. It is up to the caller to load this content if needed.
+	 */
+	export async function extractEntryMetadataAsync(input: AsyncUint8Array, offset: number = 0): Promise<TarEntryMetadata | null> {
+
+		if (!input) {
+			return null;
+		}
+
+		const sector = await TarHeaderUtility.findNextUstarSectorAsync(input, offset);
+
+		if (!sector) {
+			return null;
+		}
+
+		const { value, offset: sectorOffset } = sector;
+		const header = TarHeaderUtility.extractHeaderContent(value);
+		const content = null;
+
+		return { header, content, offset: sectorOffset };
+	}
 
 	/**
 	 * Searches through the given input buffer for the next tar entry, starting at the given offset.
@@ -68,7 +95,7 @@ export namespace TarEntryUtility {
 			content = input.slice(start, end);
 		}
 
-		return { header, content };
+		return { header, content, offset: ustarSectorOffset };
 	}
 
 	// ---------------- Creation Utilities ----------------

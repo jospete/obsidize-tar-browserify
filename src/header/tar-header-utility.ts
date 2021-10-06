@@ -1,4 +1,4 @@
-import { TarUtility } from '../common';
+import { TarUtility, AsyncUint8Array, AsyncUint8ArraySearchResult } from '../common';
 import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
 import { TarHeaderFieldDefinition } from './tar-header-field-definition';
 import { TarHeaderFieldType } from './tar-header-field-type';
@@ -149,6 +149,22 @@ export namespace TarHeaderUtility {
 			deviceMinorNumber: '00',
 			fileNamePrefix: ''
 		};
+	}
+
+	/**
+	 * Searches through the given AsyncUint8Array for the next USTAR sector,
+	 * starting at the given offset.
+	 */
+	export function findNextUstarSectorAsync(
+		input: AsyncUint8Array,
+		offset: number = 0
+	): Promise<AsyncUint8ArraySearchResult | null> {
+		return TarUtility.findInAsyncUint8Array(
+			input,
+			offset,
+			1,
+			value => isUstarSector(value)
+		);
 	}
 
 	/**

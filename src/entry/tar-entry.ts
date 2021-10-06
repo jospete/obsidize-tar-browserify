@@ -1,4 +1,4 @@
-import { TarUtility } from '../common';
+import { TarUtility, AsyncUint8Array } from '../common';
 
 import {
 	TarHeader,
@@ -37,32 +37,65 @@ export class TarEntry {
 		return !!(v && v instanceof TarEntry);
 	}
 
+	public static from(attrs: Partial<TarHeader>, content: Uint8Array | null = null): TarEntry {
+		const header = TarHeaderUtility.expandHeaderToExtractionResult(attrs);
+		return new TarEntry({ header, content, offset: 0 });
+	}
+
 	public static tryParse(input: Uint8Array, offset?: number): TarEntry | null {
 		const metadata = TarEntryUtility.extractEntryMetadata(input, offset);
 		return metadata ? new TarEntry(metadata) : null;
 	}
 
-	public static from(attrs: Partial<TarHeader>, content: Uint8Array | null = null): TarEntry {
-		const header = TarHeaderUtility.expandHeaderToExtractionResult(attrs);
-		return new TarEntry({ header, content });
+	public static async tryParseAsync(input: AsyncUint8Array, offset?: number): Promise<TarEntry | null> {
+		const metadata = await TarEntryUtility.extractEntryMetadataAsync(input, offset);
+		return metadata ? new TarEntry(metadata) : null;
 	}
 
+	/**
+	 * The header metadata parsed out for this entry.
+	 * See TarHeaderFieldDefinition for details.
+	 */
 	public get header(): TarHeaderExtractionResult {
 		return this.metadata.header;
 	}
 
+	/**
+	 * The file content for this entry.
+	 * This may be null for entries loaded asynchronously, or
+	 * for non-file entries like directories.
+	 */
 	public get content(): Uint8Array | null | undefined {
 		return this.metadata.content;
 	}
 
-	public get contentByteLength(): number {
-		return TarUtility.sizeofUint8Array(this.content);
+	/**
+	 * The starting absolute index (inclusive) in the source buffer that this entry was parsed from.
+	 * Returns zero by default if this was not parsed by a source buffer.
+	 */
+	public get bufferStartIndex(): number {
+		return this.metadata.offset;
 	}
 
+	/**
+	 * The ending absolute index (exclusive) in the source buffer that this entry was parsed from.
+	 * Returns sectorByteLength by default if this was not parsed by a source buffer.
+	 */
+	public get bufferEndIndex(): number {
+		return this.bufferStartIndex + this.sectorByteLength;
+	}
+
+	/**
+	 * The total exact byte length of this entry, including the header.
+	 */
 	public get byteLength(): number {
-		return TarHeaderUtility.HEADER_SIZE + this.contentByteLength;
+		return TarHeaderUtility.HEADER_SIZE + this.fileSize;
 	}
 
+	/**
+	 * The total byte length of this entry, including the header, 
+	 * which is a multiple of the standard tar sector size.
+	 */
 	public get sectorByteLength(): number {
 		return TarUtility.roundUpSectorOffset(this.byteLength);
 	}

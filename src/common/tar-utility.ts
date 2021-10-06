@@ -2,14 +2,14 @@
  * Generalized iterface for interacting with buffers that we only have a partial view into.
  */
 export interface AsyncUint8Array {
-	readonly byteLength: number;
+	byteLength(): Promise<number>;
 	read(offset: number, length: number): Promise<Uint8Array>;
 }
 
 /**
  * Result shape returned by findInAsyncUint8Array()
  */
-export interface AsyncUint8ArrayFindResult {
+export interface AsyncUint8ArraySearchResult {
 	source: AsyncUint8Array;
 	value: Uint8Array;
 	offset: number;
@@ -109,34 +109,39 @@ export namespace TarUtility {
 		return result;
 	}
 
+	/**
+	 * Searches the given AsyncUint8Array for a block that meets the given predicate.
+	 * @param offset the absolute offset to start reads from
+	 * @param stepSize the _relative_ step size in multiples of SECTOR_SIZE (i.e. stepSize = 3 --> blockSize = SECTOR_SIZE * 3)
+	 */
 	export async function findInAsyncUint8Array(
 		target: AsyncUint8Array,
 		offset: number,
 		stepSize: number,
 		predicate: (value: Uint8Array, offset: number, target: AsyncUint8Array) => boolean
-	): Promise<AsyncUint8ArrayFindResult | null> {
+	): Promise<AsyncUint8ArraySearchResult | null> {
 
 		if (!target) {
 			return null;
 		}
 
-		const maxLength = target.byteLength;
+		const maxLength = await target.byteLength();
 		offset = clamp(offset, 0, maxLength);
 
 		if (offset >= maxLength) {
 			return null;
 		}
 
-		stepSize = clamp(stepSize, SECTOR_SIZE, maxLength);
+		const blockSize = clamp(stepSize, SECTOR_SIZE, maxLength) * TarUtility.SECTOR_SIZE;
 
 		if (!predicate) predicate = () => true;
 
 		let cursor = offset;
-		let result: Uint8Array = await target.read(cursor, stepSize);
+		let result: Uint8Array = await target.read(cursor, blockSize);
 
 		while (cursor < maxLength && !predicate(result, cursor, target)) {
-			cursor += stepSize;
-			result = await target.read(cursor, stepSize);
+			cursor += blockSize;
+			result = await target.read(cursor, blockSize);
 		}
 
 		if (cursor < maxLength) {

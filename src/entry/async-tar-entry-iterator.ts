@@ -1,4 +1,4 @@
-import { TarUtility } from '../common';
+import { AsyncUint8Array } from '../common';
 import { TarEntry } from './tar-entry';
 import { TarEntryIteratorBase } from './tar-entry-iterator-base';
 
@@ -9,24 +9,24 @@ import { TarEntryIteratorBase } from './tar-entry-iterator-base';
  * A) step through the files using next() manually, or
  * B) get all the files at once with Array.from()
  */
-export class TarEntryIterator extends TarEntryIteratorBase implements IterableIterator<TarEntry> {
+export class AsyncTarEntryIterator extends TarEntryIteratorBase implements AsyncIterableIterator<TarEntry> {
 
-	private mData: Uint8Array | null;
+	private mData: AsyncUint8Array | null;
 
 	constructor() {
 		super();
 		this.initialize(null);
 	}
 
-	[Symbol.iterator](): IterableIterator<TarEntry> {
+	[Symbol.asyncIterator](): AsyncIterableIterator<TarEntry> {
 		return this;
 	}
 
-	public initialize(data: Uint8Array | null): void {
+	public async initialize(data: AsyncUint8Array | null): Promise<void> {
 
-		if (TarUtility.isUint8Array(data)) {
-			this.mData = data!;
-			this.bufferLength = this.mData.byteLength;
+		if (data) {
+			this.mData = data;
+			this.bufferLength = await this.mData.byteLength();
 
 		} else {
 			this.mData = null;
@@ -36,13 +36,13 @@ export class TarEntryIterator extends TarEntryIteratorBase implements IterableIt
 		this.bufferOffset = 0;
 	}
 
-	public next(): IteratorResult<TarEntry> {
+	public async next(): Promise<IteratorResult<TarEntry>> {
 
 		if (!this.canAdvanceOffset()) {
 			return { value: null, done: true };
 		}
 
-		const entry = TarEntry.tryParse(this.mData!, this.bufferOffset);
+		const entry = await TarEntry.tryParseAsync(this.mData!, this.bufferOffset);
 
 		if (!entry) {
 			return { value: null, done: true };
