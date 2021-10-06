@@ -82,6 +82,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarEntryUtility.html#appendEntryBuffer" class="tsd-kind-icon">append<wbr>Entry<wbr>Buffer</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarEntryUtility.html#extractEntryMetadata" class="tsd-kind-icon">extract<wbr>Entry<wbr>Metadata</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarEntryUtility.html#extractEntryMetadataAsync" class="tsd-kind-icon">extract<wbr>Entry<wbr>Metadata<wbr>Async</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarEntryUtility.html#generateCompositeBuffer" class="tsd-kind-icon">generate<wbr>Composite<wbr>Buffer</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarEntryUtility.html#generateEntryBuffer" class="tsd-kind-icon">generate<wbr>Entry<wbr>Buffer</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarEntryUtility.html#generatePaddedCompositeBuffer" class="tsd-kind-icon">generate<wbr>Padded<wbr>Composite<wbr>Buffer</a></li>
@@ -103,7 +104,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/entry/tar-entry-utility.ts#L80">entry/tar-entry-utility.ts:80</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/tar-entry-utility.ts#L107">entry/tar-entry-utility.ts:107</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -129,7 +130,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/entry/tar-entry-utility.ts#L47">entry/tar-entry-utility.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/tar-entry-utility.ts#L74">entry/tar-entry-utility.ts:74</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -152,6 +153,39 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="extractEntryMetadataAsync" class="tsd-anchor"></a>
+					<h3>extract<wbr>Entry<wbr>Metadata<wbr>Async</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">extract<wbr>Entry<wbr>Metadata<wbr>Async<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><a href="../interfaces/AsyncUint8Array.html" class="tsd-signature-type" data-tsd-kind="Interface">AsyncUint8Array</a>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarEntryMetadata.html" class="tsd-signature-type" data-tsd-kind="Interface">TarEntryMetadata</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/tar-entry-utility.ts#L51">entry/tar-entry-utility.ts:51</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Searches through the given AsyncUint8Array for the next available tar entry from the given offset.</p>
+								</div>
+								<p>NOTE: Unlike extractEntryMetadata(), this does not try to load the file content into memory and
+								assumes that the entry may be a file that is too large to load. It is up to the caller to load this content if needed.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>input: <a href="../interfaces/AsyncUint8Array.html" class="tsd-signature-type" data-tsd-kind="Interface">AsyncUint8Array</a></h5>
+								</li>
+								<li>
+									<h5>offset: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarEntryMetadata.html" class="tsd-signature-type" data-tsd-kind="Interface">TarEntryMetadata</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
 					<a name="generateCompositeBuffer" class="tsd-anchor"></a>
 					<h3>generate<wbr>Composite<wbr>Buffer</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
@@ -161,7 +195,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/entry/tar-entry-utility.ts#L76">entry/tar-entry-utility.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/tar-entry-utility.ts#L103">entry/tar-entry-utility.ts:103</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -184,7 +218,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/entry/tar-entry-utility.ts#L92">entry/tar-entry-utility.ts:92</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/tar-entry-utility.ts#L119">entry/tar-entry-utility.ts:119</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -207,7 +241,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/entry/tar-entry-utility.ts#L85">entry/tar-entry-utility.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/tar-entry-utility.ts#L112">entry/tar-entry-utility.ts:112</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -230,7 +264,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/entry/tar-entry-utility.ts#L22">entry/tar-entry-utility.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/tar-entry-utility.ts#L23">entry/tar-entry-utility.ts:23</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -274,6 +308,9 @@
 						<a href="TarEntryUtility.html#extractEntryMetadata" class="tsd-kind-icon">extract<wbr>Entry<wbr>Metadata</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarEntryUtility.html#extractEntryMetadataAsync" class="tsd-kind-icon">extract<wbr>Entry<wbr>Metadata<wbr>Async</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
 						<a href="TarEntryUtility.html#generateCompositeBuffer" class="tsd-kind-icon">generate<wbr>Composite<wbr>Buffer</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-namespace">
@@ -298,12 +335,19 @@
 				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
 				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>

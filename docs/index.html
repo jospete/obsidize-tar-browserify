@@ -61,9 +61,8 @@
 				<a href="#obsidizetar-browserify" id="obsidizetar-browserify" style="color: inherit; text-decoration: none;">
 					<h1>@obsidize/tar-browserify</h1>
 				</a>
-				<p>Simple utility unpack small tar files in the browser.</p>
+				<p>Simple utility for packing and unpacking tar files in the browser.</p>
 				<p>This differs from other <a href="https://www.npmjs.com/search?q=tar">npm tar modules</a> in that it contains no node-based dependencies like <code>fs</code> or <code>streams</code>.</p>
-				<p><em>NOTE:</em> this module performs all its processing in-memory, so using this with large files is not recommended.</p>
 				<p>Pairs well with these modules:</p>
 				<ul>
 					<li><a href="https://www.npmjs.com/package/pako">pako</a> for gzip / unzip</li>
@@ -88,7 +87,7 @@
 				<a href="#example" id="example" style="color: inherit; text-decoration: none;">
 					<h3>Example</h3>
 				</a>
-				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">Tarball</span><span style="color: #000000">, </span><span style="color: #001080">TarUtility</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@obsidize/tar-browserify&#039;</span><span style="color: #000000">;</span>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">Tarball</span><span style="color: #000000">, </span><span style="color: #001080">TarUtility</span><span style="color: #000000">, </span><span style="color: #001080">AsyncUint8Array</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@obsidize/tar-browserify&#039;</span><span style="color: #000000">;</span>
 
 <span style="color: #008000">// Decode a tarball from some source</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sourceBuffer</span><span style="color: #000000"> = </span><span style="color: #267F99">Uint8Array</span><span style="color: #000000">.</span><span style="color: #795E26">from</span><span style="color: #000000">([</span><span style="color: #098658">1</span><span style="color: #000000">, </span><span style="color: #098658">2</span><span style="color: #000000">, </span><span style="color: #098658">3</span><span style="color: #000000">, </span><span style="color: #098658">4</span><span style="color: #000000">]);</span>
@@ -101,6 +100,17 @@
 <span style="color: #000000">        </span><span style="color: #001080">content:</span><span style="color: #000000"> </span><span style="color: #001080">TarUtility</span><span style="color: #000000">.</span><span style="color: #795E26">encodeString</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;This is a test file&#039;</span><span style="color: #000000">)</span>
 <span style="color: #000000">    }</span>
 <span style="color: #000000">]);</span>
+
+<span style="color: #008000">// To unpack large files, use extractAsync() to conserve memory</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">entries</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">Tarball</span><span style="color: #000000">.</span><span style="color: #795E26">extractAsync</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span>
+<span style="color: #000000">    </span><span style="color: #008000">// fetch tarball file length from storage</span>
+<span style="color: #000000">    </span><span style="color: #795E26">byteLength</span><span style="color: #001080">:</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> ... </span><span style="color: #008000">/* Promise&lt;number&gt; */</span>
+<span style="color: #000000">    </span>
+<span style="color: #000000">    </span><span style="color: #008000">// read tarball data from storage</span>
+<span style="color: #000000">    </span><span style="color: #008000">// allows us to read the file in chunks rather than all at once</span>
+<span style="color: #000000">    </span><span style="color: #001080">read</span><span style="color: #000000">: (</span><span style="color: #001080">offset</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000">, </span><span style="color: #001080">length</span><span style="color: #000000">: </span><span style="color: #267F99">number</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> ... </span><span style="color: #008000">/* Promise&lt;Uint8Array&gt; */</span>
+<span style="color: #000000">});</span>
 </code></pre>
 				<p>See the <a href="https://github.com/jospete/obsidize-tar-browserify/blob/master/tests/example-usage.spec.ts">Example Usage Spec</a> to get a general feel for what this module can do.</p>
 				<a href="#api" id="api" style="color: inherit; text-decoration: none;">
@@ -143,13 +153,25 @@
 						<a href="enums/TarHeaderLinkIndicatorType.html" class="tsd-kind-icon">Tar<wbr>Header<wbr>Link<wbr>Indicator<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-class">
+						<a href="classes/AsyncTarEntryIterator.html" class="tsd-kind-icon">Async<wbr>Tar<wbr>Entry<wbr>Iterator</a>
+					</li>
+					<li class=" tsd-kind-class">
 						<a href="classes/TarEntry.html" class="tsd-kind-icon">Tar<wbr>Entry</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/TarEntryIterator.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Iterator</a>
 					</li>
 					<li class=" tsd-kind-class">
+						<a href="classes/TarEntryIteratorBase.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Iterator<wbr>Base</a>
+					</li>
+					<li class=" tsd-kind-class">
 						<a href="classes/Tarball.html" class="tsd-kind-icon">Tarball</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/AsyncUint8Array.html" class="tsd-kind-icon">Async<wbr>Uint8<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/AsyncUint8ArraySearchResult.html" class="tsd-kind-icon">Async<wbr>Uint8<wbr>Array<wbr>Search<wbr>Result</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/TarEntryAttributes.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Attributes</a>
@@ -165,6 +187,9 @@
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="interfaces/TarHeaderFieldExtractionResult.html" class="tsd-kind-icon">Tar<wbr>Header<wbr>Field<wbr>Extraction<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="modules.html#TarEntryDelegate" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Delegate</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="modules.html#TarHeaderExtractionResult" class="tsd-kind-icon">Tar<wbr>Header<wbr>Extraction<wbr>Result</a>
@@ -188,12 +213,19 @@
 				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
 				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
