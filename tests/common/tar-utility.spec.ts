@@ -1,4 +1,4 @@
-import { TarUtility } from '../src';
+import { TarUtility } from '../../src';
 
 describe('TarUtility', () => {
 

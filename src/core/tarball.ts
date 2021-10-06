@@ -5,7 +5,8 @@ import {
 	TarEntryUtility,
 	TarEntryIterator,
 	TarEntryAttributes,
-	AsyncTarEntryIterator
+	AsyncTarEntryIterator,
+	TarEntryDelegate
 } from '../entry';
 
 /**
@@ -34,23 +35,15 @@ export class Tarball {
 		return TarEntryUtility.generatePaddedCompositeBuffer(safeEntries);
 	}
 
+	/**
+	 * Parses a set of TarEntry instances from the given async buffer.
+	 * The buffer should come from a complete, uncompressed tar file.
+	 */
 	public static async extractAsync(
 		buffer: AsyncUint8Array,
-		onNextFile: (entry: TarEntry) => void
+		onNextEntry?: TarEntryDelegate
 	): Promise<TarEntry[]> {
-
-		if (!onNextFile) onNextFile = () => null;
-
-		const iterator = new AsyncTarEntryIterator();
-		const result: TarEntry[] = [];
-		iterator.initialize(buffer);
-
-		for await (const entry of iterator) {
-			onNextFile(entry);
-			result.push(entry);
-		}
-
-		return result;
+		return AsyncTarEntryIterator.extractAll(buffer, onNextEntry);
 	}
 
 	public setBuffer(buffer: Uint8Array): this {
