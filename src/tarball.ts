@@ -2,11 +2,8 @@ import { TarEntry, TarEntryUtility, TarEntryIterator, TarEntryAttributes } from 
 import { TarUtility } from './tar-utility';
 
 /**
- * Main entry point for reading tarballs.
- * 
- * 
- * High-level wrapper for a blob of uint8 data.
- * See TarIterator for more granular options.
+ * Main entry point for extracting and creating tarballs.
+ * See TarIterator and TarEntry for more granular options.
  */
 export class Tarball {
 
@@ -17,10 +14,17 @@ export class Tarball {
 	) {
 	}
 
+	/**
+	 * Parses a set of TarEntry instances from the given buffer.
+	 * The buffer should come from a complete, uncompressed tar file.
+	 */
 	public static extract(buffer: Uint8Array): TarEntry[] {
 		return new Tarball(buffer).readAllEntries();
 	}
 
+	/**
+	 * Generates a tar file buffer from the given attributes list.
+	 */
 	public static create(entries: TarEntryAttributes[]): Uint8Array {
 		const safeEntries = Array.from(entries).filter(v => !!v);
 		return TarEntryUtility.generatePaddedCompositeBuffer(safeEntries);

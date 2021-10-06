@@ -22,8 +22,6 @@ import { TarUtility } from '../tar-utility';
  * Here, we consider an "entry" to be a tuple of:
  * 1. The parsed USTAR header sector content (AKA TarHeader)
  * 2. The aggregate of the proceeding file content sectors, based on the header's file size attribute
- * 
- * NOTE: You can extract instances of this from raw Uint8Array instances using extractTarEntry()
  */
 export class TarEntry {
 
