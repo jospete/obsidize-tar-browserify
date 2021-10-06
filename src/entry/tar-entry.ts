@@ -42,6 +42,11 @@ export class TarEntry {
 		return new TarEntry({ header, content, offset: 0 });
 	}
 
+	public static fromAttributes(attrs: TarEntryAttributes): TarEntry {
+		const { header, content } = attrs;
+		return TarEntry.from(header, content);
+	}
+
 	public static tryParse(input: Uint8Array, offset?: number): TarEntry | null {
 		const metadata = TarEntryUtility.extractEntryMetadata(input, offset);
 		return metadata ? new TarEntry(metadata) : null;

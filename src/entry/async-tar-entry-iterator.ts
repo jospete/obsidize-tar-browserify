@@ -43,16 +43,6 @@ export class AsyncTarEntryIterator extends TarEntryIteratorBase implements Async
 		}
 
 		const entry = await TarEntry.tryParseAsync(this.mData!, this.bufferOffset);
-
-		if (!entry) {
-			return { value: null, done: true };
-		}
-
-		this.bufferOffset = entry.bufferEndIndex;
-
-		const value = entry;
-		const done = !this.canAdvanceOffset();
-
-		return { value, done };
+		return this.consumeIteratorResult(entry);
 	}
 }

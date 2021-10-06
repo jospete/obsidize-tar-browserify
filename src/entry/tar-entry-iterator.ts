@@ -43,16 +43,6 @@ export class TarEntryIterator extends TarEntryIteratorBase implements IterableIt
 		}
 
 		const entry = TarEntry.tryParse(this.mData!, this.bufferOffset);
-
-		if (!entry) {
-			return { value: null, done: true };
-		}
-
-		this.bufferOffset = entry.bufferEndIndex;
-
-		const value = entry;
-		const done = !this.canAdvanceOffset();
-
-		return { value, done };
+		return this.consumeIteratorResult(entry);
 	}
 }

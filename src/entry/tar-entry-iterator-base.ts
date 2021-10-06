@@ -1,4 +1,5 @@
 import { TarUtility } from '../common';
+import { TarEntry } from './tar-entry';
 
 /**
  * Shared logic between async and sync iterators.
@@ -32,5 +33,19 @@ export class TarEntryIteratorBase {
 		const { bufferOffset, bufferLength } = this;
 		const canAdvanceOffset = this.canAdvanceOffset();
 		return { bufferOffset, bufferLength, canAdvanceOffset };
+	}
+
+	protected consumeIteratorResult(entry: TarEntry | null): IteratorResult<TarEntry> {
+
+		if (!entry) {
+			return { value: null, done: true };
+		}
+
+		this.bufferOffset = entry.bufferEndIndex;
+
+		const value = entry;
+		const done = !this.canAdvanceOffset();
+
+		return { value, done };
 	}
 }

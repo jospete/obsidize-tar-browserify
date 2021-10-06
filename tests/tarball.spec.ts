@@ -5,13 +5,8 @@ import { base64ToUint8Array } from './util';
 
 describe('Tarball', () => {
 
-	it('has a toJSON() option', () => {
-		const tarball = new Tarball(base64ToUint8Array(tarballSampleBase64));
-		expect(tarball.toJSON()).toBeTruthy();
-	});
-
 	it('can safely be stringified when an invalid buffer is given', () => {
-		const tarball = new Tarball(null);
+		const tarball = new Tarball();
 		expect(() => JSON.stringify(tarball)).not.toThrowError();
 	});
 

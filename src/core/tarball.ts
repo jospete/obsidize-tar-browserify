@@ -1,5 +1,12 @@
-import { TarUtility } from '../common';
-import { TarEntry, TarEntryUtility, TarEntryIterator, TarEntryAttributes } from '../entry';
+import { AsyncUint8Array } from '../common';
+
+import {
+	TarEntry,
+	TarEntryUtility,
+	TarEntryIterator,
+	TarEntryAttributes,
+	AsyncTarEntryIterator
+} from '../entry';
 
 /**
  * Main entry point for extracting and creating tarballs.
@@ -7,19 +14,16 @@ import { TarEntry, TarEntryUtility, TarEntryIterator, TarEntryAttributes } from 
  */
 export class Tarball {
 
-	private readonly iterator: TarEntryIterator = new TarEntryIterator();
-
-	constructor(
-		public readonly buffer: Uint8Array
-	) {
-	}
+	public entries: TarEntry[] = [];
 
 	/**
 	 * Parses a set of TarEntry instances from the given buffer.
 	 * The buffer should come from a complete, uncompressed tar file.
 	 */
 	public static extract(buffer: Uint8Array): TarEntry[] {
-		return new Tarball(buffer).readAllEntries();
+		const iterator = new TarEntryIterator();
+		iterator.initialize(buffer);
+		return Array.from(iterator);
 	}
 
 	/**
@@ -30,13 +34,37 @@ export class Tarball {
 		return TarEntryUtility.generatePaddedCompositeBuffer(safeEntries);
 	}
 
-	public readAllEntries(): TarEntry[] {
-		this.iterator.initialize(this.buffer);
-		return Array.from(this.iterator);
+	public static async extractAsync(
+		buffer: AsyncUint8Array,
+		onNextFile: (entry: TarEntry) => void
+	): Promise<TarEntry[]> {
+
+		if (!onNextFile) onNextFile = () => null;
+
+		const iterator = new AsyncTarEntryIterator();
+		const result: TarEntry[] = [];
+		iterator.initialize(buffer);
+
+		for await (const entry of iterator) {
+			onNextFile(entry);
+			result.push(entry);
+		}
+
+		return result;
 	}
 
-	public toJSON(): any {
-		const byteCount = TarUtility.isUint8Array(this.buffer) ? this.buffer.byteLength : 0;
-		return `Tarball <${byteCount} bytes>`;
+	public setBuffer(buffer: Uint8Array): this {
+		this.entries = Tarball.extract(buffer);
+		return this;
+	}
+
+	public add(attrs: TarEntryAttributes): this {
+		this.entries.push(TarEntry.fromAttributes(attrs));
+		return this;
+	}
+
+	public toUint8Array(): Uint8Array {
+		const attrs = Array.from(this.entries).map(e => e.toAttributes());
+		return Tarball.create(attrs);
 	}
 }
