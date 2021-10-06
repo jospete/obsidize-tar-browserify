@@ -25,6 +25,10 @@ export namespace TarUtility {
 		return !!(value && value instanceof Uint8Array);
 	}
 
+	export function sizeofUint8Array(value: any, defaultValue: number = 0): number {
+		return isUint8Array(value) ? value.byteLength : defaultValue;
+	}
+
 	export function toString(value: any): string {
 		return value + '';
 	}

@@ -69,7 +69,7 @@ export class TarEntryIterator implements IterableIterator<TarEntry> {
 		}
 
 		this.mOffset = TarUtility.clamp(
-			entry.endOffset,
+			this.bufferOffset + entry.sectorByteLength,
 			this.bufferOffset,
 			this.bufferLength
 		);

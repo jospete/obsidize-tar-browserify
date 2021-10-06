@@ -44,9 +44,8 @@ export class TarEntry {
 		return metadata ? new TarEntry(metadata) : null;
 	}
 
-	public static from(attrs: Partial<TarHeader>, bytes?: Uint8Array): TarEntry {
+	public static from(attrs: Partial<TarHeader>, content: Uint8Array | null = null): TarEntry {
 		const header = TarHeaderUtility.expandHeaderToExtractionResult(attrs);
-		const content = TarEntryUtility.wrapEntryContentMetadata(bytes);
 		return new TarEntry({ header, content });
 	}
 
@@ -55,19 +54,19 @@ export class TarEntry {
 	}
 
 	public get content(): Uint8Array | null | undefined {
-		return this.metadata.content.value;
+		return this.metadata.content;
 	}
 
-	public get startOffset(): number {
-		return this.metadata.content.start;
-	}
-
-	public get endOffset(): number {
-		return this.metadata.content.end;
+	public get contentByteLength(): number {
+		return TarUtility.sizeofUint8Array(this.content);
 	}
 
 	public get byteLength(): number {
-		return this.endOffset - this.startOffset;
+		return TarHeaderUtility.HEADER_SIZE + this.contentByteLength;
+	}
+
+	public get sectorByteLength(): number {
+		return TarUtility.roundUpSectorOffset(this.byteLength);
 	}
 
 	public get fileName(): string {
