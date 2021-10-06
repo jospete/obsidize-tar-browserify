@@ -22,4 +22,12 @@ describe('TarEntryUtility', () => {
 			expect(TarEntryUtility.generateEntryBuffer({} as any)).not.toBe(null);
 		});
 	});
+
+	describe('extractEntryMetadataAsync()', () => {
+
+		it('returns null if the given input is falsy', async () => {
+			expect(await TarEntryUtility.extractEntryMetadataAsync(null)).toBe(null);
+			expect(await TarEntryUtility.extractEntryMetadataAsync(null, 42)).toBe(null);
+		});
+	});
 });
