@@ -1,0 +1,929 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>TarHeaderUtility | @obsidize/tar-browserify</title>
+	<meta name="description" content="Documentation for @obsidize/tar-browserify">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">@obsidize/tar-browserify</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../modules.html">@obsidize/tar-browserify</a>
+				</li>
+				<li>
+					<a href="TarHeaderUtility.html">TarHeaderUtility</a>
+				</li>
+			</ul>
+			<h1>Namespace TarHeaderUtility</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Common pure functions for serializing and deserializing tar header content.</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Variables</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#CHECKSUM_SEED" class="tsd-kind-icon">CHECKSUM_<wbr>SEED</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#CHECKSUM_SEED_STRING" class="tsd-kind-icon">CHECKSUM_<wbr>SEED_<wbr>STRING</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#FILE_MODE_DEFAULT" class="tsd-kind-icon">FILE_<wbr>MODE_<wbr>DEFAULT</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#HEADER_SIZE" class="tsd-kind-icon">HEADER_<wbr>SIZE</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#OCTAL_RADIX" class="tsd-kind-icon">OCTAL_<wbr>RADIX</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#decodeTimestamp" class="tsd-kind-icon">decode<wbr>Timestamp</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#deserializeAsciiPaddedField" class="tsd-kind-icon">deserialize<wbr>Ascii<wbr>Padded<wbr>Field</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#deserializeFieldValue" class="tsd-kind-icon">deserialize<wbr>Field<wbr>Value</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#deserializeIntegerOctal" class="tsd-kind-icon">deserialize<wbr>Integer<wbr>Octal</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#deserializeIntegerOctalTimestamp" class="tsd-kind-icon">deserialize<wbr>Integer<wbr>Octal<wbr>Timestamp</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#encodeTimestamp" class="tsd-kind-icon">encode<wbr>Timestamp</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#expandHeaderToExtractionResult" class="tsd-kind-icon">expand<wbr>Header<wbr>ToExtraction<wbr>Result</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#extractHeader" class="tsd-kind-icon">extract<wbr>Header</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#extractHeaderContent" class="tsd-kind-icon">extract<wbr>Header<wbr>Content</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#findNextUstarSectorOffset" class="tsd-kind-icon">find<wbr>Next<wbr>Ustar<wbr>Sector<wbr>Offset</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#flattenHeaderExtractionResult" class="tsd-kind-icon">flatten<wbr>Header<wbr>Extraction<wbr>Result</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#generateHeaderBuffer" class="tsd-kind-icon">generate<wbr>Header<wbr>Buffer</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#getDefaultHeaderValues" class="tsd-kind-icon">get<wbr>Default<wbr>Header<wbr>Values</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#isUstarSector" class="tsd-kind-icon">is<wbr>Ustar<wbr>Sector</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#parseIntOctal" class="tsd-kind-icon">parse<wbr>Int<wbr>Octal</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#sanitizeHeader" class="tsd-kind-icon">sanitize<wbr>Header</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#sanitizeTimestamp" class="tsd-kind-icon">sanitize<wbr>Timestamp</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#serializeFieldValue" class="tsd-kind-icon">serialize<wbr>Field<wbr>Value</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#serializeIntegerOctal" class="tsd-kind-icon">serialize<wbr>Integer<wbr>Octal</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#serializeIntegerOctalTimestamp" class="tsd-kind-icon">serialize<wbr>Integer<wbr>Octal<wbr>Timestamp</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#serializeIntegerOctalToString" class="tsd-kind-icon">serialize<wbr>Integer<wbr>Octal<wbr>ToString</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#serializeIntegerOctalWithSuffix" class="tsd-kind-icon">serialize<wbr>Integer<wbr>Octal<wbr>With<wbr>Suffix</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#sliceFieldAscii" class="tsd-kind-icon">slice<wbr>Field<wbr>Ascii</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="TarHeaderUtility.html#sliceFieldBuffer" class="tsd-kind-icon">slice<wbr>Field<wbr>Buffer</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-namespace">
+					<a name="CHECKSUM_SEED" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> CHECKSUM_<wbr>SEED</h3>
+					<div class="tsd-signature tsd-kind-icon">CHECKSUM_<wbr>SEED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L32">header/tar-header-utility.ts:32</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-namespace">
+					<a name="CHECKSUM_SEED_STRING" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> CHECKSUM_<wbr>SEED_<wbr>STRING</h3>
+					<div class="tsd-signature tsd-kind-icon">CHECKSUM_<wbr>SEED_<wbr>STRING<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L31">header/tar-header-utility.ts:31</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-namespace">
+					<a name="FILE_MODE_DEFAULT" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> FILE_<wbr>MODE_<wbr>DEFAULT</h3>
+					<div class="tsd-signature tsd-kind-icon">FILE_<wbr>MODE_<wbr>DEFAULT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L30">header/tar-header-utility.ts:30</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-namespace">
+					<a name="HEADER_SIZE" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> HEADER_<wbr>SIZE</h3>
+					<div class="tsd-signature tsd-kind-icon">HEADER_<wbr>SIZE<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">512</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L29">header/tar-header-utility.ts:29</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-namespace">
+					<a name="OCTAL_RADIX" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> OCTAL_<wbr>RADIX</h3>
+					<div class="tsd-signature tsd-kind-icon">OCTAL_<wbr>RADIX<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">8</span><span class="tsd-signature-symbol"> = 8</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L28">header/tar-header-utility.ts:28</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="decodeTimestamp" class="tsd-anchor"></a>
+					<h3>decode<wbr>Timestamp</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">decode<wbr>Timestamp<span class="tsd-signature-symbol">(</span>headerValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L55">header/tar-header-utility.ts:55</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>headerValue: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="deserializeAsciiPaddedField" class="tsd-anchor"></a>
+					<h3>deserialize<wbr>Ascii<wbr>Padded<wbr>Field</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">deserialize<wbr>Ascii<wbr>Padded<wbr>Field<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L67">header/tar-header-utility.ts:67</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">Uint8Array</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="deserializeFieldValue" class="tsd-anchor"></a>
+					<h3>deserialize<wbr>Field<wbr>Value</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">deserialize<wbr>Field<wbr>Value<span class="tsd-signature-symbol">(</span>field<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a>, input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L186">header/tar-header-utility.ts:186</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>field: <a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a></h5>
+								</li>
+								<li>
+									<h5>input: <span class="tsd-signature-type">Uint8Array</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="deserializeIntegerOctal" class="tsd-anchor"></a>
+					<h3>deserialize<wbr>Integer<wbr>Octal</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">deserialize<wbr>Integer<wbr>Octal<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L75">header/tar-header-utility.ts:75</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>input: <span class="tsd-signature-type">Uint8Array</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="deserializeIntegerOctalTimestamp" class="tsd-anchor"></a>
+					<h3>deserialize<wbr>Integer<wbr>Octal<wbr>Timestamp</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">deserialize<wbr>Integer<wbr>Octal<wbr>Timestamp<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L87">header/tar-header-utility.ts:87</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">Uint8Array</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="encodeTimestamp" class="tsd-anchor"></a>
+					<h3>encode<wbr>Timestamp</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">encode<wbr>Timestamp<span class="tsd-signature-symbol">(</span>timestamp<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L59">header/tar-header-utility.ts:59</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>timestamp: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="expandHeaderToExtractionResult" class="tsd-anchor"></a>
+					<h3>expand<wbr>Header<wbr>ToExtraction<wbr>Result</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">expand<wbr>Header<wbr>ToExtraction<wbr>Result<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules.html#TarHeaderExtractionResult" class="tsd-signature-type" data-tsd-kind="Type alias">TarHeaderExtractionResult</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L271">header/tar-header-utility.ts:271</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>input: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../modules.html#TarHeaderExtractionResult" class="tsd-signature-type" data-tsd-kind="Type alias">TarHeaderExtractionResult</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="extractHeader" class="tsd-anchor"></a>
+					<h3>extract<wbr>Header</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">extract<wbr>Header<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L182">header/tar-header-utility.ts:182</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>input: <span class="tsd-signature-type">Uint8Array</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> offset: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="extractHeaderContent" class="tsd-anchor"></a>
+					<h3>extract<wbr>Header<wbr>Content</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">extract<wbr>Header<wbr>Content<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules.html#TarHeaderExtractionResult" class="tsd-signature-type" data-tsd-kind="Type alias">TarHeaderExtractionResult</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L202">header/tar-header-utility.ts:202</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Extracts all known header fields from the given input buffer, at the given offset.</p>
+								</div>
+								<p>NOTE: this does not check if the buffer at the given offset is actually a ustar sector, and
+								it is up to the caller to make this check.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>input: <span class="tsd-signature-type">Uint8Array</span></h5>
+								</li>
+								<li>
+									<h5>offset: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../modules.html#TarHeaderExtractionResult" class="tsd-signature-type" data-tsd-kind="Type alias">TarHeaderExtractionResult</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="findNextUstarSectorOffset" class="tsd-anchor"></a>
+					<h3>find<wbr>Next<wbr>Ustar<wbr>Sector<wbr>Offset</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">find<wbr>Next<wbr>Ustar<wbr>Sector<wbr>Offset<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L158">header/tar-header-utility.ts:158</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Searches the given input buffer for a USTAR header tar sector, starting at the given offset.
+									Returns -1 if no valid header sector is found.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>input: <span class="tsd-signature-type">Uint8Array</span></h5>
+								</li>
+								<li>
+									<h5>offset: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="flattenHeaderExtractionResult" class="tsd-anchor"></a>
+					<h3>flatten<wbr>Header<wbr>Extraction<wbr>Result</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">flatten<wbr>Header<wbr>Extraction<wbr>Result<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><a href="../modules.html#TarHeaderExtractionResult" class="tsd-signature-type" data-tsd-kind="Type alias">TarHeaderExtractionResult</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L217">header/tar-header-utility.ts:217</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>input: <a href="../modules.html#TarHeaderExtractionResult" class="tsd-signature-type" data-tsd-kind="Type alias">TarHeaderExtractionResult</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="generateHeaderBuffer" class="tsd-anchor"></a>
+					<h3>generate<wbr>Header<wbr>Buffer</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Header<wbr>Buffer<span class="tsd-signature-symbol">(</span>header<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L256">header/tar-header-utility.ts:256</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Creates a USTAR sector buffer using the given header values.
+									NOTE: missing fields will be auto-populated with the defaults via sanitizeHeader()</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>header: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="getDefaultHeaderValues" class="tsd-anchor"></a>
+					<h3>get<wbr>Default<wbr>Header<wbr>Values</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Default<wbr>Header<wbr>Values<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L133">header/tar-header-utility.ts:133</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="isUstarSector" class="tsd-anchor"></a>
+					<h3>is<wbr>Ustar<wbr>Sector</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Ustar<wbr>Sector<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L101">header/tar-header-utility.ts:101</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>input: <span class="tsd-signature-type">Uint8Array</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> offset: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="parseIntOctal" class="tsd-anchor"></a>
+					<h3>parse<wbr>Int<wbr>Octal</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Int<wbr>Octal<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L71">header/tar-header-utility.ts:71</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>input: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="sanitizeHeader" class="tsd-anchor"></a>
+					<h3>sanitize<wbr>Header</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">sanitize<wbr>Header<span class="tsd-signature-symbol">(</span>header<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L124">header/tar-header-utility.ts:124</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>header: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="sanitizeTimestamp" class="tsd-anchor"></a>
+					<h3>sanitize<wbr>Timestamp</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">sanitize<wbr>Timestamp<span class="tsd-signature-symbol">(</span>timestamp<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L63">header/tar-header-utility.ts:63</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>timestamp: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="serializeFieldValue" class="tsd-anchor"></a>
+					<h3>serialize<wbr>Field<wbr>Value</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">serialize<wbr>Field<wbr>Value<span class="tsd-signature-symbol">(</span>field<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a>, input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L233">header/tar-header-utility.ts:233</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>field: <a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a></h5>
+								</li>
+								<li>
+									<h5>input: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="serializeIntegerOctal" class="tsd-anchor"></a>
+					<h3>serialize<wbr>Integer<wbr>Octal</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">serialize<wbr>Integer<wbr>Octal<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, field<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L79">header/tar-header-utility.ts:79</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>field: <a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="serializeIntegerOctalTimestamp" class="tsd-anchor"></a>
+					<h3>serialize<wbr>Integer<wbr>Octal<wbr>Timestamp</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">serialize<wbr>Integer<wbr>Octal<wbr>Timestamp<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, field<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L83">header/tar-header-utility.ts:83</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>field: <a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="serializeIntegerOctalToString" class="tsd-anchor"></a>
+					<h3>serialize<wbr>Integer<wbr>Octal<wbr>ToString</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">serialize<wbr>Integer<wbr>Octal<wbr>ToString<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, maxLength<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L106">header/tar-header-utility.ts:106</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>maxLength: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="serializeIntegerOctalWithSuffix" class="tsd-anchor"></a>
+					<h3>serialize<wbr>Integer<wbr>Octal<wbr>With<wbr>Suffix</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">serialize<wbr>Integer<wbr>Octal<wbr>With<wbr>Suffix<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, field<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a>, suffix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L112">header/tar-header-utility.ts:112</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>value: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>field: <a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a></h5>
+								</li>
+								<li>
+									<h5>suffix: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="sliceFieldAscii" class="tsd-anchor"></a>
+					<h3>slice<wbr>Field<wbr>Ascii</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">slice<wbr>Field<wbr>Ascii<span class="tsd-signature-symbol">(</span>field<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a>, input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L91">header/tar-header-utility.ts:91</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>field: <a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a></h5>
+								</li>
+								<li>
+									<h5>input: <span class="tsd-signature-type">Uint8Array</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> offset: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-namespace">
+					<a name="sliceFieldBuffer" class="tsd-anchor"></a>
+					<h3>slice<wbr>Field<wbr>Buffer</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-namespace">
+						<li class="tsd-signature tsd-kind-icon">slice<wbr>Field<wbr>Buffer<span class="tsd-signature-symbol">(</span>field<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a>, input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-utility.ts#L95">header/tar-header-utility.ts:95</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>field: <a href="../interfaces/TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderField</a></h5>
+								</li>
+								<li>
+									<h5>input: <span class="tsd-signature-type">Uint8Array</span></h5>
+								</li>
+								<li>
+									<h5>offset: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="../modules.html">Exports</a>
+					</li>
+					<li class=" tsd-kind-namespace">
+						<a href="TarEntryUtility.html">Tar<wbr>Entry<wbr>Utility</a>
+					</li>
+					<li class=" tsd-kind-namespace">
+						<a href="TarHeaderFieldDefinition.html">Tar<wbr>Header<wbr>Field<wbr>Definition</a>
+					</li>
+					<li class="current tsd-kind-namespace">
+						<a href="TarHeaderUtility.html">Tar<wbr>Header<wbr>Utility</a>
+					</li>
+					<li class=" tsd-kind-namespace">
+						<a href="TarUtility.html">Tar<wbr>Utility</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-variable tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#CHECKSUM_SEED" class="tsd-kind-icon">CHECKSUM_<wbr>SEED</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#CHECKSUM_SEED_STRING" class="tsd-kind-icon">CHECKSUM_<wbr>SEED_<wbr>STRING</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#FILE_MODE_DEFAULT" class="tsd-kind-icon">FILE_<wbr>MODE_<wbr>DEFAULT</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#HEADER_SIZE" class="tsd-kind-icon">HEADER_<wbr>SIZE</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#OCTAL_RADIX" class="tsd-kind-icon">OCTAL_<wbr>RADIX</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#decodeTimestamp" class="tsd-kind-icon">decode<wbr>Timestamp</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#deserializeAsciiPaddedField" class="tsd-kind-icon">deserialize<wbr>Ascii<wbr>Padded<wbr>Field</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#deserializeFieldValue" class="tsd-kind-icon">deserialize<wbr>Field<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#deserializeIntegerOctal" class="tsd-kind-icon">deserialize<wbr>Integer<wbr>Octal</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#deserializeIntegerOctalTimestamp" class="tsd-kind-icon">deserialize<wbr>Integer<wbr>Octal<wbr>Timestamp</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#encodeTimestamp" class="tsd-kind-icon">encode<wbr>Timestamp</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#expandHeaderToExtractionResult" class="tsd-kind-icon">expand<wbr>Header<wbr>ToExtraction<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#extractHeader" class="tsd-kind-icon">extract<wbr>Header</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#extractHeaderContent" class="tsd-kind-icon">extract<wbr>Header<wbr>Content</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#findNextUstarSectorOffset" class="tsd-kind-icon">find<wbr>Next<wbr>Ustar<wbr>Sector<wbr>Offset</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#flattenHeaderExtractionResult" class="tsd-kind-icon">flatten<wbr>Header<wbr>Extraction<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#generateHeaderBuffer" class="tsd-kind-icon">generate<wbr>Header<wbr>Buffer</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#getDefaultHeaderValues" class="tsd-kind-icon">get<wbr>Default<wbr>Header<wbr>Values</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#isUstarSector" class="tsd-kind-icon">is<wbr>Ustar<wbr>Sector</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#parseIntOctal" class="tsd-kind-icon">parse<wbr>Int<wbr>Octal</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#sanitizeHeader" class="tsd-kind-icon">sanitize<wbr>Header</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#sanitizeTimestamp" class="tsd-kind-icon">sanitize<wbr>Timestamp</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#serializeFieldValue" class="tsd-kind-icon">serialize<wbr>Field<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#serializeIntegerOctal" class="tsd-kind-icon">serialize<wbr>Integer<wbr>Octal</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#serializeIntegerOctalTimestamp" class="tsd-kind-icon">serialize<wbr>Integer<wbr>Octal<wbr>Timestamp</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#serializeIntegerOctalToString" class="tsd-kind-icon">serialize<wbr>Integer<wbr>Octal<wbr>ToString</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#serializeIntegerOctalWithSuffix" class="tsd-kind-icon">serialize<wbr>Integer<wbr>Octal<wbr>With<wbr>Suffix</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#sliceFieldAscii" class="tsd-kind-icon">slice<wbr>Field<wbr>Ascii</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-namespace">
+						<a href="TarHeaderUtility.html#sliceFieldBuffer" class="tsd-kind-icon">slice<wbr>Field<wbr>Buffer</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,10 +1,12 @@
+#! /usr/bin/env node
+
 const fs = require('fs-extra');
 
 const { Tarball } = require('../dist');
-const { tarballSampleBase64 } = require('../tests/generated/tarball-test-assets');
-const { base64ToUint8Array } = require('../tests/util');
+const { readTarSample } = require('./tar-asset-util');
 
-const tarball = new Tarball(Buffer.from(tarballSampleBase64, 'base64'));
+const sampleTarBuffer = readTarSample();
+const tarball = new Tarball(sampleTarBuffer);
 const entries = tarball.readAllEntries();
 
 fs.mkdirpSync('./tmp');

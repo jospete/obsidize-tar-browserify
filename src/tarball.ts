@@ -1,8 +1,5 @@
-import { TarEntry } from './tar-entry';
-import { TarEntryIterator } from './tar-entry-iterator';
+import { TarEntry, TarEntryUtility, TarEntryIterator, TarEntryAttributes } from './entry';
 import { TarUtility } from './tar-utility';
-
-const { isUint8Array } = TarUtility;
 
 /**
  * Main entry point for reading tarballs.
@@ -20,13 +17,22 @@ export class Tarball {
 	) {
 	}
 
+	public static extract(buffer: Uint8Array): TarEntry[] {
+		return new Tarball(buffer).readAllEntries();
+	}
+
+	public static create(entries: TarEntryAttributes[]): Uint8Array {
+		const safeEntries = Array.from(entries).filter(v => !!v);
+		return TarEntryUtility.generatePaddedCompositeBuffer(safeEntries);
+	}
+
 	public readAllEntries(): TarEntry[] {
 		this.iterator.initialize(this.buffer);
 		return Array.from(this.iterator);
 	}
 
 	public toJSON(): any {
-		const byteCount = isUint8Array(this.buffer) ? this.buffer.byteLength : 0;
+		const byteCount = TarUtility.isUint8Array(this.buffer) ? this.buffer.byteLength : 0;
 		return `Tarball <${byteCount} bytes>`;
 	}
 }

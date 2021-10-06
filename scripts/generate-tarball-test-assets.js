@@ -4,6 +4,8 @@ const path = require('path');
 const fs = require('fs-extra');
 const tar = require('tar');
 
+const { writeTarSample } = require('./tar-asset-util');
+
 async function crawlTarAssets(files) {
 	const globby = await import('globby').then(m => m.globby);
 	return Promise.all(files.map(f => globby(f)));
@@ -65,7 +67,9 @@ async function exportTestAsssets(tarballContent, files) {
 	const totalFileCount = fileStructures.reduce((count, globPaths) => count + globPaths.length, 0);
 	const output = createOutputContent({ totalFileCount, fileStructures, tarballSampleBase64 });
 
+	writeTarSample(tarballContent);
 	fs.writeFileSync(outputPath, output, 'utf8');
+
 	console.log('generated output at ' + outputPath + ' for files: ', files);
 }
 

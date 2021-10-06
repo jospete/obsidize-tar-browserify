@@ -3,15 +3,13 @@ import { Tarball, TarEntry, TarUtility } from '../src';
 import { tarballSampleBase64, fileStructures } from './generated/tarball-test-assets';
 import { base64ToUint8Array } from './util';
 
-const { isUint8Array } = TarUtility;
-
 describe('General Usage', () => {
 
 	it('can parse tarballs created by the node-tar module', async () => {
 
 		const tarballUint8 = base64ToUint8Array(tarballSampleBase64);
 		console.log('tarballUint8 length = ' + tarballUint8.byteLength);
-		console.log('tarballUint8 isUint8Array = ' + isUint8Array(tarballUint8));
+		console.log('tarballUint8 isUint8Array = ' + TarUtility.isUint8Array(tarballUint8));
 
 		const tarball = new Tarball(tarballUint8);
 		console.log('processing tarball: ', tarball.toJSON());

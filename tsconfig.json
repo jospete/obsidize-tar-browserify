@@ -21,10 +21,11 @@
     ]
   },
   "include": [
-    "src"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "tests"
+    "tests",
+    "scripts"
   ]
 }

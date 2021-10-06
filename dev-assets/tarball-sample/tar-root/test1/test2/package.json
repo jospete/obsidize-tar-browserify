@@ -1,6 +1,6 @@
 {
   "name": "@obsidize/tar-browserify",
-  "version": "2.0.0",
+  "version": "1.0.1",
   "description": "Browser-based tar utility for packing and unpacking small tar files",
   "main": "es5.js",
   "module": "index.js",
@@ -26,11 +26,10 @@
     "release:publish": "run-s git:publish dist:publish",
     "release:prepare:patch": "npm run release:prepare -- --release-as patch",
     "bump": "run-s release:prepare:patch release:test release:publish",
-    "docs": "typedoc ./src/index.ts --out ./docs --excludePrivate",
+    "docs": "typedoc ./src/index.ts --out ./docs",
     "docs:open": "open-cli \".\\docs\\index.html\"",
     "generate:tar:assets": "ts-node ./scripts/generate-tarball-test-assets.js",
-    "generate:tar:json": "npm run rebuild && node ./scripts/generate-tar-example-json.js",
-    "generate:tar:output": "npm run rebuild && node ./scripts/generate-tar-example-file.js"
+    "generate:tar:json": "ts-node -O {\\\"module\\\":\\\"commonjs\\\"} ./scripts/generate-tar-example-json.ts"
   },
   "repository": {
     "type": "git",
