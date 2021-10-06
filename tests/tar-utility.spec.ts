@@ -66,4 +66,35 @@ describe('TarUtility', () => {
 			expect(TarUtility.advanceSectorOffsetUnclamped(TarUtility.SECTOR_SIZE)).toBe(TarUtility.SECTOR_SIZE * 2);
 		});
 	});
+
+	describe('decodeString()', () => {
+
+		it('returns an empty string when the given value is not a valid Uint8Array', () => {
+			expect(TarUtility.decodeString(null)).toBe('');
+		});
+	});
+
+	describe('generateChecksum()', () => {
+
+		it('returns zero when the given value is not a valid Uint8Array', () => {
+			expect(TarUtility.generateChecksum(null)).toBe(0);
+		});
+	});
+
+	describe('concatUint8Arrays()', () => {
+
+		it('returns the second value when the first is not a Uint8Array', () => {
+			const a = null;
+			const b = new Uint8Array(5);
+			expect(TarUtility.concatUint8Arrays(a, b)).toBe(b);
+		});
+
+		it('does nothing when given blank instances', () => {
+			const a = new Uint8Array(0);
+			const b = new Uint8Array(0);
+			let result: Uint8Array;
+			expect(() => result = TarUtility.concatUint8Arrays(a, b)).not.toThrowError();
+			expect(result.byteLength).toBe(0);
+		});
+	});
 });

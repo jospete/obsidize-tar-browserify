@@ -29,12 +29,12 @@ export namespace TarUtility {
 		return value + '';
 	}
 
-	export function encodeString(value: string): Uint8Array {
-		return new TextEncoder().encode(toString(value));
+	export function encodeString(input: string): Uint8Array {
+		return new TextEncoder().encode(toString(input));
 	}
 
-	export function decodeString(value: Uint8Array): string {
-		return isUint8Array(value) ? new TextDecoder().decode(value) : '';
+	export function decodeString(input: Uint8Array): string {
+		return isUint8Array(input) ? new TextDecoder().decode(input) : '';
 	}
 
 	export function generateChecksum(input: Uint8Array): number {
@@ -79,8 +79,8 @@ export namespace TarUtility {
 
 	export function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {
 
-		if (!isUint8Array(a)) return b;
 		if (!isUint8Array(b)) return a;
+		if (!isUint8Array(a)) return b;
 
 		const aLength = a.byteLength;
 		const bLength = b.byteLength;
