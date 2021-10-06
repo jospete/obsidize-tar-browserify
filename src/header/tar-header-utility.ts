@@ -111,8 +111,8 @@ export namespace TarHeaderUtility {
 
 	export function serializeIntegerOctalWithSuffix(value: number, field: TarHeaderField, suffix: string): Uint8Array {
 
-		const { size } = (field || {});
-		const adjustedLength = size - 1 - suffix.length;
+		const { size } = (field || { size: 0 });
+		const adjustedLength = Math.max(0, size - 1 - suffix.length);
 
 		// USTAR docs indicate that value length needs to be 1 less than actual field size.
 		// We also need to allow for suffixes... because random white spaces.
@@ -230,11 +230,6 @@ export namespace TarHeaderUtility {
 
 	// ---------------- Creation Utilities ----------------
 
-	export function expandHeaderFieldToExtractionResult<T>(field: TarHeaderField, value: T): TarHeaderFieldExtractionResult<T> {
-		const bytes = serializeFieldValue(field, value);
-		return { field, bytes, value };
-	}
-
 	export function serializeFieldValue(field: TarHeaderField, input: any): Uint8Array {
 
 		const { type, size } = (field || {});
@@ -245,9 +240,7 @@ export namespace TarHeaderUtility {
 			? transform.serialize(input, field)
 			: null;
 
-		const valueLength = TarUtility.isUint8Array(value)
-			? value!.byteLength
-			: 0;
+		const valueLength = TarUtility.sizeofUint8Array(value);
 
 		if (valueLength > 0 && valueLength <= size) {
 			result.set(value!, 0);
@@ -265,13 +258,11 @@ export namespace TarHeaderUtility {
 		const headerBuffer = new Uint8Array(HEADER_SIZE);
 		const extracted = expandHeaderToExtractionResult(header);
 
+		// We don't need to do any extra sanity checks here since the above
+		// expansion call guarantees that these attributes will be defined and valid.
 		for (const metadata of Object.values(extracted)) {
-
 			const { bytes, field } = metadata;
-
-			if (field && TarUtility.isUint8Array(bytes) && bytes.byteLength > 0) {
-				headerBuffer.set(bytes, field.offset);
-			}
+			headerBuffer.set(bytes, field.offset);
 		}
 
 		return headerBuffer;

@@ -162,6 +162,14 @@ describe('TarHeaderUtility', () => {
 		});
 	});
 
+	describe('serializeFieldValue()', () => {
+
+		it('returns an empty Uint8Array on malformed input', () => {
+			expect(TarHeaderUtility.serializeFieldValue(null, 'test'))
+				.toEqual(new Uint8Array(0));
+		});
+	});
+
 	describe('deserializeFieldValue()', () => {
 
 		const defaultHeader = TarHeaderUtility.expandHeaderToExtractionResult(null);
@@ -176,5 +184,30 @@ describe('TarHeaderUtility', () => {
 				expect(deserialized).toEqual(metadata.value);
 			});
 		}
+
+		it('returns undefined for unknown field types', () => {
+			expect(TarHeaderUtility.deserializeFieldValue(null, new Uint8Array(0))).not.toBeDefined();
+		});
+	});
+
+	describe('serializeIntegerOctalWithSuffix()', () => {
+
+		it('uses a default min length of zero when a field is not given', () => {
+			expect(TarHeaderUtility.serializeIntegerOctalWithSuffix(0, null, ''))
+				.toEqual(TarUtility.encodeString('0'));
+		});
+	});
+
+	describe('flattenHeaderExtractionResult()', () => {
+
+		it('returns an unpopulated object when the input is malformed', () => {
+			expect(TarHeaderUtility.flattenHeaderExtractionResult(null))
+				.toEqual(TarHeaderUtility.getDefaultHeaderValues());
+		});
+
+		it('properly handles malformed objects', () => {
+			expect(TarHeaderUtility.flattenHeaderExtractionResult({ fileName: null } as any))
+				.toEqual(TarHeaderUtility.getDefaultHeaderValues());
+		});
 	});
 });

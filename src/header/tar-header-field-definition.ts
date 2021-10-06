@@ -47,10 +47,6 @@ export namespace TarHeaderFieldDefinition {
 		fileNamePrefix
 	};
 
-	export function getFieldDefinition(fieldName: keyof TarHeader): TarHeaderField | undefined {
-		return fieldsByName[fieldName];
-	}
-
 	export function orderedSet(): TarHeaderField[] {
 		return Object.values(fieldsByName);
 	}
