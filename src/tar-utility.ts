@@ -37,6 +37,10 @@ export namespace TarUtility {
 		return isUint8Array(value) ? new TextDecoder().decode(value) : '';
 	}
 
+	export function generateChecksum(input: Uint8Array): number {
+		return isUint8Array(input) ? input.reduce((a, b) => (a + b), 0) : 0;
+	}
+
 	export function clamp(value: number, min: number, max: number): number {
 		return Math.max(min, Math.min(value, max));
 	}

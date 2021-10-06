@@ -8,31 +8,27 @@ import { TarHeaderFieldType } from './tar-header-field-type'
  */
 export namespace TarHeaderFieldDefinition {
 
-	// NOTE: We use object creator functions here so that each tar header gets its own instances of these fields,
-	// in order to prevent programmatic data pollution.
-
 	// Legacy Fields
-	export function fileName(): TarHeaderField { return ({ name: 'fileName', offset: 0, size: 100, type: TarHeaderFieldType.ASCII_PADDED_END }) }
-	export function fileMode(): TarHeaderField { return ({ name: 'fileMode', offset: 100, size: 8, type: TarHeaderFieldType.INTEGER_OCTAL }) }
-	export function ownerUserId(): TarHeaderField { return ({ name: 'ownerUserId', offset: 108, size: 8, type: TarHeaderFieldType.INTEGER_OCTAL }) }
-	export function groupUserId(): TarHeaderField { return ({ name: 'groupUserId', offset: 116, size: 8, type: TarHeaderFieldType.INTEGER_OCTAL }) }
-	export function fileSize(): TarHeaderField { return ({ name: 'fileSize', offset: 124, size: 12, type: TarHeaderFieldType.INTEGER_OCTAL }) }
-	export function lastModified(): TarHeaderField { return ({ name: 'lastModified', offset: 136, size: 12, type: TarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP }) }
-	export function headerChecksum(): TarHeaderField { return ({ name: 'headerChecksum', offset: 148, size: 8, type: TarHeaderFieldType.INTEGER_OCTAL }) }
-	export function typeFlag(): TarHeaderField { return ({ name: 'typeFlag', offset: 156, size: 1, type: TarHeaderFieldType.ASCII }) }
-	export function linkedFileName(): TarHeaderField { return ({ name: 'linkedFileName', offset: 157, size: 100, type: TarHeaderFieldType.ASCII_PADDED_END }) }
+	export const fileName: TarHeaderField = Object.freeze({ name: 'fileName', offset: 0, size: 100, type: TarHeaderFieldType.ASCII_PADDED_END });
+	export const fileMode: TarHeaderField = Object.freeze({ name: 'fileMode', offset: 100, size: 8, type: TarHeaderFieldType.INTEGER_OCTAL });
+	export const ownerUserId: TarHeaderField = Object.freeze({ name: 'ownerUserId', offset: 108, size: 8, type: TarHeaderFieldType.INTEGER_OCTAL });
+	export const groupUserId: TarHeaderField = Object.freeze({ name: 'groupUserId', offset: 116, size: 8, type: TarHeaderFieldType.INTEGER_OCTAL });
+	export const fileSize: TarHeaderField = Object.freeze({ name: 'fileSize', offset: 124, size: 12, type: TarHeaderFieldType.INTEGER_OCTAL });
+	export const lastModified: TarHeaderField = Object.freeze({ name: 'lastModified', offset: 136, size: 12, type: TarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP });
+	export const headerChecksum: TarHeaderField = Object.freeze({ name: 'headerChecksum', offset: 148, size: 8, type: TarHeaderFieldType.INTEGER_OCTAL });
+	export const typeFlag: TarHeaderField = Object.freeze({ name: 'typeFlag', offset: 156, size: 1, type: TarHeaderFieldType.ASCII });
+	export const linkedFileName: TarHeaderField = Object.freeze({ name: 'linkedFileName', offset: 157, size: 100, type: TarHeaderFieldType.ASCII_PADDED_END });
 
 	// USTAR Fields
-	export function ustarIndicator(): TarHeaderField { return ({ name: 'ustarIndicator', offset: 257, size: 6, type: TarHeaderFieldType.ASCII, constantValue: 'ustar\0' }) }
-	export function ustarVersion(): TarHeaderField { return ({ name: 'ustarVersion', offset: 263, size: 2, type: TarHeaderFieldType.ASCII, constantValue: '00' }) }
-	export function ownerUserName(): TarHeaderField { return ({ name: 'ownerUserName', offset: 265, size: 32, type: TarHeaderFieldType.ASCII_PADDED_END }) }
-	export function ownerGroupName(): TarHeaderField { return ({ name: 'ownerGroupName', offset: 297, size: 32, type: TarHeaderFieldType.ASCII_PADDED_END }) }
-	export function deviceMajorNumber(): TarHeaderField { return ({ name: 'deviceMajorNumber', offset: 329, size: 8, type: TarHeaderFieldType.ASCII_PADDED_END }) }
-	export function deviceMinorNumber(): TarHeaderField { return ({ name: 'deviceMinorNumber', offset: 337, size: 8, type: TarHeaderFieldType.ASCII_PADDED_END }) }
-	export function fileNamePrefix(): TarHeaderField { return ({ name: 'fileNamePrefix', offset: 345, size: 155, type: TarHeaderFieldType.ASCII_PADDED_END }) }
-	export function padding(): TarHeaderField { return ({ name: 'padding', offset: 500, size: 12, type: TarHeaderFieldType.ASCII, constantValue: '000000000000' }) }
+	export const ustarIndicator: TarHeaderField = Object.freeze({ name: 'ustarIndicator', offset: 257, size: 6, type: TarHeaderFieldType.ASCII, constantValue: 'ustar\0' });
+	export const ustarVersion: TarHeaderField = Object.freeze({ name: 'ustarVersion', offset: 263, size: 2, type: TarHeaderFieldType.ASCII, constantValue: '00' });
+	export const ownerUserName: TarHeaderField = Object.freeze({ name: 'ownerUserName', offset: 265, size: 32, type: TarHeaderFieldType.ASCII_PADDED_END });
+	export const ownerGroupName: TarHeaderField = Object.freeze({ name: 'ownerGroupName', offset: 297, size: 32, type: TarHeaderFieldType.ASCII_PADDED_END });
+	export const deviceMajorNumber: TarHeaderField = Object.freeze({ name: 'deviceMajorNumber', offset: 329, size: 8, type: TarHeaderFieldType.ASCII_PADDED_END });
+	export const deviceMinorNumber: TarHeaderField = Object.freeze({ name: 'deviceMinorNumber', offset: 337, size: 8, type: TarHeaderFieldType.ASCII_PADDED_END });
+	export const fileNamePrefix: TarHeaderField = Object.freeze({ name: 'fileNamePrefix', offset: 345, size: 155, type: TarHeaderFieldType.ASCII_PADDED_END });
 
-	const fieldsByName: { [key in keyof TarHeader]: () => TarHeaderField } = {
+	const fieldsByName: { [key in keyof TarHeader]: TarHeaderField } = {
 		fileName,
 		fileMode,
 		ownerUserId,
@@ -48,34 +44,18 @@ export namespace TarHeaderFieldDefinition {
 		ownerGroupName,
 		deviceMajorNumber,
 		deviceMinorNumber,
-		fileNamePrefix,
-		padding
+		fileNamePrefix
 	};
 
 	export function getFieldDefinition(fieldName: keyof TarHeader): TarHeaderField | undefined {
-		const target = fieldsByName[fieldName];
-		return target ? target() : undefined;
+		return fieldsByName[fieldName];
 	}
 
 	export function orderedSet(): TarHeaderField[] {
-		return [
-			fileName(),
-			fileMode(),
-			ownerUserId(),
-			groupUserId(),
-			fileSize(),
-			lastModified(),
-			headerChecksum(),
-			typeFlag(),
-			linkedFileName(),
-			ustarIndicator(),
-			ustarVersion(),
-			ownerUserName(),
-			ownerGroupName(),
-			deviceMajorNumber(),
-			deviceMinorNumber(),
-			fileNamePrefix(),
-			padding()
-		];
+		return Object.values(fieldsByName);
+	}
+
+	export function checksumSet(): TarHeaderField[] {
+		return orderedSet().filter(v => v !== headerChecksum);
 	}
 }

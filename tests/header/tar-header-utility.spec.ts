@@ -56,7 +56,7 @@ describe('TarHeaderUtility', () => {
 
 		it('defaults to offset zero when no offset is provided', () => {
 			const buffer = Uint8Array.from(range(0x1FF));
-			const headerField = TarHeaderFieldDefinition.fileSize();
+			const headerField = TarHeaderFieldDefinition.fileSize;
 			const slicedBuffer = TarHeaderUtility.sliceFieldBuffer(headerField, buffer);
 			const sliceStart = headerField.offset;
 			const sliceEnd = sliceStart + headerField.size;
@@ -70,7 +70,7 @@ describe('TarHeaderUtility', () => {
 			const testChar = 'Z';
 			const testCharCode = testChar.charCodeAt(0);
 			const buffer = Uint8Array.from(range(0x1FF).map(() => testCharCode));
-			const headerField = TarHeaderFieldDefinition.fileName();
+			const headerField = TarHeaderFieldDefinition.fileName;
 			const slicedAscii = TarHeaderUtility.sliceFieldAscii(headerField, buffer);
 			expect(slicedAscii).toEqual(''.padEnd(headerField.size, testChar));
 		});
@@ -149,14 +149,14 @@ describe('TarHeaderUtility', () => {
 		it('interprets the given value based on the given field metadata', () => {
 			const valueOctal = '777';
 			const value = parseInt(valueOctal, 8);
-			const field = TarHeaderFieldDefinition.fileMode();
+			const field = TarHeaderFieldDefinition.fileMode;
 			const fieldValue = TarHeaderUtility.serializeFieldValue(field, value);
 			expect(TarHeaderUtility.deserializeFieldValue(field, fieldValue)).toBe(value);
 		});
 
 		it('decodes mtime values to proper Date timestamps', () => {
 			const now = TarHeaderUtility.decodeTimestamp(TarHeaderUtility.encodeTimestamp(Date.now()));
-			const field = TarHeaderFieldDefinition.lastModified();
+			const field = TarHeaderFieldDefinition.lastModified;
 			const fieldValue = TarHeaderUtility.serializeFieldValue(field, now);
 			expect(TarHeaderUtility.deserializeFieldValue(field, fieldValue)).toBe(now);
 		});

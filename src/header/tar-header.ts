@@ -20,5 +20,4 @@ export interface TarHeader {
 	deviceMajorNumber: string;
 	deviceMinorNumber: string;
 	fileNamePrefix: string;
-	padding: string;
 }
