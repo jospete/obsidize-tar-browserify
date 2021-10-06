@@ -1,10 +1,8 @@
 # @obsidize/tar-browserify
 
-Simple utility unpack small tar files in the browser.
+Simple utility for packing and unpacking tar files in the browser.
 
 This differs from other [npm tar modules](https://www.npmjs.com/search?q=tar) in that it contains no node-based dependencies like ```fs``` or ```streams```.
-
-*NOTE:* this module performs all its processing in-memory, so using this with large files is not recommended.
 
 Pairs well with these modules:
 - [pako](https://www.npmjs.com/package/pako) for gzip / unzip
@@ -29,7 +27,7 @@ npm install --save git+https://github.com/jospete/obsidize-tar-browserify.git
 ### Example
 
 ```typescript
-import {Tarball, TarUtility} from '@obsidize/tar-browserify';
+import {Tarball, TarUtility, AsyncUint8Array} from '@obsidize/tar-browserify';
 
 // Decode a tarball from some source
 const sourceBuffer = Uint8Array.from([1, 2, 3, 4]);
@@ -42,6 +40,17 @@ const tarballBuffer = Tarball.create([
 		content: TarUtility.encodeString('This is a test file')
 	}
 ]);
+
+// To unpack large files, use extractAsync() to conserve memory
+const entries = await Tarball.extractAsync({
+	
+	// fetch tarball file length from storage
+	byteLength: () => ... /* Promise<number> */
+	
+	// read tarball data from storage
+	// allows us to read the file in chunks rather than all at once
+	read: (offset: number, length: number) => ... /* Promise<Uint8Array> */
+});
 ```
 
 See the [Example Usage Spec](https://github.com/jospete/obsidize-tar-browserify/blob/master/tests/example-usage.spec.ts) to get a general feel for what this module can do.
