@@ -41,4 +41,18 @@ describe('Tarball', () => {
 			expect(outputUint8).toEqual(sampleUint8);
 		});
 	});
+
+	describe('add()', () => {
+
+		it('includes the given entry in generated output', async () => {
+
+			const tarball = new Tarball();
+
+			tarball.add({ header: { fileName: 'test.txt' }, content: new Uint8Array(10) });
+			const entries = Tarball.extract(tarball.toUint8Array());
+
+			expect(entries.length).toBe(1);
+			expect(entries[0].fileName).toBe('test.txt');
+		});
+	});
 });

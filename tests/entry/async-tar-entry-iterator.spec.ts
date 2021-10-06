@@ -1,4 +1,4 @@
-import { AsyncTarEntryIterator, TarEntry } from '../../src';
+import { AsyncTarEntryIterator, Tarball } from '../../src';
 import { MockAsyncUint8Array } from '../mocks/mock-async-uint8array';
 
 describe('AsyncTarEntryIterator', () => {
@@ -18,8 +18,11 @@ describe('AsyncTarEntryIterator', () => {
 
 		it('calls the entry callback when it is given', async () => {
 
-			const entry = TarEntry.from({ fileName: 'test.txt' }, new Uint8Array(10));
-			const asyncBuffer = new MockAsyncUint8Array(entry.toUint8Array());
+			const tarballBuffer = Tarball.create([
+				{ header: { fileName: 'test.txt' }, content: new Uint8Array(10) }
+			]);
+
+			const asyncBuffer = new MockAsyncUint8Array(tarballBuffer);
 			const nextEntrySpy = jasmine.createSpy('nextEntrySpy');
 			const result = await AsyncTarEntryIterator.extractAll(asyncBuffer, nextEntrySpy);
 
