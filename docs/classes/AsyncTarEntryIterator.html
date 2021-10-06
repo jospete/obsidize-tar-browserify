@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>TarEntryIterator | @obsidize/tar-browserify</title>
+	<title>AsyncTarEntryIterator | @obsidize/tar-browserify</title>
 	<meta name="description" content="Documentation for @obsidize/tar-browserify">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,10 +55,10 @@
 					<a href="../modules.html">@obsidize/tar-browserify</a>
 				</li>
 				<li>
-					<a href="TarEntryIterator.html">TarEntryIterator</a>
+					<a href="AsyncTarEntryIterator.html">AsyncTarEntryIterator</a>
 				</li>
 			</ul>
-			<h1>Class TarEntryIterator</h1>
+			<h1>Class AsyncTarEntryIterator</h1>
 		</div>
 	</div>
 </header>
@@ -82,7 +82,7 @@
 						<a href="TarEntryIteratorBase.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntryIteratorBase</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">TarEntryIterator</span>
+								<span class="target">AsyncTarEntryIterator</span>
 							</li>
 						</ul>
 					</li>
@@ -91,7 +91,7 @@
 			<section class="tsd-panel">
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
-					<li><span class="tsd-signature-type">IterableIterator</span><span class="tsd-signature-symbol">&lt;</span><a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">&gt;</span></li>
+					<li><span class="tsd-signature-type">AsyncIterableIterator</span><span class="tsd-signature-symbol">&lt;</span><a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -101,26 +101,27 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="TarEntryIterator.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="AsyncTarEntryIterator.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="TarEntryIterator.html#bufferLength" class="tsd-kind-icon">buffer<wbr>Length</a></li>
-								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="TarEntryIterator.html#bufferOffset" class="tsd-kind-icon">buffer<wbr>Offset</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="TarEntryIterator.html#defaultIteratorResult" class="tsd-kind-icon">default<wbr>Iterator<wbr>Result</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="AsyncTarEntryIterator.html#bufferLength" class="tsd-kind-icon">buffer<wbr>Length</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="AsyncTarEntryIterator.html#bufferOffset" class="tsd-kind-icon">buffer<wbr>Offset</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="AsyncTarEntryIterator.html#defaultIteratorResult" class="tsd-kind-icon">default<wbr>Iterator<wbr>Result</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="TarEntryIterator.html#_Symbol_iterator_" class="tsd-kind-icon">[<wbr>Symbol.iterator]</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="TarEntryIterator.html#canAdvanceOffset" class="tsd-kind-icon">can<wbr>Advance<wbr>Offset</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="TarEntryIterator.html#consumeIteratorResult" class="tsd-kind-icon">consume<wbr>Iterator<wbr>Result</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="TarEntryIterator.html#initialize" class="tsd-kind-icon">initialize</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="TarEntryIterator.html#next" class="tsd-kind-icon">next</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="TarEntryIterator.html#toJSON" class="tsd-kind-icon">toJSON</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="AsyncTarEntryIterator.html#_Symbol_asyncIterator_" class="tsd-kind-icon">[<wbr>Symbol.async<wbr>Iterator]</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="AsyncTarEntryIterator.html#canAdvanceOffset" class="tsd-kind-icon">can<wbr>Advance<wbr>Offset</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="AsyncTarEntryIterator.html#consumeIteratorResult" class="tsd-kind-icon">consume<wbr>Iterator<wbr>Result</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="AsyncTarEntryIterator.html#initialize" class="tsd-kind-icon">initialize</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="AsyncTarEntryIterator.html#next" class="tsd-kind-icon">next</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="AsyncTarEntryIterator.html#toJSON" class="tsd-kind-icon">toJSON</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="AsyncTarEntryIterator.html#extractAll" class="tsd-kind-icon">extract<wbr>All</a></li>
 							</ul>
 						</section>
 					</div>
@@ -132,17 +133,17 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Tar<wbr>Entry<wbr>Iterator<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="TarEntryIterator.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntryIterator</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Async<wbr>Tar<wbr>Entry<wbr>Iterator<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="AsyncTarEntryIterator.html" class="tsd-signature-type" data-tsd-kind="Class">AsyncTarEntryIterator</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="TarEntryIteratorBase.html">TarEntryIteratorBase</a>.<a href="TarEntryIteratorBase.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/tar-entry-iterator.ts#L16">entry/tar-entry-iterator.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/async-tar-entry-iterator.ts#L18">entry/async-tar-entry-iterator.ts:18</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="TarEntryIterator.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntryIterator</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="AsyncTarEntryIterator.html" class="tsd-signature-type" data-tsd-kind="Class">AsyncTarEntryIterator</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -234,20 +235,20 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="_Symbol_iterator_" class="tsd-anchor"></a>
-					<h3>[<wbr>Symbol.iterator]</h3>
+					<a name="_Symbol_asyncIterator_" class="tsd-anchor"></a>
+					<h3>[<wbr>Symbol.async<wbr>Iterator]</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">[<wbr>Symbol.iterator]<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IterableIterator</span><span class="tsd-signature-symbol">&lt;</span><a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">[<wbr>Symbol.async<wbr>Iterator]<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AsyncIterableIterator</span><span class="tsd-signature-symbol">&lt;</span><a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of IterableIterator.__@iterator</p>
+								<p>Implementation of AsyncIterableIterator.__@asyncIterator</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/tar-entry-iterator.ts#L21">entry/tar-entry-iterator.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/async-tar-entry-iterator.ts#L46">entry/async-tar-entry-iterator.ts:46</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">IterableIterator</span><span class="tsd-signature-symbol">&lt;</span><a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">AsyncIterableIterator</span><span class="tsd-signature-symbol">&lt;</span><a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -297,22 +298,22 @@
 					<a name="initialize" class="tsd-anchor"></a>
 					<h3>initialize</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">initialize<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">initialize<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/AsyncUint8Array.html" class="tsd-signature-type" data-tsd-kind="Interface">AsyncUint8Array</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/tar-entry-iterator.ts#L31">entry/tar-entry-iterator.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/async-tar-entry-iterator.ts#L56">entry/async-tar-entry-iterator.ts:56</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>data: <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Uint8Array</span></h5>
+									<h5>data: <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/AsyncUint8Array.html" class="tsd-signature-type" data-tsd-kind="Interface">AsyncUint8Array</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -320,17 +321,17 @@
 					<a name="next" class="tsd-anchor"></a>
 					<h3>next</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">next<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IteratorResult</span><span class="tsd-signature-symbol">&lt;</span><a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">next<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">IteratorResult</span><span class="tsd-signature-symbol">&lt;</span><a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of IterableIterator.next</p>
+								<p>Implementation of AsyncIterableIterator.next</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/tar-entry-iterator.ts#L25">entry/tar-entry-iterator.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/async-tar-entry-iterator.ts#L50">entry/async-tar-entry-iterator.ts:50</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">IteratorResult</span><span class="tsd-signature-symbol">&lt;</span><a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">IteratorResult</span><span class="tsd-signature-symbol">&lt;</span><a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -352,6 +353,37 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="extractAll" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> extract<wbr>All</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">extract<wbr>All<span class="tsd-signature-symbol">(</span>buffer<span class="tsd-signature-symbol">: </span><a href="../interfaces/AsyncUint8Array.html" class="tsd-signature-type" data-tsd-kind="Interface">AsyncUint8Array</a>, onNextEntry<span class="tsd-signature-symbol">?: </span><a href="../modules.html#TarEntryDelegate" class="tsd-signature-type" data-tsd-kind="Type alias">TarEntryDelegate</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/8d7191c/src/entry/async-tar-entry-iterator.ts#L26">entry/async-tar-entry-iterator.ts:26</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Convenience to parse out all entries in one go.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>buffer: <a href="../interfaces/AsyncUint8Array.html" class="tsd-signature-type" data-tsd-kind="Interface">AsyncUint8Array</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> onNextEntry: <a href="../modules.html#TarEntryDelegate" class="tsd-signature-type" data-tsd-kind="Type alias">TarEntryDelegate</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -370,51 +402,54 @@
 					<li class=" tsd-kind-enum">
 						<a href="../enums/TarHeaderLinkIndicatorType.html" class="tsd-kind-icon">Tar<wbr>Header<wbr>Link<wbr>Indicator<wbr>Type</a>
 					</li>
-					<li class=" tsd-kind-class">
-						<a href="AsyncTarEntryIterator.html" class="tsd-kind-icon">Async<wbr>Tar<wbr>Entry<wbr>Iterator</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="TarEntry.html" class="tsd-kind-icon">Tar<wbr>Entry</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="TarEntryIterator.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Iterator</a>
+						<a href="AsyncTarEntryIterator.html" class="tsd-kind-icon">Async<wbr>Tar<wbr>Entry<wbr>Iterator</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-								<a href="TarEntryIterator.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="AsyncTarEntryIterator.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
-								<a href="TarEntryIterator.html#bufferLength" class="tsd-kind-icon">buffer<wbr>Length</a>
+								<a href="AsyncTarEntryIterator.html#bufferLength" class="tsd-kind-icon">buffer<wbr>Length</a>
 							</li>
 							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
-								<a href="TarEntryIterator.html#bufferOffset" class="tsd-kind-icon">buffer<wbr>Offset</a>
+								<a href="AsyncTarEntryIterator.html#bufferOffset" class="tsd-kind-icon">buffer<wbr>Offset</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="TarEntryIterator.html#defaultIteratorResult" class="tsd-kind-icon">default<wbr>Iterator<wbr>Result</a>
+								<a href="AsyncTarEntryIterator.html#defaultIteratorResult" class="tsd-kind-icon">default<wbr>Iterator<wbr>Result</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="TarEntryIterator.html#_Symbol_iterator_" class="tsd-kind-icon">[<wbr>Symbol.iterator]</a>
+								<a href="AsyncTarEntryIterator.html#_Symbol_asyncIterator_" class="tsd-kind-icon">[<wbr>Symbol.async<wbr>Iterator]</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="TarEntryIterator.html#canAdvanceOffset" class="tsd-kind-icon">can<wbr>Advance<wbr>Offset</a>
+								<a href="AsyncTarEntryIterator.html#canAdvanceOffset" class="tsd-kind-icon">can<wbr>Advance<wbr>Offset</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="TarEntryIterator.html#consumeIteratorResult" class="tsd-kind-icon">consume<wbr>Iterator<wbr>Result</a>
+								<a href="AsyncTarEntryIterator.html#consumeIteratorResult" class="tsd-kind-icon">consume<wbr>Iterator<wbr>Result</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="TarEntryIterator.html#initialize" class="tsd-kind-icon">initialize</a>
+								<a href="AsyncTarEntryIterator.html#initialize" class="tsd-kind-icon">initialize</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="TarEntryIterator.html#next" class="tsd-kind-icon">next</a>
+								<a href="AsyncTarEntryIterator.html#next" class="tsd-kind-icon">next</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="TarEntryIterator.html#toJSON" class="tsd-kind-icon">toJSON</a>
+								<a href="AsyncTarEntryIterator.html#toJSON" class="tsd-kind-icon">toJSON</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="AsyncTarEntryIterator.html#extractAll" class="tsd-kind-icon">extract<wbr>All</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-class">
+						<a href="TarEntry.html" class="tsd-kind-icon">Tar<wbr>Entry</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="TarEntryIterator.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Iterator</a>
+					</li>
 					<li class=" tsd-kind-class">
 						<a href="TarEntryIteratorBase.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Iterator<wbr>Base</a>
 					</li>

@@ -1,5 +1,5 @@
 import { TarHeaderFieldDefinition, TarHeaderLinkIndicatorType, TarHeaderUtility, TarUtility } from '../../src';
-
+import { MockAsyncUint8Array } from '../mocks/mock-async-uint8array';
 import { range } from '../util';
 
 const staticDateTime = 1632419077000;
@@ -208,6 +208,16 @@ describe('TarHeaderUtility', () => {
 		it('properly handles malformed objects', () => {
 			expect(TarHeaderUtility.flattenHeaderExtractionResult({ fileName: null } as any))
 				.toEqual(TarHeaderUtility.getDefaultHeaderValues());
+		});
+	});
+
+	describe('findNextUstarSectorAsync()', () => {
+
+		it('returns null when malformed inputs are given', async () => {
+			expect(await TarHeaderUtility.findNextUstarSectorAsync(null)).toBe(null);
+			const mockBuffer = new Uint8Array(5);
+			const mockAsyncBuffer = new MockAsyncUint8Array(mockBuffer);
+			expect(await TarHeaderUtility.findNextUstarSectorAsync(mockAsyncBuffer, mockBuffer.byteLength)).toBe(null);
 		});
 	});
 });

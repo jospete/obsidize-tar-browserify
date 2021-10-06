@@ -11,11 +11,8 @@ describe('General Usage', () => {
 		console.log('tarballUint8 length = ' + tarballUint8.byteLength);
 		console.log('tarballUint8 isUint8Array = ' + TarUtility.isUint8Array(tarballUint8));
 
-		const tarball = new Tarball(tarballUint8);
-		console.log('processing tarball: ', tarball.toJSON());
-
 		const foundFiles = new Set<TarEntry>();
-		const files = tarball.readAllEntries().filter(entry => entry.isFile());
+		const files = Tarball.extract(tarballUint8).filter(entry => entry.isFile());
 		const fileNames = files.map(f => f.fileName);
 		const fileSet = new Set(files);
 		const fileNamesDump = JSON.stringify(fileNames, null, '\t');

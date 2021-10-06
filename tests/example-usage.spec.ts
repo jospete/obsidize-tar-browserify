@@ -12,13 +12,10 @@ describe('Example Usage', () => {
 		// 1. Get some tarball file data
 		const tarballUint8 = base64ToUint8Array(tarballSampleBase64);
 
-		// 2. Make a tarball with it
-		const tarball = new Tarball(tarballUint8);
+		// 2. Get the entries you are interested in (AKA ignore directory entries)
+		const entries = Tarball.extract(tarballUint8).filter(entry => entry.isFile());
 
-		// 3. Get the entries you are interested in (AKA ignore directory entries)
-		const entries = tarball.readAllEntries().filter(entry => entry.isFile());
-
-		// 4. Do whatever work you need to with the entries
+		// 3. Do whatever work you need to with the entries
 		expect(entries.length).toBe(totalFileCount);
 
 		for (const entry of entries) {
