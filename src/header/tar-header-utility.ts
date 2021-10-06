@@ -1,4 +1,4 @@
-import { TarUtility } from '../tar-utility';
+import { TarUtility } from '../common';
 import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
 import { TarHeaderFieldDefinition } from './tar-header-field-definition';
 import { TarHeaderFieldType } from './tar-header-field-type';

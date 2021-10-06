@@ -1,3 +1,5 @@
+import { TarUtility } from '../common';
+
 import {
 	TarHeader,
 	TarHeaderUtility,
@@ -13,8 +15,6 @@ import {
 	TarEntryAttributes,
 	TarEntryMetadata
 } from './tar-entry-utility';
-
-import { TarUtility } from '../tar-utility';
 
 /**
  * Container for metadata and content of a tarball entry.

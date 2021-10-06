@@ -1,5 +1,5 @@
-import { TarEntry, TarEntryUtility, TarEntryIterator, TarEntryAttributes } from './entry';
-import { TarUtility } from './tar-utility';
+import { TarUtility } from '../common';
+import { TarEntry, TarEntryUtility, TarEntryIterator, TarEntryAttributes } from '../entry';
 
 /**
  * Main entry point for extracting and creating tarballs.

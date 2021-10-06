@@ -1,4 +1,21 @@
 /**
+ * Generalized iterface for interacting with buffers that we only have a partial view into.
+ */
+export interface AsyncUint8Array {
+	readonly byteLength: number;
+	read(offset: number, length: number): Promise<Uint8Array>;
+}
+
+/**
+ * Result shape returned by findInAsyncUint8Array()
+ */
+export interface AsyncUint8ArrayFindResult {
+	source: AsyncUint8Array;
+	value: Uint8Array;
+	offset: number;
+}
+
+/**
  * Common pure functions for transforming tarball content.
  */
 export namespace TarUtility {
@@ -90,5 +107,42 @@ export namespace TarUtility {
 		if (bLength > 0) result.set(b, aLength);
 
 		return result;
+	}
+
+	export async function findInAsyncUint8Array(
+		target: AsyncUint8Array,
+		offset: number,
+		stepSize: number,
+		predicate: (value: Uint8Array, offset: number, target: AsyncUint8Array) => boolean
+	): Promise<AsyncUint8ArrayFindResult | null> {
+
+		if (!target) {
+			return null;
+		}
+
+		const maxLength = target.byteLength;
+		offset = clamp(offset, 0, maxLength);
+
+		if (offset >= maxLength) {
+			return null;
+		}
+
+		stepSize = clamp(stepSize, SECTOR_SIZE, maxLength);
+
+		if (!predicate) predicate = () => true;
+
+		let cursor = offset;
+		let result: Uint8Array = await target.read(cursor, stepSize);
+
+		while (cursor < maxLength && !predicate(result, cursor, target)) {
+			cursor += stepSize;
+			result = await target.read(cursor, stepSize);
+		}
+
+		if (cursor < maxLength) {
+			return { source: target, value: result, offset: cursor };
+		}
+
+		return null;
 	}
 }

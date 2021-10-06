@@ -1,5 +1,6 @@
-import { TarUtility } from '../tar-utility';
+import { TarUtility } from '../common';
 import { TarEntry } from './tar-entry';
+import { TarEntryIteratorBase } from './tar-entry-iterator-base';
 
 /**
  * Utility for stepping through a given byte buffer and extracting tar files one-at-a-time.
@@ -8,13 +9,12 @@ import { TarEntry } from './tar-entry';
  * A) step through the files using next() manually, or
  * B) get all the files at once with Array.from()
  */
-export class TarEntryIterator implements IterableIterator<TarEntry> {
+export class TarEntryIterator extends TarEntryIteratorBase implements IterableIterator<TarEntry> {
 
 	private mData: Uint8Array | null;
-	private mOffset: number;
-	private mMaxOffset: number;
 
 	constructor() {
+		super();
 		this.initialize(null);
 	}
 
@@ -22,36 +22,18 @@ export class TarEntryIterator implements IterableIterator<TarEntry> {
 		return this;
 	}
 
-	public get bufferOffset(): number {
-		return this.mOffset;
-	}
-
-	public get bufferLength(): number {
-		return this.mMaxOffset;
-	}
-
-	public canAdvanceOffset(): boolean {
-		return !!this.mData && this.bufferOffset < this.bufferLength;
-	}
-
-	public toJSON(): any {
-		const { bufferOffset, bufferLength } = this;
-		const canAdvanceOffset = this.canAdvanceOffset();
-		return { bufferOffset, bufferLength, canAdvanceOffset };
-	}
-
 	public initialize(data: Uint8Array | null): this {
 
 		if (TarUtility.isUint8Array(data)) {
 			this.mData = data!.slice();
-			this.mMaxOffset = this.mData.byteLength;
+			this.bufferLength = this.mData.byteLength;
 
 		} else {
 			this.mData = null;
-			this.mMaxOffset = 0;
+			this.bufferLength = 0;
 		}
 
-		this.mOffset = 0;
+		this.bufferOffset = 0;
 
 		return this;
 	}
@@ -68,11 +50,7 @@ export class TarEntryIterator implements IterableIterator<TarEntry> {
 			return { value: null, done: true };
 		}
 
-		this.mOffset = TarUtility.clamp(
-			this.bufferOffset + entry.sectorByteLength,
-			this.bufferOffset,
-			this.bufferLength
-		);
+		this.bufferOffset += entry.sectorByteLength;
 
 		const value = entry;
 		const done = !this.canAdvanceOffset();

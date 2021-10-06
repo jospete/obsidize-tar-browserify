@@ -1,5 +1,5 @@
+import { TarUtility } from '../common';
 import { TarHeaderExtractionResult, TarHeaderUtility, TarHeader } from '../header';
-import { TarUtility } from '../tar-utility';
 
 export interface TarEntryMetadata {
 	header: TarHeaderExtractionResult;
