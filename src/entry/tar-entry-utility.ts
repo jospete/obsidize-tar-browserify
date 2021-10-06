@@ -96,15 +96,10 @@ export namespace TarEntryUtility {
 		}
 
 		const { header, content } = attrs;
-
-		let contentSize = 0;
-		let paddedContent = content!;
-
-		if (TarUtility.isUint8Array(content)) {
-			contentSize = content!.byteLength;
-		}
-
+		const contentSize = TarUtility.sizeofUint8Array(content);
 		const offsetDelta = TarUtility.getSectorOffsetDelta(contentSize);
+
+		let paddedContent = content!;
 
 		if (contentSize > 0 && offsetDelta > 0) {
 			paddedContent = TarUtility.concatUint8Arrays(content!, new Uint8Array(offsetDelta));

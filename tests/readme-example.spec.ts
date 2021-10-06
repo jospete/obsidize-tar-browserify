@@ -8,12 +8,16 @@ describe('README Example', () => {
 		const sourceBuffer = Uint8Array.from([1, 2, 3, 4]);
 		const entries = Tarball.extract(sourceBuffer);
 
+		expect(entries).toBeDefined();
+
 		// Create a tarball from some given entry attributes
-		const tarballBuffer = Tarball.from([
+		const tarballBuffer = Tarball.create([
 			{
 				header: { fileName: 'Test File.txt' },
 				content: TarUtility.encodeString('This is a test file')
 			}
 		]);
+
+		expect(tarballBuffer).toBeDefined();
 	});
 });
