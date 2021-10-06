@@ -4,13 +4,13 @@ Simple utility unpack small tar files in the browser.
 
 This differs from other [npm tar modules](https://www.npmjs.com/search?q=tar) in that it contains no node-based dependencies like ```fs``` or ```streams```.
 
-This module is tested against the output of the [node-tar](https://www.npmjs.com/package/tar) package to ensure stability.
-
 *NOTE:* this module performs all its processing in-memory, so using this with large files is not recommended.
 
 Pairs well with these modules:
 - [pako](https://www.npmjs.com/package/pako) for gzip / unzip
 - [path-browserify](https://www.npmjs.com/package/path-browserify) to further process raw file names
+
+This module is tested against the output of the [node-tar](https://www.npmjs.com/package/tar) package to ensure stability.
 
 ## Installation
 
