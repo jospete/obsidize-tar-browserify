@@ -68,7 +68,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Determines how a tar header field will be interpreted when it is parsed from a Uint8Array.</p>
+						<p>Determines how a tar header field is interpreted to and from a Uint8Array.</p>
 					</div>
 				</div>
 			</section>
@@ -80,9 +80,9 @@
 							<h3>Enumeration members</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="TarHeaderFieldType.html#ASCII" class="tsd-kind-icon">ASCII</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="TarHeaderFieldType.html#ASCII_TRIMMED" class="tsd-kind-icon">ASCII_<wbr>TRIMMED</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="TarHeaderFieldType.html#ASCII_PADDED_END" class="tsd-kind-icon">ASCII_<wbr>PADDED_<wbr>END</a></li>
 								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="TarHeaderFieldType.html#INTEGER_OCTAL" class="tsd-kind-icon">INTEGER_<wbr>OCTAL</a></li>
-								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="TarHeaderFieldType.html#INTEGER_OCTAL_ASCII" class="tsd-kind-icon">INTEGER_<wbr>OCTAL_<wbr>ASCII</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="TarHeaderFieldType.html#INTEGER_OCTAL_TIMESTAMP" class="tsd-kind-icon">INTEGER_<wbr>OCTAL_<wbr>TIMESTAMP</a></li>
 							</ul>
 						</section>
 					</div>
@@ -96,30 +96,33 @@
 					<div class="tsd-signature tsd-kind-icon">ASCII<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;ASCII&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/60f5176/src/core/tar-header.ts#L10">core/tar-header.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-field-type.ts#L9">header/tar-header-field-type.ts:9</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Bytes interpreted as char codes.
-							output type: string</p>
+							<p>Bytes interpreted as char codes.</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="ASCII_TRIMMED" class="tsd-anchor"></a>
-					<h3>ASCII_<wbr>TRIMMED</h3>
-					<div class="tsd-signature tsd-kind-icon">ASCII_<wbr>TRIMMED<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;ASCII_TRIMMED&quot;</span></div>
+					<a name="ASCII_PADDED_END" class="tsd-anchor"></a>
+					<h3>ASCII_<wbr>PADDED_<wbr>END</h3>
+					<div class="tsd-signature tsd-kind-icon">ASCII_<wbr>PADDED_<wbr>END<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;ASCII_PADDED_END&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/60f5176/src/core/tar-header.ts#L16">core/tar-header.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-field-type.ts#L17">header/tar-header-field-type.ts:17</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Bytes interpreted as char codes, and trims trailing NUL characters.
-							output type: string</p>
+							<p>Bytes interpreted as char codes with spaces and trailing NUL characters.</p>
 						</div>
+						<dl class="tsd-comment-tags">
+							<dt>example</dt>
+							<dd><p>&#39;Test File Name.txt\0\0\0\0\0\0\0....&#39;</p>
+							</dd>
+						</dl>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
@@ -128,29 +131,34 @@
 					<div class="tsd-signature tsd-kind-icon">INTEGER_<wbr>OCTAL<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;INTEGER_OCTAL&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/60f5176/src/core/tar-header.ts#L22">core/tar-header.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-field-type.ts#L26">header/tar-header-field-type.ts:26</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Bytes interpreted as a number from octal number characters (i.e. &#39;0&#39; - &#39;7&#39;)
-							output type: number</p>
+							<p>Bytes interpreted as a padded ascii octal number (i.e. ascii in range [&#39;0&#39; - &#39;7&#39;]).
+							USTAR format dictates that all octal integer values of this type should be front-padded with zeroes.</p>
 						</div>
+						<dl class="tsd-comment-tags">
+							<dt>example</dt>
+							<dd><p>&#39;0000232 &#39; // (equates to decimal 1234)</p>
+							</dd>
+						</dl>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
-					<a name="INTEGER_OCTAL_ASCII" class="tsd-anchor"></a>
-					<h3>INTEGER_<wbr>OCTAL_<wbr>ASCII</h3>
-					<div class="tsd-signature tsd-kind-icon">INTEGER_<wbr>OCTAL_<wbr>ASCII<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;INTEGER_OCTAL_ASCII&quot;</span></div>
+					<a name="INTEGER_OCTAL_TIMESTAMP" class="tsd-anchor"></a>
+					<h3>INTEGER_<wbr>OCTAL_<wbr>TIMESTAMP</h3>
+					<div class="tsd-signature tsd-kind-icon">INTEGER_<wbr>OCTAL_<wbr>TIMESTAMP<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> = &quot;INTEGER_OCTAL_TIMESTAMP&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/60f5176/src/core/tar-header.ts#L28">core/tar-header.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/33ed72b/src/header/tar-header-field-type.ts#L32">header/tar-header-field-type.ts:32</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Bytes interpreted as ascii octal number characters (i.e. &#39;0&#39; - &#39;7&#39;)
-							output type: string</p>
+							<p>Special flavor of an integer octal that also transforms the
+							value by 1000x to add the milliseconds frame for a Date value.</p>
 						</div>
 					</div>
 				</section>
@@ -175,13 +183,13 @@
 								<a href="TarHeaderFieldType.html#ASCII" class="tsd-kind-icon">ASCII</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="TarHeaderFieldType.html#ASCII_TRIMMED" class="tsd-kind-icon">ASCII_<wbr>TRIMMED</a>
+								<a href="TarHeaderFieldType.html#ASCII_PADDED_END" class="tsd-kind-icon">ASCII_<wbr>PADDED_<wbr>END</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
 								<a href="TarHeaderFieldType.html#INTEGER_OCTAL" class="tsd-kind-icon">INTEGER_<wbr>OCTAL</a>
 							</li>
 							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
-								<a href="TarHeaderFieldType.html#INTEGER_OCTAL_ASCII" class="tsd-kind-icon">INTEGER_<wbr>OCTAL_<wbr>ASCII</a>
+								<a href="TarHeaderFieldType.html#INTEGER_OCTAL_TIMESTAMP" class="tsd-kind-icon">INTEGER_<wbr>OCTAL_<wbr>TIMESTAMP</a>
 							</li>
 						</ul>
 					</li>
@@ -200,7 +208,10 @@
 						<a href="../classes/Tarball.html" class="tsd-kind-icon">Tarball</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="../interfaces/TarEntryExtractionResult.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Extraction<wbr>Result</a>
+						<a href="../interfaces/TarEntryAttributes.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Attributes</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/TarEntryMetadata.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Metadata</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/TarHeader.html" class="tsd-kind-icon">Tar<wbr>Header</a>
@@ -208,8 +219,17 @@
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/TarHeaderField.html" class="tsd-kind-icon">Tar<wbr>Header<wbr>Field</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="../interfaces/TarHeaderFieldExtractionResult.html" class="tsd-kind-icon">Tar<wbr>Header<wbr>Field<wbr>Extraction<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../modules.html#TarHeaderExtractionResult" class="tsd-kind-icon">Tar<wbr>Header<wbr>Extraction<wbr>Result</a>
+					</li>
 					<li class=" tsd-kind-function">
-						<a href="../modules.html#extractTarEntry" class="tsd-kind-icon">extract<wbr>Tar<wbr>Entry</a>
+						<a href="../modules.html#isTarHeaderLinkIndicatorTypeDirectory" class="tsd-kind-icon">is<wbr>Tar<wbr>Header<wbr>Link<wbr>Indicator<wbr>Type<wbr>Directory</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#isTarHeaderLinkIndicatorTypeFile" class="tsd-kind-icon">is<wbr>Tar<wbr>Header<wbr>Link<wbr>Indicator<wbr>Type<wbr>File</a>
 					</li>
 				</ul>
 			</nav>
@@ -229,7 +249,10 @@
 				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
 			</ul>
 		</div>
 	</div>

@@ -62,7 +62,7 @@
 					<h1>@obsidize/tar-browserify</h1>
 				</a>
 				<p>Simple utility unpack small tar files in the browser.</p>
-				<p>This differs from other <a href="https://www.npmjs.com/search?q=tar">npm tar modules</a> in that it contains no node-based dependencies like fs or streams.</p>
+				<p>This differs from other <a href="https://www.npmjs.com/search?q=tar">npm tar modules</a> in that it contains no node-based dependencies like <code>fs</code> or <code>streams</code>.</p>
 				<p><em>NOTE:</em> this module performs all its processing in-memory, so using this with large files is not recommended.</p>
 				<p>Pairs well with these modules:</p>
 				<ul>
@@ -85,11 +85,33 @@
 				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
 					<h2>Usage</h2>
 				</a>
+				<a href="#example" id="example" style="color: inherit; text-decoration: none;">
+					<h3>Example</h3>
+				</a>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">Tarball</span><span style="color: #000000">, </span><span style="color: #001080">TarUtility</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@obsidize/tar-browserify&#039;</span><span style="color: #000000">;</span>
+
+<span style="color: #008000">// Decode a tarball from some source</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sourceBuffer</span><span style="color: #000000"> = </span><span style="color: #267F99">Uint8Array</span><span style="color: #000000">.</span><span style="color: #795E26">from</span><span style="color: #000000">([</span><span style="color: #098658">1</span><span style="color: #000000">, </span><span style="color: #098658">2</span><span style="color: #000000">, </span><span style="color: #098658">3</span><span style="color: #000000">, </span><span style="color: #098658">4</span><span style="color: #000000">]);</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">entries</span><span style="color: #000000"> = </span><span style="color: #001080">Tarball</span><span style="color: #000000">.</span><span style="color: #795E26">extract</span><span style="color: #000000">(</span><span style="color: #001080">sourceBuffer</span><span style="color: #000000">);</span>
+
+<span style="color: #008000">// Create a tarball from some given entry attributes</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">tarballBuffer</span><span style="color: #000000"> = </span><span style="color: #001080">Tarball</span><span style="color: #000000">.</span><span style="color: #795E26">create</span><span style="color: #000000">([</span>
+<span style="color: #000000">    {</span>
+<span style="color: #000000">        </span><span style="color: #001080">header:</span><span style="color: #000000"> {</span><span style="color: #001080">fileName:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Test File.txt&#039;</span><span style="color: #000000">},</span>
+<span style="color: #000000">        </span><span style="color: #001080">content:</span><span style="color: #000000"> </span><span style="color: #001080">TarUtility</span><span style="color: #000000">.</span><span style="color: #795E26">encodeString</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;This is a test file&#039;</span><span style="color: #000000">)</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">]);</span>
+</code></pre>
 				<p>See the <a href="https://github.com/jospete/obsidize-tar-browserify/blob/master/tests/example-usage.spec.ts">Example Usage Spec</a> to get a general feel for what this module can do.</p>
 				<a href="#api" id="api" style="color: inherit; text-decoration: none;">
 					<h2>API</h2>
 				</a>
 				<p>Source documentation can be found <a href="https://jospete.github.io/obsidize-tar-browserify/">here</a></p>
+				<a href="#testing" id="testing" style="color: inherit; text-decoration: none;">
+					<h2>Testing</h2>
+				</a>
+				<p>This module is tested against the output of the <a href="https://www.npmjs.com/package/tar">node-tar</a> package to ensure stability.</p>
+				<p>See package scripts for available test options.</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -99,7 +121,13 @@
 						<a href="modules.html">Exports</a>
 					</li>
 					<li class=" tsd-kind-namespace">
+						<a href="modules/TarEntryUtility.html">Tar<wbr>Entry<wbr>Utility</a>
+					</li>
+					<li class=" tsd-kind-namespace">
 						<a href="modules/TarHeaderFieldDefinition.html">Tar<wbr>Header<wbr>Field<wbr>Definition</a>
+					</li>
+					<li class=" tsd-kind-namespace">
+						<a href="modules/TarHeaderUtility.html">Tar<wbr>Header<wbr>Utility</a>
 					</li>
 					<li class=" tsd-kind-namespace">
 						<a href="modules/TarUtility.html">Tar<wbr>Utility</a>
@@ -124,7 +152,10 @@
 						<a href="classes/Tarball.html" class="tsd-kind-icon">Tarball</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="interfaces/TarEntryExtractionResult.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Extraction<wbr>Result</a>
+						<a href="interfaces/TarEntryAttributes.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Attributes</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/TarEntryMetadata.html" class="tsd-kind-icon">Tar<wbr>Entry<wbr>Metadata</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/TarHeader.html" class="tsd-kind-icon">Tar<wbr>Header</a>
@@ -132,8 +163,17 @@
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/TarHeaderField.html" class="tsd-kind-icon">Tar<wbr>Header<wbr>Field</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/TarHeaderFieldExtractionResult.html" class="tsd-kind-icon">Tar<wbr>Header<wbr>Field<wbr>Extraction<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="modules.html#TarHeaderExtractionResult" class="tsd-kind-icon">Tar<wbr>Header<wbr>Extraction<wbr>Result</a>
+					</li>
 					<li class=" tsd-kind-function">
-						<a href="modules.html#extractTarEntry" class="tsd-kind-icon">extract<wbr>Tar<wbr>Entry</a>
+						<a href="modules.html#isTarHeaderLinkIndicatorTypeDirectory" class="tsd-kind-icon">is<wbr>Tar<wbr>Header<wbr>Link<wbr>Indicator<wbr>Type<wbr>Directory</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#isTarHeaderLinkIndicatorTypeFile" class="tsd-kind-icon">is<wbr>Tar<wbr>Header<wbr>Link<wbr>Indicator<wbr>Type<wbr>File</a>
 					</li>
 				</ul>
 			</nav>
@@ -153,7 +193,10 @@
 				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
 			</ul>
 		</div>
 	</div>
