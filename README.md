@@ -26,8 +26,12 @@ npm install --save git+https://github.com/jospete/obsidize-tar-browserify.git
 
 ### Example
 
+The below example can be tested with runkit on npm:
+
 ```typescript
 import {Tarball, TarUtility} from '@obsidize/tar-browserify';
+// or with runkit:
+// const {Tarball, TarUtility} = tarBrowserify;
 
 // Example 1 - Create a tarball from some given entry attributes
 const createdTarball = Tarball.create([
@@ -42,6 +46,7 @@ const entries = Tarball.extract(createdTarball);
 const [mainFile] = entries;
 
 console.log(mainFile.fileName); // 'Test File.txt'
+console.log(mainFile.content); // Uint8Array object
 console.log(TarUtility.decodeString(mainFile.content)); // 'This is a test file'
 ```
 
