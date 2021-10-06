@@ -26,23 +26,35 @@ npm install --save git+https://github.com/jospete/obsidize-tar-browserify.git
 
 ### Example
 
+The below example can be tested with runkit on npm:
+
 ```typescript
-import {Tarball, TarUtility, AsyncUint8Array} from '@obsidize/tar-browserify';
+import {Tarball, TarUtility} from '@obsidize/tar-browserify';
+// or with runkit:
+// const {Tarball, TarUtility} = tarBrowserify;
 
-// Decode a tarball from some source
-const sourceBuffer = Uint8Array.from([1, 2, 3, 4]);
-const entries = Tarball.extract(sourceBuffer);
-
-// Create a tarball from some given entry attributes
-const tarballBuffer = Tarball.create([
+// Example 1 - Create a tarball from some given entry attributes
+const createdTarball = Tarball.create([
 	{
 		header: {fileName: 'Test File.txt'},
 		content: TarUtility.encodeString('This is a test file')
 	}
 ]);
 
-// To unpack large files, use extractAsync() to conserve memory
-const entries = await Tarball.extractAsync({
+// Example 2 - Decode a tarball from some source
+const entries = Tarball.extract(createdTarball);
+const [mainFile] = entries;
+
+console.log(mainFile.fileName); // 'Test File.txt'
+console.log(mainFile.content); // Uint8Array object
+console.log(TarUtility.decodeString(mainFile.content)); // 'This is a test file'
+```
+
+**NOTE:** for large files, it is better to use the provided async options:
+
+```typescript
+// unpack large files asynchronously to conserve memory
+const entriesFromBigFile = await Tarball.extractAsync({
 	
 	// fetch tarball file length from storage
 	byteLength: () => ... /* Promise<number> */
