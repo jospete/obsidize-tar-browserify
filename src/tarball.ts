@@ -17,6 +17,10 @@ export class Tarball {
 	) {
 	}
 
+	public static extract(buffer: Uint8Array): TarEntry[] {
+		return new Tarball(buffer).readAllEntries();
+	}
+
 	public static from(entries: TarEntryAttributes[]): Uint8Array {
 		const safeEntries = Array.from(entries).filter(v => !!v);
 		return TarEntryUtility.generatePaddedCompositeBuffer(safeEntries);

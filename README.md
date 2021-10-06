@@ -29,7 +29,19 @@ npm install --save git+https://github.com/jospete/obsidize-tar-browserify.git
 ### Example
 
 ```typescript
-import {Tarball} from '@obsidize/tar-browserify';
+import {Tarball, TarUtility} from '@obsidize/tar-browserify';
+
+// Decode a tarball from some source
+const sourceBuffer = Uint8Array.from([1, 2, 3, 4]);
+const entries = Tarball.extract(sourceBuffer);
+
+// Create a tarball from some given entry attributes
+const tarballBuffer = Tarball.from([
+	{
+		header: {fileName: 'Test File.txt'},
+		content: TarUtility.encodeString('This is a test file')
+	}
+]);
 ```
 
 See the [Example Usage Spec](https://github.com/jospete/obsidize-tar-browserify/blob/master/tests/example-usage.spec.ts) to get a general feel for what this module can do.

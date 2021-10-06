@@ -12,7 +12,7 @@ export interface TarHeader {
 	lastModified: number;
 	headerChecksum: number;
 	linkedFileName: string;
-	typeFlag: TarHeaderLinkIndicatorType | string;
+	typeFlag: TarHeaderLinkIndicatorType;
 	ustarIndicator: string;
 	ustarVersion: string;
 	ownerUserName: string;

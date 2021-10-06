@@ -19,8 +19,7 @@ describe('Tarball', () => {
 
 		it('creates a tarball from the given entries', async () => {
 			const sampleUint8 = base64ToUint8Array(tarballSampleBase64);
-			const tarball = new Tarball(sampleUint8);
-			const entries = tarball.readAllEntries();
+			const entries = Tarball.extract(sampleUint8);
 			const outputUint8 = Tarball.from(entries.map(e => e.toAttributes()));
 			expect(outputUint8).toEqual(sampleUint8);
 		});
