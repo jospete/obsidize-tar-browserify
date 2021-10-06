@@ -87,22 +87,30 @@
 				<a href="#example" id="example" style="color: inherit; text-decoration: none;">
 					<h3>Example</h3>
 				</a>
-				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">Tarball</span><span style="color: #000000">, </span><span style="color: #001080">TarUtility</span><span style="color: #000000">, </span><span style="color: #001080">AsyncUint8Array</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@obsidize/tar-browserify&#039;</span><span style="color: #000000">;</span>
+				<p>The below example can be tested with runkit on npm:</p>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span><span style="color: #001080">Tarball</span><span style="color: #000000">, </span><span style="color: #001080">TarUtility</span><span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@obsidize/tar-browserify&#039;</span><span style="color: #000000">;</span>
+<span style="color: #008000">// or with runkit:</span>
+<span style="color: #008000">// const {Tarball, TarUtility} = tarBrowserify;</span>
 
-<span style="color: #008000">// Decode a tarball from some source</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sourceBuffer</span><span style="color: #000000"> = </span><span style="color: #267F99">Uint8Array</span><span style="color: #000000">.</span><span style="color: #795E26">from</span><span style="color: #000000">([</span><span style="color: #098658">1</span><span style="color: #000000">, </span><span style="color: #098658">2</span><span style="color: #000000">, </span><span style="color: #098658">3</span><span style="color: #000000">, </span><span style="color: #098658">4</span><span style="color: #000000">]);</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">entries</span><span style="color: #000000"> = </span><span style="color: #001080">Tarball</span><span style="color: #000000">.</span><span style="color: #795E26">extract</span><span style="color: #000000">(</span><span style="color: #001080">sourceBuffer</span><span style="color: #000000">);</span>
-
-<span style="color: #008000">// Create a tarball from some given entry attributes</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">tarballBuffer</span><span style="color: #000000"> = </span><span style="color: #001080">Tarball</span><span style="color: #000000">.</span><span style="color: #795E26">create</span><span style="color: #000000">([</span>
+<span style="color: #008000">// Example 1 - Create a tarball from some given entry attributes</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">createdTarball</span><span style="color: #000000"> = </span><span style="color: #001080">Tarball</span><span style="color: #000000">.</span><span style="color: #795E26">create</span><span style="color: #000000">([</span>
 <span style="color: #000000">    {</span>
 <span style="color: #000000">        </span><span style="color: #001080">header:</span><span style="color: #000000"> {</span><span style="color: #001080">fileName:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Test File.txt&#039;</span><span style="color: #000000">},</span>
 <span style="color: #000000">        </span><span style="color: #001080">content:</span><span style="color: #000000"> </span><span style="color: #001080">TarUtility</span><span style="color: #000000">.</span><span style="color: #795E26">encodeString</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;This is a test file&#039;</span><span style="color: #000000">)</span>
 <span style="color: #000000">    }</span>
 <span style="color: #000000">]);</span>
 
-<span style="color: #008000">// To unpack large files, use extractAsync() to conserve memory</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">entries</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">Tarball</span><span style="color: #000000">.</span><span style="color: #795E26">extractAsync</span><span style="color: #000000">({</span>
+<span style="color: #008000">// Example 2 - Decode a tarball from some source</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">entries</span><span style="color: #000000"> = </span><span style="color: #001080">Tarball</span><span style="color: #000000">.</span><span style="color: #795E26">extract</span><span style="color: #000000">(</span><span style="color: #001080">createdTarball</span><span style="color: #000000">);</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> [</span><span style="color: #0070C1">mainFile</span><span style="color: #000000">] = </span><span style="color: #001080">entries</span><span style="color: #000000">;</span>
+
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">mainFile</span><span style="color: #000000">.</span><span style="color: #001080">fileName</span><span style="color: #000000">); </span><span style="color: #008000">// &#039;Test File.txt&#039;</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">mainFile</span><span style="color: #000000">.</span><span style="color: #001080">content</span><span style="color: #000000">); </span><span style="color: #008000">// Uint8Array object</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">TarUtility</span><span style="color: #000000">.</span><span style="color: #795E26">decodeString</span><span style="color: #000000">(</span><span style="color: #001080">mainFile</span><span style="color: #000000">.</span><span style="color: #001080">content</span><span style="color: #000000">)); </span><span style="color: #008000">// &#039;This is a test file&#039;</span>
+</code></pre>
+				<p><strong>NOTE:</strong> for large files, it is better to use the provided async options:</p>
+				<pre><code class="language-typescript"><span style="color: #008000">// unpack large files asynchronously to conserve memory</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">entriesFromBigFile</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #001080">Tarball</span><span style="color: #000000">.</span><span style="color: #795E26">extractAsync</span><span style="color: #000000">({</span>
 <span style="color: #000000">    </span>
 <span style="color: #000000">    </span><span style="color: #008000">// fetch tarball file length from storage</span>
 <span style="color: #000000">    </span><span style="color: #795E26">byteLength</span><span style="color: #001080">:</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> ... </span><span style="color: #008000">/* Promise&lt;number&gt; */</span>
