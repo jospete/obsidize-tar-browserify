@@ -27,7 +27,7 @@ npm install --save git+https://github.com/jospete/obsidize-tar-browserify.git
 ### Example
 
 ```typescript
-import {Tarball, TarUtility, AsyncUint8Array} from '@obsidize/tar-browserify';
+import {Tarball, TarUtility} from '@obsidize/tar-browserify';
 
 // Decode a tarball from some source
 const sourceBuffer = Uint8Array.from([1, 2, 3, 4]);
