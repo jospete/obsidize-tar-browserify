@@ -89,17 +89,15 @@ export class TarEntry {
 		return isTarHeaderLinkIndicatorTypeFile(this.getType());
 	}
 
+	public getHeaderFieldMetadata<T>(key: keyof TarHeader): TarHeaderFieldExtractionResult<T> | undefined {
+		return (this.header as any)[key];
+	}
+
 	public getParsedHeaderFieldValue<T>(key: keyof TarHeader, defaultValue?: T): T {
 		const metadata = this.getHeaderFieldMetadata(key);
 		return (metadata && TarUtility.isDefined(metadata.value)
 			? metadata.value
 			: defaultValue) as T;
-	}
-
-	public getHeaderFieldMetadata<T>(key: keyof TarHeader): TarHeaderFieldExtractionResult<T> | undefined {
-		return (this.header && key in this.header)
-			? (this.header as any)[key]
-			: undefined;
 	}
 
 	public toUint8Array(): Uint8Array {

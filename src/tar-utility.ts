@@ -17,16 +17,12 @@ export namespace TarUtility {
 		return typeof value === 'number' && !Number.isNaN(value);
 	}
 
-	export function optDefined<T>(value: T, defaultValue: T): T {
-		return isDefined(value) ? value : defaultValue;
-	}
-
 	export function isUint8Array(value: any): boolean {
 		return !!(value && value instanceof Uint8Array);
 	}
 
-	export function sizeofUint8Array(value: any, defaultValue: number = 0): number {
-		return isUint8Array(value) ? value.byteLength : defaultValue;
+	export function sizeofUint8Array(value: any): number {
+		return isUint8Array(value) ? value.byteLength : 0;
 	}
 
 	export function toString(value: any): string {
@@ -79,32 +75,6 @@ export namespace TarUtility {
 
 	export function bytesToAscii(input: number[]): string {
 		return String.fromCharCode.apply(null, input);
-	}
-
-	export function asciiToBytes(input: string): number[] {
-		return toString(input).split('').map(s => s.charCodeAt(0));
-	}
-
-	export function uint8ArrayToAscii(input: Uint8Array): string {
-		return bytesToAscii(Array.from(input));
-	}
-
-	export function asciiToUint8Array(input: string): Uint8Array {
-
-		input = toString(input);
-
-		const size = input.length;
-		const result = new Uint8Array(size);
-
-		for (let i = 0; i < size; i++) {
-			result[i] = input.charCodeAt(i);
-		}
-
-		return result;
-	}
-
-	export function concatManyUint8Arrays(...arrays: Uint8Array[]): Uint8Array {
-		return Array.from(arrays).reduce(concatUint8Arrays, new Uint8Array(0));
 	}
 
 	export function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {

@@ -58,8 +58,8 @@ export namespace TarEntryUtility {
 
 		const maxOffset = input.byteLength;
 		const header = TarHeaderUtility.extractHeaderContent(input, ustarSectorOffset);
-		const fileSize = header.fileSize ? header.fileSize.value : null;
 		const start = TarUtility.advanceSectorOffset(ustarSectorOffset, maxOffset);
+		const fileSize = header.fileSize.value;
 
 		let content: Uint8Array | null = null;
 
@@ -110,11 +110,10 @@ export namespace TarEntryUtility {
 			paddedContent = TarUtility.concatUint8Arrays(content!, new Uint8Array(offsetDelta));
 		}
 
-		if (header) {
-			header.fileSize = contentSize;
-		}
+		const safeHeader = TarHeaderUtility.sanitizeHeader(header);
+		safeHeader.fileSize = contentSize;
 
-		const headerBuffer = TarHeaderUtility.generateHeaderBuffer(header);
+		const headerBuffer = TarHeaderUtility.generateHeaderBuffer(safeHeader);
 		return TarUtility.concatUint8Arrays(headerBuffer, paddedContent);
 	}
 }
