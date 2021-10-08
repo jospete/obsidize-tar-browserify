@@ -94,10 +94,6 @@ export namespace TarUtility {
 		return result ? result[1] : str;
 	}
 
-	export function bytesToAscii(input: number[]): string {
-		return String.fromCharCode.apply(null, input);
-	}
-
 	export function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {
 
 		if (!isUint8Array(b)) return a;
