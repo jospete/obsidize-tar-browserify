@@ -64,18 +64,6 @@ describe('TarHeaderUtility', () => {
 		});
 	});
 
-	describe('sliceFieldAscii()', () => {
-
-		it('performs additional conversion on a Uint8Array to read the bytes as an ascii string', () => {
-			const testChar = 'Z';
-			const testCharCode = testChar.charCodeAt(0);
-			const buffer = Uint8Array.from(range(0x1FF).map(() => testCharCode));
-			const headerField = TarHeaderFieldDefinition.fileName;
-			const slicedAscii = TarHeaderUtility.sliceFieldAscii(headerField, buffer);
-			expect(slicedAscii).toEqual(''.padEnd(headerField.size, testChar));
-		});
-	});
-
 	describe('isUstarSector()', () => {
 
 		it('returns true if the buffer contains a ustar indicator', () => {

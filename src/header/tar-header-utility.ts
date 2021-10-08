@@ -88,8 +88,8 @@ export namespace TarHeaderUtility {
 		return decodeTimestamp(deserializeIntegerOctal(value));
 	}
 
-	export function sliceFieldAscii(field: TarHeaderField, input: Uint8Array, offset?: number): string {
-		return TarUtility.bytesToAscii(Array.from(sliceFieldBuffer(field, input, offset)));
+	export function sliceFieldString(field: TarHeaderField, input: Uint8Array, offset?: number): string {
+		return TarUtility.decodeString(sliceFieldBuffer(field, input, offset));
 	}
 
 	export function sliceFieldBuffer(field: TarHeaderField, input: Uint8Array, offset: number = 0): Uint8Array {
@@ -100,7 +100,7 @@ export namespace TarHeaderUtility {
 
 	export function isUstarSector(input: Uint8Array, offset?: number): boolean {
 		const { ustarIndicator } = TarHeaderFieldDefinition;
-		return sliceFieldAscii(ustarIndicator, input, offset) === ustarIndicator.constantValue;
+		return sliceFieldString(ustarIndicator, input, offset) === ustarIndicator.constantValue;
 	}
 
 	export function serializeIntegerOctalToString(value: number, maxLength: number): string {
