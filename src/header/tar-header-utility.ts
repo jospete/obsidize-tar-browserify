@@ -99,8 +99,8 @@ export namespace TarHeaderUtility {
 	}
 
 	export function isUstarSector(input: Uint8Array, offset?: number): boolean {
-		const { ustarIndicator } = TarHeaderFieldDefinition;
-		return sliceFieldString(ustarIndicator, input, offset) === ustarIndicator.constantValue;
+		return sliceFieldString(TarHeaderFieldDefinition.ustarIndicator, input, offset)
+			.startsWith(TarHeaderFieldDefinition.USTAR_TAG);
 	}
 
 	export function serializeIntegerOctalToString(value: number, maxLength: number): string {

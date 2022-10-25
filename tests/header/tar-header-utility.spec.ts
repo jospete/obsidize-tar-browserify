@@ -75,6 +75,30 @@ describe('TarHeaderUtility', () => {
 			expect(TarHeaderUtility.isUstarSector(null as any)).toBe(false);
 			expect(TarHeaderUtility.isUstarSector(new Uint8Array(0))).toBe(false);
 		});
+
+		it('allows for non-standard padding after ustar indicator header data', () => {
+
+			const targetOffset = TarHeaderFieldDefinition.ustarIndicator.offset;
+			const testHeaderBuffer = TarHeaderUtility.generateHeaderBuffer(null);
+			const baseValue = TarHeaderFieldDefinition.USTAR_TAG;
+
+			const assertValidHeader = (value: string, isValid: boolean) => {
+				testHeaderBuffer.set(TarUtility.encodeString(value), targetOffset);
+				expect(TarHeaderUtility.isUstarSector(testHeaderBuffer)).toBe(isValid);
+			};
+
+			assertValidHeader('\0\0\0\0\0\0\0\0', false);
+			assertValidHeader(baseValue, true);
+
+			// some older tar creation tools add spacing after "ustar", so need to account for that
+			assertValidHeader(`${baseValue}\0`, true);
+			assertValidHeader(`${baseValue} \0`, true);
+			assertValidHeader(`${baseValue}  \0`, true);
+			assertValidHeader(`${baseValue}  `, true);
+
+			// make sure we can go back to failed state because paranoia
+			assertValidHeader('\0\0\0\0\0\0\0\0', false);
+		});
 	});
 
 	describe('sanitizeHeader()', () => {
@@ -167,8 +191,11 @@ describe('TarHeaderUtility', () => {
 			const serialized = TarHeaderUtility.serializeFieldValue(metadata.field, metadata.value);
 			const deserialized = TarHeaderUtility.deserializeFieldValue(metadata.field, serialized);
 
-			it('mirrors the serializer functions for "' + propertyName + '"', () => {
+			it(`mirrors the serialized value for "${propertyName}"`, () => {
 				expect(serialized).toEqual(metadata.bytes);
+			});
+
+			it(`mirrors the deserialized value for "${propertyName}"`, () => {
 				expect(deserialized).toEqual(metadata.value);
 			});
 		}
