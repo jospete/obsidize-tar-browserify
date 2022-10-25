@@ -12,10 +12,10 @@ describe('TarEntry', () => {
 
 	it('can safely be stringified', () => {
 
-		const rawEntry = new TarEntry(null);
+		const rawEntry = new TarEntry(null as any);
 		expect(() => JSON.stringify(rawEntry)).not.toThrowError();
 
-		const fileWithContent = TarEntry.from(null, Uint8Array.from(range(100)));
+		const fileWithContent = TarEntry.from(null as any, Uint8Array.from(range(100)));
 		expect(() => JSON.stringify(fileWithContent)).not.toThrowError();
 	});
 
@@ -27,7 +27,7 @@ describe('TarEntry', () => {
 			const entryBuffer1 = entry1.toUint8Array();
 
 			const entry2 = TarEntry.tryParse(entryBuffer1);
-			const entryBuffer2 = entry2.toUint8Array();
+			const entryBuffer2 = entry2!.toUint8Array();
 
 			expect(entry2).toEqual(entry1);
 			expect(entryBuffer2).toEqual(entryBuffer1);
@@ -49,7 +49,7 @@ describe('TarEntry', () => {
 	describe('getHeaderFieldMetadata()', () => {
 
 		it('returns undefined for unknown fields', () => {
-			const rawEntry = new TarEntry(null);
+			const rawEntry = new TarEntry(null as any);
 			expect(rawEntry.getHeaderFieldMetadata('potato' as any)).not.toBeDefined();
 		});
 	});
@@ -57,7 +57,7 @@ describe('TarEntry', () => {
 	describe('getParsedHeaderFieldValue()', () => {
 
 		it('returns the given default value for unknown fields', () => {
-			const rawEntry = new TarEntry(null);
+			const rawEntry = new TarEntry(null as any);
 			expect(rawEntry.getParsedHeaderFieldValue('potato' as any, 5)).toBe(5);
 		});
 	});

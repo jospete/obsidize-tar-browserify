@@ -71,21 +71,21 @@ describe('TarUtility', () => {
 	describe('decodeString()', () => {
 
 		it('returns an empty string when the given value is not a valid Uint8Array', () => {
-			expect(TarUtility.decodeString(null)).toBe('');
+			expect(TarUtility.decodeString(null as any)).toBe('');
 		});
 	});
 
 	describe('generateChecksum()', () => {
 
 		it('returns zero when the given value is not a valid Uint8Array', () => {
-			expect(TarUtility.generateChecksum(null)).toBe(0);
+			expect(TarUtility.generateChecksum(null as any)).toBe(0);
 		});
 	});
 
 	describe('concatUint8Arrays()', () => {
 
 		it('returns the second value when the first is not a Uint8Array', () => {
-			const a = null;
+			const a: any = null;
 			const b = new Uint8Array(5);
 			expect(TarUtility.concatUint8Arrays(a, b)).toBe(b);
 		});
@@ -93,9 +93,9 @@ describe('TarUtility', () => {
 		it('does nothing when given blank instances', () => {
 			const a = new Uint8Array(0);
 			const b = new Uint8Array(0);
-			let result: Uint8Array;
+			let result: Uint8Array | null = null;
 			expect(() => result = TarUtility.concatUint8Arrays(a, b)).not.toThrowError();
-			expect(result.byteLength).toBe(0);
+			expect(result!.byteLength).toBe(0);
 		});
 	});
 
@@ -106,7 +106,7 @@ describe('TarUtility', () => {
 			const buffer = new Uint8Array(1024);
 			const asyncBuffer = new MockAsyncUint8Array(buffer);
 			const result = await TarUtility.findInAsyncUint8Array(asyncBuffer);
-			expect(result.value.byteLength).toBe(512);
+			expect(result!.value.byteLength).toBe(512);
 		});
 	});
 });
