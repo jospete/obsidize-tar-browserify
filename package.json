@@ -20,7 +20,7 @@
     "copy:readme": "cpy ./README.md ./dist/",
     "copy:assets": "run-p copy:package copy:readme",
     "git:publish": "node ./scripts/release-publish.js",
-    "dist:publish": "npm publish dist",
+    "dist:publish": "npm publish ./dist",
     "dist:bundle": "run-s rebuild coverage docs",
     "version": "npm run dist:bundle",
     "version:publish": "run-s git:publish dist:publish",
