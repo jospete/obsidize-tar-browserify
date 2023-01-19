@@ -132,7 +132,8 @@ export namespace TarUtility {
 			return null;
 		}
 
-		const blockSize = clamp(stepSize, 1, SECTOR_SIZE) * TarUtility.SECTOR_SIZE;
+		// don't allow reading more than ~250KB at a time by default
+		const blockSize = clamp(stepSize, 1, SECTOR_SIZE) * SECTOR_SIZE;
 
 		let found = false;
 		let cursor = offset;
