@@ -4,15 +4,15 @@ const fs = require('fs-extra');
 
 const sampleTarPath = './dev-assets/tarball-sample/output/node-tar-sample.tar';
 
-const readTarSample = () => {
+function readTarSample() {
 	return fs.readFileSync(sampleTarPath);
-};
+}
 
 module.exports.readTarSample = readTarSample;
 
-const writeTarSample = (data) => {
+function writeTarSample(data) {
 	console.log('updating tar sample at ' + sampleTarPath);
 	fs.writeFileSync(sampleTarPath, data);
-};
+}
 
 module.exports.writeTarSample = writeTarSample;
