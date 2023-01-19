@@ -116,12 +116,12 @@ export namespace TarUtility {
 	 */
 	export async function findInAsyncUint8Array(
 		target: AsyncUint8Array,
-		offset: number = 0,
-		stepSize: number = 1,
-		predicate?: (value: Uint8Array, offset: number, target: AsyncUint8Array) => boolean
+		offset: number,
+		stepSize: number,
+		predicate: (value: Uint8Array, offset: number, target: AsyncUint8Array) => boolean
 	): Promise<AsyncUint8ArraySearchResult | null> {
 
-		if (!target) {
+		if (!target || !predicate) {
 			return null;
 		}
 
@@ -134,18 +134,18 @@ export namespace TarUtility {
 
 		const blockSize = clamp(stepSize, 1, SECTOR_SIZE) * TarUtility.SECTOR_SIZE;
 
-		if (!predicate) predicate = noop as any;
-
+		let found = false;
 		let cursor = offset;
-		let result: Uint8Array = await target.read(cursor, blockSize);
+		let result: Uint8Array;
 
-		while (cursor < maxLength && !predicate!(result, cursor, target)) {
-			cursor += blockSize;
+		while (!found && cursor < maxLength) {
 			result = await target.read(cursor, blockSize);
+			found = predicate(result, cursor, target);
+			cursor += blockSize;
 		}
 
-		if (cursor < maxLength) {
-			return { source: target, value: result, offset: cursor };
+		if (found) {
+			return { source: target, value: result!, offset: cursor };
 		}
 
 		return null;

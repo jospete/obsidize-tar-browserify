@@ -98,15 +98,4 @@ describe('TarUtility', () => {
 			expect(result!.byteLength).toBe(0);
 		});
 	});
-
-	describe('findInAsyncUint8Array()', () => {
-
-		it('returns the first slice when a predicate is not given', async () => {
-			const a = null;
-			const buffer = new Uint8Array(1024);
-			const asyncBuffer = new MockAsyncUint8Array(buffer);
-			const result = await TarUtility.findInAsyncUint8Array(asyncBuffer);
-			expect(result!.value.byteLength).toBe(512);
-		});
-	});
 });

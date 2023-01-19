@@ -4,7 +4,7 @@ import { TarEntry } from './tar-entry';
 /**
  * Shared logic between async and sync iterators.
  */
-export class TarEntryIteratorBase {
+export abstract class TarEntryIteratorBase {
 
 	private mOffset: number = 0;
 	private mSize: number = 0;
@@ -42,7 +42,7 @@ export class TarEntryIteratorBase {
 	protected consumeIteratorResult(entry: TarEntry | null): IteratorResult<TarEntry> {
 
 		if (!entry) {
-			return { value: null, done: true };
+			return this.defaultIteratorResult;
 		}
 
 		this.bufferOffset = entry.bufferEndIndex;
