@@ -73,7 +73,7 @@ async function exportTestAsssets(tarballContent, files) {
 	console.log('generated output at ' + outputPath + ' for files: ', files);
 }
 
-async function run() {
+async function main() {
 
 	const files = [
 		'./dev-assets/tarball-sample/tar-root'
@@ -85,4 +85,4 @@ async function run() {
 	await exportTestAsssets(tarballContent, files);
 }
 
-run();
+main().catch(console.error);
