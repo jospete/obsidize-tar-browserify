@@ -1,0 +1,10 @@
+{
+	"editor.formatOnSave": true,
+	"javascript.preferences.quoteStyle": "single",
+	"typescript.preferences.quoteStyle": "single",
+	"editor.insertSpaces": false,
+	"editor.tabSize": 4,
+	"editor.tabCompletion": "on",
+	"editor.detectIndentation": false,
+	"html.format.wrapAttributes": "aligned-multiple"
+}
