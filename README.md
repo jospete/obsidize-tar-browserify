@@ -27,7 +27,10 @@ import { Tarball } from '@obsidize/tar-browserify';
 // or with runkit:
 // const { Tarball } = require('@obsidize/tar-browserify');
 
-// Example 1 - Create a tarball from some given entry attributes
+// Example 1 - Create a tarball from some given entry attributes.
+//
+// The Tarball class implements several shorthand methods for
+// injecting content like so:
 const createdTarball = new Tarball()
 	.addTextFile('Test File.txt', 'This is a test file')
 	.addBinaryFile('Some binary data.bin', new Uint8Array(10))
@@ -35,7 +38,11 @@ const createdTarball = new Tarball()
 	.addTextFile('MyFolder/a nested file.txt', 'this is under MyFolder')
 	.toUint8Array();
 
-// Example 2 - Decode a tarball from some Uint8Array source
+// Example 2 - Decode a tarball from some Uint8Array source.
+//
+// Here we use the tarball we just created for demonstration purposes, 
+// but this could just as easily be a blob from a server, or a local file;
+// as long as the content is a Uint8Array that implements the tar format correctly.
 const entries = Tarball.extract(createdTarball);
 const [mainFile] = entries;
 
@@ -70,15 +77,23 @@ const [firstEntry] = entriesFromBigFile;
 const firstEntryContent = await firstEntry.readContentFrom(asyncBuffer);
 ```
 
-See this module's [Test Suite](https://github.com/jospete/obsidize-tar-browserify/tree/master/tests) 
-to get a general feel for what this module can do.
-
 ## API
 
-Source documentation can be found [here](https://jospete.github.io/obsidize-tar-browserify/)
+Full API docs can be found [here](https://jospete.github.io/obsidize-tar-browserify/)
 
 ## Testing
 
-This module is tested against the output of the [node-tar](https://www.npmjs.com/package/tar) package to ensure stability.
+This module has a full [Test Suite](https://github.com/jospete/obsidize-tar-browserify/tree/master/tests) 
+to ensure breaking changes are not introduced, and is tested against the output 
+of the [node-tar](https://www.npmjs.com/package/tar) package to ensure stability.
 
-See package scripts for available test options.
+- `npm test` - run unit tests with live-reload.
+- `npm run coverage` - perform a single-pass of unit tests with code-coverage display.
+
+## Building From Source
+
+- clone this repo
+- run `npm install`
+- run `npm run build`
+
+The output will be in `./dist`
