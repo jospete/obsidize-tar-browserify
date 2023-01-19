@@ -50,12 +50,12 @@
 	},
 	"homepage": "https://github.com/jospete/obsidize-tar-browserify#readme",
 	"dependencies": {
-		"tslib": "^2.3.1"
+		"tslib": "2.4.1"
 	},
 	"devDependencies": {
 		"@types/fs-extra": "9.0.12",
 		"@types/jasmine": "^3.6.3",
-		"cpy-cli": "^3.1.1",
+		"cpy-cli": "^4.2.0",
 		"fs-extra": "10.0.0",
 		"globby": "12.0.2",
 		"jasmine-core": "^3.6.0",
@@ -68,13 +68,13 @@
 		"karma-jasmine-html-reporter": "^1.5.4",
 		"karma-typescript": "^5.4.0",
 		"npm-run-all": "^4.1.5",
-		"open-cli": "^6.0.1",
+		"open-cli": "^7.1.0",
 		"rimraf": "^3.0.2",
 		"rxjs": "6.6.7",
 		"tar": "6.1.11",
 		"ts-loader": "^8.0.18",
 		"ts-node": "10.2.1",
-		"typedoc": "0.21.4",
+		"typedoc": "^0.21.10",
 		"typescript": "4.1.5",
 		"webpack": "^5.25.0",
 		"webpack-cli": "^4.5.0",
