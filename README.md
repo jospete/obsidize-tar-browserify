@@ -2,7 +2,8 @@
 
 Simple utility for packing and unpacking tar files in the browser.
 
-This differs from other [npm tar modules](https://www.npmjs.com/search?q=tar) in that it contains no node-based dependencies like ```fs``` or ```streams```.
+This differs from other [npm tar modules](https://www.npmjs.com/search?q=tar) 
+in that it contains no node-based dependencies like ```fs``` or ```streams```.
 
 Pairs well with these modules:
 - [pako](https://www.npmjs.com/package/pako) for gzip / unzip
@@ -10,16 +11,8 @@ Pairs well with these modules:
 
 ## Installation
 
-- npm:
-
 ```bash
-npm install --save @obsidize/tar-browserify
-```
-
-- git:
-
-```bash
-npm install --save git+https://github.com/jospete/obsidize-tar-browserify.git
+npm install -P -E @obsidize/tar-browserify
 ```
 
 ## Usage
@@ -34,12 +27,11 @@ import {Tarball, TarUtility} from '@obsidize/tar-browserify';
 // const {Tarball, TarUtility} = tarBrowserify;
 
 // Example 1 - Create a tarball from some given entry attributes
-const createdTarball = Tarball.create([
-	{
-		header: {fileName: 'Test File.txt'},
-		content: TarUtility.encodeString('This is a test file')
-	}
-]);
+const createdTarball = new Tarball()
+	.addTextFile('Test File.txt', 'This is a test file')
+	.addBinaryFile('Some binary data.bin', new Uint8Array(10))
+	.addDirectory('MyFolder')
+	.addTextFile('MyFolder/a nested file.txt', 'this is under MyFolder');
 
 // Example 2 - Decode a tarball from some Uint8Array source
 const entries = Tarball.extract(createdTarball);
@@ -47,25 +39,37 @@ const [mainFile] = entries;
 
 console.log(mainFile.fileName); // 'Test File.txt'
 console.log(mainFile.content); // Uint8Array object
-console.log(TarUtility.decodeString(mainFile.content)); // 'This is a test file'
+console.log(mainFile.getContentAsText()); // 'This is a test file'
 ```
 
 **NOTE:** for large files, it is better to use the provided async options:
 
 ```typescript
-// unpack large files asynchronously to conserve memory
-const entriesFromBigFile = await Tarball.extractAsync({
+import {Tarball, AsyncUint8Array} from '@obsidize/tar-browserify';
+
+// Generalized wrapper for loading data in chunks.
+// The caller must wrap whatever external storage they are using with this.
+const asyncBuffer: AsyncUint8Array = {
 	
 	// fetch tarball file length from storage
-	byteLength: () => ... /* Promise<number> */
+	byteLength: async () => ... /* Promise<number> */
 	
 	// read tarball data from storage
 	// allows us to read the file in chunks rather than all at once
-	read: (offset: number, length: number) => ... /* Promise<Uint8Array> */
-});
+	read: async (offset: number, length: number) => ... /* Promise<Uint8Array> */
+};
+
+// unpack large files asynchronously to conserve memory
+const entriesFromBigFile = await Tarball.extractAsync(asyncBuffer);
+
+// IMPORTANT - async entries do not load file content by default to conserve memory.
+// The caller must read file contents from an async entry like so:
+const [firstEntry] = entriesFromBigFile;
+const firstEntryContent = await firstEntry.readContentFrom(asyncBuffer);
 ```
 
-See the [Example Usage Spec](https://github.com/jospete/obsidize-tar-browserify/blob/master/tests/example-usage.spec.ts) to get a general feel for what this module can do.
+See this module's [Test Suite](https://github.com/jospete/obsidize-tar-browserify/tree/master/tests) 
+to get a general feel for what this module can do.
 
 ## API
 
