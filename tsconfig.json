@@ -1,31 +1,32 @@
 {
-  "compilerOptions": {
-    "baseUrl": ".",
-    "declaration": true,
-    "stripInternal": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "importHelpers": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "strictPropertyInitialization": false,
-    "module": "ES2015",
-    "moduleResolution": "node",
-    "outDir": "./dist",
-    "rootDir": "src",
-    "target": "ES6",
-    "lib": [
-      "ES6",
-      "ES2017",
-      "DOM"
-    ]
-  },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "tests",
-    "scripts"
-  ]
+	"compilerOptions": {
+		"baseUrl": ".",
+		"declaration": true,
+		"stripInternal": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"importHelpers": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"strictPropertyInitialization": false,
+		"module": "ES2015",
+		"moduleResolution": "node",
+		"outDir": "./dist",
+		"rootDir": "src",
+		"target": "ES6",
+		"lib": [
+			"ES6",
+			"ES2017",
+			"DOM"
+		]
+	},
+	"include": [
+		"src/**/*.ts"
+	],
+	"exclude": [
+		"node_modules/",
+		"tests/",
+		"scripts/",
+		"docs/"
+	]
 }

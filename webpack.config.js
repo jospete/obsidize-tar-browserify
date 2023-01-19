@@ -15,7 +15,7 @@ module.exports = {
 		],
 	},
 	resolve: {
-		extensions: ['.tsx', '.ts', '.js'],
+		extensions: ['.ts'],
 	},
 	output: {
 		filename: 'es5.js',
