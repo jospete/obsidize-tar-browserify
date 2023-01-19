@@ -1,4 +1,5 @@
-import { AsyncUint8Array } from '../common';
+import { TarUtility, AsyncUint8Array } from '../common';
+import { TarHeader, TarHeaderLinkIndicatorType } from '../header';
 
 import {
 	TarEntry,
@@ -46,6 +47,11 @@ export class Tarball {
 		return AsyncTarEntryIterator.extractAll(buffer, onNextEntry);
 	}
 
+	public toUint8Array(): Uint8Array {
+		const attrs = Array.from(this.entries).map(e => e.toAttributes());
+		return Tarball.create(attrs);
+	}
+
 	public setBuffer(buffer: Uint8Array): this {
 		this.entries = Tarball.extract(buffer);
 		return this;
@@ -56,8 +62,27 @@ export class Tarball {
 		return this;
 	}
 
-	public toUint8Array(): Uint8Array {
-		const attrs = Array.from(this.entries).map(e => e.toAttributes());
-		return Tarball.create(attrs);
+	public addTextFile(path: string, content: string, headerOptions?: Partial<TarHeader>): this {
+		return this.addBinaryFile(path, TarUtility.encodeString(content), headerOptions);
+	}
+
+	public addBinaryFile(path: string, content: Uint8Array, headerOptions: Partial<TarHeader> = {}): this {
+		return this.add({
+			header: Object.assign({
+				fileName: path,
+				fileSize: content.byteLength,
+				typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE
+			}, headerOptions),
+			content
+		});
+	}
+
+	public addDirectory(path: string, headerOptions: Partial<TarHeader> = {}): this {
+		return this.add({
+			header: Object.assign({
+				fileName: path,
+				typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
+			}, headerOptions)
+		});
 	}
 }

@@ -1,4 +1,4 @@
-import { Tarball } from '../../src';
+import { Tarball, TarHeaderLinkIndicatorType } from '../../src';
 
 import { tarballSampleBase64 } from '../generated/tarball-test-assets';
 import { MockAsyncUint8Array } from '../mocks/mock-async-uint8array';
@@ -53,6 +53,107 @@ describe('Tarball', () => {
 
 			expect(entries.length).toBe(1);
 			expect(entries[0].fileName).toBe('test.txt');
+		});
+	});
+
+	describe('addBinaryFile()', () => {
+
+		it('is a shortcut for adding a standard file entry', () => {
+
+			const tarball = new Tarball();
+			const fileName = 'test.txt';
+			const fileContent = new Uint8Array(10);
+
+			tarball.addBinaryFile(fileName, fileContent);
+
+			const [entry] = tarball.entries;
+
+			expect(tarball.entries.length).toBe(1);
+			expect(entry.isFile()).toBe(true);
+			expect(entry.fileName).toBe(fileName);
+			expect(entry.fileSize).toBe(fileContent.byteLength);
+			expect(entry.getType()).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
+		});
+
+		it('accepts custom header options as an additional parameter', () => {
+
+			const tarball = new Tarball();
+			const fileName = 'test.txt';
+			const fileContent = new Uint8Array(10);
+			const overrideType = TarHeaderLinkIndicatorType.CONTIGUOUS_FILE;
+
+			tarball.addBinaryFile(fileName, fileContent, { typeFlag: overrideType });
+
+			const [entry] = tarball.entries;
+
+			expect(entry.getType()).toBe(overrideType);
+		});
+	});
+
+	describe('addTextFile()', () => {
+
+		it('is a shortcut for adding a standard file entry', () => {
+
+			const tarball = new Tarball();
+			const fileName = 'test.txt';
+			const fileContent = 'This is some text';
+
+			tarball.addTextFile(fileName, fileContent);
+
+			const [entry] = tarball.entries;
+
+			expect(tarball.entries.length).toBe(1);
+			expect(entry.isFile()).toBe(true);
+			expect(entry.fileName).toBe(fileName);
+			expect(entry.getContentAsText()).toBe(fileContent);
+			expect(entry.getType()).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
+		});
+
+		it('accepts custom header options as an additional parameter', () => {
+
+			const tarball = new Tarball();
+			const fileName = 'test.txt';
+			const fileContent = 'This is some text';
+			const overrideType = TarHeaderLinkIndicatorType.CONTIGUOUS_FILE;
+
+			tarball.addTextFile(fileName, fileContent, { typeFlag: overrideType });
+
+			const [entry] = tarball.entries;
+
+			expect(entry.getType()).toBe(overrideType);
+		});
+	});
+
+	describe('addDirectory()', () => {
+
+		it('is a shortcut for adding a standard directory entry', () => {
+
+			const tarball = new Tarball();
+			const fileName = './sample/directory/path';
+
+			tarball.addDirectory(fileName);
+
+			const [entry] = tarball.entries;
+
+			expect(tarball.entries.length).toBe(1);
+			expect(entry.fileName).toBe(fileName);
+			expect(entry.fileSize).toBe(0);
+			expect(entry.isDirectory()).toBe(true);
+			expect(entry.getType()).toBe(TarHeaderLinkIndicatorType.DIRECTORY);
+			expect(entry.getParsedHeaderFieldValue('ownerUserName', '')).toBe('');
+		});
+
+		it('accepts custom header options as an additional parameter', () => {
+
+			const tarball = new Tarball();
+			const fileName = './sample/directory/path';
+			const overrideUser = 'someguy';
+
+			tarball.addDirectory(fileName, { ownerUserName: overrideUser });
+
+			const [entry] = tarball.entries;
+
+			expect(entry.getParsedHeaderFieldValue('ownerUserName', '')).toBe(overrideUser);
 		});
 	});
 });

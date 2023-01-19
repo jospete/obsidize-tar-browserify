@@ -117,6 +117,10 @@ export class TarEntry {
 		return this.getParsedHeaderFieldValue('typeFlag', TarHeaderLinkIndicatorType.UNKNOWN);
 	}
 
+	public getContentAsText(): string {
+		return TarUtility.decodeString(this.content!);
+	}
+
 	public isDirectory(): boolean {
 		return isTarHeaderLinkIndicatorTypeDirectory(this.getType());
 	}
