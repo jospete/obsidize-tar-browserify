@@ -72,8 +72,32 @@ describe('TarHeaderUtility', () => {
 		});
 
 		it('returns false if the buffer does NOT contain a ustar indicator', () => {
-			expect(TarHeaderUtility.isUstarSector(null)).toBe(false);
+			expect(TarHeaderUtility.isUstarSector(null as any)).toBe(false);
 			expect(TarHeaderUtility.isUstarSector(new Uint8Array(0))).toBe(false);
+		});
+
+		it('allows for non-standard padding after ustar indicator header data', () => {
+
+			const targetOffset = TarHeaderFieldDefinition.ustarIndicator.offset;
+			const testHeaderBuffer = TarHeaderUtility.generateHeaderBuffer(null);
+			const baseValue = TarHeaderFieldDefinition.USTAR_TAG;
+
+			const assertValidHeader = (value: string, isValid: boolean) => {
+				testHeaderBuffer.set(TarUtility.encodeString(value), targetOffset);
+				expect(TarHeaderUtility.isUstarSector(testHeaderBuffer)).toBe(isValid);
+			};
+
+			assertValidHeader('\0\0\0\0\0\0\0\0', false);
+			assertValidHeader(baseValue, true);
+
+			// some older tar creation tools add spacing after "ustar", so need to account for that
+			assertValidHeader(`${baseValue}\0`, true);
+			assertValidHeader(`${baseValue} \0`, true);
+			assertValidHeader(`${baseValue}  \0`, true);
+			assertValidHeader(`${baseValue}  `, true);
+
+			// make sure we can go back to failed state because paranoia
+			assertValidHeader('\0\0\0\0\0\0\0\0', false);
 		});
 	});
 
@@ -95,7 +119,7 @@ describe('TarHeaderUtility', () => {
 		});
 
 		it('returns -1 when there is no ustar sector in the given scope', () => {
-			expect(TarHeaderUtility.findNextUstarSectorOffset(null)).toBe(-1);
+			expect(TarHeaderUtility.findNextUstarSectorOffset(null as any)).toBe(-1);
 		});
 
 		it('uses the given offset when it is provided', () => {
@@ -128,7 +152,7 @@ describe('TarHeaderUtility', () => {
 		});
 
 		it('returns a default value when the given input cannot be parsed to a number', () => {
-			expect(TarHeaderUtility.parseIntOctal(null)).toBe(0);
+			expect(TarHeaderUtility.parseIntOctal(null as any)).toBe(0);
 		});
 	});
 
@@ -153,7 +177,7 @@ describe('TarHeaderUtility', () => {
 	describe('serializeFieldValue()', () => {
 
 		it('returns an empty Uint8Array on malformed input', () => {
-			expect(TarHeaderUtility.serializeFieldValue(null, 'test'))
+			expect(TarHeaderUtility.serializeFieldValue(null as any, 'test'))
 				.toEqual(new Uint8Array(0));
 		});
 	});
@@ -167,21 +191,24 @@ describe('TarHeaderUtility', () => {
 			const serialized = TarHeaderUtility.serializeFieldValue(metadata.field, metadata.value);
 			const deserialized = TarHeaderUtility.deserializeFieldValue(metadata.field, serialized);
 
-			it('mirrors the serializer functions for "' + propertyName + '"', () => {
+			it(`mirrors the serialized value for "${propertyName}"`, () => {
 				expect(serialized).toEqual(metadata.bytes);
+			});
+
+			it(`mirrors the deserialized value for "${propertyName}"`, () => {
 				expect(deserialized).toEqual(metadata.value);
 			});
 		}
 
 		it('returns undefined for unknown field types', () => {
-			expect(TarHeaderUtility.deserializeFieldValue(null, new Uint8Array(0))).not.toBeDefined();
+			expect(TarHeaderUtility.deserializeFieldValue(null as any, new Uint8Array(0))).not.toBeDefined();
 		});
 	});
 
 	describe('serializeIntegerOctalWithSuffix()', () => {
 
 		it('uses a default min length of zero when a field is not given', () => {
-			expect(TarHeaderUtility.serializeIntegerOctalWithSuffix(0, null, ''))
+			expect(TarHeaderUtility.serializeIntegerOctalWithSuffix(0, null as any, ''))
 				.toEqual(TarUtility.encodeString('0'));
 		});
 	});
@@ -189,7 +216,7 @@ describe('TarHeaderUtility', () => {
 	describe('flattenHeaderExtractionResult()', () => {
 
 		it('returns an unpopulated object when the input is malformed', () => {
-			expect(TarHeaderUtility.flattenHeaderExtractionResult(null))
+			expect(TarHeaderUtility.flattenHeaderExtractionResult(null as any))
 				.toEqual(TarHeaderUtility.getDefaultHeaderValues());
 		});
 
@@ -202,7 +229,7 @@ describe('TarHeaderUtility', () => {
 	describe('findNextUstarSectorAsync()', () => {
 
 		it('returns null when malformed inputs are given', async () => {
-			expect(await TarHeaderUtility.findNextUstarSectorAsync(null)).toBe(null);
+			expect(await TarHeaderUtility.findNextUstarSectorAsync(null as any)).toBe(null);
 			const mockBuffer = new Uint8Array(5);
 			const mockAsyncBuffer = new MockAsyncUint8Array(mockBuffer);
 			expect(await TarHeaderUtility.findNextUstarSectorAsync(mockAsyncBuffer, mockBuffer.byteLength)).toBe(null);

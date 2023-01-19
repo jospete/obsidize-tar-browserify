@@ -12,7 +12,7 @@ describe('AsyncTarEntryIterator', () => {
 	describe('extractAll()', () => {
 
 		it('does not require an entry callback', async () => {
-			const result = await AsyncTarEntryIterator.extractAll(null);
+			const result = await AsyncTarEntryIterator.extractAll(null as any);
 			expect(result).toEqual([]);
 		});
 

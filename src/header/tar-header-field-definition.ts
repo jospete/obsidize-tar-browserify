@@ -8,6 +8,8 @@ import { TarHeaderFieldType } from './tar-header-field-type'
  */
 export namespace TarHeaderFieldDefinition {
 
+	export const USTAR_TAG = 'ustar';
+
 	// Legacy Fields
 	export const fileName: TarHeaderField = Object.freeze({ name: 'fileName', offset: 0, size: 100, type: TarHeaderFieldType.ASCII_PADDED_END });
 	export const fileMode: TarHeaderField = Object.freeze({ name: 'fileMode', offset: 100, size: 8, type: TarHeaderFieldType.INTEGER_OCTAL });
@@ -20,7 +22,7 @@ export namespace TarHeaderFieldDefinition {
 	export const linkedFileName: TarHeaderField = Object.freeze({ name: 'linkedFileName', offset: 157, size: 100, type: TarHeaderFieldType.ASCII_PADDED_END });
 
 	// USTAR Fields
-	export const ustarIndicator: TarHeaderField = Object.freeze({ name: 'ustarIndicator', offset: 257, size: 6, type: TarHeaderFieldType.ASCII, constantValue: 'ustar\0' });
+	export const ustarIndicator: TarHeaderField = Object.freeze({ name: 'ustarIndicator', offset: 257, size: 6, type: TarHeaderFieldType.ASCII, constantValue: `${USTAR_TAG}\0` });
 	export const ustarVersion: TarHeaderField = Object.freeze({ name: 'ustarVersion', offset: 263, size: 2, type: TarHeaderFieldType.ASCII, constantValue: '00' });
 	export const ownerUserName: TarHeaderField = Object.freeze({ name: 'ownerUserName', offset: 265, size: 32, type: TarHeaderFieldType.ASCII_PADDED_END });
 	export const ownerGroupName: TarHeaderField = Object.freeze({ name: 'ownerGroupName', offset: 297, size: 32, type: TarHeaderFieldType.ASCII_PADDED_END });

@@ -41,7 +41,7 @@ const createdTarball = Tarball.create([
 	}
 ]);
 
-// Example 2 - Decode a tarball from some source
+// Example 2 - Decode a tarball from some Uint8Array source
 const entries = Tarball.extract(createdTarball);
 const [mainFile] = entries;
 
