@@ -5,7 +5,7 @@ export function base64ToUint8Array(base64Str: string): Uint8Array {
 }
 
 export function range(size: number): number[] {
-	const result = [];
+	const result: number[] = [];
 	for (let i = 0; i < size; i++) result.push(i);
 	return result;
 };
