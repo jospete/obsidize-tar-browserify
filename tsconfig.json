@@ -9,6 +9,8 @@
 		"skipLibCheck": true,
 		"strict": true,
 		"strictPropertyInitialization": false,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
 		"module": "ES2015",
 		"moduleResolution": "node",
 		"outDir": "./dist",
