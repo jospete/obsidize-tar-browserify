@@ -37,11 +37,13 @@
 		"url": "git+https://github.com/jospete/obsidize-tar-browserify.git"
 	},
 	"keywords": [
-		"obsidize",
 		"tar",
-		"tarball",
 		"browser",
-		"browserify"
+		"tarball",
+		"browserify",
+		"ustar",
+		"gnutar",
+		"obsidize"
 	],
 	"author": "Josh Noel <obsidize@gmail.com>",
 	"license": "MIT",
