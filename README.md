@@ -22,16 +22,18 @@ npm install -P -E @obsidize/tar-browserify
 The below example can be tested with runkit on npm:
 
 ```typescript
-import {Tarball, TarUtility} from '@obsidize/tar-browserify';
+import { Tarball } from '@obsidize/tar-browserify';
+
 // or with runkit:
-// const {Tarball, TarUtility} = tarBrowserify;
+// const { Tarball } = require('@obsidize/tar-browserify');
 
 // Example 1 - Create a tarball from some given entry attributes
 const createdTarball = new Tarball()
 	.addTextFile('Test File.txt', 'This is a test file')
 	.addBinaryFile('Some binary data.bin', new Uint8Array(10))
 	.addDirectory('MyFolder')
-	.addTextFile('MyFolder/a nested file.txt', 'this is under MyFolder');
+	.addTextFile('MyFolder/a nested file.txt', 'this is under MyFolder')
+	.toUint8Array();
 
 // Example 2 - Decode a tarball from some Uint8Array source
 const entries = Tarball.extract(createdTarball);

@@ -1,38 +1,57 @@
-import { Tarball, TarUtility } from '../src';
+import { AsyncUint8Array, Tarball, TarHeaderUtility } from '../src';
 
 describe('README Example', () => {
 
-	it('can be executed', async () => {
+	describe('simple use case', () => {
 
-		// Decode a tarball from some source
-		const sourceBuffer = Uint8Array.from([1, 2, 3, 4]);
-		const entries = Tarball.extract(sourceBuffer);
+		it('can be executed', () => {
 
-		expect(entries).toBeDefined();
+			// or with runkit:
+			// const { Tarball } = require('@obsidize/tar-browserify');
 
-		// Create a tarball from some given entry attributes
-		const tarballBuffer = Tarball.create([
-			{
-				header: { fileName: 'Test File.txt' },
-				content: TarUtility.encodeString('This is a test file')
-			}
-		]);
+			// Example 1 - Create a tarball from some given entry attributes
+			const createdTarball = new Tarball()
+				.addTextFile('Test File.txt', 'This is a test file')
+				.addBinaryFile('Some binary data.bin', new Uint8Array(10))
+				.addDirectory('MyFolder')
+				.addTextFile('MyFolder/a nested file.txt', 'this is under MyFolder')
+				.toUint8Array();
 
-		expect(tarballBuffer).toBeDefined();
+			// Example 2 - Decode a tarball from some Uint8Array source
+			const entries = Tarball.extract(createdTarball);
+			const [mainFile] = entries;
 
-		const mockBuffer = new Uint8Array(42);
-
-		// To unpack large files, use extractAsync() to conserve memory
-		const asyncEntries = await Tarball.extractAsync({
-
-			// fetch tarball file length from storage
-			byteLength: () => Promise.resolve(mockBuffer.byteLength),
-
-			// read tarball data from storage
-			// allows us to read the file in chunks rather than all at once
-			read: (offset: number, length: number) => Promise.resolve(mockBuffer.slice(offset, length))
+			console.log(mainFile.fileName); // 'Test File.txt'
+			console.log(mainFile.content); // Uint8Array object
+			console.log(mainFile.getContentAsText()); // 'This is a test file'
 		});
+	});
 
-		expect(asyncEntries).toBeDefined();
+	describe('async use case', () => {
+
+		it('can be executed', async () => {
+
+			const mockBuffer = new Uint8Array(TarHeaderUtility.HEADER_SIZE + 42);
+
+			const asyncBuffer: AsyncUint8Array = {
+
+				// fetch tarball file length from storage
+				byteLength: async () => mockBuffer.byteLength,
+
+				// read tarball data from storage
+				// allows us to read the file in chunks rather than all at once
+				read: async (offset: number, length: number) => mockBuffer.slice(offset, offset + length)
+			};
+
+			// To unpack large files, use extractAsync() to conserve memory
+			const entriesFromBigFile = await Tarball.extractAsync(asyncBuffer);
+			expect(entriesFromBigFile).toBeDefined();
+
+			// IMPORTANT - async entries do not load file content by default to conserve memory.
+			// The caller must read file contents from an async entry like so:
+			const [firstEntry] = entriesFromBigFile;
+			const firstEntryContent = await firstEntry.readContentFrom(asyncBuffer);
+			expect(firstEntryContent).toBeDefined();
+		});
 	});
 });
