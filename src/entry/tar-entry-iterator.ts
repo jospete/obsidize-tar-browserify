@@ -18,6 +18,15 @@ export class TarEntryIterator extends TarEntryIteratorBase implements IterableIt
 		this.initialize(null);
 	}
 
+	/**
+	 * Convenience to parse out all entries in one go.
+	 */
+	public static extractAll(buffer: Uint8Array): TarEntry[] {
+		const iterator = new TarEntryIterator();
+		iterator.initialize(buffer);
+		return Array.from(iterator);
+	}
+
 	[Symbol.iterator](): IterableIterator<TarEntry> {
 		return this;
 	}

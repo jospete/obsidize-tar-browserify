@@ -23,9 +23,7 @@ export class Tarball {
 	 * The buffer should come from a complete, uncompressed tar file.
 	 */
 	public static extract(buffer: Uint8Array): TarEntry[] {
-		const iterator = new TarEntryIterator();
-		iterator.initialize(buffer);
-		return Array.from(iterator);
+		return TarEntryIterator.extractAll(buffer);
 	}
 
 	/**
