@@ -24,6 +24,8 @@ describe('README Example', () => {
 			console.log(mainFile.fileName); // 'Test File.txt'
 			console.log(mainFile.content); // Uint8Array object
 			console.log(mainFile.getContentAsText()); // 'This is a test file'
+
+			expect(mainFile.getContentAsText()).toBe('This is a test file');
 		});
 	});
 
@@ -31,7 +33,9 @@ describe('README Example', () => {
 
 		it('can be executed', async () => {
 
-			const mockBuffer = new Uint8Array(TarHeaderUtility.HEADER_SIZE + 42);
+			const mockBuffer = new Tarball()
+				.addTextFile('Example.txt', 'This is a mock file for async testing')
+				.toUint8Array();
 
 			const asyncBuffer: AsyncUint8Array = {
 
@@ -45,12 +49,13 @@ describe('README Example', () => {
 
 			// To unpack large files, use extractAsync() to conserve memory
 			const entriesFromBigFile = await Tarball.extractAsync(asyncBuffer);
-			expect(entriesFromBigFile).toBeDefined();
 
 			// IMPORTANT - async entries do not load file content by default to conserve memory.
 			// The caller must read file contents from an async entry like so:
 			const [firstEntry] = entriesFromBigFile;
 			const firstEntryContent = await firstEntry.readContentFrom(asyncBuffer);
+
+			expect(entriesFromBigFile).toBeDefined();
 			expect(firstEntryContent).toBeDefined();
 		});
 	});
