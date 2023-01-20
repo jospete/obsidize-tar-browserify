@@ -37,7 +37,7 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 			header = TarHeaderUtility.expandHeaderToExtractionResult(headerAttrs);
 		}
 
-		return { header, content, offset };
+		return new TarEntryMetadata(header, content, offset);
 	}
 
 	/**
@@ -68,7 +68,7 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 			content = input.slice(start, end);
 		}
 
-		return { header, content, offset: ustarSectorOffset };
+		return new TarEntryMetadata(header, content, ustarSectorOffset);
 	}
 
 	/**
@@ -89,10 +89,10 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 			return null;
 		}
 
-		const { value, offset: sectorOffset } = sector;
+		const { value, offset: ustarSectorOffset } = sector;
 		const header = TarHeaderUtility.extractHeaderContent(value);
 		const content = null;
 
-		return { header, content, offset: sectorOffset };
+		return new TarEntryMetadata(header, content, ustarSectorOffset);
 	}
 }
