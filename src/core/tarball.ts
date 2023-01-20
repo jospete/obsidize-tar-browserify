@@ -3,11 +3,11 @@ import { TarHeader, TarHeaderLinkIndicatorType } from '../header';
 
 import {
 	TarEntry,
-	TarEntryUtility,
 	TarEntryIterator,
-	TarEntryAttributes,
 	AsyncTarEntryIterator,
-	TarEntryDelegate
+	TarEntryDelegate,
+	TarEntryAttributesLike,
+	TarEntryAttributes
 } from '../entry';
 
 /**
@@ -29,9 +29,8 @@ export class Tarball {
 	/**
 	 * Generates a tar file buffer from the given attributes list.
 	 */
-	public static create(entries: TarEntryAttributes[]): Uint8Array {
-		const safeEntries = Array.from(entries).filter(v => !!v);
-		return TarEntryUtility.generatePaddedCompositeBuffer(safeEntries);
+	public static create(entries: TarEntryAttributesLike[]): Uint8Array {
+		return TarEntryAttributes.combinePaddedFrom(entries);
 	}
 
 	/**
@@ -55,7 +54,7 @@ export class Tarball {
 		return this;
 	}
 
-	public add(attrs: TarEntryAttributes): this {
+	public add(attrs: TarEntryAttributesLike): this {
 		this.entries.push(TarEntry.fromAttributes(attrs));
 		return this;
 	}

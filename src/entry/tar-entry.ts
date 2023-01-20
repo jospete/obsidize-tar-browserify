@@ -10,11 +10,8 @@ import {
 	TarHeaderExtractionResult
 } from '../header';
 
-import {
-	TarEntryUtility,
-	TarEntryAttributes,
-	TarEntryMetadata
-} from './tar-entry-utility';
+import { TarEntryAttributes, TarEntryAttributesLike } from './tar-entry-attributes';
+import { TarEntryMetadata, TarEntryMetadataLike } from './tar-entry-metadata';
 
 /**
  * Container for metadata and content of a tarball entry.
@@ -28,9 +25,9 @@ export class TarEntry implements TarHeader {
 	protected readonly metadata: TarEntryMetadata;
 
 	constructor(
-		metadata: TarEntryMetadata
+		metadata: TarEntryMetadataLike
 	) {
-		this.metadata = TarEntryUtility.sanitizeTarEntryMetadata(metadata);
+		this.metadata = TarEntryMetadata.from(metadata);
 	}
 
 	public static isTarEntry(v: any): boolean {
@@ -42,18 +39,18 @@ export class TarEntry implements TarHeader {
 		return new TarEntry({ header, content, offset: 0 });
 	}
 
-	public static fromAttributes(attrs: TarEntryAttributes): TarEntry {
+	public static fromAttributes(attrs: TarEntryAttributesLike): TarEntry {
 		const { header, content } = attrs;
 		return TarEntry.from(header, content);
 	}
 
 	public static tryParse(input: Uint8Array, offset?: number): TarEntry | null {
-		const metadata = TarEntryUtility.extractEntryMetadata(input, offset);
+		const metadata = TarEntryMetadata.extractFrom(input, offset);
 		return metadata ? new TarEntry(metadata) : null;
 	}
 
 	public static async tryParseAsync(input: AsyncUint8Array, offset?: number): Promise<TarEntry | null> {
-		const metadata = await TarEntryUtility.extractEntryMetadataAsync(input, offset);
+		const metadata = await TarEntryMetadata.extractFromAsync(input, offset);
 		return metadata ? new TarEntry(metadata) : null;
 	}
 
@@ -301,14 +298,14 @@ export class TarEntry implements TarHeader {
 	}
 
 	public toUint8Array(): Uint8Array {
-		return TarEntryUtility.generateEntryBuffer(this.toAttributes())!;
+		return this.toAttributes().toUint8Array();
 	}
 
 	public toAttributes(): TarEntryAttributes {
-		return {
-			header: TarHeaderUtility.flattenHeaderExtractionResult(this.header),
-			content: this.content
-		};
+		return new TarEntryAttributes(
+			TarHeaderUtility.flattenHeaderExtractionResult(this.header),
+			this.content
+		);
 	}
 
 	/**
