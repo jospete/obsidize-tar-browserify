@@ -9,6 +9,7 @@
 	"html.format.wrapAttributes": "aligned-multiple",
 	"editor.wordWrap": "bounded",
 	"editor.wordWrapColumn": 120,
+	"typescript.preferences.importModuleSpecifier": "relative",
 	"[typescript]": {
 		"editor.codeActionsOnSave": {
 			"source.organizeImports": true

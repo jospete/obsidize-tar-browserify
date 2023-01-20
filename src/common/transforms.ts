@@ -66,12 +66,6 @@ export function parseIntSafe(value: any, radix: number = 10, defaultValue: numbe
 	return isNumber(parsed) ? parsed : defaultValue;
 }
 
-export function removeTrailingZeros(str: string): string {
-	const pattern = /^([^\0]*)[\0]*$/;
-	const result = pattern.exec(str);
-	return result ? result[1] : str;
-}
-
 export function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {
 
 	if (!isUint8Array(b)) return a;

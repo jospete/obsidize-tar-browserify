@@ -1,14 +1,8 @@
-import {
-	advanceSectorOffset,
-	AsyncUint8Array,
-	AsyncUint8ArraySearchResult,
-	findInAsyncUint8Array,
-	isNumber,
-	isUint8Array,
-	sizeofUint8Array
-} from '../common';
+import { AsyncUint8Array, AsyncUint8ArraySearchResult, findInAsyncUint8Array } from '../common/async-uint8array';
+import { advanceSectorOffset, isNumber, isUint8Array, sizeofUint8Array } from '../common/transforms';
+import { isUstarSector } from '../header/tar-header-field-definitions';
+import { TarHeaderMetadata } from '../header/tar-header-metadata';
 
-import { isUstarSector, TarHeaderMetadata } from '../header';
 
 export interface TarEntryMetadataLike {
 	header: TarHeaderMetadata;

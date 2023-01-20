@@ -1,13 +1,16 @@
 import {
-	encodeString,
 	FILE_MODE_DEFAULT,
-	generateChecksum,
 	HEADER_SIZE,
-	isNumber,
-	isUint8Array,
 	USTAR_INDICATOR_VALUE,
 	USTAR_VERSION_VALUE
-} from '../common';
+} from '../common/constants';
+
+import {
+	encodeString,
+	generateChecksum,
+	isNumber,
+	isUint8Array
+} from '../common/transforms';
 
 import {
 	sanitizeTimestamp,

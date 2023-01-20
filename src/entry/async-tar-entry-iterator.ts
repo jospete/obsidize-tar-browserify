@@ -1,4 +1,5 @@
-import { AsyncUint8Array, noop } from '../common';
+import { AsyncUint8Array } from '../common/async-uint8array';
+import { noop } from '../common/transforms';
 import { TarEntry } from './tar-entry';
 import { TarEntryIteratorBase } from './tar-entry-iterator-base';
 

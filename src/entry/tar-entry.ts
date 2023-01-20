@@ -1,18 +1,13 @@
-import {
-	AsyncUint8Array,
-	clamp,
-	decodeString,
-	HEADER_SIZE,
-	roundUpSectorOffset
-} from '../common';
-
+import { AsyncUint8Array } from '../common/async-uint8array';
+import { HEADER_SIZE } from '../common/constants';
+import { clamp, decodeString, roundUpSectorOffset } from '../common/transforms';
+import { TarHeader } from '../header/tar-header';
 import {
 	isTarHeaderLinkIndicatorTypeDirectory,
 	isTarHeaderLinkIndicatorTypeFile,
-	TarHeader, TarHeaderLinkIndicatorType,
-	TarHeaderMetadata
-} from '../header';
-
+	TarHeaderLinkIndicatorType
+} from '../header/tar-header-link-indicator-type';
+import { TarHeaderMetadata } from '../header/tar-header-metadata';
 import { TarEntryAttributes, TarEntryAttributesLike } from './tar-entry-attributes';
 import { TarEntryMetadata, TarEntryMetadataLike } from './tar-entry-metadata';
 

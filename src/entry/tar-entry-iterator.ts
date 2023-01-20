@@ -1,4 +1,4 @@
-import { isUint8Array } from '../common';
+import { isUint8Array } from '../common/transforms';
 import { TarEntry } from './tar-entry';
 import { TarEntryIteratorBase } from './tar-entry-iterator-base';
 

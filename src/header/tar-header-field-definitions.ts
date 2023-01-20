@@ -1,4 +1,4 @@
-import { USTAR_INDICATOR_VALUE, USTAR_TAG, USTAR_VERSION_VALUE } from '../common';
+import { USTAR_INDICATOR_VALUE, USTAR_TAG, USTAR_VERSION_VALUE } from '../common/constants';
 import { TarHeader } from './tar-header';
 import { TarHeaderField } from './tar-header-field';
 import { TarHeaderFieldType } from './tar-header-field-type';

@@ -1,4 +1,4 @@
-import { clamp } from '../common';
+import { clamp } from '../common/transforms';
 import { TarEntry } from './tar-entry';
 
 /**

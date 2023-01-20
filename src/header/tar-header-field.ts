@@ -2,12 +2,11 @@ import {
 	decodeString,
 	encodeString,
 	isUint8Array,
-	OCTAL_RADIX,
 	parseIntSafe,
-	removeTrailingZeros,
 	sizeofUint8Array
-} from '../common';
+} from '../common/transforms';
 
+import { OCTAL_RADIX } from '../common/constants';
 import { TarHeader } from './tar-header';
 import { TarHeaderFieldType } from './tar-header-field-type';
 
@@ -55,6 +54,12 @@ export function deserializeIntegerOctalTimestamp(value: Uint8Array): number {
 
 export function serializeIntegerOctal(value: number, field: TarHeaderFieldLike): Uint8Array {
 	return serializeIntegerOctalWithSuffix(value, field, ' ');
+}
+
+export function removeTrailingZeros(str: string): string {
+	const pattern = /^([^\0]*)[\0]*$/;
+	const result = pattern.exec(str);
+	return result ? result[1] : str;
 }
 
 export function serializeIntegerOctalToString(value: number, maxLength: number): string {

@@ -1,5 +1,7 @@
-import { concatUint8Arrays, getSectorOffsetDelta, SECTOR_SIZE, sizeofUint8Array } from '../common';
-import { sanitizeHeader, TarHeader, TarHeaderMetadata } from '../header';
+import { SECTOR_SIZE } from '../common/constants';
+import { concatUint8Arrays, getSectorOffsetDelta, sizeofUint8Array } from '../common/transforms';
+import { TarHeader } from '../header/tar-header';
+import { sanitizeHeader, TarHeaderMetadata } from '../header/tar-header-metadata';
 
 export interface TarEntryAttributesLike {
 	header: Partial<TarHeader>;

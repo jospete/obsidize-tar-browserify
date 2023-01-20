@@ -1,14 +1,11 @@
-import { AsyncUint8Array, encodeString } from '../common';
-import { TarHeader, TarHeaderLinkIndicatorType } from '../header';
-
-import {
-	TarEntry,
-	TarEntryIterator,
-	AsyncTarEntryIterator,
-	TarEntryDelegate,
-	TarEntryAttributesLike,
-	TarEntryAttributes
-} from '../entry';
+import { AsyncUint8Array } from '../common/async-uint8array';
+import { encodeString } from '../common/transforms';
+import { AsyncTarEntryIterator, TarEntryDelegate } from '../entry/async-tar-entry-iterator';
+import { TarEntry } from '../entry/tar-entry';
+import { TarEntryAttributes, TarEntryAttributesLike } from '../entry/tar-entry-attributes';
+import { TarEntryIterator } from '../entry/tar-entry-iterator';
+import { TarHeader } from '../header/tar-header';
+import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
 
 /**
  * Main entry point for extracting and creating tarballs.
