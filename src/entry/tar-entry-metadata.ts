@@ -71,7 +71,14 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 	) {
 	}
 
+	public static isTarEntryMetadata(value: any): boolean {
+		return !!(value && (value instanceof TarEntryMetadata));
+	}
+
 	public static from(value: TarEntryMetadataLike): TarEntryMetadata {
+
+		if (TarEntryMetadata.isTarEntryMetadata(value))
+			return value as TarEntryMetadata;
 
 		let { header, content, offset } = (value || {});
 
