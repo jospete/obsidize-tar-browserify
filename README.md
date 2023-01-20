@@ -2,8 +2,11 @@
 
 Simple utility for packing and unpacking tar files in the browser.
 
-This differs from other [npm tar modules](https://www.npmjs.com/search?q=tar) 
-in that it contains no node-based dependencies like ```fs``` or ```streams```.
+Highlights:
+- No node-based requires/imports (fully compatible in browser)
+- Only one dependency (`tslib` to play nice with typescript projects)
+- Inline extraction tools (examples below)
+- Builder pattern for creating tarball files in-memory (examples below)
 
 Pairs well with these modules:
 - [pako](https://www.npmjs.com/package/pako) for gzip / unzip
@@ -22,16 +25,14 @@ npm install -P -E @obsidize/tar-browserify
 The below example can be tested with runkit on npm:
 
 ```typescript
-import { Tarball } from '@obsidize/tar-browserify';
+import { Tarball } from '@obsidize/tar-browserify'; // TypeScript
+// const { Tarball } = require('@obsidize/tar-browserify'); // NodeJS (Required for RunKit)
 
-// or with runkit:
-// const { Tarball } = require('@obsidize/tar-browserify');
-
-// Example 1 - Create a tarball from some given entry attributes.
+// Example 1 - Create a tarball in-memory.
 //
 // The Tarball class implements several shorthand methods for
 // injecting content like so:
-const createdTarball = new Tarball()
+const createdTarballBuffer = new Tarball()
 	.addTextFile('Test File.txt', 'This is a test file')
 	.addBinaryFile('Some binary data.bin', new Uint8Array(10))
 	.addDirectory('MyFolder')
@@ -43,7 +44,7 @@ const createdTarball = new Tarball()
 // Here we use the tarball we just created for demonstration purposes, 
 // but this could just as easily be a blob from a server, or a local file;
 // as long as the content is a Uint8Array that implements the tar format correctly.
-const entries = Tarball.extract(createdTarball);
+const entries = Tarball.extract(createdTarballBuffer);
 const [mainFile] = entries;
 
 console.log(mainFile.fileName); // 'Test File.txt'

@@ -6,14 +6,11 @@ describe('README Example', () => {
 
 		it('can be executed', () => {
 
-			// or with runkit:
-			// const { Tarball } = require('@obsidize/tar-browserify');
-
-			// Example 1 - Create a tarball from some given entry attributes.
+			// Example 1 - Create a tarball in-memory.
 			//
 			// The Tarball class implements several shorthand methods for
 			// injecting content like so:
-			const createdTarball = new Tarball()
+			const createdTarballBuffer = new Tarball()
 				.addTextFile('Test File.txt', 'This is a test file')
 				.addBinaryFile('Some binary data.bin', new Uint8Array(10))
 				.addDirectory('MyFolder')
@@ -25,7 +22,7 @@ describe('README Example', () => {
 			// Here we use the tarball we just created for demonstration purposes, 
 			// but this could just as easily be a blob from a server, or a local file;
 			// as long as the content is a Uint8Array that implements the tar format correctly.
-			const entries = Tarball.extract(createdTarball);
+			const entries = Tarball.extract(createdTarballBuffer);
 			const [mainFile] = entries;
 
 			expect(mainFile.getContentAsText()).toBe('This is a test file');
