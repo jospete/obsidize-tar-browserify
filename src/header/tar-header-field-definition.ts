@@ -1,6 +1,6 @@
-import { TarHeader } from './tar-header'
-import { TarHeaderField } from './tar-header-field'
-import { TarHeaderFieldType } from './tar-header-field-type'
+import { TarHeader } from './tar-header';
+import { TarHeaderField } from './tar-header-field';
+import { TarHeaderFieldType } from './tar-header-field-type';
 
 /**
  * Definitions taken from here:

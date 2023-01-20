@@ -1,4 +1,10 @@
-import { TarUtility, AsyncUint8Array } from '../common';
+import {
+	AsyncUint8Array,
+	clamp,
+	decodeString,
+	isDefined,
+	roundUpSectorOffset
+} from '../common';
 
 import {
 	TarHeader,
@@ -227,7 +233,7 @@ export class TarEntry implements TarHeader {
 	 * which is a multiple of the standard tar sector size.
 	 */
 	public get sectorByteLength(): number {
-		return TarUtility.roundUpSectorOffset(this.byteLength);
+		return roundUpSectorOffset(this.byteLength);
 	}
 
 	/**
@@ -248,15 +254,8 @@ export class TarEntry implements TarHeader {
 		return this.contentStartIndex + this.fileSize;
 	}
 
-	/**
-	 * @deprecated - use typeFlag property instead
-	 */
-	public getType(): TarHeaderLinkIndicatorType {
-		return this.typeFlag;
-	}
-
 	public getContentAsText(): string {
-		return TarUtility.decodeString(this.content!);
+		return decodeString(this.content!);
 	}
 
 	public isDirectory(): boolean {
@@ -273,7 +272,7 @@ export class TarEntry implements TarHeader {
 
 	public getParsedHeaderFieldValue<T>(key: keyof TarHeader, defaultValue?: T): T {
 		const metadata = this.getHeaderFieldMetadata(key);
-		return (metadata && TarUtility.isDefined(metadata.value)
+		return (metadata && isDefined(metadata.value)
 			? metadata.value
 			: defaultValue) as T;
 	}
@@ -291,7 +290,7 @@ export class TarEntry implements TarHeader {
 	 */
 	public async readContentFrom(buffer: AsyncUint8Array, offset: number = 0, length: number = 0): Promise<Uint8Array> {
 		const { contentStartIndex, contentEndIndex, fileSize } = this;
-		const normalizedOffset = TarUtility.clamp(offset, 0, fileSize) + contentStartIndex;
+		const normalizedOffset = clamp(offset, 0, fileSize) + contentStartIndex;
 		const bytesRemaining = Math.max(0, contentEndIndex - normalizedOffset);
 		const normalizedLength = length > 0 ? Math.min(length, bytesRemaining) : bytesRemaining;
 		return buffer.read(normalizedOffset, normalizedLength);

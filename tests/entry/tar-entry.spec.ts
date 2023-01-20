@@ -1,4 +1,4 @@
-import { AsyncUint8Array, TarEntry, TarHeaderLinkIndicatorType, TarHeaderUtility, TarUtility } from '../../src';
+import { AsyncUint8Array, isUint8Array, TarEntry, TarHeaderLinkIndicatorType, TarHeaderUtility } from '../../src';
 
 import { range } from '../util';
 
@@ -114,7 +114,7 @@ describe('TarEntry', () => {
 			const entry = TarEntry.from({ fileName: 'Test File', fileSize: 80 });
 			const result = await entry.readContentFrom(asyncBuffer, offset, length);
 
-			expect(TarUtility.isUint8Array(result)).toBe(true);
+			expect(isUint8Array(result)).toBe(true);
 			expect(result.byteLength).toBe(length);
 			expect(result[0]).toBe(offset);
 			expect(result[result.byteLength - 1]).toBe(offset + length - 1);
@@ -135,7 +135,7 @@ describe('TarEntry', () => {
 			const entry = TarEntry.from({ fileName: 'Test File', fileSize: 80 });
 			const result = await entry.readContentFrom(asyncBuffer);
 
-			expect(TarUtility.isUint8Array(result)).toBe(true);
+			expect(isUint8Array(result)).toBe(true);
 			expect(result.byteLength).toBe(entry.fileSize);
 			expect(result[0]).toBe(0);
 			expect(result[result.byteLength - 1]).toBe(entry.fileSize - 1);

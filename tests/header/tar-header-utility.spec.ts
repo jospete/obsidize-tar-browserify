@@ -1,4 +1,4 @@
-import { TarHeaderFieldDefinition, TarHeaderLinkIndicatorType, TarHeaderUtility, TarUtility } from '../../src';
+import { concatUint8Arrays, encodeString, isUint8Array, SECTOR_SIZE, TarHeaderFieldDefinition, TarHeaderLinkIndicatorType, TarHeaderUtility } from '../../src';
 import { MockAsyncUint8Array } from '../mocks/mock-async-uint8array';
 import { range } from '../util';
 
@@ -16,7 +16,7 @@ describe('TarHeaderUtility', () => {
 		});
 
 		const headerBuffer1 = TarHeaderUtility.generateHeaderBuffer(header1);
-		expect(TarUtility.isUint8Array(headerBuffer1)).toBe(true);
+		expect(isUint8Array(headerBuffer1)).toBe(true);
 		expect(headerBuffer1.byteLength).toBe(TarHeaderUtility.HEADER_SIZE);
 
 		const header2 = TarHeaderUtility.extractHeader(headerBuffer1);
@@ -83,7 +83,7 @@ describe('TarHeaderUtility', () => {
 			const baseValue = TarHeaderFieldDefinition.USTAR_TAG;
 
 			const assertValidHeader = (value: string, isValid: boolean) => {
-				testHeaderBuffer.set(TarUtility.encodeString(value), targetOffset);
+				testHeaderBuffer.set(encodeString(value), targetOffset);
 				expect(TarHeaderUtility.isUstarSector(testHeaderBuffer)).toBe(isValid);
 			};
 
@@ -124,10 +124,10 @@ describe('TarHeaderUtility', () => {
 
 		it('uses the given offset when it is provided', () => {
 
-			const padLength = TarUtility.SECTOR_SIZE * 2;
+			const padLength = SECTOR_SIZE * 2;
 			const paddingBuffer = new Uint8Array(padLength);
 			const testHeaderBuffer = TarHeaderUtility.generateHeaderBuffer(null);
-			const combinedBuffer = TarUtility.concatUint8Arrays(paddingBuffer, testHeaderBuffer);
+			const combinedBuffer = concatUint8Arrays(paddingBuffer, testHeaderBuffer);
 
 			expect(TarHeaderUtility.findNextUstarSectorOffset(combinedBuffer)).toBe(padLength);
 			expect(TarHeaderUtility.findNextUstarSectorOffset(combinedBuffer, padLength)).toBe(padLength);
@@ -209,7 +209,7 @@ describe('TarHeaderUtility', () => {
 
 		it('uses a default min length of zero when a field is not given', () => {
 			expect(TarHeaderUtility.serializeIntegerOctalWithSuffix(0, null as any, ''))
-				.toEqual(TarUtility.encodeString('0'));
+				.toEqual(encodeString('0'));
 		});
 	});
 

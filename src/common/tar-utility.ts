@@ -1,154 +1,88 @@
-/**
- * Generalized iterface for interacting with buffers that we only have a partial view into.
- */
-export interface AsyncUint8Array {
-	byteLength(): Promise<number>;
-	read(offset: number, length: number): Promise<Uint8Array>;
+export const SECTOR_SIZE = 512;
+
+export function noop<T>(value?: T): T {
+	return value as any;
 }
 
-/**
- * Result shape returned by findInAsyncUint8Array()
- */
-export interface AsyncUint8ArraySearchResult {
-	source: AsyncUint8Array;
-	value: Uint8Array;
-	offset: number;
+export function isUndefined(value: any): boolean {
+	return typeof value === 'undefined';
 }
 
-/**
- * Common pure functions for transforming tarball content.
- */
-export namespace TarUtility {
+export function isDefined(value: any): boolean {
+	return !isUndefined(value);
+}
 
-	export const SECTOR_SIZE = 512;
+export function isNumber(value: any): boolean {
+	return typeof value === 'number' && !Number.isNaN(value);
+}
 
-	export function noop<T>(value?: T): T {
-		return value as any;
-	}
+export function isUint8Array(value: any): boolean {
+	return !!(value && value instanceof Uint8Array);
+}
 
-	export function isUndefined(value: any): boolean {
-		return typeof value === 'undefined';
-	}
+export function sizeofUint8Array(value: any): number {
+	return isUint8Array(value) ? value.byteLength : 0;
+}
 
-	export function isDefined(value: any): boolean {
-		return !isUndefined(value);
-	}
+export function toString(value: any): string {
+	return value + '';
+}
 
-	export function isNumber(value: any): boolean {
-		return typeof value === 'number' && !Number.isNaN(value);
-	}
+export function encodeString(input: string): Uint8Array {
+	return new TextEncoder().encode(toString(input));
+}
 
-	export function isUint8Array(value: any): boolean {
-		return !!(value && value instanceof Uint8Array);
-	}
+export function decodeString(input: Uint8Array): string {
+	return isUint8Array(input) ? new TextDecoder().decode(input) : '';
+}
 
-	export function sizeofUint8Array(value: any): number {
-		return isUint8Array(value) ? value.byteLength : 0;
-	}
+export function generateChecksum(input: Uint8Array): number {
+	return isUint8Array(input) ? input.reduce((a, b) => (a + b), 0) : 0;
+}
 
-	export function toString(value: any): string {
-		return value + '';
-	}
+export function clamp(value: number, min: number, max: number): number {
+	return Math.max(min, Math.min(value, max));
+}
 
-	export function encodeString(input: string): Uint8Array {
-		return new TextEncoder().encode(toString(input));
-	}
+export function advanceSectorOffset(currentOffset: number, maxOffset: number): number {
+	return Math.min(maxOffset, advanceSectorOffsetUnclamped(currentOffset));
+}
 
-	export function decodeString(input: Uint8Array): string {
-		return isUint8Array(input) ? new TextDecoder().decode(input) : '';
-	}
+export function advanceSectorOffsetUnclamped(currentOffset: number): number {
+	return (1 + Math.floor(currentOffset / SECTOR_SIZE)) * SECTOR_SIZE;
+}
 
-	export function generateChecksum(input: Uint8Array): number {
-		return isUint8Array(input) ? input.reduce((a, b) => (a + b), 0) : 0;
-	}
+export function roundUpSectorOffset(currentOffset: number): number {
+	return Math.ceil(currentOffset / SECTOR_SIZE) * SECTOR_SIZE;
+}
 
-	export function clamp(value: number, min: number, max: number): number {
-		return Math.max(min, Math.min(value, max));
-	}
+export function getSectorOffsetDelta(currentOffset: number): number {
+	return roundUpSectorOffset(currentOffset) - currentOffset;
+}
 
-	export function advanceSectorOffset(currentOffset: number, maxOffset: number): number {
-		return Math.min(maxOffset, advanceSectorOffsetUnclamped(currentOffset));
-	}
+export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {
+	if (isNumber(value)) return Math.floor(value);
+	const parsed = parseInt(value, radix);
+	return isNumber(parsed) ? parsed : defaultValue;
+}
 
-	export function advanceSectorOffsetUnclamped(currentOffset: number): number {
-		return (1 + Math.floor(currentOffset / SECTOR_SIZE)) * SECTOR_SIZE;
-	}
+export function removeTrailingZeros(str: string): string {
+	const pattern = /^([^\0]*)[\0]*$/;
+	const result = pattern.exec(str);
+	return result ? result[1] : str;
+}
 
-	export function roundUpSectorOffset(currentOffset: number): number {
-		return Math.ceil(currentOffset / SECTOR_SIZE) * SECTOR_SIZE;
-	}
+export function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {
 
-	export function getSectorOffsetDelta(currentOffset: number): number {
-		return roundUpSectorOffset(currentOffset) - currentOffset;
-	}
+	if (!isUint8Array(b)) return a;
+	if (!isUint8Array(a)) return b;
 
-	export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {
-		if (isNumber(value)) return Math.floor(value);
-		const parsed = parseInt(value, radix);
-		return isNumber(parsed) ? parsed : defaultValue;
-	}
+	const aLength = a.byteLength;
+	const bLength = b.byteLength;
+	const result = new Uint8Array(aLength + bLength);
 
-	export function removeTrailingZeros(str: string): string {
-		const pattern = /^([^\0]*)[\0]*$/;
-		const result = pattern.exec(str);
-		return result ? result[1] : str;
-	}
+	if (aLength > 0) result.set(a, 0);
+	if (bLength > 0) result.set(b, aLength);
 
-	export function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {
-
-		if (!isUint8Array(b)) return a;
-		if (!isUint8Array(a)) return b;
-
-		const aLength = a.byteLength;
-		const bLength = b.byteLength;
-		const result = new Uint8Array(aLength + bLength);
-
-		if (aLength > 0) result.set(a, 0);
-		if (bLength > 0) result.set(b, aLength);
-
-		return result;
-	}
-
-	/**
-	 * Searches the given AsyncUint8Array for a block that meets the given predicate.
-	 * @param offset the absolute offset to start reads from
-	 * @param stepSize the _relative_ step size in multiples of SECTOR_SIZE (i.e. stepSize = 3 --> blockSize = SECTOR_SIZE * 3)
-	 */
-	export async function findInAsyncUint8Array(
-		target: AsyncUint8Array,
-		offset: number,
-		stepSize: number,
-		predicate: (value: Uint8Array, offset: number, target: AsyncUint8Array) => boolean
-	): Promise<AsyncUint8ArraySearchResult | null> {
-
-		if (!target || !predicate) {
-			return null;
-		}
-
-		const maxLength = await target.byteLength();
-		offset = clamp(offset, 0, maxLength);
-
-		if (offset >= maxLength) {
-			return null;
-		}
-
-		// don't allow reading more than ~250KB at a time by default
-		const blockSize = clamp(stepSize, 1, SECTOR_SIZE) * SECTOR_SIZE;
-
-		let found = false;
-		let cursor = offset;
-		let result: Uint8Array;
-
-		while (!found && cursor < maxLength) {
-			result = await target.read(cursor, blockSize);
-			found = predicate(result, cursor, target);
-			cursor += blockSize;
-		}
-
-		if (found) {
-			return { source: target, value: result!, offset: cursor };
-		}
-
-		return null;
-	}
+	return result;
 }

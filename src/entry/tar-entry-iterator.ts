@@ -1,4 +1,4 @@
-import { TarUtility } from '../common';
+import { isUint8Array } from '../common';
 import { TarEntry } from './tar-entry';
 import { TarEntryIteratorBase } from './tar-entry-iterator-base';
 
@@ -39,7 +39,7 @@ export class TarEntryIterator extends TarEntryIteratorBase implements IterableIt
 
 	public initialize(data: Uint8Array | null): void {
 
-		if (TarUtility.isUint8Array(data)) {
+		if (isUint8Array(data)) {
 			this.mData = data!;
 			this.bufferLength = this.mData.byteLength;
 

@@ -1,4 +1,4 @@
-import { TarUtility } from '../common';
+import { clamp } from '../common';
 import { TarEntry } from './tar-entry';
 
 /**
@@ -18,7 +18,7 @@ export abstract class TarEntryIteratorBase {
 	}
 
 	public set bufferOffset(value: number) {
-		this.mOffset = TarUtility.clamp(value, 0, this.bufferLength);
+		this.mOffset = clamp(value, 0, this.bufferLength);
 	}
 
 	public get bufferLength(): number {

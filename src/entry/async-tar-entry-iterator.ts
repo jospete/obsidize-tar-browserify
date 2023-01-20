@@ -1,4 +1,4 @@
-import { TarUtility, AsyncUint8Array } from '../common';
+import { AsyncUint8Array, noop } from '../common';
 import { TarEntry } from './tar-entry';
 import { TarEntryIteratorBase } from './tar-entry-iterator-base';
 
@@ -28,7 +28,7 @@ export class AsyncTarEntryIterator extends TarEntryIteratorBase implements Async
 		onNextEntry?: TarEntryDelegate
 	): Promise<TarEntry[]> {
 
-		if (!onNextEntry) onNextEntry = TarUtility.noop;
+		if (!onNextEntry) onNextEntry = noop;
 
 		const iterator = new AsyncTarEntryIterator();
 		const result: TarEntry[] = [];

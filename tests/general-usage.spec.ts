@@ -1,6 +1,5 @@
-import { Tarball, TarEntry, TarUtility } from '../src';
-
-import { tarballSampleBase64, fileStructures } from './generated/tarball-test-assets';
+import { isUint8Array, Tarball, TarEntry } from '../src';
+import { fileStructures, tarballSampleBase64 } from './generated/tarball-test-assets';
 import { base64ToUint8Array } from './util';
 
 describe('General Usage', () => {
@@ -9,7 +8,7 @@ describe('General Usage', () => {
 
 		const tarballUint8 = base64ToUint8Array(tarballSampleBase64);
 		console.log('tarballUint8 length = ' + tarballUint8.byteLength);
-		console.log('tarballUint8 isUint8Array = ' + TarUtility.isUint8Array(tarballUint8));
+		console.log('tarballUint8 isUint8Array = ' + isUint8Array(tarballUint8));
 
 		const foundFiles = new Set<TarEntry>();
 		const files = Tarball.extract(tarballUint8).filter(entry => entry.isFile());

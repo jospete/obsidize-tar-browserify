@@ -1,4 +1,4 @@
-import { TarUtility } from '../common';
+import { concatUint8Arrays, getSectorOffsetDelta, SECTOR_SIZE, sizeofUint8Array } from '../common';
 import { TarHeader, TarHeaderUtility } from '../header';
 
 export interface TarEntryAttributesLike {
@@ -28,9 +28,9 @@ export class TarEntryAttributes implements TarEntryAttributesLike {
 	}
 
 	public static combinePadded(snapshots: TarEntryAttributes[]): Uint8Array {
-		return TarUtility.concatUint8Arrays(
+		return concatUint8Arrays(
 			TarEntryAttributes.combine(snapshots),
-			new Uint8Array(TarUtility.SECTOR_SIZE * 2)
+			new Uint8Array(SECTOR_SIZE * 2)
 		);
 	}
 
@@ -42,25 +42,25 @@ export class TarEntryAttributes implements TarEntryAttributesLike {
 	}
 
 	public appendTo(accumulatedBuffer: Uint8Array): Uint8Array {
-		return TarUtility.concatUint8Arrays(accumulatedBuffer, this.toUint8Array());
+		return concatUint8Arrays(accumulatedBuffer, this.toUint8Array());
 	}
 
 	public toUint8Array(): Uint8Array {
 
 		const { header, content } = this;
-		const contentSize = TarUtility.sizeofUint8Array(content);
-		const offsetDelta = TarUtility.getSectorOffsetDelta(contentSize);
+		const contentSize = sizeofUint8Array(content);
+		const offsetDelta = getSectorOffsetDelta(contentSize);
 
 		let paddedContent = content!;
 
 		if (contentSize > 0 && offsetDelta > 0) {
-			paddedContent = TarUtility.concatUint8Arrays(content!, new Uint8Array(offsetDelta));
+			paddedContent = concatUint8Arrays(content!, new Uint8Array(offsetDelta));
 		}
 
 		const safeHeader = TarHeaderUtility.sanitizeHeader(header);
 		safeHeader.fileSize = contentSize;
 
 		const headerBuffer = TarHeaderUtility.generateHeaderBuffer(safeHeader);
-		return TarUtility.concatUint8Arrays(headerBuffer, paddedContent);
+		return concatUint8Arrays(headerBuffer, paddedContent);
 	}
 }

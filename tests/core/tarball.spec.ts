@@ -72,7 +72,7 @@ describe('Tarball', () => {
 			expect(entry.isFile()).toBe(true);
 			expect(entry.fileName).toBe(fileName);
 			expect(entry.fileSize).toBe(fileContent.byteLength);
-			expect(entry.getType()).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
+			expect(entry.typeFlag).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
 		});
 
 		it('accepts custom header options as an additional parameter', () => {
@@ -86,7 +86,7 @@ describe('Tarball', () => {
 
 			const [entry] = tarball.entries;
 
-			expect(entry.getType()).toBe(overrideType);
+			expect(entry.typeFlag).toBe(overrideType);
 		});
 	});
 
@@ -106,7 +106,7 @@ describe('Tarball', () => {
 			expect(entry.isFile()).toBe(true);
 			expect(entry.fileName).toBe(fileName);
 			expect(entry.getContentAsText()).toBe(fileContent);
-			expect(entry.getType()).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
+			expect(entry.typeFlag).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
 		});
 
 		it('accepts custom header options as an additional parameter', () => {
@@ -120,7 +120,7 @@ describe('Tarball', () => {
 
 			const [entry] = tarball.entries;
 
-			expect(entry.getType()).toBe(overrideType);
+			expect(entry.typeFlag).toBe(overrideType);
 		});
 	});
 
@@ -139,7 +139,7 @@ describe('Tarball', () => {
 			expect(entry.fileName).toBe(fileName);
 			expect(entry.fileSize).toBe(0);
 			expect(entry.isDirectory()).toBe(true);
-			expect(entry.getType()).toBe(TarHeaderLinkIndicatorType.DIRECTORY);
+			expect(entry.typeFlag).toBe(TarHeaderLinkIndicatorType.DIRECTORY);
 			expect(entry.getParsedHeaderFieldValue('ownerUserName', '')).toBe('');
 		});
 

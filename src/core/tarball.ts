@@ -1,4 +1,4 @@
-import { TarUtility, AsyncUint8Array } from '../common';
+import { AsyncUint8Array, encodeString } from '../common';
 import { TarHeader, TarHeaderLinkIndicatorType } from '../header';
 
 import {
@@ -60,7 +60,7 @@ export class Tarball {
 	}
 
 	public addTextFile(path: string, content: string, headerOptions?: Partial<TarHeader>): this {
-		return this.addBinaryFile(path, TarUtility.encodeString(content), headerOptions);
+		return this.addBinaryFile(path, encodeString(content), headerOptions);
 	}
 
 	public addBinaryFile(path: string, content: Uint8Array, headerOptions: Partial<TarHeader> = {}): this {
