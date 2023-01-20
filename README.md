@@ -20,8 +20,6 @@ npm install -P -E @obsidize/tar-browserify
 
 ## Usage
 
-### Example
-
 The below example can be tested with runkit on npm:
 
 ```typescript
