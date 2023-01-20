@@ -35,10 +35,21 @@ export class Tarball {
 	 * The buffer should come from a complete, uncompressed tar file.
 	 */
 	public static async extractAsync(
-		buffer: AsyncUint8Array,
-		onNextEntry?: TarEntryDelegate
+		buffer: AsyncUint8Array
 	): Promise<TarEntry[]> {
-		return AsyncTarEntryIterator.extractAll(buffer, onNextEntry);
+		return AsyncTarEntryIterator.extractAll(buffer);
+	}
+
+	/**
+	 * Step through entries as they are parsed from the source.
+	 * Does not collect entries into an array, and is generally more
+	 * memory-friendly.
+	 */
+	public static async streamAsync(
+		buffer: AsyncUint8Array,
+		onNext: TarEntryDelegate
+	): Promise<void> {
+		return AsyncTarEntryIterator.forEachIn(buffer, onNext);
 	}
 
 	public toUint8Array(): Uint8Array {

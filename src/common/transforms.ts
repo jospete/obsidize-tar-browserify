@@ -1,9 +1,5 @@
 import { OCTAL_RADIX, SECTOR_SIZE } from './constants';
 
-export function noop<T>(value?: T): T {
-	return value as any;
-}
-
 export function isNumber(value: any): boolean {
 	return typeof value === 'number' && !Number.isNaN(value);
 }

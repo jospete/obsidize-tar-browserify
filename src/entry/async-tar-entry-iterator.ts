@@ -1,9 +1,8 @@
 import { AsyncUint8Array } from '../common/async-uint8array';
-import { noop } from '../common/transforms';
 import { TarEntry } from './tar-entry';
 import { TarEntryIteratorBase } from './tar-entry-iterator-base';
 
-export type TarEntryDelegate = (entry: TarEntry) => any;
+export type TarEntryDelegate = (entry: TarEntry, index: number, buffer: AsyncUint8Array) => Promise<void>;
 
 /**
  * Utility for stepping through a given byte buffer and extracting tar files one-at-a-time.
@@ -22,24 +21,32 @@ export class AsyncTarEntryIterator extends TarEntryIteratorBase implements Async
 	}
 
 	/**
-	 * Convenience to parse out all entries in one go.
+	 * Convenience to step through entries one-at-a-time, without collecting them.
+	 * Helps to emulate "streaming" functionality that other tar modules have.
 	 */
-	public static async extractAll(
-		buffer: AsyncUint8Array,
-		onNextEntry?: TarEntryDelegate
-	): Promise<TarEntry[]> {
-
-		if (!onNextEntry) onNextEntry = noop;
+	public static async forEachIn(buffer: AsyncUint8Array, onNext: TarEntryDelegate): Promise<void> {
 
 		const iterator = new AsyncTarEntryIterator();
-		const result: TarEntry[] = [];
 
 		await iterator.initialize(buffer);
+		let i = 0;
 
 		for await (const entry of iterator) {
-			onNextEntry(entry);
-			result.push(entry);
+			await onNext(entry, i, buffer);
+			i++;
 		}
+	}
+
+	/**
+	 * Convenience to parse out all entries in one go.
+	 */
+	public static async extractAll(buffer: AsyncUint8Array): Promise<TarEntry[]> {
+
+		const result: TarEntry[] = [];
+
+		await AsyncTarEntryIterator.forEachIn(buffer, async entry => {
+			result.push(entry);
+		});
 
 		return result;
 	}

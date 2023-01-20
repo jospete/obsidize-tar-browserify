@@ -50,13 +50,24 @@ describe('README Example', () => {
 				read: async (offset: number, length: number) => mockBuffer.slice(offset, offset + length)
 			};
 
-			// To unpack large files, use extractAsync() to conserve memory
+			// Option 1 - extractAsync()
+			// Preferred for files with few entries
 			const entriesFromBigFile = await Tarball.extractAsync(asyncBuffer);
 
 			// IMPORTANT - async entries do not load file content by default to conserve memory.
 			// The caller must read file contents from an async entry like so:
 			const [firstEntry] = entriesFromBigFile;
 			const firstEntryContent = await firstEntry.readContentFrom(asyncBuffer);
+
+			// Option 2 - streamAsync()
+			// Preferred for files with many entries
+			await Tarball.streamAsync(asyncBuffer, async (entry, _entryIndex, buffer) => {
+				if (entry.isFile()) {
+					const content = await entry.readContentFrom(buffer);
+					console.log(`got file data from ${entry.fileName} (${content.byteLength} bytes)`);
+					// TODO: do some stuff with the content
+				}
+			});
 
 			expect(entriesFromBigFile).toBeDefined();
 			expect(firstEntryContent).toBeDefined();
