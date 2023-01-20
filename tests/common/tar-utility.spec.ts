@@ -1,16 +1,24 @@
 import {
+	Constants,
+	TarUtility
+} from '../../src';
+
+const {
+	decodeTimestamp,
+	encodeTimestamp,
 	advanceSectorOffsetUnclamped,
 	concatUint8Arrays,
 	decodeString,
-	decodeTimestamp,
-	encodeTimestamp,
 	generateChecksum,
 	parseIntOctal,
 	parseIntSafe,
 	removeTrailingZeros,
 	roundUpSectorOffset,
+} = TarUtility;
+
+const {
 	SECTOR_SIZE
-} from '../../src';
+} = Constants;
 
 const staticDateTime = 1632419077000;
 const staticDateTimeEncoded = 1632419077;

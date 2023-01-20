@@ -1,18 +1,30 @@
 import {
-	encodeString,
-	fileMode,
-	fileName,
-	fileSize,
-	isUstarSector,
-	lastModified,
-	sanitizeTimestamp,
+	Constants,
+	HeaderFieldDefinitions,
 	serializeIntegerOctalWithSuffix,
 	TarHeaderFieldMetadata,
 	TarHeaderFieldType,
 	TarHeaderMetadata,
-	ustarIndicator,
-	USTAR_TAG
+	TarUtility
 } from '../../src';
+
+const {
+	encodeString,
+	sanitizeTimestamp,
+} = TarUtility;
+
+const {
+	USTAR_TAG
+} = Constants;
+
+const {
+	fileMode,
+	fileName,
+	fileSize,
+	lastModified,
+	ustarIndicator,
+	isUstarSector
+} = HeaderFieldDefinitions;
 
 import { range } from '../util';
 

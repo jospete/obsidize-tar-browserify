@@ -1,10 +1,13 @@
 import {
+	Constants,
 	getDefaultHeaderValues,
-	HEADER_SIZE,
-	isUint8Array,
 	sanitizeHeader,
-	TarHeaderMetadata
+	TarHeaderMetadata,
+	TarUtility
 } from '../../src';
+
+const { HEADER_SIZE } = Constants;
+const { isUint8Array } = TarUtility;
 
 describe('TarHeaderMetadata', () => {
 

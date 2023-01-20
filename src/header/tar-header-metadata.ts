@@ -9,11 +9,11 @@ import {
 	encodeString,
 	generateChecksum,
 	isNumber,
-	isUint8Array
+	isUint8Array,
+	sanitizeTimestamp
 } from '../common/transforms';
 
 import {
-	sanitizeTimestamp,
 	TarHeaderField
 } from './tar-header-field';
 

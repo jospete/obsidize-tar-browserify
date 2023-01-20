@@ -1,13 +1,21 @@
 import {
-	concatUint8Arrays,
-	FILE_MODE_DEFAULT,
+	Constants,
 	findNextUstarSectorAsync,
 	findNextUstarSectorOffset,
 	sanitizeHeader,
-	SECTOR_SIZE,
 	TarHeaderLinkIndicatorType,
-	TarHeaderMetadata
+	TarHeaderMetadata,
+	TarUtility
 } from '../../src';
+
+const {
+	concatUint8Arrays
+} = TarUtility;
+
+const {
+	FILE_MODE_DEFAULT,
+	SECTOR_SIZE,
+} = Constants;
 
 import { MockAsyncUint8Array } from '../mocks/mock-async-uint8array';
 

@@ -1,7 +1,9 @@
-import { isUint8Array, Tarball } from '../src';
+import { Tarball, TarUtility } from '../src';
 
 import { tarballSampleBase64, totalFileCount } from './generated/tarball-test-assets';
 import { base64ToUint8Array } from './util';
+
+const { isUint8Array } = TarUtility;
 
 describe('Example Usage', () => {
 

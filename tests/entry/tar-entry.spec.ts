@@ -1,4 +1,13 @@
-import { AsyncUint8Array, HEADER_SIZE, isUint8Array, TarEntry, TarHeaderLinkIndicatorType } from '../../src';
+import {
+	AsyncUint8Array,
+	Constants,
+	TarEntry,
+	TarHeaderLinkIndicatorType,
+	TarUtility
+} from '../../src';
+
+const { HEADER_SIZE } = Constants;
+const { isUint8Array } = TarUtility;
 
 import { range } from '../util';
 
