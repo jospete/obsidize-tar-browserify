@@ -25,10 +25,16 @@ describe('General Usage', () => {
 					throw new Error(`path "${path}" not found in files: ${fileNamesDump}`);
 				}
 
+				expect(target).toBeDefined();
+
+				const targetAlreadyFound = foundFiles.has(target);
+
 				// Force an assertion error so we know which path failed
-				if (foundFiles.has(target)) {
+				if (targetAlreadyFound) {
 					throw new Error(`found duplicate target "${path}" not found in files: ${fileNamesDump}`);
 				}
+
+				expect(targetAlreadyFound).toBe(false);
 
 				foundFiles.add(target);
 				fileSet.delete(target);

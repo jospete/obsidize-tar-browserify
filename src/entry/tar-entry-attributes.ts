@@ -1,5 +1,5 @@
 import { concatUint8Arrays, getSectorOffsetDelta, SECTOR_SIZE, sizeofUint8Array } from '../common';
-import { TarHeader, TarHeaderUtility } from '../header';
+import { sanitizeHeader, TarHeader, TarHeaderMetadata } from '../header';
 
 export interface TarEntryAttributesLike {
 	header: Partial<TarHeader>;
@@ -57,10 +57,10 @@ export class TarEntryAttributes implements TarEntryAttributesLike {
 			paddedContent = concatUint8Arrays(content!, new Uint8Array(offsetDelta));
 		}
 
-		const safeHeader = TarHeaderUtility.sanitizeHeader(header);
+		const safeHeader = sanitizeHeader(header);
 		safeHeader.fileSize = contentSize;
 
-		const headerBuffer = TarHeaderUtility.generateHeaderBuffer(safeHeader);
+		const headerBuffer = TarHeaderMetadata.serialize(safeHeader);
 		return concatUint8Arrays(headerBuffer, paddedContent);
 	}
 }

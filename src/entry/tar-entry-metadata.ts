@@ -1,8 +1,8 @@
 import { advanceSectorOffset, AsyncUint8Array, isNumber, isUint8Array, sizeofUint8Array } from '../common';
-import { TarHeaderExtractionResult, TarHeaderUtility } from '../header';
+import { findNextUstarSectorAsync, findNextUstarSectorOffset, TarHeaderMetadata } from '../header';
 
 export interface TarEntryMetadataLike {
-	header: TarHeaderExtractionResult;
+	header: TarHeaderMetadata;
 	offset: number;
 	content?: Uint8Array | null;
 }
@@ -14,9 +14,9 @@ export interface TarEntryMetadataLike {
 export class TarEntryMetadata implements TarEntryMetadataLike {
 
 	constructor(
-		public readonly header: TarHeaderExtractionResult,
-		public readonly content: Uint8Array | null = null,
-		public readonly offset: number = 0,
+		public readonly header: TarHeaderMetadata,
+		public readonly content: Uint8Array | null,
+		public readonly offset: number,
 	) {
 	}
 
@@ -24,7 +24,7 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 
 		let { header, content, offset } = (value || {});
 
-		if (!header) header = TarHeaderUtility.expandHeaderToExtractionResult(null);
+		if (!header) header = new TarHeaderMetadata();
 		if (!content) content = null;
 		if (!offset) offset = 0;
 
@@ -32,9 +32,10 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 
 		// The fileSize field metadata must always be in sync between the content and the header
 		if (header.fileSize.value !== contentLength && contentLength > 0) {
-			const headerAttrs = TarHeaderUtility.flattenHeaderExtractionResult(header);
+			// Need to flatten / re-expand to ensure checksum and serialized bytes are in sync
+			const headerAttrs = header.flatten();
 			headerAttrs.fileSize = contentLength;
-			header = TarHeaderUtility.expandHeaderToExtractionResult(headerAttrs);
+			header = new TarHeaderMetadata(headerAttrs);
 		}
 
 		return new TarEntryMetadata(header, content, offset);
@@ -50,14 +51,14 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 			return null;
 		}
 
-		const ustarSectorOffset = TarHeaderUtility.findNextUstarSectorOffset(input, offset);
+		const ustarSectorOffset = findNextUstarSectorOffset(input, offset);
 
 		if (ustarSectorOffset < 0) {
 			return null;
 		}
 
 		const maxOffset = input.byteLength;
-		const header = TarHeaderUtility.extractHeaderContent(input, ustarSectorOffset);
+		const header = TarHeaderMetadata.from(input, ustarSectorOffset);
 		const start = advanceSectorOffset(ustarSectorOffset, maxOffset);
 		const fileSize = header.fileSize.value;
 
@@ -87,14 +88,14 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 			return null;
 		}
 
-		const sector = await TarHeaderUtility.findNextUstarSectorAsync(input, offset);
+		const sector = await findNextUstarSectorAsync(input, offset);
 
 		if (!sector) {
 			return null;
 		}
 
 		const { value, offset: ustarSectorOffset } = sector;
-		const header = TarHeaderUtility.extractHeaderContent(value);
+		const header = TarHeaderMetadata.from(value);
 		const content = null;
 
 		return new TarEntryMetadata(header, content, ustarSectorOffset);

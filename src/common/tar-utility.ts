@@ -1,19 +1,25 @@
 export const SECTOR_SIZE = 512;
+export const OCTAL_RADIX = 8;
+export const USTAR_TAG = 'ustar';
+export const USTAR_INDICATOR_VALUE = `${USTAR_TAG}\0`;
+export const USTAR_VERSION_VALUE = '00';
+export const HEADER_SIZE = SECTOR_SIZE;
+export const FILE_MODE_DEFAULT = parseIntOctal('777');
 
 export function noop<T>(value?: T): T {
 	return value as any;
 }
 
-export function isUndefined(value: any): boolean {
-	return typeof value === 'undefined';
-}
-
-export function isDefined(value: any): boolean {
-	return !isUndefined(value);
-}
-
 export function isNumber(value: any): boolean {
 	return typeof value === 'number' && !Number.isNaN(value);
+}
+
+export function isString(value: any): boolean {
+	return typeof value === 'string';
+}
+
+export function isPopulatedString(value: any): boolean {
+	return isString(value) && value.length > 0;
 }
 
 export function isUint8Array(value: any): boolean {
@@ -24,12 +30,8 @@ export function sizeofUint8Array(value: any): number {
 	return isUint8Array(value) ? value.byteLength : 0;
 }
 
-export function toString(value: any): string {
-	return value + '';
-}
-
 export function encodeString(input: string): Uint8Array {
-	return new TextEncoder().encode(toString(input));
+	return isPopulatedString(input) ? new TextEncoder().encode(input) : new Uint8Array(0);
 }
 
 export function decodeString(input: Uint8Array): string {
@@ -58,6 +60,22 @@ export function roundUpSectorOffset(currentOffset: number): number {
 
 export function getSectorOffsetDelta(currentOffset: number): number {
 	return roundUpSectorOffset(currentOffset) - currentOffset;
+}
+
+export function decodeTimestamp(value: number): number {
+	return Math.floor(parseIntSafe(value)) * 1000;
+}
+
+export function encodeTimestamp(value: number): number {
+	return Math.floor(parseIntSafe(value) / 1000);
+}
+
+export function sanitizeTimestamp(value: number): number {
+	return decodeTimestamp(encodeTimestamp(value));
+}
+
+export function parseIntOctal(input: string): number {
+	return parseIntSafe(input, OCTAL_RADIX);
 }
 
 export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {

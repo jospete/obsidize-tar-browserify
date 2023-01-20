@@ -1,4 +1,4 @@
-import { AsyncUint8Array, isUint8Array, TarEntry, TarHeaderLinkIndicatorType, TarHeaderUtility } from '../../src';
+import { AsyncUint8Array, HEADER_SIZE, isUint8Array, TarEntry, TarHeaderLinkIndicatorType } from '../../src';
 
 import { range } from '../util';
 
@@ -71,37 +71,13 @@ describe('TarEntry', () => {
 		});
 	});
 
-	describe('getHeaderFieldMetadata()', () => {
-
-		it('returns undefined for unknown fields', () => {
-			const rawEntry = new TarEntry(null as any);
-			expect(rawEntry.getHeaderFieldMetadata('potato' as any)).not.toBeDefined();
-		});
-	});
-
-	describe('getParsedHeaderFieldValue()', () => {
-
-		it('returns the given default value for unknown fields', () => {
-			const rawEntry = new TarEntry(null as any);
-			expect(rawEntry.getParsedHeaderFieldValue('potato' as any, 5)).toBe(5);
-		});
-	});
-
-	describe('setParsedHeaderFieldValue()', () => {
-
-		it('does nothing if the given key is not a valid TarHeader property', () => {
-			const rawEntry = new TarEntry(null as any);
-			expect(() => rawEntry.setParsedHeaderFieldValue('potato' as any, 5)).not.toThrowError();
-		});
-	});
-
 	describe('readContentFrom()', () => {
 
 		it('reads the contextualized slice from the given buffer', async () => {
 
-			const testBuffer = new Uint8Array(TarHeaderUtility.HEADER_SIZE + 100);
+			const testBuffer = new Uint8Array(HEADER_SIZE + 100);
 
-			for (let i = TarHeaderUtility.HEADER_SIZE, j = 0; i < testBuffer.byteLength; i++, j++)
+			for (let i = HEADER_SIZE, j = 0; i < testBuffer.byteLength; i++, j++)
 				testBuffer[i] = j;
 
 			const asyncBuffer: AsyncUint8Array = {
@@ -122,9 +98,9 @@ describe('TarEntry', () => {
 
 		it('reads the entire file if no offset or length options are given', async () => {
 
-			const testBuffer = new Uint8Array(TarHeaderUtility.HEADER_SIZE + 100);
+			const testBuffer = new Uint8Array(HEADER_SIZE + 100);
 
-			for (let i = TarHeaderUtility.HEADER_SIZE, j = 0; i < testBuffer.byteLength; i++, j++)
+			for (let i = HEADER_SIZE, j = 0; i < testBuffer.byteLength; i++, j++)
 				testBuffer[i] = j;
 
 			const asyncBuffer: AsyncUint8Array = {

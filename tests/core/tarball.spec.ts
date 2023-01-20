@@ -140,7 +140,7 @@ describe('Tarball', () => {
 			expect(entry.fileSize).toBe(0);
 			expect(entry.isDirectory()).toBe(true);
 			expect(entry.typeFlag).toBe(TarHeaderLinkIndicatorType.DIRECTORY);
-			expect(entry.getParsedHeaderFieldValue('ownerUserName', '')).toBe('');
+			expect(entry.ownerUserName).toBe('');
 		});
 
 		it('accepts custom header options as an additional parameter', () => {
@@ -153,7 +153,7 @@ describe('Tarball', () => {
 
 			const [entry] = tarball.entries;
 
-			expect(entry.getParsedHeaderFieldValue('ownerUserName', '')).toBe(overrideUser);
+			expect(entry.ownerUserName).toBe(overrideUser);
 		});
 	});
 });

@@ -2,18 +2,15 @@ import {
 	AsyncUint8Array,
 	clamp,
 	decodeString,
-	isDefined,
+	HEADER_SIZE,
 	roundUpSectorOffset
 } from '../common';
 
 import {
-	TarHeader,
-	TarHeaderUtility,
-	TarHeaderLinkIndicatorType,
 	isTarHeaderLinkIndicatorTypeDirectory,
 	isTarHeaderLinkIndicatorTypeFile,
-	TarHeaderFieldExtractionResult,
-	TarHeaderExtractionResult
+	TarHeader, TarHeaderLinkIndicatorType,
+	TarHeaderMetadata
 } from '../header';
 
 import { TarEntryAttributes, TarEntryAttributesLike } from './tar-entry-attributes';
@@ -41,7 +38,7 @@ export class TarEntry implements TarHeader {
 	}
 
 	public static from(attrs: Partial<TarHeader>, content: Uint8Array | null = null): TarEntry {
-		const header = TarHeaderUtility.expandHeaderToExtractionResult(attrs);
+		const header = new TarHeaderMetadata(attrs);
 		return new TarEntry({ header, content, offset: 0 });
 	}
 
@@ -65,123 +62,123 @@ export class TarEntry implements TarHeader {
 	// =================================================================
 
 	public get fileName(): string {
-		return this.getParsedHeaderFieldValue('fileName', '');
+		return this.header.fileName.value;
 	}
 
 	public set fileName(value: string) {
-		this.setParsedHeaderFieldValue('fileName', value);
+		this.header.fileName.value = value;
 	}
 
 	public get fileSize(): number {
-		return this.getParsedHeaderFieldValue('fileSize', 0);
+		return this.header.fileSize.value;
 	}
 
 	public set fileSize(value: number) {
-		this.setParsedHeaderFieldValue('fileSize', value);
+		this.header.fileSize.value = value;
 	}
 
 	public get fileMode(): number {
-		return this.getParsedHeaderFieldValue('fileMode', 0);
+		return this.header.fileMode.value;
 	}
 
 	public set fileMode(value: number) {
-		this.setParsedHeaderFieldValue('fileMode', value);
+		this.header.fileMode.value = value;
 	}
 
 	public get ownerUserId(): number {
-		return this.getParsedHeaderFieldValue('ownerUserId', 0);
+		return this.header.ownerUserId.value;
 	}
 
 	public set ownerUserId(value: number) {
-		this.setParsedHeaderFieldValue('ownerUserId', value);
+		this.header.ownerUserId.value = value;
 	}
 
 	public get groupUserId(): number {
-		return this.getParsedHeaderFieldValue('groupUserId', 0);
+		return this.header.groupUserId.value;
 	}
 
 	public set groupUserId(value: number) {
-		this.setParsedHeaderFieldValue('groupUserId', value);
+		this.header.groupUserId.value = value;
 	}
 
 	public get lastModified(): number {
-		return this.getParsedHeaderFieldValue('lastModified', 0);
+		return this.header.lastModified.value;
 	}
 
 	public set lastModified(value: number) {
-		this.setParsedHeaderFieldValue('lastModified', value);
+		this.header.lastModified.value = value;
 	}
 
 	public get headerChecksum(): number {
-		return this.getParsedHeaderFieldValue('headerChecksum', 0);
+		return this.header.headerChecksum.value;
 	}
 
 	public get linkedFileName(): string {
-		return this.getParsedHeaderFieldValue('linkedFileName', '');
+		return this.header.linkedFileName.value;
 	}
 
 	public set linkedFileName(value: string) {
-		this.setParsedHeaderFieldValue('linkedFileName', value);
+		this.header.linkedFileName.value = value;
 	}
 
 	public get typeFlag(): TarHeaderLinkIndicatorType {
-		return this.getParsedHeaderFieldValue('typeFlag', TarHeaderLinkIndicatorType.UNKNOWN);
+		return this.header.typeFlag.value;
 	}
 
 	public set typeFlag(value: TarHeaderLinkIndicatorType) {
-		this.setParsedHeaderFieldValue('typeFlag', value);
+		this.header.typeFlag.value = value;
 	}
 
 	public get ustarIndicator(): string {
-		return this.getParsedHeaderFieldValue('ustarIndicator', '');
+		return this.header.ustarIndicator.value;
 	}
 
 	public get ustarVersion(): string {
-		return this.getParsedHeaderFieldValue('ustarVersion', '');
+		return this.header.ustarVersion.value;
 	}
 
 	public set ustarVersion(value: string) {
-		this.setParsedHeaderFieldValue('ustarVersion', value);
+		this.header.ustarVersion.value = value;
 	}
 
 	public get ownerUserName(): string {
-		return this.getParsedHeaderFieldValue('ownerUserName', '');
+		return this.header.ownerUserName.value;
 	}
 
 	public set ownerUserName(value: string) {
-		this.setParsedHeaderFieldValue('ownerUserName', value);
+		this.header.ownerUserName.value = value;
 	}
 
 	public get ownerGroupName(): string {
-		return this.getParsedHeaderFieldValue('ownerGroupName', '');
+		return this.header.ownerGroupName.value;
 	}
 
 	public set ownerGroupName(value: string) {
-		this.setParsedHeaderFieldValue('ownerGroupName', value);
+		this.header.ownerGroupName.value = value;
 	}
 
 	public get deviceMajorNumber(): string {
-		return this.getParsedHeaderFieldValue('deviceMajorNumber', '');
+		return this.header.deviceMajorNumber.value;
 	}
 
 	public set deviceMajorNumber(value: string) {
-		this.setParsedHeaderFieldValue('deviceMajorNumber', value);
+		this.header.deviceMajorNumber.value = value;
 	}
 
 	public get deviceMinorNumber(): string {
-		return this.getParsedHeaderFieldValue('deviceMinorNumber', '');
+		return this.header.deviceMinorNumber.value;
 	}
 
 	public set deviceMinorNumber(value: string) {
-		this.setParsedHeaderFieldValue('deviceMinorNumber', value);
+		this.header.deviceMinorNumber.value = value;
 	}
 
 	public get fileNamePrefix(): string {
-		return this.getParsedHeaderFieldValue('fileNamePrefix', '');
+		return this.header.fileNamePrefix.value;
 	}
 
 	public set fileNamePrefix(value: string) {
-		this.setParsedHeaderFieldValue('fileNamePrefix', value);
+		this.header.fileNamePrefix.value = value;
 	}
 
 	// =================================================================
@@ -192,7 +189,7 @@ export class TarEntry implements TarHeader {
 	 * The header metadata parsed out for this entry.
 	 * See TarHeaderFieldDefinition for details.
 	 */
-	public get header(): TarHeaderExtractionResult {
+	public get header(): TarHeaderMetadata {
 		return this.metadata.header;
 	}
 
@@ -225,7 +222,7 @@ export class TarEntry implements TarHeader {
 	 * The total exact byte length of this entry, including the header.
 	 */
 	public get byteLength(): number {
-		return TarHeaderUtility.HEADER_SIZE + this.fileSize;
+		return HEADER_SIZE + this.fileSize;
 	}
 
 	/**
@@ -242,7 +239,7 @@ export class TarEntry implements TarHeader {
 	 * whether or not this is a file.
 	 */
 	public get contentStartIndex(): number {
-		return TarHeaderUtility.HEADER_SIZE + this.bufferStartIndex;
+		return HEADER_SIZE + this.bufferStartIndex;
 	}
 
 	/**
@@ -266,22 +263,6 @@ export class TarEntry implements TarHeader {
 		return isTarHeaderLinkIndicatorTypeFile(this.typeFlag);
 	}
 
-	public getHeaderFieldMetadata<T>(key: keyof TarHeader): TarHeaderFieldExtractionResult<T> | undefined {
-		return (this.header as any)[key];
-	}
-
-	public getParsedHeaderFieldValue<T>(key: keyof TarHeader, defaultValue?: T): T {
-		const metadata = this.getHeaderFieldMetadata(key);
-		return (metadata && isDefined(metadata.value)
-			? metadata.value
-			: defaultValue) as T;
-	}
-
-	public setParsedHeaderFieldValue<T>(key: keyof TarHeader, value: T): void {
-		const metadata = this.getHeaderFieldMetadata(key);
-		if (metadata) metadata.value = value;
-	}
-
 	/**
 	 * Only necessary if this entry was extracted from an async buffer, since the entry
 	 * does not hold the content of async buffers by default.
@@ -296,15 +277,12 @@ export class TarEntry implements TarHeader {
 		return buffer.read(normalizedOffset, normalizedLength);
 	}
 
-	public toUint8Array(): Uint8Array {
-		return this.toAttributes().toUint8Array();
+	public toAttributes(): TarEntryAttributes {
+		return new TarEntryAttributes(this.header.flatten(), this.content);
 	}
 
-	public toAttributes(): TarEntryAttributes {
-		return new TarEntryAttributes(
-			TarHeaderUtility.flattenHeaderExtractionResult(this.header),
-			this.content
-		);
+	public toUint8Array(): Uint8Array {
+		return this.toAttributes().toUint8Array();
 	}
 
 	/**

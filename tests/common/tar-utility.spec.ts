@@ -1,4 +1,19 @@
-import { advanceSectorOffsetUnclamped, concatUint8Arrays, decodeString, generateChecksum, parseIntSafe, removeTrailingZeros, roundUpSectorOffset, SECTOR_SIZE } from '../../src';
+import {
+	advanceSectorOffsetUnclamped,
+	concatUint8Arrays,
+	decodeString,
+	decodeTimestamp,
+	encodeTimestamp,
+	generateChecksum,
+	parseIntOctal,
+	parseIntSafe,
+	removeTrailingZeros,
+	roundUpSectorOffset,
+	SECTOR_SIZE
+} from '../../src';
+
+const staticDateTime = 1632419077000;
+const staticDateTimeEncoded = 1632419077;
 
 describe('TarUtility', () => {
 
@@ -95,6 +110,43 @@ describe('TarUtility', () => {
 			let result: Uint8Array | null = null;
 			expect(() => result = concatUint8Arrays(a, b)).not.toThrowError();
 			expect(result!.byteLength).toBe(0);
+		});
+	});
+
+	describe('decodeTimestamp()', () => {
+
+		it('converts the encoded value to a valid date time', () => {
+			expect(decodeTimestamp(staticDateTimeEncoded)).toBe(staticDateTime);
+		});
+
+		it('floors floating point values', () => {
+			expect(decodeTimestamp(staticDateTimeEncoded + 0.9)).toBe(staticDateTime);
+		});
+	});
+
+	describe('encodeTimestamp()', () => {
+
+		it('encodes the value to a serializable mtime', () => {
+			expect(encodeTimestamp(staticDateTime)).toBe(staticDateTimeEncoded);
+		});
+
+		it('floors floating point values', () => {
+			expect(encodeTimestamp(staticDateTime + 0.9)).toBe(staticDateTimeEncoded);
+		});
+	});
+
+	describe('parseIntOctal()', () => {
+
+		it('translates the given octal string into a number', () => {
+			expect(parseIntOctal('777')).toBe(parseInt('777', 8));
+		});
+
+		it('removes trailing zeroes and white space', () => {
+			expect(parseIntOctal('0000777 \0\0\0\0')).toBe(parseInt('777', 8));
+		});
+
+		it('returns a default value when the given input cannot be parsed to a number', () => {
+			expect(parseIntOctal(null as any)).toBe(0);
 		});
 	});
 });
