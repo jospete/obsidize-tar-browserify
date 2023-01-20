@@ -6,6 +6,10 @@ export interface TarEntryAttributesLike {
 	content?: Uint8Array | null;
 }
 
+function concatAttributes(accumulator: Uint8Array, attrs: TarEntryAttributes): Uint8Array {
+	return concatUint8Arrays(accumulator, attrs.toUint8Array());
+}
+
 /**
  * Deflated snapshot of an entry with _no_ metadata built-in.
  * Counterpart to `TarEntryMetadata`.
@@ -23,26 +27,22 @@ export class TarEntryAttributes implements TarEntryAttributesLike {
 		return new TarEntryAttributes(header, content);
 	}
 
+	public static fromMany(values: TarEntryAttributesLike[]): TarEntryAttributes[] {
+		return Array.from(values).filter(v => !!v).map(v => TarEntryAttributes.from(v));
+	}
+
 	public static combine(snapshots: TarEntryAttributes[]): Uint8Array {
-		return snapshots.reduce((acc, attrs) => attrs.appendTo(acc), new Uint8Array(0));
+		return snapshots.reduce(concatAttributes, new Uint8Array(0));
 	}
 
 	public static combinePadded(snapshots: TarEntryAttributes[]): Uint8Array {
-		return concatUint8Arrays(
-			TarEntryAttributes.combine(snapshots),
-			new Uint8Array(SECTOR_SIZE * 2)
-		);
+		const padBuffer = new Uint8Array(SECTOR_SIZE * 2);
+		return concatUint8Arrays(TarEntryAttributes.combine(snapshots), padBuffer);
 	}
 
 	public static combinePaddedFrom(snapshots: TarEntryAttributesLike[]): Uint8Array {
-		const safeSnapshots = Array.from(snapshots)
-			.filter(v => !!v)
-			.map(v => TarEntryAttributes.from(v));
-		return TarEntryAttributes.combinePadded(safeSnapshots);
-	}
-
-	public appendTo(accumulatedBuffer: Uint8Array): Uint8Array {
-		return concatUint8Arrays(accumulatedBuffer, this.toUint8Array());
+		const parsedAttrs = TarEntryAttributes.fromMany(snapshots);
+		return TarEntryAttributes.combinePadded(parsedAttrs);
 	}
 
 	public toUint8Array(): Uint8Array {

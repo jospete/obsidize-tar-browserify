@@ -278,7 +278,7 @@ export class TarEntry implements TarHeader {
 	}
 
 	public toAttributes(): TarEntryAttributes {
-		return new TarEntryAttributes(this.header.flatten(), this.content);
+		return new TarEntryAttributes(this.header.deflate(), this.content);
 	}
 
 	public toUint8Array(): Uint8Array {

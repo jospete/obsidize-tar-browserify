@@ -25,7 +25,7 @@ describe('TarHeaderMetadata', () => {
 		expect(headerBuffer2).toEqual(headerBuffer1);
 
 		// We should be able to serialize and deserialize the same header multiple times without any data loss.
-		const header3 = TarHeaderMetadata.flattenFrom(headerBuffer2);
+		const header3 = TarHeaderMetadata.deflateFrom(headerBuffer2);
 		expect(header3.fileName).toBe(header1.fileName);
 		expect(header3.fileSize).toBe(header1.fileSize);
 		expect(header3.fileMode).toBe(header1.fileMode);
@@ -34,14 +34,14 @@ describe('TarHeaderMetadata', () => {
 	describe('flatten()', () => {
 
 		it('returns an unpopulated object when the input is malformed', () => {
-			const flattened = TarHeaderMetadata.flattenFrom(null as any);
+			const flattened = TarHeaderMetadata.deflateFrom(null as any);
 			const { headerChecksum } = flattened;
 			const expected = Object.assign(getDefaultHeaderValues(), { headerChecksum });
 			expect(flattened).toEqual(expected);
 		});
 
 		it('properly handles malformed objects', () => {
-			const flattened = TarHeaderMetadata.flattenFrom({ fileName: null } as any);
+			const flattened = TarHeaderMetadata.deflateFrom({ fileName: null } as any);
 			const { headerChecksum } = flattened;
 			const expected = Object.assign(getDefaultHeaderValues(), { headerChecksum });
 			expect(flattened).toEqual(expected);

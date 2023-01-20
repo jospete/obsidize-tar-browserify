@@ -1,10 +1,4 @@
-export const SECTOR_SIZE = 512;
-export const OCTAL_RADIX = 8;
-export const USTAR_TAG = 'ustar';
-export const USTAR_INDICATOR_VALUE = `${USTAR_TAG}\0`;
-export const USTAR_VERSION_VALUE = '00';
-export const HEADER_SIZE = SECTOR_SIZE;
-export const FILE_MODE_DEFAULT = parseIntOctal('777');
+import { OCTAL_RADIX, SECTOR_SIZE } from './constants';
 
 export function noop<T>(value?: T): T {
 	return value as any;
@@ -60,18 +54,6 @@ export function roundUpSectorOffset(currentOffset: number): number {
 
 export function getSectorOffsetDelta(currentOffset: number): number {
 	return roundUpSectorOffset(currentOffset) - currentOffset;
-}
-
-export function decodeTimestamp(value: number): number {
-	return Math.floor(parseIntSafe(value)) * 1000;
-}
-
-export function encodeTimestamp(value: number): number {
-	return Math.floor(parseIntSafe(value) / 1000);
-}
-
-export function sanitizeTimestamp(value: number): number {
-	return decodeTimestamp(encodeTimestamp(value));
 }
 
 export function parseIntOctal(input: string): number {

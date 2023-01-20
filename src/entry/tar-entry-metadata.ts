@@ -1,10 +1,61 @@
-import { advanceSectorOffset, AsyncUint8Array, isNumber, isUint8Array, sizeofUint8Array } from '../common';
-import { findNextUstarSectorAsync, findNextUstarSectorOffset, TarHeaderMetadata } from '../header';
+import {
+	advanceSectorOffset,
+	AsyncUint8Array,
+	AsyncUint8ArraySearchResult,
+	findInAsyncUint8Array,
+	isNumber,
+	isUint8Array,
+	sizeofUint8Array
+} from '../common';
+
+import { isUstarSector, TarHeaderMetadata } from '../header';
 
 export interface TarEntryMetadataLike {
 	header: TarHeaderMetadata;
 	offset: number;
 	content?: Uint8Array | null;
+}
+
+/**
+ * Searches through the given AsyncUint8Array for the next USTAR sector,
+ * starting at the given offset.
+ */
+export function findNextUstarSectorAsync(
+	input: AsyncUint8Array,
+	offset: number = 0
+): Promise<AsyncUint8ArraySearchResult | null> {
+	return findInAsyncUint8Array(
+		input,
+		offset,
+		1,
+		value => isUstarSector(value)
+	);
+}
+
+/**
+ * Searches the given input buffer for a USTAR header tar sector, starting at the given offset.
+ * Returns -1 if no valid header sector is found.
+ */
+export function findNextUstarSectorOffset(input: Uint8Array, offset: number = 0): number {
+
+	const NOT_FOUND = -1;
+
+	if (!isUint8Array(input)) {
+		return NOT_FOUND;
+	}
+
+	const maxOffset = input.byteLength;
+	let nextOffset = Math.max(0, offset);
+
+	while (nextOffset < maxOffset && !isUstarSector(input, nextOffset)) {
+		nextOffset = advanceSectorOffset(nextOffset, maxOffset);
+	}
+
+	if (nextOffset < maxOffset) {
+		return nextOffset;
+	}
+
+	return NOT_FOUND;
 }
 
 /**
@@ -32,10 +83,7 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 
 		// The fileSize field metadata must always be in sync between the content and the header
 		if (header.fileSize.value !== contentLength && contentLength > 0) {
-			// Need to flatten / re-expand to ensure checksum and serialized bytes are in sync
-			const headerAttrs = header.flatten();
-			headerAttrs.fileSize = contentLength;
-			header = new TarHeaderMetadata(headerAttrs);
+			header.update({ fileSize: contentLength });
 		}
 
 		return new TarEntryMetadata(header, content, offset);

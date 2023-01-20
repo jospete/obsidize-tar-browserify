@@ -1,15 +1,11 @@
 import {
 	decodeString,
-	decodeTimestamp,
 	encodeString,
-	encodeTimestamp,
 	isUint8Array,
+	OCTAL_RADIX,
 	parseIntSafe,
 	removeTrailingZeros,
-	sizeofUint8Array,
-	USTAR_INDICATOR_VALUE,
-	USTAR_TAG,
-	USTAR_VERSION_VALUE
+	sizeofUint8Array
 } from '../common';
 
 import { TarHeader } from './tar-header';
@@ -29,7 +25,17 @@ export interface TarHeaderFieldLike {
 	constantValue?: any;
 }
 
-const OCTAL_RADIX = 8;
+export function decodeTimestamp(value: number): number {
+	return Math.floor(parseIntSafe(value)) * 1000;
+}
+
+export function encodeTimestamp(value: number): number {
+	return Math.floor(parseIntSafe(value) / 1000);
+}
+
+export function sanitizeTimestamp(value: number): number {
+	return decodeTimestamp(encodeTimestamp(value));
+}
 
 export function deserializeAsciiPaddedField(value: Uint8Array): string {
 	return removeTrailingZeros(decodeString(value));
@@ -113,20 +119,37 @@ export class TarHeaderField implements TarHeaderFieldLike {
 		this.constantValue = config.constantValue || undefined;
 	}
 
+	/**
+	 * Creates an immutable field instance based on the given config.
+	 */
 	public static frozen(config: TarHeaderFieldLike): TarHeaderField {
 		return Object.freeze(new TarHeaderField(config));
 	}
 
+	/**
+	 * Shorthand for padding the output of `slice` into `decodeString`.
+	 */
 	public sliceString(input: Uint8Array, offset?: number): string {
 		return decodeString(this.slice(input, offset));
 	}
 
+	/**
+	 * @param input - a buffer of one or more complete tar sectors
+	 * @param offset - the offset to slice from (must be a multiple of `SECTOR_SIZE`)
+	 * @returns the slice of the given input Uint8Array that this field resides in.
+	 */
 	public slice(input: Uint8Array, offset: number = 0): Uint8Array {
 		if (!isUint8Array(input)) return new Uint8Array(0);
-		const absoluteOffset = this.offset + offset;
-		return input.slice(absoluteOffset, absoluteOffset + this.size);
+		const start = offset + this.offset;
+		const end = start + this.size;
+		return input.slice(start, end);
 	}
 
+	/**
+	 * @param input - a buffer of one or more complete tar sectors
+	 * @returns The value parsed from the input based on this field's transform type,
+	 * or `undefined` on error.
+	 */
 	public deserialize<T = any>(input: Uint8Array): T | undefined {
 		const transform = fieldTypeTransformMap[this.type];
 		return (transform && isUint8Array(input))
@@ -134,6 +157,10 @@ export class TarHeaderField implements TarHeaderFieldLike {
 			: undefined;
 	}
 
+	/**
+	 * @param input - the value to be serialized, based on this field's transform type.
+	 * @returns the serialized value as a Uint8Array
+	 */
 	public serialize(input: any): Uint8Array {
 
 		const result = new Uint8Array(this.size);
@@ -147,158 +174,4 @@ export class TarHeaderField implements TarHeaderFieldLike {
 
 		return result;
 	}
-}
-
-
-// =====================================================================
-// Legacy Fields
-// =====================================================================
-
-export const fileName: TarHeaderField = TarHeaderField.frozen({
-	name: 'fileName',
-	offset: 0,
-	size: 100,
-	type: TarHeaderFieldType.ASCII_PADDED_END
-});
-
-export const fileMode: TarHeaderField = TarHeaderField.frozen({
-	name: 'fileMode',
-	offset: 100,
-	size: 8,
-	type: TarHeaderFieldType.INTEGER_OCTAL
-});
-
-export const ownerUserId: TarHeaderField = TarHeaderField.frozen({
-	name: 'ownerUserId',
-	offset: 108,
-	size: 8,
-	type: TarHeaderFieldType.INTEGER_OCTAL
-});
-
-export const groupUserId: TarHeaderField = TarHeaderField.frozen({
-	name: 'groupUserId',
-	offset: 116,
-	size: 8,
-	type: TarHeaderFieldType.INTEGER_OCTAL
-});
-
-export const fileSize: TarHeaderField = TarHeaderField.frozen({
-	name: 'fileSize',
-	offset: 124,
-	size: 12,
-	type: TarHeaderFieldType.INTEGER_OCTAL
-});
-
-export const lastModified: TarHeaderField = TarHeaderField.frozen({
-	name: 'lastModified',
-	offset: 136,
-	size: 12,
-	type: TarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP
-});
-
-export const headerChecksum: TarHeaderField = TarHeaderField.frozen({
-	name: 'headerChecksum',
-	offset: 148,
-	size: 8,
-	type: TarHeaderFieldType.INTEGER_OCTAL
-});
-
-export const typeFlag: TarHeaderField = TarHeaderField.frozen({
-	name: 'typeFlag',
-	offset: 156,
-	size: 1,
-	type: TarHeaderFieldType.ASCII
-});
-
-export const linkedFileName: TarHeaderField = TarHeaderField.frozen({
-	name: 'linkedFileName',
-	offset: 157,
-	size: 100,
-	type: TarHeaderFieldType.ASCII_PADDED_END
-});
-
-// =====================================================================
-// USTAR Fields
-// =====================================================================
-
-export const ustarIndicator: TarHeaderField = TarHeaderField.frozen({
-	name: 'ustarIndicator',
-	offset: 257,
-	size: 6,
-	type: TarHeaderFieldType.ASCII,
-	constantValue: USTAR_INDICATOR_VALUE
-});
-
-export const ustarVersion: TarHeaderField = TarHeaderField.frozen({
-	name: 'ustarVersion',
-	offset: 263,
-	size: 2,
-	type: TarHeaderFieldType.ASCII,
-	constantValue: USTAR_VERSION_VALUE
-});
-
-export const ownerUserName: TarHeaderField = TarHeaderField.frozen({
-	name: 'ownerUserName',
-	offset: 265,
-	size: 32,
-	type: TarHeaderFieldType.ASCII_PADDED_END
-});
-
-export const ownerGroupName: TarHeaderField = TarHeaderField.frozen({
-	name: 'ownerGroupName',
-	offset: 297,
-	size: 32,
-	type: TarHeaderFieldType.ASCII_PADDED_END
-});
-
-export const deviceMajorNumber: TarHeaderField = TarHeaderField.frozen({
-	name: 'deviceMajorNumber',
-	offset: 329,
-	size: 8,
-	type: TarHeaderFieldType.ASCII_PADDED_END
-});
-
-export const deviceMinorNumber: TarHeaderField = TarHeaderField.frozen({
-	name: 'deviceMinorNumber',
-	offset: 337,
-	size: 8,
-	type: TarHeaderFieldType.ASCII_PADDED_END
-});
-
-export const fileNamePrefix: TarHeaderField = TarHeaderField.frozen({
-	name: 'fileNamePrefix',
-	offset: 345,
-	size: 155,
-	type: TarHeaderFieldType.ASCII_PADDED_END
-});
-
-const fieldsByName: { [key in keyof TarHeader]: TarHeaderField } = {
-	fileName,
-	fileMode,
-	ownerUserId,
-	groupUserId,
-	fileSize,
-	lastModified,
-	headerChecksum,
-	typeFlag,
-	linkedFileName,
-	ustarIndicator,
-	ustarVersion,
-	ownerUserName,
-	ownerGroupName,
-	deviceMajorNumber,
-	deviceMinorNumber,
-	fileNamePrefix
-};
-
-export function orderedSet(): TarHeaderField[] {
-	return Object.values(fieldsByName);
-}
-
-export function checksumSet(): TarHeaderField[] {
-	return orderedSet().filter(v => v !== headerChecksum);
-}
-
-export function isUstarSector(input: Uint8Array, offset?: number): boolean {
-	return ustarIndicator.sliceString(input, offset).startsWith(USTAR_TAG);
 }

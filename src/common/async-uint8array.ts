@@ -1,4 +1,5 @@
-import { SECTOR_SIZE, clamp } from './tar-utility';
+import { SECTOR_SIZE } from './constants';
+import { clamp } from './tar-utility';
 
 /**
  * Generalized iterface for interacting with buffers that we only have a partial view into.
