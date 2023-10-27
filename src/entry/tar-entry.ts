@@ -1,6 +1,6 @@
 import { AsyncUint8Array } from '../common/async-uint8array';
-import { HEADER_SIZE } from '../common/constants';
-import { clamp, decodeString, roundUpSectorOffset } from '../common/transforms';
+import { Constants } from '../common/constants';
+import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
 import {
 	isTarHeaderLinkIndicatorTypeDirectory,
@@ -217,7 +217,7 @@ export class TarEntry implements TarHeader {
 	 * The total exact byte length of this entry, including the header.
 	 */
 	public get byteLength(): number {
-		return HEADER_SIZE + this.fileSize;
+		return Constants.HEADER_SIZE + this.fileSize;
 	}
 
 	/**
@@ -225,7 +225,7 @@ export class TarEntry implements TarHeader {
 	 * which is a multiple of the standard tar sector size.
 	 */
 	public get sectorByteLength(): number {
-		return roundUpSectorOffset(this.byteLength);
+		return TarUtility.roundUpSectorOffset(this.byteLength);
 	}
 
 	/**
@@ -234,7 +234,7 @@ export class TarEntry implements TarHeader {
 	 * whether or not this is a file.
 	 */
 	public get contentStartIndex(): number {
-		return HEADER_SIZE + this.bufferStartIndex;
+		return Constants.HEADER_SIZE + this.bufferStartIndex;
 	}
 
 	/**
@@ -247,7 +247,7 @@ export class TarEntry implements TarHeader {
 	}
 
 	public getContentAsText(): string {
-		return decodeString(this.content!);
+		return TarUtility.decodeString(this.content!);
 	}
 
 	public isDirectory(): boolean {
@@ -266,7 +266,7 @@ export class TarEntry implements TarHeader {
 	 */
 	public async readContentFrom(buffer: AsyncUint8Array, offset: number = 0, length: number = 0): Promise<Uint8Array> {
 		const { contentStartIndex, contentEndIndex, fileSize } = this;
-		const normalizedOffset = clamp(offset, 0, fileSize) + contentStartIndex;
+		const normalizedOffset = TarUtility.clamp(offset, 0, fileSize) + contentStartIndex;
 		const bytesRemaining = Math.max(0, contentEndIndex - normalizedOffset);
 		const normalizedLength = length > 0 ? Math.min(length, bytesRemaining) : bytesRemaining;
 		return buffer.read(normalizedOffset, normalizedLength);

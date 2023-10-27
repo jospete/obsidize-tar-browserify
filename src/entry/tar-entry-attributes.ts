@@ -1,5 +1,5 @@
-import { SECTOR_SIZE } from '../common/constants';
-import { concatUint8Arrays, getSectorOffsetDelta, sizeofUint8Array } from '../common/transforms';
+import { Constants } from '../common/constants';
+import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
 import { sanitizeHeader, TarHeaderMetadata } from '../header/tar-header-metadata';
 
@@ -9,7 +9,7 @@ export interface TarEntryAttributesLike {
 }
 
 function concatAttributes(accumulator: Uint8Array, attrs: TarEntryAttributes): Uint8Array {
-	return concatUint8Arrays(accumulator, attrs.toUint8Array());
+	return TarUtility.concatUint8Arrays(accumulator, attrs.toUint8Array());
 }
 
 /**
@@ -38,8 +38,8 @@ export class TarEntryAttributes implements TarEntryAttributesLike {
 	}
 
 	public static combinePadded(snapshots: TarEntryAttributes[]): Uint8Array {
-		const padBuffer = new Uint8Array(SECTOR_SIZE * 2);
-		return concatUint8Arrays(TarEntryAttributes.combine(snapshots), padBuffer);
+		const padBuffer = new Uint8Array(Constants.SECTOR_SIZE * 2);
+		return TarUtility.concatUint8Arrays(TarEntryAttributes.combine(snapshots), padBuffer);
 	}
 
 	public static combinePaddedFrom(snapshots: TarEntryAttributesLike[]): Uint8Array {
@@ -50,19 +50,19 @@ export class TarEntryAttributes implements TarEntryAttributesLike {
 	public toUint8Array(): Uint8Array {
 
 		const { header, content } = this;
-		const contentSize = sizeofUint8Array(content);
-		const offsetDelta = getSectorOffsetDelta(contentSize);
+		const contentSize = TarUtility.sizeofUint8Array(content);
+		const offsetDelta = TarUtility.getSectorOffsetDelta(contentSize);
 
 		let paddedContent = content!;
 
 		if (contentSize > 0 && offsetDelta > 0) {
-			paddedContent = concatUint8Arrays(content!, new Uint8Array(offsetDelta));
+			paddedContent = TarUtility.concatUint8Arrays(content!, new Uint8Array(offsetDelta));
 		}
 
 		const safeHeader = sanitizeHeader(header);
 		safeHeader.fileSize = contentSize;
 
 		const headerBuffer = TarHeaderMetadata.serialize(safeHeader);
-		return concatUint8Arrays(headerBuffer, paddedContent);
+		return TarUtility.concatUint8Arrays(headerBuffer, paddedContent);
 	}
 }

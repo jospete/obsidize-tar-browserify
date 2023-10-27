@@ -1,5 +1,5 @@
 import { AsyncUint8Array } from '../common/async-uint8array';
-import { encodeString } from '../common/transforms';
+import { TarUtility } from '../common/tar-utility';
 import { AsyncTarEntryIterator, TarEntryDelegate } from '../entry/async-tar-entry-iterator';
 import { TarEntry } from '../entry/tar-entry';
 import { TarEntryAttributes, TarEntryAttributesLike } from '../entry/tar-entry-attributes';
@@ -68,7 +68,7 @@ export class Tarball {
 	}
 
 	public addTextFile(path: string, content: string, headerOptions?: Partial<TarHeader>): this {
-		return this.addBinaryFile(path, encodeString(content), headerOptions);
+		return this.addBinaryFile(path, TarUtility.encodeString(content), headerOptions);
 	}
 
 	public addBinaryFile(path: string, content: Uint8Array, headerOptions: Partial<TarHeader> = {}): this {

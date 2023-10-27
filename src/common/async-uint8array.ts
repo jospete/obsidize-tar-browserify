@@ -1,5 +1,5 @@
-import { SECTOR_SIZE } from './constants';
-import { clamp } from './transforms';
+import { Constants } from './constants';
+import { TarUtility } from './tar-utility';
 
 /**
  * Generalized iterface for interacting with buffers that we only have a partial view into.
@@ -35,14 +35,14 @@ export async function findInAsyncUint8Array(
 	}
 
 	const maxLength = await target.byteLength();
-	offset = clamp(offset, 0, maxLength);
+	offset = TarUtility.clamp(offset, 0, maxLength);
 
 	if (offset >= maxLength) {
 		return null;
 	}
 
 	// don't allow reading more than ~250KB at a time by default
-	const blockSize = clamp(stepSize, 1, SECTOR_SIZE) * SECTOR_SIZE;
+	const blockSize = TarUtility.clamp(stepSize, 1, Constants.SECTOR_SIZE) * Constants.SECTOR_SIZE;
 
 	let found = false;
 	let cursor = offset;

@@ -1,8 +1,7 @@
 import { AsyncUint8Array, AsyncUint8ArraySearchResult, findInAsyncUint8Array } from '../common/async-uint8array';
-import { advanceSectorOffset, isNumber, isUint8Array, sizeofUint8Array } from '../common/transforms';
-import { isUstarSector } from '../header/tar-header-field-definitions';
+import { TarUtility } from '../common/tar-utility';
+import { HeaderFieldDefinitions } from '../header/tar-header-field-definitions';
 import { TarHeaderMetadata } from '../header/tar-header-metadata';
-
 
 export interface TarEntryMetadataLike {
 	header: TarHeaderMetadata;
@@ -22,7 +21,7 @@ export function findNextUstarSectorAsync(
 		input,
 		offset,
 		1,
-		value => isUstarSector(value)
+		value => HeaderFieldDefinitions.isUstarSector(value)
 	);
 }
 
@@ -34,15 +33,15 @@ export function findNextUstarSectorOffset(input: Uint8Array, offset: number = 0)
 
 	const NOT_FOUND = -1;
 
-	if (!isUint8Array(input)) {
+	if (!TarUtility.isUint8Array(input)) {
 		return NOT_FOUND;
 	}
 
 	const maxOffset = input.byteLength;
 	let nextOffset = Math.max(0, offset);
 
-	while (nextOffset < maxOffset && !isUstarSector(input, nextOffset)) {
-		nextOffset = advanceSectorOffset(nextOffset, maxOffset);
+	while (nextOffset < maxOffset && !HeaderFieldDefinitions.isUstarSector(input, nextOffset)) {
+		nextOffset = TarUtility.advanceSectorOffset(nextOffset, maxOffset);
 	}
 
 	if (nextOffset < maxOffset) {
@@ -80,7 +79,7 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 		if (!content) content = null;
 		if (!offset) offset = 0;
 
-		const contentLength = sizeofUint8Array(content);
+		const contentLength = TarUtility.sizeofUint8Array(content);
 
 		// The fileSize field metadata must always be in sync between the content and the header
 		if (header.fileSize.value !== contentLength && contentLength > 0) {
@@ -96,7 +95,7 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 	 */
 	public static extractFrom(input: Uint8Array, offset: number = 0): TarEntryMetadata | null {
 
-		if (!isUint8Array(input)) {
+		if (!TarUtility.isUint8Array(input)) {
 			return null;
 		}
 
@@ -108,12 +107,12 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 
 		const maxOffset = input.byteLength;
 		const header = TarHeaderMetadata.from(input, ustarSectorOffset);
-		const start = advanceSectorOffset(ustarSectorOffset, maxOffset);
+		const start = TarUtility.advanceSectorOffset(ustarSectorOffset, maxOffset);
 		const fileSize = header.fileSize.value;
 
 		let content: Uint8Array | null = null;
 
-		if (isNumber(fileSize) && fileSize > 0) {
+		if (TarUtility.isNumber(fileSize) && fileSize > 0) {
 			const end = Math.min(maxOffset, start + fileSize);
 			content = input.slice(start, end);
 		}

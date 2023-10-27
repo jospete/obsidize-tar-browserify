@@ -1,15 +1,4 @@
-import {
-	decodeString,
-	deserializeAsciiPaddedField,
-	deserializeIntegerOctal,
-	deserializeIntegerOctalTimestamp,
-	encodeString,
-	encodeTimestamp,
-	isUint8Array,
-	serializeIntegerOctalToString,
-	sizeofUint8Array
-} from '../common/transforms';
-
+import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from './tar-header';
 import { TarHeaderFieldType } from './tar-header-field-type';
 
@@ -28,7 +17,7 @@ export interface TarHeaderFieldLike {
 }
 
 function serializeIntegerOctalTimestamp(value: number, field: TarHeaderFieldLike): Uint8Array {
-	return serializeIntegerOctalWithSuffix(encodeTimestamp(value), field, '');
+	return serializeIntegerOctalWithSuffix(TarUtility.encodeTimestamp(value), field, '');
 }
 
 function serializeIntegerOctal(value: number, field: TarHeaderFieldLike): Uint8Array {
@@ -42,9 +31,9 @@ export function serializeIntegerOctalWithSuffix(value: number, field: TarHeaderF
 
 	// USTAR docs indicate that value length needs to be 1 less than actual field size.
 	// We also need to allow for suffixes... because random white spaces.
-	const serializedString = serializeIntegerOctalToString(value, adjustedLength) + suffix;
+	const serializedString = TarUtility.serializeIntegerOctalToString(value, adjustedLength) + suffix;
 
-	return encodeString(serializedString);
+	return TarUtility.encodeString(serializedString);
 }
 
 interface FieldTransform<T> {
@@ -54,20 +43,20 @@ interface FieldTransform<T> {
 
 const fieldTypeTransformMap: { [key: string]: FieldTransform<any> } = {
 	[TarHeaderFieldType.ASCII]: {
-		serialize: encodeString,
-		deserialize: decodeString
+		serialize: TarUtility.encodeString,
+		deserialize: TarUtility.decodeString
 	},
 	[TarHeaderFieldType.ASCII_PADDED_END]: {
-		serialize: encodeString,
-		deserialize: deserializeAsciiPaddedField
+		serialize: TarUtility.encodeString,
+		deserialize: TarUtility.deserializeAsciiPaddedField
 	},
 	[TarHeaderFieldType.INTEGER_OCTAL]: {
 		serialize: serializeIntegerOctal,
-		deserialize: deserializeIntegerOctal
+		deserialize: TarUtility.deserializeIntegerOctal
 	},
 	[TarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP]: {
 		serialize: serializeIntegerOctalTimestamp,
-		deserialize: deserializeIntegerOctalTimestamp
+		deserialize: TarUtility.deserializeIntegerOctalTimestamp
 	}
 };
 
@@ -102,7 +91,7 @@ export class TarHeaderField implements TarHeaderFieldLike {
 	 * Shorthand for padding the output of `slice` into `decodeString`.
 	 */
 	public sliceString(input: Uint8Array, offset?: number): string {
-		return decodeString(this.slice(input, offset));
+		return TarUtility.decodeString(this.slice(input, offset));
 	}
 
 	/**
@@ -111,7 +100,7 @@ export class TarHeaderField implements TarHeaderFieldLike {
 	 * @returns the slice of the given input Uint8Array that this field resides in.
 	 */
 	public slice(input: Uint8Array, offset: number = 0): Uint8Array {
-		if (!isUint8Array(input)) return new Uint8Array(0);
+		if (!TarUtility.isUint8Array(input)) return new Uint8Array(0);
 		const start = offset + this.offset;
 		const end = start + this.size;
 		return input.slice(start, end);
@@ -124,7 +113,7 @@ export class TarHeaderField implements TarHeaderFieldLike {
 	 */
 	public deserialize<T = any>(input: Uint8Array): T | undefined {
 		const transform = fieldTypeTransformMap[this.type];
-		return (transform && isUint8Array(input))
+		return (transform && TarUtility.isUint8Array(input))
 			? transform.deserialize(input, this)
 			: undefined;
 	}
@@ -138,7 +127,7 @@ export class TarHeaderField implements TarHeaderFieldLike {
 		const result = new Uint8Array(this.size);
 		const transform: FieldTransform<any> = fieldTypeTransformMap[this.type];
 		const value = transform.serialize(input, this);
-		const valueLength = sizeofUint8Array(value);
+		const valueLength = TarUtility.sizeofUint8Array(value);
 
 		if (valueLength > 0 && valueLength <= this.size) {
 			result.set(value!, 0);
