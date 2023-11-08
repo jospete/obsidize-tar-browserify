@@ -1,8 +1,7 @@
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
-import { TarHeaderMetadata } from '../header/tar-header-metadata';
-import { TarHeaderUtility } from '../header/tar-header-utility';
+import { TarHeaderLike } from '../header/tar-header-like';
 
 export interface TarEntryAttributesLike {
 	header: Partial<TarHeader>;
@@ -20,7 +19,7 @@ function concatAttributes(accumulator: Uint8Array, attrs: TarEntryAttributes): U
 export class TarEntryAttributes implements TarEntryAttributesLike {
 
 	constructor(
-		public readonly header: Partial<TarHeader>,
+		public readonly header: TarHeaderLike | Partial<TarHeaderLike>,
 		public readonly content: Uint8Array | null = null
 	) {
 	}
@@ -60,10 +59,10 @@ export class TarEntryAttributes implements TarEntryAttributesLike {
 			paddedContent = TarUtility.concatUint8Arrays(content!, new Uint8Array(offsetDelta));
 		}
 
-		const safeHeader = TarHeaderUtility.sanitizeHeader(header);
+		const safeHeader = TarHeader.from(header);
 		safeHeader.fileSize = contentSize;
 
-		const headerBuffer = TarHeaderMetadata.serialize(safeHeader);
+		const headerBuffer = safeHeader.toUint8Array();
 		return TarUtility.concatUint8Arrays(headerBuffer, paddedContent);
 	}
 }

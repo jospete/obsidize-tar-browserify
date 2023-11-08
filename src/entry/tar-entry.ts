@@ -2,12 +2,9 @@ import { AsyncUint8Array } from '../common/async-uint8array';
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
-import {
-	isTarHeaderLinkIndicatorTypeDirectory,
-	isTarHeaderLinkIndicatorTypeFile,
-	TarHeaderLinkIndicatorType
-} from '../header/tar-header-link-indicator-type';
-import { TarHeaderMetadata } from '../header/tar-header-metadata';
+import { TarHeaderLike } from '../header/tar-header-like';
+import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
+import { TarHeaderUtility } from '../header/tar-header-utility';
 import { TarEntryAttributes, TarEntryAttributesLike } from './tar-entry-attributes';
 import { TarEntryMetadata, TarEntryMetadataLike } from './tar-entry-metadata';
 
@@ -18,7 +15,7 @@ import { TarEntryMetadata, TarEntryMetadataLike } from './tar-entry-metadata';
  * 1. The parsed USTAR header sector content (AKA TarHeader)
  * 2. The aggregate of the proceeding file content sectors, based on the header's file size attribute
  */
-export class TarEntry implements TarHeader {
+export class TarEntry implements TarHeaderLike {
 
 	protected readonly metadata: TarEntryMetadata;
 
@@ -32,8 +29,8 @@ export class TarEntry implements TarHeader {
 		return !!(v && v instanceof TarEntry);
 	}
 
-	public static from(attrs: Partial<TarHeader>, content: Uint8Array | null = null): TarEntry {
-		const header = new TarHeaderMetadata(attrs);
+	public static from(attrs: TarHeaderLike | Partial<TarHeaderLike>, content: Uint8Array | null = null): TarEntry {
+		const header = TarHeader.from(attrs);
 		return new TarEntry({ header, content, offset: 0 });
 	}
 
@@ -57,123 +54,123 @@ export class TarEntry implements TarHeader {
 	// =================================================================
 
 	public get fileName(): string {
-		return this.header.fileName.value;
+		return this.header.fileName;
 	}
 
 	public set fileName(value: string) {
-		this.header.fileName.value = value;
+		this.header.fileName = value;
 	}
 
 	public get fileSize(): number {
-		return this.header.fileSize.value;
+		return this.header.fileSize;
 	}
 
 	public set fileSize(value: number) {
-		this.header.fileSize.value = value;
+		this.header.fileSize = value;
 	}
 
 	public get fileMode(): number {
-		return this.header.fileMode.value;
+		return this.header.fileMode;
 	}
 
 	public set fileMode(value: number) {
-		this.header.fileMode.value = value;
+		this.header.fileMode = value;
 	}
 
 	public get ownerUserId(): number {
-		return this.header.ownerUserId.value;
+		return this.header.ownerUserId;
 	}
 
 	public set ownerUserId(value: number) {
-		this.header.ownerUserId.value = value;
+		this.header.ownerUserId = value;
 	}
 
 	public get groupUserId(): number {
-		return this.header.groupUserId.value;
+		return this.header.groupUserId;
 	}
 
 	public set groupUserId(value: number) {
-		this.header.groupUserId.value = value;
+		this.header.groupUserId = value;
 	}
 
 	public get lastModified(): number {
-		return this.header.lastModified.value;
+		return this.header.lastModified;
 	}
 
 	public set lastModified(value: number) {
-		this.header.lastModified.value = value;
+		this.header.lastModified = value;
 	}
 
 	public get headerChecksum(): number {
-		return this.header.headerChecksum.value;
+		return this.header.headerChecksum;
 	}
 
 	public get linkedFileName(): string {
-		return this.header.linkedFileName.value;
+		return this.header.linkedFileName;
 	}
 
 	public set linkedFileName(value: string) {
-		this.header.linkedFileName.value = value;
+		this.header.linkedFileName = value;
 	}
 
 	public get typeFlag(): TarHeaderLinkIndicatorType {
-		return this.header.typeFlag.value;
+		return this.header.typeFlag;
 	}
 
 	public set typeFlag(value: TarHeaderLinkIndicatorType) {
-		this.header.typeFlag.value = value;
+		this.header.typeFlag = value;
 	}
 
 	public get ustarIndicator(): string {
-		return this.header.ustarIndicator.value;
+		return this.header.ustarIndicator;
 	}
 
 	public get ustarVersion(): string {
-		return this.header.ustarVersion.value;
+		return this.header.ustarVersion;
 	}
 
 	public set ustarVersion(value: string) {
-		this.header.ustarVersion.value = value;
+		this.header.ustarVersion = value;
 	}
 
 	public get ownerUserName(): string {
-		return this.header.ownerUserName.value;
+		return this.header.ownerUserName;
 	}
 
 	public set ownerUserName(value: string) {
-		this.header.ownerUserName.value = value;
+		this.header.ownerUserName = value;
 	}
 
 	public get ownerGroupName(): string {
-		return this.header.ownerGroupName.value;
+		return this.header.ownerGroupName;
 	}
 
 	public set ownerGroupName(value: string) {
-		this.header.ownerGroupName.value = value;
+		this.header.ownerGroupName = value;
 	}
 
 	public get deviceMajorNumber(): string {
-		return this.header.deviceMajorNumber.value;
+		return this.header.deviceMajorNumber;
 	}
 
 	public set deviceMajorNumber(value: string) {
-		this.header.deviceMajorNumber.value = value;
+		this.header.deviceMajorNumber = value;
 	}
 
 	public get deviceMinorNumber(): string {
-		return this.header.deviceMinorNumber.value;
+		return this.header.deviceMinorNumber;
 	}
 
 	public set deviceMinorNumber(value: string) {
-		this.header.deviceMinorNumber.value = value;
+		this.header.deviceMinorNumber = value;
 	}
 
 	public get fileNamePrefix(): string {
-		return this.header.fileNamePrefix.value;
+		return this.header.fileNamePrefix;
 	}
 
 	public set fileNamePrefix(value: string) {
-		this.header.fileNamePrefix.value = value;
+		this.header.fileNamePrefix = value;
 	}
 
 	// =================================================================
@@ -184,7 +181,7 @@ export class TarEntry implements TarHeader {
 	 * The header metadata parsed out for this entry.
 	 * See TarHeaderFieldDefinition for details.
 	 */
-	public get header(): TarHeaderMetadata {
+	public get header(): TarHeader {
 		return this.metadata.header;
 	}
 
@@ -251,11 +248,11 @@ export class TarEntry implements TarHeader {
 	}
 
 	public isDirectory(): boolean {
-		return isTarHeaderLinkIndicatorTypeDirectory(this.typeFlag);
+		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeDirectory(this.typeFlag);
 	}
 
 	public isFile(): boolean {
-		return isTarHeaderLinkIndicatorTypeFile(this.typeFlag);
+		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeFile(this.typeFlag);
 	}
 
 	/**
@@ -273,7 +270,7 @@ export class TarEntry implements TarHeader {
 	}
 
 	public toAttributes(): TarEntryAttributes {
-		return new TarEntryAttributes(this.header.deflate(), this.content);
+		return new TarEntryAttributes(this.header, this.content);
 	}
 
 	public toUint8Array(): Uint8Array {

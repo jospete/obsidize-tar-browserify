@@ -1,9 +1,8 @@
 import {
 	Constants,
+	TarHeader,
 	TarHeaderField,
-	TarHeaderFieldMetadata,
 	TarHeaderFieldType,
-	TarHeaderMetadata,
 	TarHeaderUtility,
 	TarUtility
 } from '../../src';
@@ -40,7 +39,7 @@ describe('TarHeaderField', () => {
 	describe('isUstarSector()', () => {
 
 		it('returns true if the buffer contains a ustar indicator', () => {
-			const testHeaderBuffer = TarHeaderMetadata.serialize(null);
+			const testHeaderBuffer = TarHeader.serialize(null as any);
 			expect(isUstarSector(testHeaderBuffer)).toBe(true);
 		});
 
@@ -52,7 +51,7 @@ describe('TarHeaderField', () => {
 		it('allows for non-standard padding after ustar indicator header data', () => {
 
 			const targetOffset = ustarIndicator.offset;
-			const testHeaderBuffer = TarHeaderMetadata.serialize(null);
+			const testHeaderBuffer = TarHeader.serialize(null as any);
 			const baseValue = USTAR_TAG;
 
 			const assertValidHeader = (value: string, isValid: boolean) => {
@@ -104,27 +103,28 @@ describe('TarHeaderField', () => {
 		});
 
 		it('does not explode when given malformed input', () => {
-			expect(() => lastModified.serialize(null)).not.toThrowError();
+			expect(() => lastModified.serialize(null as any)).not.toThrowError();
 		});
 	});
 
 	describe('deserialize()', () => {
 
-		const defaultHeader = new TarHeaderMetadata();
-		const fields: TarHeaderFieldMetadata<any>[] = Object.values(defaultHeader);
+		const defaultHeader = TarHeader.seeded();
+		const fields = TarHeaderField.all();
 
-		for (const fieldMeta of fields) {
+		for (const field of fields) {
 
-			const field = fieldMeta.field;
-			const serialized = field.serialize(fieldMeta.value);
+			const headerValue = defaultHeader[field.name];
+			const serialized = field.serialize(headerValue);
 			const deserialized = field.deserialize(serialized);
 
 			it(`mirrors the serialized value for "${field.name}"`, () => {
-				expect(serialized).toEqual(fieldMeta.bytes);
+				expect(headerValue).toBeDefined();
+				expect(serialized).toEqual(field.slice(defaultHeader.bytes));
 			});
 
 			it(`mirrors the deserialized value for "${field.name}"`, () => {
-				expect(deserialized).toEqual(fieldMeta.value);
+				expect(deserialized).toEqual(defaultHeader[field.name]);
 			});
 		}
 
@@ -132,6 +132,23 @@ describe('TarHeaderField', () => {
 			let value: any = null;
 			expect(() => value = lastModified.deserialize(null as any)).not.toThrowError();
 			expect(value).not.toBeDefined();
+		});
+	});
+
+	describe('inject()', () => {
+
+		it('properly handles custom offsets', () => {
+
+			const buffer = new Uint8Array(Constants.HEADER_SIZE * 2);
+			const headerOffset = 42;
+			const valueOctal = '777';
+			const value = parseInt(valueOctal, 8);
+			const field = fileMode;
+			const fieldValue = field.serialize(value);
+			const injected = field.inject(buffer, headerOffset, value);
+
+			expect(injected).toBe(true);
+			expect(field.slice(buffer, headerOffset)).toEqual(fieldValue);
 		});
 	});
 });

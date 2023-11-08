@@ -1,6 +1,5 @@
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
-import { TarHeader } from './tar-header';
 import { TarHeaderField } from './tar-header-field';
 import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
 
@@ -15,33 +14,19 @@ export namespace TarHeaderUtility {
 		return TarHeaderField.ustarIndicator.sliceString(input, offset).startsWith(Constants.USTAR_TAG);
 	}
 
-	export function sanitizeHeader(header: Partial<TarHeader> | null): TarHeader {
-
-		if (header && TarUtility.isNumber(header.lastModified)) {
-			header.lastModified = TarUtility.sanitizeTimestamp(header.lastModified!);
-		}
-
-		return Object.assign(getDefaultHeaderValues(), (header || {})) as TarHeader;
+	export function isTarHeaderLinkIndicatorTypeDirectory(type: TarHeaderLinkIndicatorType | string): boolean {
+		return type === TarHeaderLinkIndicatorType.DIRECTORY;
 	}
-
-	export function getDefaultHeaderValues(): TarHeader {
-		return {
-			fileName: '',
-			fileMode: Constants.FILE_MODE_DEFAULT,
-			groupUserId: 0,
-			ownerUserId: 0,
-			fileSize: 0,
-			lastModified: TarUtility.sanitizeTimestamp(Date.now()),
-			headerChecksum: 0,
-			linkedFileName: '',
-			typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE,
-			ustarIndicator: Constants.USTAR_INDICATOR_VALUE,
-			ustarVersion: Constants.USTAR_VERSION_VALUE,
-			ownerUserName: '',
-			ownerGroupName: '',
-			deviceMajorNumber: '00',
-			deviceMinorNumber: '00',
-			fileNamePrefix: ''
-		};
+	
+	export function isTarHeaderLinkIndicatorTypeFile(type: TarHeaderLinkIndicatorType | string): boolean {
+		switch (type) {
+			case TarHeaderLinkIndicatorType.NORMAL_FILE:
+			case TarHeaderLinkIndicatorType.NORMAL_FILE_ALT1:
+			case TarHeaderLinkIndicatorType.NORMAL_FILE_ALT2:
+			case TarHeaderLinkIndicatorType.CONTIGUOUS_FILE:
+				return true;
+			default:
+				return false;
+		}
 	}
 }

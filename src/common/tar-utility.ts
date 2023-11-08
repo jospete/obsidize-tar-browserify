@@ -9,6 +9,14 @@ export namespace TarUtility {
 	export function isString(value: any): boolean {
 		return typeof value === 'string';
 	}
+
+	export function isUndefined(value: any): boolean {
+		return typeof value === 'undefined';
+	}
+
+	export function isDefined(value: any): boolean {
+		return !isUndefined(value);
+	}
 	
 	export function isPopulatedString(value: any): boolean {
 		return isString(value) && value.length > 0;
@@ -69,31 +77,17 @@ export namespace TarUtility {
 	export function sanitizeTimestamp(value: number): number {
 		return decodeTimestamp(encodeTimestamp(value));
 	}
-	
-	export function deserializeAsciiPaddedField(value: Uint8Array): string {
-		return removeTrailingZeros(decodeString(value));
+
+	export function getTarTimestamp(): number {
+		return sanitizeTimestamp(Date.now());
 	}
-	
-	export function deserializeIntegerOctalTimestamp(value: Uint8Array): number {
-		return decodeTimestamp(deserializeIntegerOctal(value));
-	}
-	
-	export function deserializeIntegerOctal(input: Uint8Array): number {
-		return parseIntSafe(decodeString(input).trim(), Constants.OCTAL_RADIX);
-	}
-	
+
 	export function removeTrailingZeros(str: string): string {
 		const pattern = /^([^\0]*)[\0]*$/;
 		const result = pattern.exec(str);
 		return result ? result[1] : str;
 	}
-	
-	export function serializeIntegerOctalToString(value: number, maxLength: number): string {
-		return parseIntSafe(value)
-			.toString(Constants.OCTAL_RADIX)
-			.padStart(maxLength, '0');
-	}
-	
+
 	export function parseIntSafe(value: any, radix: number = 10, defaultValue: number = 0): number {
 		if (isNumber(value)) return Math.floor(value);
 		const parsed = parseInt(value, radix);

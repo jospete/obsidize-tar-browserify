@@ -1,17 +1,17 @@
-import { TarEntryMetadata, TarHeaderMetadata } from '../../src';
+import { TarEntryMetadata, TarHeader } from '../../src';
 
 describe('TarEntryMetadata', () => {
 
 	describe('from()', () => {
 
 		it('returns the input value if it is already a TarEntryMetadata instance', () => {
-			const metadata = new TarEntryMetadata(new TarHeaderMetadata(), null, 0);
+			const metadata = new TarEntryMetadata(new TarHeader(), null, 0);
 			expect(TarEntryMetadata.from(metadata)).toBe(metadata);
 		});
 
 		it('accepts a custom offset', () => {
 			const testOffset = 42;
-			const metadata = TarEntryMetadata.from({ header: new TarHeaderMetadata(), offset: testOffset });
+			const metadata = TarEntryMetadata.from({ header: new TarHeader(), offset: testOffset });
 			expect(metadata.offset).toBe(testOffset);
 		});
 	});

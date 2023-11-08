@@ -36,19 +36,19 @@ describe('TarEntry', () => {
 		expect(entry.headerChecksum).toBeDefined();
 
 		expect(entry.fileMode = 1).toBe(entry.fileMode);
-		expect(entry.fileSize = 1).toBe(entry.fileSize);
-		expect(entry.ownerUserId = 1).toBe(entry.ownerUserId);
-		expect(entry.groupUserId = 1).toBe(entry.groupUserId);
-		expect(entry.lastModified = 1).toBe(entry.lastModified);
+		expect(entry.fileSize = 2).toBe(entry.fileSize);
+		expect(entry.ownerUserId = 3).toBe(entry.ownerUserId);
+		expect(entry.groupUserId = 4).toBe(entry.groupUserId);
+		expect(entry.lastModified = TarUtility.getTarTimestamp()).toBe(entry.lastModified);
 
-		expect(entry.fileName = 'test').toBe(entry.fileName);
-		expect(entry.linkedFileName = 'test').toBe(entry.linkedFileName);
-		expect(entry.ustarVersion = 'test').toBe(entry.ustarVersion);
-		expect(entry.ownerUserName = 'test').toBe(entry.ownerUserName);
-		expect(entry.ownerGroupName = 'test').toBe(entry.ownerGroupName);
-		expect(entry.deviceMajorNumber = 'test').toBe(entry.deviceMajorNumber);
-		expect(entry.deviceMinorNumber = 'test').toBe(entry.deviceMinorNumber);
-		expect(entry.fileNamePrefix = 'test').toBe(entry.fileNamePrefix);
+		expect(entry.fileName = 'file name test').toBe(entry.fileName);
+		expect(entry.linkedFileName = 'link name test').toBe(entry.linkedFileName);
+		expect(entry.ustarVersion = '42').toBe(entry.ustarVersion);
+		expect(entry.ownerUserName = 'test owner user').toBe(entry.ownerUserName);
+		expect(entry.ownerGroupName = 'test owner group').toBe(entry.ownerGroupName);
+		expect(entry.deviceMajorNumber = '11').toBe(entry.deviceMajorNumber);
+		expect(entry.deviceMinorNumber = '22').toBe(entry.deviceMinorNumber);
+		expect(entry.fileNamePrefix = 'sample file prefix').toBe(entry.fileNamePrefix);
 
 		expect(entry.typeFlag = TarHeaderLinkIndicatorType.HARD_LINK).toBe(entry.typeFlag);
 	});

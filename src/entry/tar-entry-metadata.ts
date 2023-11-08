@@ -1,54 +1,12 @@
-import { AsyncUint8Array, AsyncUint8ArraySearchResult, findInAsyncUint8Array } from '../common/async-uint8array';
+import { AsyncUint8Array } from '../common/async-uint8array';
 import { TarUtility } from '../common/tar-utility';
-import { TarHeaderMetadata } from '../header/tar-header-metadata';
-import { TarHeaderUtility } from '../header/tar-header-utility';
+import { TarHeader } from '../header/tar-header';
+import { TarEntryUtility } from './tar-entry-utility';
 
 export interface TarEntryMetadataLike {
-	header: TarHeaderMetadata;
+	header: TarHeader;
 	offset: number;
 	content?: Uint8Array | null;
-}
-
-/**
- * Searches through the given AsyncUint8Array for the next USTAR sector,
- * starting at the given offset.
- */
-export function findNextUstarSectorAsync(
-	input: AsyncUint8Array,
-	offset: number = 0
-): Promise<AsyncUint8ArraySearchResult | null> {
-	return findInAsyncUint8Array(
-		input,
-		offset,
-		1,
-		value => TarHeaderUtility.isUstarSector(value)
-	);
-}
-
-/**
- * Searches the given input buffer for a USTAR header tar sector, starting at the given offset.
- * Returns -1 if no valid header sector is found.
- */
-export function findNextUstarSectorOffset(input: Uint8Array, offset: number = 0): number {
-
-	const NOT_FOUND = -1;
-
-	if (!TarUtility.isUint8Array(input)) {
-		return NOT_FOUND;
-	}
-
-	const maxOffset = input.byteLength;
-	let nextOffset = Math.max(0, offset);
-
-	while (nextOffset < maxOffset && !TarHeaderUtility.isUstarSector(input, nextOffset)) {
-		nextOffset = TarUtility.advanceSectorOffset(nextOffset, maxOffset);
-	}
-
-	if (nextOffset < maxOffset) {
-		return nextOffset;
-	}
-
-	return NOT_FOUND;
 }
 
 /**
@@ -58,7 +16,7 @@ export function findNextUstarSectorOffset(input: Uint8Array, offset: number = 0)
 export class TarEntryMetadata implements TarEntryMetadataLike {
 
 	constructor(
-		public readonly header: TarHeaderMetadata,
+		public readonly header: TarHeader,
 		public readonly content: Uint8Array | null,
 		public readonly offset: number,
 	) {
@@ -70,20 +28,22 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 
 	public static from(value: TarEntryMetadataLike): TarEntryMetadata {
 
-		if (TarEntryMetadata.isTarEntryMetadata(value))
+		if (TarEntryMetadata.isTarEntryMetadata(value)) {
 			return value as TarEntryMetadata;
+		}
 
 		let { header, content, offset } = (value || {});
 
-		if (!header) header = new TarHeaderMetadata();
+		if (!header) header = TarHeader.seeded();
 		if (!content) content = null;
 		if (!offset) offset = 0;
 
 		const contentLength = TarUtility.sizeofUint8Array(content);
 
 		// The fileSize field metadata must always be in sync between the content and the header
-		if (header.fileSize.value !== contentLength && contentLength > 0) {
-			header.update({ fileSize: contentLength });
+		if (header.fileSize !== contentLength && contentLength > 0) {
+			header.fileSize = contentLength;
+			header.normalize();
 		}
 
 		return new TarEntryMetadata(header, content, offset);
@@ -99,16 +59,18 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 			return null;
 		}
 
-		const ustarSectorOffset = findNextUstarSectorOffset(input, offset);
+		const ustarSectorOffset = TarEntryUtility.findNextUstarSectorOffset(input, offset);
 
 		if (ustarSectorOffset < 0) {
 			return null;
 		}
 
 		const maxOffset = input.byteLength;
-		const header = TarHeaderMetadata.from(input, ustarSectorOffset);
+		// FIXME: replace slice with standard constructor when TarEntry is migrated to the same format
+		// const header = new TarHeader(input, ustarSectorOffset);
+		const header = TarHeader.slice(input, ustarSectorOffset);
 		const start = TarUtility.advanceSectorOffset(ustarSectorOffset, maxOffset);
-		const fileSize = header.fileSize.value;
+		const fileSize = header.fileSize;
 
 		let content: Uint8Array | null = null;
 
@@ -136,14 +98,14 @@ export class TarEntryMetadata implements TarEntryMetadataLike {
 			return null;
 		}
 
-		const sector = await findNextUstarSectorAsync(input, offset);
+		const sector = await TarEntryUtility.findNextUstarSectorAsync(input, offset);
 
 		if (!sector) {
 			return null;
 		}
 
 		const { value, offset: ustarSectorOffset } = sector;
-		const header = TarHeaderMetadata.from(value);
+		const header = new TarHeader(value);
 		const content = null;
 
 		return new TarEntryMetadata(header, content, ustarSectorOffset);

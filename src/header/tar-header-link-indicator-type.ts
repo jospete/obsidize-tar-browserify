@@ -36,19 +36,3 @@ export enum TarHeaderLinkIndicatorType {
 	 */
 	LOCAL_EXTENDED_HEADER = 'x',
 }
-
-export function isTarHeaderLinkIndicatorTypeDirectory(type: TarHeaderLinkIndicatorType | string): boolean {
-	return type === TarHeaderLinkIndicatorType.DIRECTORY;
-}
-
-export function isTarHeaderLinkIndicatorTypeFile(type: TarHeaderLinkIndicatorType | string): boolean {
-	switch (type) {
-		case TarHeaderLinkIndicatorType.NORMAL_FILE:
-		case TarHeaderLinkIndicatorType.NORMAL_FILE_ALT1:
-		case TarHeaderLinkIndicatorType.NORMAL_FILE_ALT2:
-		case TarHeaderLinkIndicatorType.CONTIGUOUS_FILE:
-			return true;
-		default:
-			return false;
-	}
-}
