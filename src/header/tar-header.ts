@@ -142,7 +142,7 @@ export class TarHeader implements TarHeaderLike {
 
 	public get typeFlag(): TarHeaderLinkIndicatorType {
 		return (TarHeaderField.typeFlag.extract(this.bytes, this.offset) as TarHeaderLinkIndicatorType)
-			?? TarHeaderLinkIndicatorType.UNKNOWN;
+			|| TarHeaderLinkIndicatorType.UNKNOWN;
 	}
 
 	public set typeFlag(value: TarHeaderLinkIndicatorType) {

@@ -27,6 +27,50 @@ import { MockAsyncUint8Array } from '../mocks/mock-async-uint8array';
 
 describe('TarHeader', () => {
 
+	it('returns a type flag of UNKNOWN when it fails to retrieve the type flag info', () => {
+		const header = new TarHeader(new Uint8Array(10));
+		expect(header.typeFlag).toBe(TarHeaderLinkIndicatorType.UNKNOWN);
+	});
+
+	describe('slice()', () => {
+
+		it('returns a blank instance if the given input is not a Uint8Array', () => {
+			const header = TarHeader.slice(null as any, 0);
+			expect(header).toBeTruthy();
+			expect(header.bytes.every(b => b === 0)).toBe(true);
+		});
+	});
+
+	describe('initialize()', () => {
+
+		it('applies default values if no custom object is given', () => {
+
+			const header = new TarHeader();
+
+			expect(header.deviceMajorNumber).toBe('');
+			expect(header.fileMode).toBe(0);
+
+			header.initialize();
+
+			expect(header.deviceMajorNumber).toBe('00');
+			expect(header.fileMode).toBe(Constants.FILE_MODE_DEFAULT);
+		});
+
+		it('applies a combination of default values and custom ones if a custom object is given', () => {
+
+			const header = new TarHeader();
+			const fileName = 'test file.txt';
+
+			expect(header.fileName).toBe('');
+			expect(header.fileMode).toBe(0);
+
+			header.initialize({fileName});
+
+			expect(header.fileName).toBe(fileName);
+			expect(header.fileMode).toBe(Constants.FILE_MODE_DEFAULT);
+		});
+	});
+
 	describe('update()', () => {
 
 		it('applies given values to the backing buffer', () => {
@@ -39,6 +83,21 @@ describe('TarHeader', () => {
 
 			expect(header.fileMode).toBe(fileMode);
 			expect(bufferText).toBe('000777 \0');
+		});
+
+		it('does nothing if the given attributes are malformed', () => {
+
+			const header = new TarHeader();
+			spyOn(header, 'normalize').and.callThrough();
+
+			header.update(null as any);
+			expect(header.normalize).not.toHaveBeenCalled();
+
+			header.update({});
+			expect(header.normalize).not.toHaveBeenCalled();
+
+			header.update({fileMode: 123});
+			expect(header.normalize).toHaveBeenCalledTimes(1);
 		});
 	});
 

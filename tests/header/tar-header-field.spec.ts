@@ -150,5 +150,24 @@ describe('TarHeaderField', () => {
 			expect(injected).toBe(true);
 			expect(field.slice(buffer, headerOffset)).toEqual(fieldValue);
 		});
+
+		it('returns false if the content could not be injected into the output buffer', () => {
+
+			const buffer = new Uint8Array(10);
+			const headerOffset = 42;
+			const valueOctal = '777';
+			const value = parseInt(valueOctal, 8);
+			const field = fileMode;
+			const injected = field.inject(buffer, headerOffset, value);
+
+			expect(injected).toBe(false);
+		});
+	});
+
+	describe('calculateChecksum()', () => {
+
+		it('returns 0 if the input buffer is not valid', () => {
+			expect(fileMode.calculateChecksum(null as any)).toBe(0);
+		});
 	});
 });

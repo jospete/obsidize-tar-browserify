@@ -252,7 +252,7 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 	/**
 	 * Runs `deserialize()` including this field's offset to the total offset.
 	 */
-	public extract(input: Uint8Array, offset: number = 0): T | undefined {
+	public extract(input: Uint8Array, offset: number): T | undefined {
 		return this.deserialize(input, offset + this.offset);
 	}
 
