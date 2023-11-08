@@ -3,11 +3,7 @@ import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from './tar-header';
 import { TarHeaderField } from './tar-header-field';
 import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
-
-const CHECKSUM_SEED_STRING = ''.padStart(TarHeaderField.headerChecksum.size, ' ');
-const CHECKSUM_SEED = TarUtility.generateChecksum(TarUtility.encodeString(CHECKSUM_SEED_STRING));
-const ALL_FIELDS = TarHeaderField.all();
-const CHECKSUM_FIELDS = TarHeaderField.checksumSet();
+import { TarHeaderUtility } from './tar-header-utility';
 
 export interface TarHeaderFieldMetadata<T> {
 	field: TarHeaderField;
@@ -18,36 +14,6 @@ export interface TarHeaderFieldMetadata<T> {
 export type TarHeaderMetadataLike = {
 	[key in keyof TarHeader]: TarHeaderFieldMetadata<any>;
 };
-
-export function sanitizeHeader(header: Partial<TarHeader> | null): TarHeader {
-
-	if (header && TarUtility.isNumber(header.lastModified)) {
-		header.lastModified = TarUtility.sanitizeTimestamp(header.lastModified!);
-	}
-
-	return Object.assign(getDefaultHeaderValues(), (header || {})) as TarHeader;
-}
-
-export function getDefaultHeaderValues(): TarHeader {
-	return {
-		fileName: '',
-		fileMode: Constants.FILE_MODE_DEFAULT,
-		groupUserId: 0,
-		ownerUserId: 0,
-		fileSize: 0,
-		lastModified: TarUtility.sanitizeTimestamp(Date.now()),
-		headerChecksum: 0,
-		linkedFileName: '',
-		typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE,
-		ustarIndicator: Constants.USTAR_INDICATOR_VALUE,
-		ustarVersion: Constants.USTAR_VERSION_VALUE,
-		ownerUserName: '',
-		ownerGroupName: '',
-		deviceMajorNumber: '00',
-		deviceMinorNumber: '00',
-		fileNamePrefix: ''
-	};
-}
 
 /**
  * Expanded version of a TarHeader that contains both the
@@ -72,7 +38,7 @@ export class TarHeaderMetadata implements TarHeaderMetadataLike {
 	deviceMinorNumber: TarHeaderFieldMetadata<string>;
 	fileNamePrefix: TarHeaderFieldMetadata<string>;
 
-	constructor(input: Partial<TarHeader> | null = getDefaultHeaderValues()) {
+	constructor(input: Partial<TarHeader> | null = TarHeaderUtility.getDefaultHeaderValues()) {
 		this.inflate(input);
 	}
 
@@ -103,7 +69,7 @@ export class TarHeaderMetadata implements TarHeaderMetadataLike {
 		const result = new TarHeaderMetadata();
 
 		if (TarUtility.isUint8Array(input))
-			for (const field of ALL_FIELDS)
+			for (const field of TarHeaderUtility.ALL_FIELDS)
 				result.setSerializedField(field, input, offset);
 
 		return result;
@@ -150,11 +116,11 @@ export class TarHeaderMetadata implements TarHeaderMetadataLike {
 	 */
 	public inflate(input: Partial<TarHeader> | null): this {
 
-		const normalizedHeader = sanitizeHeader(input);
+		const normalizedHeader = TarHeaderUtility.sanitizeHeader(input);
 
-		let checksum = CHECKSUM_SEED;
+		let checksum = TarHeaderUtility.CHECKSUM_SEED;
 
-		for (const field of CHECKSUM_FIELDS) {
+		for (const field of TarHeaderUtility.CHECKSUM_FIELDS) {
 			const { bytes } = this.setDeserializedFieldFrom(field, normalizedHeader);
 			checksum += TarUtility.generateChecksum(bytes);
 		}
@@ -171,11 +137,11 @@ export class TarHeaderMetadata implements TarHeaderMetadataLike {
 
 		const result = {} as TarHeader;
 
-		for (const field of ALL_FIELDS) {
+		for (const field of TarHeaderUtility.ALL_FIELDS) {
 			(result as any)[field.name] = this[field.name].value;
 		}
 
-		return sanitizeHeader(result);
+		return TarHeaderUtility.sanitizeHeader(result);
 	}
 
 	/**
@@ -186,7 +152,7 @@ export class TarHeaderMetadata implements TarHeaderMetadataLike {
 
 		const headerBuffer = new Uint8Array(Constants.HEADER_SIZE);
 
-		for (const field of ALL_FIELDS) {
+		for (const field of TarHeaderUtility.ALL_FIELDS) {
 			const { bytes } = this[field.name];
 			headerBuffer.set(bytes, field.offset);
 		}

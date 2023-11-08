@@ -1,7 +1,8 @@
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
-import { sanitizeHeader, TarHeaderMetadata } from '../header/tar-header-metadata';
+import { TarHeaderMetadata } from '../header/tar-header-metadata';
+import { TarHeaderUtility } from '../header/tar-header-utility';
 
 export interface TarEntryAttributesLike {
 	header: Partial<TarHeader>;
@@ -59,7 +60,7 @@ export class TarEntryAttributes implements TarEntryAttributesLike {
 			paddedContent = TarUtility.concatUint8Arrays(content!, new Uint8Array(offsetDelta));
 		}
 
-		const safeHeader = sanitizeHeader(header);
+		const safeHeader = TarHeaderUtility.sanitizeHeader(header);
 		safeHeader.fileSize = contentSize;
 
 		const headerBuffer = TarHeaderMetadata.serialize(safeHeader);

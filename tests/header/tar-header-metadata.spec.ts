@@ -1,8 +1,7 @@
 import {
 	Constants,
-	getDefaultHeaderValues,
-	sanitizeHeader,
 	TarHeaderMetadata,
+	TarHeaderUtility,
 	TarUtility
 } from '../../src';
 
@@ -13,7 +12,7 @@ describe('TarHeaderMetadata', () => {
 
 	it('consistently encodes and decodes the same header buffer', () => {
 
-		const header1 = sanitizeHeader({
+		const header1 = TarHeaderUtility.sanitizeHeader({
 			fileName: 'Test File.txt',
 			fileSize: 50000,
 			fileMode: 450
@@ -39,14 +38,14 @@ describe('TarHeaderMetadata', () => {
 		it('returns an unpopulated object when the input is malformed', () => {
 			const flattened = TarHeaderMetadata.deflateFrom(null as any);
 			const { headerChecksum } = flattened;
-			const expected = Object.assign(getDefaultHeaderValues(), { headerChecksum });
+			const expected = Object.assign(TarHeaderUtility.getDefaultHeaderValues(), { headerChecksum });
 			expect(flattened).toEqual(expected);
 		});
 
 		it('properly handles malformed objects', () => {
 			const flattened = TarHeaderMetadata.deflateFrom({ fileName: null } as any);
 			const { headerChecksum } = flattened;
-			const expected = Object.assign(getDefaultHeaderValues(), { headerChecksum });
+			const expected = Object.assign(TarHeaderUtility.getDefaultHeaderValues(), { headerChecksum });
 			expect(flattened).toEqual(expected);
 		});
 	});

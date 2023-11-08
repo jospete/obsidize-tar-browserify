@@ -2,9 +2,9 @@ import {
 	Constants,
 	findNextUstarSectorAsync,
 	findNextUstarSectorOffset,
-	sanitizeHeader,
 	TarHeaderLinkIndicatorType,
 	TarHeaderMetadata,
+	TarHeaderUtility,
 	TarUtility
 } from '../../src';
 
@@ -24,7 +24,7 @@ describe('TarHeader', () => {
 	describe('sanitizeHeader()', () => {
 
 		it('populates missing fields with sensible defaults', () => {
-			const header = sanitizeHeader(null);
+			const header = TarHeaderUtility.sanitizeHeader(null);
 			expect(header).not.toBeFalsy();
 			expect(header.fileMode).toBe(FILE_MODE_DEFAULT);
 			expect(header.typeFlag).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
