@@ -250,9 +250,9 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 	}
 
 	/**
-	 * Runs `deserialize()` including this field's offset to the total offset.
+	 * Runs `deserialize()` while also taking this field's offset into account.
 	 */
-	public extract(input: Uint8Array, offset: number): T | undefined {
+	public readFrom(input: Uint8Array, offset: number): T | undefined {
 		return this.deserialize(input, offset + this.offset);
 	}
 
@@ -264,7 +264,7 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 	 * @param value - the value to be serialized
 	 * @returns true if the buffer was updated
 	 */
-	public inject(output: Uint8Array, headerOffset: number, value: T): boolean {
+	public writeTo(output: Uint8Array, headerOffset: number, value: T): boolean {
 
 		headerOffset = Math.max(headerOffset, 0);
 		

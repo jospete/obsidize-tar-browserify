@@ -77,128 +77,128 @@ export class TarHeader implements TarHeaderLike {
 	}
 
 	public get fileName(): string {
-		return TarHeaderField.fileName.extract(this.bytes, this.offset)!;
+		return TarHeaderField.fileName.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set fileName(value: string) {
-		TarHeaderField.fileName.inject(this.bytes, this.offset, value);
+		TarHeaderField.fileName.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get fileMode(): number {
-		return TarHeaderField.fileMode.extract(this.bytes, this.offset)!;
+		return TarHeaderField.fileMode.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set fileMode(value: number) {
-		TarHeaderField.fileMode.inject(this.bytes, this.offset, value);
+		TarHeaderField.fileMode.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get ownerUserId(): number {
-		return TarHeaderField.ownerUserId.extract(this.bytes, this.offset)!;
+		return TarHeaderField.ownerUserId.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set ownerUserId(value: number) {
-		TarHeaderField.ownerUserId.inject(this.bytes, this.offset, value);
+		TarHeaderField.ownerUserId.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get groupUserId(): number {
-		return TarHeaderField.groupUserId.extract(this.bytes, this.offset)!;
+		return TarHeaderField.groupUserId.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set groupUserId(value: number) {
-		TarHeaderField.groupUserId.inject(this.bytes, this.offset, value);
+		TarHeaderField.groupUserId.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get fileSize(): number {
-		return TarHeaderField.fileSize.extract(this.bytes, this.offset)!;
+		return TarHeaderField.fileSize.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set fileSize(value: number) {
-		TarHeaderField.fileSize.inject(this.bytes, this.offset, value);
+		TarHeaderField.fileSize.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get lastModified(): number {
-		return TarHeaderField.lastModified.extract(this.bytes, this.offset)!;
+		return TarHeaderField.lastModified.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set lastModified(value: number) {
-		TarHeaderField.lastModified.inject(this.bytes, this.offset, value);
+		TarHeaderField.lastModified.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get headerChecksum(): number {
-		return TarHeaderField.headerChecksum.extract(this.bytes, this.offset)!;
+		return TarHeaderField.headerChecksum.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set headerChecksum(value: number) {
-		TarHeaderField.headerChecksum.inject(this.bytes, this.offset, value);
+		TarHeaderField.headerChecksum.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get linkedFileName(): string {
-		return TarHeaderField.linkedFileName.extract(this.bytes, this.offset)!;
+		return TarHeaderField.linkedFileName.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set linkedFileName(value: string) {
-		TarHeaderField.linkedFileName.inject(this.bytes, this.offset, value);
+		TarHeaderField.linkedFileName.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get typeFlag(): TarHeaderLinkIndicatorType {
-		return (TarHeaderField.typeFlag.extract(this.bytes, this.offset) as TarHeaderLinkIndicatorType)
+		return (TarHeaderField.typeFlag.readFrom(this.bytes, this.offset) as TarHeaderLinkIndicatorType)
 			|| TarHeaderLinkIndicatorType.UNKNOWN;
 	}
 
 	public set typeFlag(value: TarHeaderLinkIndicatorType) {
-		TarHeaderField.typeFlag.inject(this.bytes, this.offset, value);
+		TarHeaderField.typeFlag.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get ustarIndicator(): string {
-		return TarHeaderField.ustarIndicator.extract(this.bytes, this.offset)!;
+		return TarHeaderField.ustarIndicator.readFrom(this.bytes, this.offset)!;
 	}
 
 	public get ustarVersion(): string {
-		return TarHeaderField.ustarVersion.extract(this.bytes, this.offset)!;
+		return TarHeaderField.ustarVersion.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set ustarVersion(value: string) {
-		TarHeaderField.ustarVersion.inject(this.bytes, this.offset, value);
+		TarHeaderField.ustarVersion.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get ownerUserName(): string {
-		return TarHeaderField.ownerUserName.extract(this.bytes, this.offset)!;
+		return TarHeaderField.ownerUserName.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set ownerUserName(value: string) {
-		TarHeaderField.ownerUserName.inject(this.bytes, this.offset, value);
+		TarHeaderField.ownerUserName.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get ownerGroupName(): string {
-		return TarHeaderField.ownerGroupName.extract(this.bytes, this.offset)!;
+		return TarHeaderField.ownerGroupName.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set ownerGroupName(value: string) {
-		TarHeaderField.ownerGroupName.inject(this.bytes, this.offset, value);
+		TarHeaderField.ownerGroupName.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get deviceMajorNumber(): string {
-		return TarHeaderField.deviceMajorNumber.extract(this.bytes, this.offset)!;
+		return TarHeaderField.deviceMajorNumber.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set deviceMajorNumber(value: string) {
-		TarHeaderField.deviceMajorNumber.inject(this.bytes, this.offset, value);
+		TarHeaderField.deviceMajorNumber.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get deviceMinorNumber(): string {
-		return TarHeaderField.deviceMinorNumber.extract(this.bytes, this.offset)!;
+		return TarHeaderField.deviceMinorNumber.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set deviceMinorNumber(value: string) {
-		TarHeaderField.deviceMinorNumber.inject(this.bytes, this.offset, value);
+		TarHeaderField.deviceMinorNumber.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get fileNamePrefix(): string {
-		return TarHeaderField.fileNamePrefix.extract(this.bytes, this.offset)!;
+		return TarHeaderField.fileNamePrefix.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set fileNamePrefix(value: string) {
-		TarHeaderField.fileNamePrefix.inject(this.bytes, this.offset, value);
+		TarHeaderField.fileNamePrefix.writeTo(this.bytes, this.offset, value);
 	}
 
 	public toUint8Array(): Uint8Array {
@@ -241,7 +241,7 @@ export class TarHeader implements TarHeaderLike {
 			const value = (attrs as any)[field.name];
 
 			if (TarUtility.isDefined(value)) {
-				const modified = field.inject(this.bytes, this.offset, value);
+				const modified = field.writeTo(this.bytes, this.offset, value);
 				didModifyAnyField = didModifyAnyField || modified;
 			}
 		}

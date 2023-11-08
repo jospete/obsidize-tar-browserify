@@ -126,4 +126,21 @@ describe('TarEntry', () => {
 			expect(result[result.byteLength - 1]).toBe(entry.fileSize - 1);
 		});
 	});
+
+	describe('writeTo()', () => {
+
+		it('returns false if the entry cannot be written to the given output', () => {
+			const entry = TarEntry.from({ fileName: 'Test File', fileSize: 80 });
+			expect(entry.writeTo(null as any, 0)).toBe(false);
+		});
+	});
+
+	describe('toUint8Array()', () => {
+
+		it('works for directories', () => {
+			const entry = TarEntry.from({ fileName: 'some-directory', typeFlag: TarHeaderLinkIndicatorType.DIRECTORY });
+			const bytes = entry.toUint8Array();
+			expect(bytes.byteLength).toBe(Constants.HEADER_SIZE);
+		});
+	});
 });

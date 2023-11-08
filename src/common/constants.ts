@@ -6,4 +6,5 @@ export namespace Constants {
 	export const USTAR_VERSION_VALUE = '00';
 	export const HEADER_SIZE = SECTOR_SIZE;
 	export const FILE_MODE_DEFAULT = 511; // '777' octal
+	export const TERMINAL_PADDING_SIZE = SECTOR_SIZE * 2;
 }

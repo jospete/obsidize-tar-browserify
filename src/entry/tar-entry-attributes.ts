@@ -38,7 +38,7 @@ export class TarEntryAttributes implements TarEntryAttributesLike {
 	}
 
 	public static combinePadded(snapshots: TarEntryAttributes[]): Uint8Array {
-		const padBuffer = new Uint8Array(Constants.SECTOR_SIZE * 2);
+		const padBuffer = new Uint8Array(Constants.TERMINAL_PADDING_SIZE);
 		return TarUtility.concatUint8Arrays(TarEntryAttributes.combine(snapshots), padBuffer);
 	}
 

@@ -27,6 +27,21 @@ import { MockAsyncUint8Array } from '../mocks/mock-async-uint8array';
 
 describe('TarHeader', () => {
 
+	it('can be created with an explicit buffer and offset', () => {
+
+		const blockSize = HEADER_SIZE;
+		const offset = blockSize;
+		const bufferLength = blockSize * 2;
+		const buffer = new Uint8Array(bufferLength);
+		const header = new TarHeader(buffer, offset);
+		const updatedFileMode = 123;
+
+		expect(header.fileMode).toBe(0);
+
+		header.fileMode = updatedFileMode;
+		expect(TarHeaderField.fileMode.readFrom(buffer, offset)).toBe(updatedFileMode);
+	});
+
 	it('returns a type flag of UNKNOWN when it fails to retrieve the type flag info', () => {
 		const header = new TarHeader(new Uint8Array(10));
 		expect(header.typeFlag).toBe(TarHeaderLinkIndicatorType.UNKNOWN);

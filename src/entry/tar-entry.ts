@@ -49,6 +49,25 @@ export class TarEntry implements TarHeaderLike {
 		return metadata ? new TarEntry(metadata) : null;
 	}
 
+	public static combinePaddedFrom(entries: TarEntry[]): Uint8Array {
+
+		let outputLength = Constants.TERMINAL_PADDING_SIZE;
+
+		for (const entry of entries) {
+			outputLength += entry.sectorByteLength;
+		}
+
+		const output = new Uint8Array(outputLength);
+		let offset = 0;
+
+		for (const entry of entries) {
+			entry.writeTo(output, offset);
+			offset += entry.sectorByteLength;
+		}
+
+		return output;
+	}
+
 	// =================================================================
 	// TarHeader Interface Fields
 	// =================================================================
@@ -269,12 +288,40 @@ export class TarEntry implements TarHeaderLike {
 		return buffer.read(normalizedOffset, normalizedLength);
 	}
 
+	public writeTo(output: Uint8Array, offset: number): boolean {
+
+		if (!TarUtility.isUint8Array(output)
+			|| output.byteLength < (offset + this.sectorByteLength)) {
+			return false;
+		}
+
+		const headerBytes = this.header.toUint8Array();
+
+		output.set(headerBytes, offset);
+		offset += headerBytes.byteLength;
+
+		if (this.content) {
+			output.set(this.content, offset);
+		}
+
+		return true;
+	}
+
 	public toAttributes(): TarEntryAttributes {
 		return new TarEntryAttributes(this.header, this.content);
 	}
 
 	public toUint8Array(): Uint8Array {
-		return this.toAttributes().toUint8Array();
+
+		const headerBytes = this.header.toUint8Array();
+		const result = new Uint8Array(this.sectorByteLength);
+		result.set(headerBytes, 0);
+
+		if (this.content) {
+			result.set(this.content, headerBytes.byteLength);
+		}
+
+		return result;
 	}
 
 	/**

@@ -4,7 +4,7 @@ import { AsyncTarEntryIterator, TarEntryDelegate } from '../entry/async-tar-entr
 import { TarEntry } from '../entry/tar-entry';
 import { TarEntryAttributes, TarEntryAttributesLike } from '../entry/tar-entry-attributes';
 import { TarEntryIterator } from '../entry/tar-entry-iterator';
-import { TarHeader } from '../header/tar-header';
+import { TarHeaderLike } from '../header/tar-header-like';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
 
 /**
@@ -16,18 +16,18 @@ export class Tarball {
 	public entries: TarEntry[] = [];
 
 	/**
+	 * Generates a tar file buffer from the given attributes list.
+	 */
+	public static create(entries: TarEntryAttributesLike[]): Uint8Array {
+		return TarEntryAttributes.combinePaddedFrom(entries);
+	}
+
+	/**
 	 * Parses a set of TarEntry instances from the given buffer.
 	 * The buffer should come from a complete, uncompressed tar file.
 	 */
 	public static extract(buffer: Uint8Array): TarEntry[] {
 		return TarEntryIterator.extractAll(buffer);
-	}
-
-	/**
-	 * Generates a tar file buffer from the given attributes list.
-	 */
-	public static create(entries: TarEntryAttributesLike[]): Uint8Array {
-		return TarEntryAttributes.combinePaddedFrom(entries);
 	}
 
 	/**
@@ -53,8 +53,7 @@ export class Tarball {
 	}
 
 	public toUint8Array(): Uint8Array {
-		const attrs = Array.from(this.entries).map(e => e.toAttributes());
-		return Tarball.create(attrs);
+		return TarEntry.combinePaddedFrom(this.entries);
 	}
 
 	public setBuffer(buffer: Uint8Array): this {
@@ -67,11 +66,15 @@ export class Tarball {
 		return this;
 	}
 
-	public addTextFile(path: string, content: string, headerOptions?: Partial<TarHeader>): this {
-		return this.addBinaryFile(path, TarUtility.encodeString(content), headerOptions);
+	public addTextFile(path: string, content: string, headerOptions?: Partial<TarHeaderLike>): this {
+		return this.addBinaryFile(
+			path, 
+			TarUtility.encodeString(content), 
+			headerOptions
+		);
 	}
 
-	public addBinaryFile(path: string, content: Uint8Array, headerOptions: Partial<TarHeader> = {}): this {
+	public addBinaryFile(path: string, content: Uint8Array, headerOptions: Partial<TarHeaderLike> = {}): this {
 		return this.add({
 			header: Object.assign({
 				fileName: path,
@@ -82,7 +85,7 @@ export class Tarball {
 		});
 	}
 
-	public addDirectory(path: string, headerOptions: Partial<TarHeader> = {}): this {
+	public addDirectory(path: string, headerOptions: Partial<TarHeaderLike> = {}): this {
 		return this.add({
 			header: Object.assign({
 				fileName: path,

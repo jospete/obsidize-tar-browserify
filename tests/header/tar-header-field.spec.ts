@@ -135,7 +135,7 @@ describe('TarHeaderField', () => {
 		});
 	});
 
-	describe('inject()', () => {
+	describe('writeTo()', () => {
 
 		it('properly handles custom offsets', () => {
 
@@ -145,7 +145,7 @@ describe('TarHeaderField', () => {
 			const value = parseInt(valueOctal, 8);
 			const field = fileMode;
 			const fieldValue = field.serialize(value);
-			const injected = field.inject(buffer, headerOffset, value);
+			const injected = field.writeTo(buffer, headerOffset, value);
 
 			expect(injected).toBe(true);
 			expect(field.slice(buffer, headerOffset)).toEqual(fieldValue);
@@ -158,7 +158,7 @@ describe('TarHeaderField', () => {
 			const valueOctal = '777';
 			const value = parseInt(valueOctal, 8);
 			const field = fileMode;
-			const injected = field.inject(buffer, headerOffset, value);
+			const injected = field.writeTo(buffer, headerOffset, value);
 
 			expect(injected).toBe(false);
 		});
