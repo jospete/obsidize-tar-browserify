@@ -9,8 +9,8 @@ export * from './entry/tar-entry-iterator';
 export * from './entry/tar-entry-metadata';
 export * from './header/tar-header';
 export * from './header/tar-header-field';
-export { HeaderFieldDefinitions } from './header/tar-header-field-definitions';
 export * from './header/tar-header-field-type';
 export * from './header/tar-header-link-indicator-type';
 export * from './header/tar-header-metadata';
+export { TarHeaderUtility } from './header/tar-header-utility';
 

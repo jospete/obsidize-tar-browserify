@@ -1,7 +1,7 @@
 import { AsyncUint8Array, AsyncUint8ArraySearchResult, findInAsyncUint8Array } from '../common/async-uint8array';
 import { TarUtility } from '../common/tar-utility';
-import { HeaderFieldDefinitions } from '../header/tar-header-field-definitions';
 import { TarHeaderMetadata } from '../header/tar-header-metadata';
+import { TarHeaderUtility } from '../header/tar-header-utility';
 
 export interface TarEntryMetadataLike {
 	header: TarHeaderMetadata;
@@ -21,7 +21,7 @@ export function findNextUstarSectorAsync(
 		input,
 		offset,
 		1,
-		value => HeaderFieldDefinitions.isUstarSector(value)
+		value => TarHeaderUtility.isUstarSector(value)
 	);
 }
 
@@ -40,7 +40,7 @@ export function findNextUstarSectorOffset(input: Uint8Array, offset: number = 0)
 	const maxOffset = input.byteLength;
 	let nextOffset = Math.max(0, offset);
 
-	while (nextOffset < maxOffset && !HeaderFieldDefinitions.isUstarSector(input, nextOffset)) {
+	while (nextOffset < maxOffset && !TarHeaderUtility.isUstarSector(input, nextOffset)) {
 		nextOffset = TarUtility.advanceSectorOffset(nextOffset, maxOffset);
 	}
 

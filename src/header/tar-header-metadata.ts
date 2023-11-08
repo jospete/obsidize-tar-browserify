@@ -2,14 +2,12 @@ import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from './tar-header';
 import { TarHeaderField } from './tar-header-field';
-import { HeaderFieldDefinitions } from './tar-header-field-definitions';
 import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
 
-const { checksumSet, headerChecksum, orderedSet } = HeaderFieldDefinitions;
-const CHECKSUM_SEED_STRING = ''.padStart(headerChecksum.size, ' ');
+const CHECKSUM_SEED_STRING = ''.padStart(TarHeaderField.headerChecksum.size, ' ');
 const CHECKSUM_SEED = TarUtility.generateChecksum(TarUtility.encodeString(CHECKSUM_SEED_STRING));
-const ALL_FIELDS = orderedSet();
-const CHECKSUM_FIELDS = checksumSet();
+const ALL_FIELDS = TarHeaderField.all();
+const CHECKSUM_FIELDS = TarHeaderField.checksumSet();
 
 export interface TarHeaderFieldMetadata<T> {
 	field: TarHeaderField;
@@ -161,7 +159,7 @@ export class TarHeaderMetadata implements TarHeaderMetadataLike {
 			checksum += TarUtility.generateChecksum(bytes);
 		}
 
-		this.setDeserializedField(headerChecksum, checksum);
+		this.setDeserializedField(TarHeaderField.headerChecksum, checksum);
 
 		return this;
 	}

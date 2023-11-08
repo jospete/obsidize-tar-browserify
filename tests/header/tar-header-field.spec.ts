@@ -1,10 +1,10 @@
 import {
 	Constants,
-	HeaderFieldDefinitions,
-	serializeIntegerOctalWithSuffix,
+	TarHeaderField,
 	TarHeaderFieldMetadata,
 	TarHeaderFieldType,
 	TarHeaderMetadata,
+	TarHeaderUtility,
 	TarUtility
 } from '../../src';
 
@@ -22,9 +22,12 @@ const {
 	fileName,
 	fileSize,
 	lastModified,
-	ustarIndicator,
+	ustarIndicator
+} = TarHeaderField;
+
+const {
 	isUstarSector
-} = HeaderFieldDefinitions;
+} = TarHeaderUtility;
 
 import { range } from '../util';
 
@@ -129,14 +132,6 @@ describe('TarHeaderField', () => {
 			let value: any = null;
 			expect(() => value = lastModified.deserialize(null as any)).not.toThrowError();
 			expect(value).not.toBeDefined();
-		});
-	});
-
-	describe('serializeIntegerOctalWithSuffix()', () => {
-
-		it('uses a default min length of zero when a field is not given', () => {
-			expect(serializeIntegerOctalWithSuffix(0, null as any, ''))
-				.toEqual(encodeString('0'));
 		});
 	});
 });

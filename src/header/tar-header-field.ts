@@ -1,3 +1,4 @@
+import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from './tar-header';
 import { TarHeaderFieldType } from './tar-header-field-type';
@@ -16,18 +17,18 @@ export interface TarHeaderFieldLike {
 	constantValue?: any;
 }
 
-function serializeIntegerOctalTimestamp(value: number, field: TarHeaderFieldLike): Uint8Array {
-	return serializeIntegerOctalWithSuffix(TarUtility.encodeTimestamp(value), field, '');
+interface FieldTransform<T> {
+	serialize(input: T, field: TarHeaderFieldLike): Uint8Array;
+	deserialize(input: Uint8Array, field: TarHeaderFieldLike): T;
 }
 
-function serializeIntegerOctal(value: number, field: TarHeaderFieldLike): Uint8Array {
-	return serializeIntegerOctalWithSuffix(value, field, ' ');
-}
+function serializeIntegerOctalWithSuffix(
+	value: number, 
+	field: TarHeaderFieldLike, 
+	suffix: string
+): Uint8Array {
 
-export function serializeIntegerOctalWithSuffix(value: number, field: TarHeaderFieldLike, suffix: string): Uint8Array {
-
-	const { size } = (field || { size: 0 });
-	const adjustedLength = Math.max(0, size - 1 - suffix.length);
+	const adjustedLength = Math.max(0, field.size - 1 - suffix.length);
 
 	// USTAR docs indicate that value length needs to be 1 less than actual field size.
 	// We also need to allow for suffixes... because random white spaces.
@@ -36,9 +37,12 @@ export function serializeIntegerOctalWithSuffix(value: number, field: TarHeaderF
 	return TarUtility.encodeString(serializedString);
 }
 
-interface FieldTransform<T> {
-	serialize(input: T, field: TarHeaderFieldLike): Uint8Array;
-	deserialize(input: Uint8Array, field: TarHeaderFieldLike): T;
+function serializeIntegerOctalTimestamp(value: number, field: TarHeaderFieldLike): Uint8Array {
+	return serializeIntegerOctalWithSuffix(TarUtility.encodeTimestamp(value), field, '');
+}
+
+function serializeIntegerOctal(value: number, field: TarHeaderFieldLike): Uint8Array {
+	return serializeIntegerOctalWithSuffix(value, field, ' ');
 }
 
 const fieldTypeTransformMap: { [key: string]: FieldTransform<any> } = {
@@ -80,12 +84,160 @@ export class TarHeaderField implements TarHeaderFieldLike {
 		this.constantValue = config.constantValue || undefined;
 	}
 
-	/**
-	 * Creates an immutable field instance based on the given config.
-	 */
 	public static frozen(config: TarHeaderFieldLike): TarHeaderField {
 		return Object.freeze(new TarHeaderField(config));
 	}
+
+	// =====================================================================
+	// Legacy Fields
+	// =====================================================================
+
+	public static readonly fileName: TarHeaderField = TarHeaderField.frozen({
+		name: 'fileName',
+		offset: 0,
+		size: 100,
+		type: TarHeaderFieldType.ASCII_PADDED_END
+	});
+
+	public static readonly fileMode: TarHeaderField = TarHeaderField.frozen({
+		name: 'fileMode',
+		offset: 100,
+		size: 8,
+		type: TarHeaderFieldType.INTEGER_OCTAL
+	});
+
+	public static readonly ownerUserId: TarHeaderField = TarHeaderField.frozen({
+		name: 'ownerUserId',
+		offset: 108,
+		size: 8,
+		type: TarHeaderFieldType.INTEGER_OCTAL
+	});
+
+	public static readonly groupUserId: TarHeaderField = TarHeaderField.frozen({
+		name: 'groupUserId',
+		offset: 116,
+		size: 8,
+		type: TarHeaderFieldType.INTEGER_OCTAL
+	});
+
+	public static readonly fileSize: TarHeaderField = TarHeaderField.frozen({
+		name: 'fileSize',
+		offset: 124,
+		size: 12,
+		type: TarHeaderFieldType.INTEGER_OCTAL
+	});
+
+	public static readonly lastModified: TarHeaderField = TarHeaderField.frozen({
+		name: 'lastModified',
+		offset: 136,
+		size: 12,
+		type: TarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP
+	});
+
+	public static readonly headerChecksum: TarHeaderField = TarHeaderField.frozen({
+		name: 'headerChecksum',
+		offset: 148,
+		size: 8,
+		type: TarHeaderFieldType.INTEGER_OCTAL
+	});
+
+	public static readonly typeFlag: TarHeaderField = TarHeaderField.frozen({
+		name: 'typeFlag',
+		offset: 156,
+		size: 1,
+		type: TarHeaderFieldType.ASCII
+	});
+
+	public static readonly linkedFileName: TarHeaderField = TarHeaderField.frozen({
+		name: 'linkedFileName',
+		offset: 157,
+		size: 100,
+		type: TarHeaderFieldType.ASCII_PADDED_END
+	});
+
+	// =====================================================================
+	// USTAR Fields
+	// =====================================================================
+
+	public static readonly ustarIndicator: TarHeaderField = TarHeaderField.frozen({
+		name: 'ustarIndicator',
+		offset: 257,
+		size: 6,
+		type: TarHeaderFieldType.ASCII,
+		constantValue: Constants.USTAR_INDICATOR_VALUE
+	});
+
+	public static readonly ustarVersion: TarHeaderField = TarHeaderField.frozen({
+		name: 'ustarVersion',
+		offset: 263,
+		size: 2,
+		type: TarHeaderFieldType.ASCII,
+		constantValue: Constants.USTAR_VERSION_VALUE
+	});
+
+	public static readonly ownerUserName: TarHeaderField = TarHeaderField.frozen({
+		name: 'ownerUserName',
+		offset: 265,
+		size: 32,
+		type: TarHeaderFieldType.ASCII_PADDED_END
+	});
+
+	public static readonly ownerGroupName: TarHeaderField = TarHeaderField.frozen({
+		name: 'ownerGroupName',
+		offset: 297,
+		size: 32,
+		type: TarHeaderFieldType.ASCII_PADDED_END
+	});
+
+	public static readonly deviceMajorNumber: TarHeaderField = TarHeaderField.frozen({
+		name: 'deviceMajorNumber',
+		offset: 329,
+		size: 8,
+		type: TarHeaderFieldType.ASCII_PADDED_END
+	});
+
+	public static readonly deviceMinorNumber: TarHeaderField = TarHeaderField.frozen({
+		name: 'deviceMinorNumber',
+		offset: 337,
+		size: 8,
+		type: TarHeaderFieldType.ASCII_PADDED_END
+	});
+
+	public static readonly fileNamePrefix: TarHeaderField = TarHeaderField.frozen({
+		name: 'fileNamePrefix',
+		offset: 345,
+		size: 155,
+		type: TarHeaderFieldType.ASCII_PADDED_END
+	});
+
+	public static all(): TarHeaderField[] {
+		return [
+			TarHeaderField.fileName,
+			TarHeaderField.fileMode,
+			TarHeaderField.ownerUserId,
+			TarHeaderField.groupUserId,
+			TarHeaderField.fileSize,
+			TarHeaderField.lastModified,
+			TarHeaderField.headerChecksum,
+			TarHeaderField.typeFlag,
+			TarHeaderField.linkedFileName,
+			TarHeaderField.ustarIndicator,
+			TarHeaderField.ustarVersion,
+			TarHeaderField.ownerUserName,
+			TarHeaderField.ownerGroupName,
+			TarHeaderField.deviceMajorNumber,
+			TarHeaderField.deviceMinorNumber,
+			TarHeaderField.fileNamePrefix
+		];
+	}
+
+	public static checksumSet(): TarHeaderField[] {
+		return TarHeaderField.all().filter(v => v !== TarHeaderField.headerChecksum);
+	}
+
+	// =====================================================================
+	// Instance Methods
+	// =====================================================================
 
 	/**
 	 * Shorthand for padding the output of `slice` into `decodeString`.
