@@ -20,6 +20,9 @@ export class TarHeader implements TarHeaderLike {
 	) {
 	}
 
+	/**
+	 * @returns A copy of the defaults used by all headers
+	 */
 	public static defaultValues(): TarHeaderLike {
 		return {
 			fileName: '',
@@ -45,6 +48,10 @@ export class TarHeader implements TarHeaderLike {
 		return !!(value && (value instanceof TarHeader));
 	}
 
+	/**
+	 * @returns A new `TarHeader` instance based on the given attributes (if they are a POJO).
+	 * Note that if the given value is already a TarHeader instance, this will return it as-is.
+	 */
 	public static from(attrs: TarHeaderLike | Partial<TarHeaderLike>): TarHeader {
 
 		if (TarHeader.isTarHeader(attrs)) {
@@ -54,6 +61,14 @@ export class TarHeader implements TarHeaderLike {
 		return new TarHeader().initialize(attrs);
 	}
 
+	/**
+	 * Creates a new `TarHeader` instance based on the content of the input at the given offset.
+	 * Instead of sharing the buffer (default behavior), this will create a new sliced copy,
+	 * ensuring that mutations on the input buffer will not affect this header.
+	 * @param input - the buffer containing header data
+	 * @param offset - the starting position of the header
+	 * @returns A new `TarHeader` instance based on the given inputs
+	 */
 	public static slice(input: Uint8Array, offset: number): TarHeader {
 
 		if (TarUtility.isUint8Array(input)) {
@@ -63,6 +78,9 @@ export class TarHeader implements TarHeaderLike {
 		return new TarHeader();
 	}
 
+	/**
+	 * Short-hand for constructing a new `TarHeader` and immediately calling `toUint8Array()` on it
+	 */
 	public static serialize(attrs: TarHeaderLike | Partial<TarHeaderLike>): Uint8Array {
 
 		if (TarHeader.isTarHeader(attrs)) {
@@ -72,6 +90,9 @@ export class TarHeader implements TarHeaderLike {
 		return TarHeader.from(attrs).toUint8Array();
 	}
 
+	/**
+	 * @returns A new `TarHeader` instance populated with the content returned by `defaultValues()`
+	 */
 	public static seeded(): TarHeader {
 		return TarHeader.from({});
 	}
@@ -201,23 +222,31 @@ export class TarHeader implements TarHeaderLike {
 		TarHeaderField.fileNamePrefix.writeTo(this.bytes, this.offset, value);
 	}
 
+	/**
+	 * @returns A snapshot of the underlying buffer for this header
+	 */
 	public toUint8Array(): Uint8Array {
 		return this.bytes.slice(this.offset, this.offset + Constants.HEADER_SIZE);
 	}
 
+	/**
+	 * Override all values in the header.
+	 * Any values not provided in `attrs` will be filled in with default values.
+	 * @returns `this` for operation chaining
+	 */
 	public initialize(attrs: TarHeaderLike | Partial<TarHeaderLike> = {}): this {
 		const completeAttrs = TarHeader.defaultValues();
 		Object.assign(completeAttrs, (attrs || {}));
 		return this.update(completeAttrs);
 	}
 
+	/**
+	 * Ensures the state of the header is synced after changes have been made.
+	 * @returns `this` for operation chaining
+	 */
 	public normalize(): this {
+
 		this.lastModified = TarUtility.sanitizeTimestamp(this.lastModified!);
-		return this.normalizeChecksum();
-	}
-
-	public normalizeChecksum(): this {
-
 		let checksum = TarHeaderUtility.CHECKSUM_SEED;
 
 		for (const field of TarHeaderUtility.CHECKSUM_FIELDS) {
@@ -225,10 +254,14 @@ export class TarHeader implements TarHeaderLike {
 		}
 
 		this.headerChecksum = checksum;
-
 		return this;
 	}
 
+	/**
+	 * Mechanism to batch-update properties.
+	 * Automatically normalizes the header if any changes were made.
+	 * @returns `this` for operation chaining
+	 */
 	public update(attrs: TarHeaderLike | Partial<TarHeaderLike>): this {
 
 		if (!attrs) {

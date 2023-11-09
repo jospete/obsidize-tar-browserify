@@ -2,6 +2,10 @@ import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarHeaderFieldType } from './tar-header-field-type';
 
+/**
+ * Generalized transformation interface for header fields.
+ * Used TarHeader getter/setter functionality.
+ */
 export interface TarHeaderFieldTransform<T> {
 	serialize(input: T, fieldLength: number): Uint8Array;
 	deserialize(input: Uint8Array, fieldLength: number, offset: number): T;
