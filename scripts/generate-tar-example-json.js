@@ -9,7 +9,7 @@ async function main() {
 
 	const sampleTarBuffer = readTarSample();
 	const tarball = new Tarball(sampleTarBuffer);
-	const entries = tarball.readAllEntries();
+	const {entries} = tarball;
 
 	fs.mkdirpSync('./tmp');
 	fs.writeFileSync('./tmp/tarball-metadata.txt', JSON.stringify(entries, null, '\t'), 'utf-8');

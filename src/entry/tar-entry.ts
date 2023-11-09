@@ -4,7 +4,6 @@ import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderLike } from '../header/tar-header-like';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
-import { TarHeaderUtility } from '../header/tar-header-utility';
 import { TarEntryUtility } from './tar-entry-utility';
 
 /**
@@ -352,11 +351,11 @@ export class TarEntry implements TarHeaderLike {
 	}
 
 	public isDirectory(): boolean {
-		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeDirectory(this.typeFlag);
+		return this.header.isDirectoryHeader;
 	}
 
 	public isFile(): boolean {
-		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeFile(this.typeFlag);
+		return this.header.isFileHeader;
 	}
 
 	/**

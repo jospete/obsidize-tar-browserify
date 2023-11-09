@@ -29,4 +29,14 @@ export namespace TarHeaderUtility {
 				return false;
 		}
 	}
+
+	export function isTarHeaderLinkIndicatorTypePax(type: TarHeaderLinkIndicatorType | string): boolean {
+		switch (type) {
+			case TarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER:
+			case TarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER:
+				return true;
+			default:
+				return false;
+		}
+	}
 }

@@ -222,6 +222,18 @@ export class TarHeader implements TarHeaderLike {
 		TarHeaderField.fileNamePrefix.writeTo(this.bytes, this.offset, value);
 	}
 
+	public get isPaxHeader(): boolean {
+		return TarHeaderUtility.isTarHeaderLinkIndicatorTypePax(this.typeFlag);
+	}
+
+	public get isFileHeader(): boolean {
+		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeFile(this.typeFlag);
+	}
+
+	public get isDirectoryHeader(): boolean {
+		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeDirectory(this.typeFlag);
+	}
+
 	/**
 	 * @returns A snapshot of the underlying buffer for this header
 	 */

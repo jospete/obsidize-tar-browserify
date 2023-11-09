@@ -2,15 +2,14 @@
 
 const fs = require('fs-extra');
 
-const { Tarball } = require('../dist');
+const { Tarball, TarEntry } = require('../dist');
 const { readTarSample } = require('./tar-asset-util');
 
 async function main() {
 
 	const sampleTarBuffer = readTarSample();
 	const tarball = new Tarball(sampleTarBuffer);
-	const entries = tarball.readAllEntries().map(e => e.toAttributes());
-	const fileContent = Buffer.from(Tarball.from(entries));
+	const fileContent = Buffer.from(TarEntry.serialize(tarball.entries));
 
 	fs.mkdirpSync('./tmp');
 	fs.writeFileSync('./tmp/tarball-serialize-test.tar', fileContent);
