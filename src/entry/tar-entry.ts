@@ -28,10 +28,22 @@ export class TarEntry implements TarHeaderLike {
 		return !!(v && v instanceof TarEntry);
 	}
 
+	/**
+	 * Convenience parser
+	 * @param attrs - partial header data POJO
+	 * @param content - content of the entry (if it is a file)
+	 */
 	public static from(attrs: TarHeaderLike | Partial<TarHeaderLike>, content: Uint8Array | null = null): TarEntry {
 		return new TarEntry(TarHeader.from(attrs), content);
 	}
 
+	/**
+	 * Searches through the given input buffer for the next tar header,
+	 * and creates a new `TarEntry` for it if it is found.
+	 * @param input - the buffer to search for a tar entry in
+	 * @param offset - the offset of the buffer to begin searching at
+	 * @returns A new `TarEntry` if a header sector was found, otherwise null
+	 */
 	public static tryParse(input: Uint8Array, offset?: number): TarEntry | null {
 
 		if (!TarUtility.isUint8Array(input)) {
@@ -61,6 +73,13 @@ export class TarEntry implements TarHeaderLike {
 		return new TarEntry(header, content, ustarSectorOffset);
 	}
 
+	/**
+	 * Searches through the given input buffer for the next tar header,
+	 * and creates a new `TarEntry` for it if it is found.
+	 * @param input - the buffer to search for a tar entry in
+	 * @param offset - the offset of the buffer to begin searching at
+	 * @returns A new `TarEntry` if a header sector was found, otherwise null
+	 */
 	public static async tryParseAsync(input: AsyncUint8Array, offset?: number): Promise<TarEntry | null> {
 		
 		if (!input) {
@@ -80,7 +99,10 @@ export class TarEntry implements TarHeaderLike {
 		return new TarEntry(header, content, ustarSectorOffset);
 	}
 
-	public static combinePaddedFrom(entries: TarEntry[]): Uint8Array {
+	/**
+	 * Combines the given array of entries into a single, complete tarball buffer
+	 */
+	public static serialize(entries: TarEntry[]): Uint8Array {
 
 		let outputLength = Constants.TERMINAL_PADDING_SIZE;
 
@@ -318,6 +340,13 @@ export class TarEntry implements TarHeaderLike {
 		return this.contentStartIndex + this.fileSize;
 	}
 
+	/**
+	 * Convenience for decoding the current content buffer as a string.
+	 * Note that if the content was not loaded for whatever reason, this
+	 * will return an empty string.
+	 * @returns The decoded string data from the currently assigned content,
+	 * or an empty string if there is no content assigned.
+	 */
 	public getContentAsText(): string {
 		return TarUtility.decodeString(this.content!);
 	}
@@ -344,6 +373,12 @@ export class TarEntry implements TarHeaderLike {
 		return buffer.read(normalizedOffset, normalizedLength);
 	}
 
+	/**
+	 * Writes the header and content of this entry to the given output
+	 * @param output - the buffer to be written to
+	 * @param offset - the offset in the buffer to start writing entry data
+	 * @returns true if this entry was successfully written to the output
+	 */
 	public writeTo(output: Uint8Array, offset: number): boolean {
 
 		if (!TarUtility.isUint8Array(output)
@@ -351,7 +386,7 @@ export class TarEntry implements TarHeaderLike {
 			return false;
 		}
 
-		const headerBytes = this.header.toUint8Array();
+		const headerBytes = this.header.normalize().toUint8Array();
 
 		output.set(headerBytes, offset);
 		offset += headerBytes.byteLength;
@@ -363,9 +398,12 @@ export class TarEntry implements TarHeaderLike {
 		return true;
 	}
 
+	/**
+	 * @returns This instance serialized as a single slice for a tar buffer
+	 */
 	public toUint8Array(): Uint8Array {
 
-		const headerBytes = this.header.toUint8Array();
+		const headerBytes = this.header.normalize().toUint8Array();
 		const result = new Uint8Array(this.sectorByteLength);
 		result.set(headerBytes, 0);
 

@@ -61,7 +61,7 @@ export class Tarball {
 	 * @returns a complete tar buffer from all the currently set tar entries in this instance.
 	 */
 	public toUint8Array(): Uint8Array {
-		return TarEntry.combinePaddedFrom(this.entries);
+		return TarEntry.serialize(this.entries);
 	}
 
 	/**
