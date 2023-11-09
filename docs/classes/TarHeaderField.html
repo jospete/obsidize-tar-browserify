@@ -14,11 +14,16 @@
 <ul class="tsd-breadcrumb">
 <li><a href="../modules.html">@obsidize/tar-browserify</a></li>
 <li><a href="TarHeaderField.html">TarHeaderField</a></li></ul>
-<h1>Class TarHeaderField</h1></div>
+<h1>Class TarHeaderField&lt;T&gt;</h1></div>
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>Definitions taken from here:
 <a href="https://en.wikipedia.org/wiki/Tar_(computing)">https://en.wikipedia.org/wiki/Tar_(computing)</a></p>
-</div></section>
+</div></section> 
+<section class="tsd-panel tsd-type-parameters">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameters">
+<li>
+<h4>T</h4></li></ul></section> 
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
 <ul class="tsd-hierarchy">
@@ -28,7 +33,7 @@
 <ul class="tsd-hierarchy">
 <li><a href="../interfaces/TarHeaderFieldLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderFieldLike</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d8df1ff/src/header/tar-header-field.ts#L67">header/tar-header-field.ts:67</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L25">header/tar-header-field.ts:25</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -44,14 +49,36 @@
 <a href="TarHeaderField.html#name" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>name</span></a>
 <a href="TarHeaderField.html#offset" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>offset</span></a>
 <a href="TarHeaderField.html#size" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>size</span></a>
+<a href="TarHeaderField.html#transform" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>transform</span></a>
 <a href="TarHeaderField.html#type" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>type</span></a>
+<a href="TarHeaderField.html#deviceMajorNumber" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>device<wbr/>Major<wbr/>Number</span></a>
+<a href="TarHeaderField.html#deviceMinorNumber" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>device<wbr/>Minor<wbr/>Number</span></a>
+<a href="TarHeaderField.html#fileMode" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>file<wbr/>Mode</span></a>
+<a href="TarHeaderField.html#fileName" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>file<wbr/>Name</span></a>
+<a href="TarHeaderField.html#fileNamePrefix" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>file<wbr/>Name<wbr/>Prefix</span></a>
+<a href="TarHeaderField.html#fileSize" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>file<wbr/>Size</span></a>
+<a href="TarHeaderField.html#groupUserId" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>group<wbr/>User<wbr/>Id</span></a>
+<a href="TarHeaderField.html#headerChecksum" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>header<wbr/>Checksum</span></a>
+<a href="TarHeaderField.html#lastModified" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>last<wbr/>Modified</span></a>
+<a href="TarHeaderField.html#linkedFileName" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>linked<wbr/>File<wbr/>Name</span></a>
+<a href="TarHeaderField.html#ownerGroupName" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>owner<wbr/>Group<wbr/>Name</span></a>
+<a href="TarHeaderField.html#ownerUserId" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>owner<wbr/>User<wbr/>Id</span></a>
+<a href="TarHeaderField.html#ownerUserName" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>owner<wbr/>User<wbr/>Name</span></a>
+<a href="TarHeaderField.html#typeFlag" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>type<wbr/>Flag</span></a>
+<a href="TarHeaderField.html#ustarIndicator" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>ustar<wbr/>Indicator</span></a>
+<a href="TarHeaderField.html#ustarVersion" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>ustar<wbr/>Version</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Methods</h3>
-<div class="tsd-index-list"><a href="TarHeaderField.html#deserialize" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-2048-path"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)" id="icon-2048-text"></path></svg><span>deserialize</span></a>
+<div class="tsd-index-list"><a href="TarHeaderField.html#calculateChecksum" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12" id="icon-2048-path"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)" id="icon-2048-text"></path></svg><span>calculate<wbr/>Checksum</span></a>
+<a href="TarHeaderField.html#deserialize" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>deserialize</span></a>
+<a href="TarHeaderField.html#readFrom" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>read<wbr/>From</span></a>
 <a href="TarHeaderField.html#serialize" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>serialize</span></a>
 <a href="TarHeaderField.html#slice" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>slice</span></a>
 <a href="TarHeaderField.html#sliceString" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>slice<wbr/>String</span></a>
+<a href="TarHeaderField.html#writeTo" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>write<wbr/>To</span></a>
+<a href="TarHeaderField.html#all" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>all</span></a>
+<a href="TarHeaderField.html#checksumSet" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>checksum<wbr/>Set</span></a>
 <a href="TarHeaderField.html#frozen" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>frozen</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
@@ -59,16 +86,21 @@
 <section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class"><a id="constructor" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="constructor.new_TarHeaderField">new <wbr/>Tar<wbr/>Header<wbr/>Field<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderFieldLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderFieldLike</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><a href="#constructor.new_TarHeaderField" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="constructor.new_TarHeaderField">new <wbr/>Tar<wbr/>Header<wbr/>Field<span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderFieldLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderFieldLike</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">&gt;</span><a href="#constructor.new_TarHeaderField" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<section class="tsd-panel tsd-type-parameters">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameters">
+<li>
+<h4>T</h4></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5>config: <a href="../interfaces/TarHeaderFieldLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderFieldLike</a></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d8df1ff/src/header/tar-header-field.ts#L75">header/tar-header-field.ts:75</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L34">header/tar-header-field.ts:34</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="constantValue" class="tsd-anchor"></a>
@@ -76,61 +108,184 @@
 <div class="tsd-signature">constant<wbr/>Value<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/TarHeaderFieldLike.html">TarHeaderFieldLike</a>.<a href="../interfaces/TarHeaderFieldLike.html#constantValue">constantValue</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d8df1ff/src/header/tar-header-field.ts#L73">header/tar-header-field.ts:73</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L31">header/tar-header-field.ts:31</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="name" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
-<div class="tsd-signature">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><a href="../interfaces/TarHeader.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeader</a></div><aside class="tsd-sources">
+<div class="tsd-signature">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><a href="../interfaces/TarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderLike</a></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/TarHeaderFieldLike.html">TarHeaderFieldLike</a>.<a href="../interfaces/TarHeaderFieldLike.html#name">name</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d8df1ff/src/header/tar-header-field.ts#L69">header/tar-header-field.ts:69</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L27">header/tar-header-field.ts:27</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="offset" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>offset</span><a href="#offset" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">offset<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/TarHeaderFieldLike.html">TarHeaderFieldLike</a>.<a href="../interfaces/TarHeaderFieldLike.html#offset">offset</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d8df1ff/src/header/tar-header-field.ts#L70">header/tar-header-field.ts:70</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L28">header/tar-header-field.ts:28</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="size" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>size</span><a href="#size" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/TarHeaderFieldLike.html">TarHeaderFieldLike</a>.<a href="../interfaces/TarHeaderFieldLike.html#size">size</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d8df1ff/src/header/tar-header-field.ts#L71">header/tar-header-field.ts:71</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L29">header/tar-header-field.ts:29</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="transform" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>transform</span><a href="#transform" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">transform<span class="tsd-signature-symbol">:</span> <a href="../interfaces/TarHeaderFieldTransform.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderFieldTransform</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L32">header/tar-header-field.ts:32</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="type" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>type</span><a href="#type" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">type<span class="tsd-signature-symbol">:</span> <a href="../enums/TarHeaderFieldType.html" class="tsd-signature-type" data-tsd-kind="Enumeration">TarHeaderFieldType</a></div><aside class="tsd-sources">
 <p>Implementation of <a href="../interfaces/TarHeaderFieldLike.html">TarHeaderFieldLike</a>.<a href="../interfaces/TarHeaderFieldLike.html#type">type</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d8df1ff/src/header/tar-header-field.ts#L72">header/tar-header-field.ts:72</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L30">header/tar-header-field.ts:30</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="deviceMajorNumber" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>device<wbr/>Major<wbr/>Number</span><a href="#deviceMajorNumber" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">device<wbr/>Major<wbr/>Number<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L148">header/tar-header-field.ts:148</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="deviceMinorNumber" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>device<wbr/>Minor<wbr/>Number</span><a href="#deviceMinorNumber" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">device<wbr/>Minor<wbr/>Number<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L155">header/tar-header-field.ts:155</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="fileMode" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>file<wbr/>Mode</span><a href="#fileMode" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">file<wbr/>Mode<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L58">header/tar-header-field.ts:58</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="fileName" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>file<wbr/>Name</span><a href="#fileName" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">file<wbr/>Name<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L51">header/tar-header-field.ts:51</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="fileNamePrefix" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>file<wbr/>Name<wbr/>Prefix</span><a href="#fileNamePrefix" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">file<wbr/>Name<wbr/>Prefix<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L162">header/tar-header-field.ts:162</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="fileSize" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>file<wbr/>Size</span><a href="#fileSize" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">file<wbr/>Size<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L79">header/tar-header-field.ts:79</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="groupUserId" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>group<wbr/>User<wbr/>Id</span><a href="#groupUserId" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">group<wbr/>User<wbr/>Id<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L72">header/tar-header-field.ts:72</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="headerChecksum" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>header<wbr/>Checksum</span><a href="#headerChecksum" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">header<wbr/>Checksum<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L93">header/tar-header-field.ts:93</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="lastModified" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>last<wbr/>Modified</span><a href="#lastModified" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">last<wbr/>Modified<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L86">header/tar-header-field.ts:86</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="linkedFileName" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>linked<wbr/>File<wbr/>Name</span><a href="#linkedFileName" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">linked<wbr/>File<wbr/>Name<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L107">header/tar-header-field.ts:107</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="ownerGroupName" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>owner<wbr/>Group<wbr/>Name</span><a href="#ownerGroupName" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">owner<wbr/>Group<wbr/>Name<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L141">header/tar-header-field.ts:141</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="ownerUserId" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>owner<wbr/>User<wbr/>Id</span><a href="#ownerUserId" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">owner<wbr/>User<wbr/>Id<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L65">header/tar-header-field.ts:65</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="ownerUserName" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>owner<wbr/>User<wbr/>Name</span><a href="#ownerUserName" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">owner<wbr/>User<wbr/>Name<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L134">header/tar-header-field.ts:134</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="typeFlag" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>type<wbr/>Flag</span><a href="#typeFlag" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">type<wbr/>Flag<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L100">header/tar-header-field.ts:100</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="ustarIndicator" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>ustar<wbr/>Indicator</span><a href="#ustarIndicator" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">ustar<wbr/>Indicator<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L118">header/tar-header-field.ts:118</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="ustarVersion" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>ustar<wbr/>Version</span><a href="#ustarVersion" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">ustar<wbr/>Version<span class="tsd-signature-symbol">:</span> <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L126">header/tar-header-field.ts:126</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="calculateChecksum" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>calculate<wbr/>Checksum</span><a href="#calculateChecksum" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="calculateChecksum.calculateChecksum-1">calculate<wbr/>Checksum<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><a href="#calculateChecksum.calculateChecksum-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Calculates the checksum value for this field in the given input buffer, at the given offset.
+All field checksum values are aggregated together to form the main header checksum entry.</p>
+
+<h3>Returns</h3><p>the checksum value for this specific field</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>input: <span class="tsd-signature-type">Uint8Array</span></h5>
+<div class="tsd-comment tsd-typography"><p>the input buffer to extract a field checksum from</p>
+</div></li>
+<li>
+<h5>offset: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></h5>
+<div class="tsd-comment tsd-typography"><p>the offset of the header in the buffer (will be combined with this field&#39;s offset)</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L292">header/tar-header-field.ts:292</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="deserialize" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>deserialize</span><a href="#deserialize" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="deserialize.deserialize-1">deserialize<span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><a href="#deserialize.deserialize-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="deserialize.deserialize-1">deserialize<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, offset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><a href="#deserialize.deserialize-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography">
 <h3>Returns</h3><p>The value parsed from the input based on this field&#39;s transform type,
 or <code>undefined</code> on error.</p>
 </div>
-<section class="tsd-panel tsd-type-parameters">
-<h4>Type Parameters</h4>
-<ul class="tsd-type-parameters">
-<li>
-<h4>T = <span class="tsd-signature-type">any</span></h4></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
 <h5>input: <span class="tsd-signature-type">Uint8Array</span></h5>
 <div class="tsd-comment tsd-typography"><p>a buffer of one or more complete tar sectors</p>
-</div></li></ul></div>
+</div></li>
+<li>
+<h5>offset: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d8df1ff/src/header/tar-header-field.ts#L114">header/tar-header-field.ts:114</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L226">header/tar-header-field.ts:226</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="readFrom" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>read<wbr/>From</span><a href="#readFrom" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="readFrom.readFrom-1">read<wbr/>From<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><a href="#readFrom.readFrom-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Runs <code>deserialize()</code> while also taking this field&#39;s offset into account.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>input: <span class="tsd-signature-type">Uint8Array</span></h5></li>
+<li>
+<h5>offset: <span class="tsd-signature-type">number</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L255">header/tar-header-field.ts:255</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="serialize" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>serialize</span><a href="#serialize" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="serialize.serialize-1">serialize<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><a href="#serialize.serialize-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="serialize.serialize-1">serialize<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span><a href="#serialize.serialize-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography">
 <h3>Returns</h3><p>the serialized value as a Uint8Array</p>
@@ -139,12 +294,12 @@ or <code>undefined</code> on error.</p>
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>input: <span class="tsd-signature-type">any</span></h5>
+<h5>input: <span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span></h5>
 <div class="tsd-comment tsd-typography"><p>the value to be serialized, based on this field&#39;s transform type.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d8df1ff/src/header/tar-header-field.ts#L125">header/tar-header-field.ts:125</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L239">header/tar-header-field.ts:239</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="slice" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>slice</span><a href="#slice" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -166,7 +321,7 @@ or <code>undefined</code> on error.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d8df1ff/src/header/tar-header-field.ts#L102">header/tar-header-field.ts:102</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L210">header/tar-header-field.ts:210</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="sliceString" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>slice<wbr/>String</span><a href="#sliceString" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -183,22 +338,69 @@ or <code>undefined</code> on error.</p>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> offset: <span class="tsd-signature-type">number</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d8df1ff/src/header/tar-header-field.ts#L93">header/tar-header-field.ts:93</a></li></ul></aside></li></ul></section>
-<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="frozen" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>frozen</span><a href="#frozen" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L201">header/tar-header-field.ts:201</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="writeTo" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>write<wbr/>To</span><a href="#writeTo" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="frozen.frozen-1">frozen<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderFieldLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderFieldLike</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><a href="#frozen.frozen-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="writeTo.writeTo-1">write<wbr/>To<span class="tsd-signature-symbol">(</span>output<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, headerOffset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#writeTo.writeTo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Creates an immutable field instance based on the given config.</p>
+<div class="tsd-comment tsd-typography"><p>Serialize the given value and set the output bytes in the given output buffer.</p>
+
+<h3>Returns</h3><p>true if the buffer was updated</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>config: <a href="../interfaces/TarHeaderFieldLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderFieldLike</a></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a></h4><aside class="tsd-sources">
+<h5>output: <span class="tsd-signature-type">Uint8Array</span></h5>
+<div class="tsd-comment tsd-typography"><p>the output buffer to be written to</p>
+</div></li>
+<li>
+<h5>headerOffset: <span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>the offset of the header in the output buffer to insert the update.
+        Note that this field&#39;s offset will be added to the header offset when inserting.</p>
+</div></li>
+<li>
+<h5>value: <span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span></h5>
+<div class="tsd-comment tsd-typography"><p>the value to be serialized</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/d8df1ff/src/header/tar-header-field.ts#L86">header/tar-header-field.ts:86</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L267">header/tar-header-field.ts:267</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="all" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>all</span><a href="#all" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="all.all-1">all<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><a href="#all.all-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L169">header/tar-header-field.ts:169</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="checksumSet" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>checksum<wbr/>Set</span><a href="#checksumSet" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="checksumSet.checksumSet-1">checksum<wbr/>Set<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><a href="#checksumSet.checksumSet-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L190">header/tar-header-field.ts:190</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="frozen" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>frozen</span><a href="#frozen" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="frozen.frozen-1">frozen<span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderFieldLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderFieldLike</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">&gt;</span><a href="#frozen.frozen-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<section class="tsd-panel tsd-type-parameters">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameters">
+<li>
+<h4>T</h4></li></ul></section>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>config: <a href="../interfaces/TarHeaderFieldLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderFieldLike</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="TarHeaderField.html" class="tsd-signature-type" data-tsd-kind="Class">TarHeaderField</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type" data-tsd-kind="Type parameter">T</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-field.ts#L43">header/tar-header-field.ts:43</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
@@ -220,7 +422,9 @@ or <code>undefined</code> on error.</p>
 <li><a href="../modules.html">@obsidize/tar-<wbr/>browserify</a>
 <ul>
 <li class="tsd-kind-namespace"><a href="../modules/Constants.html">Constants</a></li>
-<li class="tsd-kind-namespace"><a href="../modules/HeaderFieldDefinitions.html">Header<wbr/>Field<wbr/>Definitions</a></li>
+<li class="tsd-kind-namespace"><a href="../modules/TarEntryUtility.html">Tar<wbr/>Entry<wbr/>Utility</a></li>
+<li class="tsd-kind-namespace"><a href="../modules/TarHeaderFieldTransformType.html">Tar<wbr/>Header<wbr/>Field<wbr/>Transform<wbr/>Type</a></li>
+<li class="tsd-kind-namespace"><a href="../modules/TarHeaderUtility.html">Tar<wbr/>Header<wbr/>Utility</a></li>
 <li class="tsd-kind-namespace"><a href="../modules/TarUtility.html">Tar<wbr/>Utility</a></li></ul></li></ul></div></details></nav>
 <nav class="tsd-navigation secondary menu-sticky">
 <ul>
@@ -231,11 +435,33 @@ or <code>undefined</code> on error.</p>
 <li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#name" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>name</a></li>
 <li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#offset" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>offset</a></li>
 <li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#size" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>size</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#transform" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>transform</a></li>
 <li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#type" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>type</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#deviceMajorNumber" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>device<wbr/>Major<wbr/>Number</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#deviceMinorNumber" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>device<wbr/>Minor<wbr/>Number</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#fileMode" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>file<wbr/>Mode</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#fileName" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>file<wbr/>Name</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#fileNamePrefix" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>file<wbr/>Name<wbr/>Prefix</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#fileSize" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>file<wbr/>Size</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#groupUserId" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>group<wbr/>User<wbr/>Id</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#headerChecksum" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>header<wbr/>Checksum</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#lastModified" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>last<wbr/>Modified</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#linkedFileName" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>linked<wbr/>File<wbr/>Name</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#ownerGroupName" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>owner<wbr/>Group<wbr/>Name</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#ownerUserId" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>owner<wbr/>User<wbr/>Id</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#ownerUserName" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>owner<wbr/>User<wbr/>Name</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#typeFlag" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>type<wbr/>Flag</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#ustarIndicator" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>ustar<wbr/>Indicator</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="TarHeaderField.html#ustarVersion" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>ustar<wbr/>Version</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="TarHeaderField.html#calculateChecksum" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>calculate<wbr/>Checksum</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="TarHeaderField.html#deserialize" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>deserialize</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="TarHeaderField.html#readFrom" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>read<wbr/>From</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="TarHeaderField.html#serialize" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>serialize</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="TarHeaderField.html#slice" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>slice</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="TarHeaderField.html#sliceString" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>slice<wbr/>String</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="TarHeaderField.html#writeTo" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>write<wbr/>To</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="TarHeaderField.html#all" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>all</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="TarHeaderField.html#checksumSet" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>checksum<wbr/>Set</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="TarHeaderField.html#frozen" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>frozen</a></li></ul></li></ul></nav></div></div>
 <div class="container tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
