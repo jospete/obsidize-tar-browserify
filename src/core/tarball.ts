@@ -2,7 +2,6 @@ import { AsyncUint8Array } from '../common/async-uint8array';
 import { TarUtility } from '../common/tar-utility';
 import { AsyncTarEntryIterator, TarEntryDelegate } from '../entry/async-tar-entry-iterator';
 import { TarEntry } from '../entry/tar-entry';
-import { TarEntryAttributesLike } from '../entry/tar-entry-attributes';
 import { TarEntryIterator } from '../entry/tar-entry-iterator';
 import { TarHeaderLike } from '../header/tar-header-like';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
@@ -60,9 +59,13 @@ export class Tarball {
 		return this;
 	}
 
-	public add(attrs: TarEntryAttributesLike): this {
-		this.entries.push(TarEntry.fromAttributes(attrs));
+	public addEntry(entry: TarEntry): this {
+		this.entries.push(entry);
 		return this;
+	}
+
+	public addEntryWith(header: TarHeaderLike | Partial<TarHeaderLike>, content?: Uint8Array): this {
+		return this.addEntry(TarEntry.from(header, content));
 	}
 
 	public addTextFile(path: string, content: string, headerOptions?: Partial<TarHeaderLike>): this {
@@ -74,22 +77,19 @@ export class Tarball {
 	}
 
 	public addBinaryFile(path: string, content: Uint8Array, headerOptions: Partial<TarHeaderLike> = {}): this {
-		return this.add({
-			header: Object.assign({
-				fileName: path,
-				fileSize: content.byteLength,
-				typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE
-			}, headerOptions),
-			content
-		});
+		const combinedHeaderOptions = Object.assign({
+			fileName: path,
+			fileSize: content.byteLength,
+			typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE
+		}, headerOptions);
+		return this.addEntryWith(combinedHeaderOptions, content);
 	}
 
 	public addDirectory(path: string, headerOptions: Partial<TarHeaderLike> = {}): this {
-		return this.add({
-			header: Object.assign({
-				fileName: path,
-				typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
-			}, headerOptions)
-		});
+		const combinedHeaderOptions = Object.assign({
+			fileName: path,
+			typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
+		}, headerOptions);
+		return this.addEntryWith(combinedHeaderOptions);
 	}
 }

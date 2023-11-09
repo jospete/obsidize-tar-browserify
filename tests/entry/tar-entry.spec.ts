@@ -68,18 +68,6 @@ describe('TarEntry', () => {
 		});
 	});
 
-	describe('fromAttributes()', () => {
-
-		it('is the inverse of toAttributes()', async () => {
-
-			const entry1 = TarEntry.from({ fileName: 'Test File' }, new Uint8Array(100));
-			const attrs = entry1.toAttributes();
-			const entry2 = TarEntry.fromAttributes(attrs);
-
-			expect(entry2).toEqual(entry1);
-		});
-	});
-
 	describe('readContentFrom()', () => {
 
 		it('reads the contextualized slice from the given buffer', async () => {

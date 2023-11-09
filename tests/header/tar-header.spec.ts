@@ -47,6 +47,15 @@ describe('TarHeader', () => {
 		expect(header.typeFlag).toBe(TarHeaderLinkIndicatorType.UNKNOWN);
 	});
 
+	describe('from()', () => {
+
+		it('returns the input value as-is if it is already a TarHeader instance', () => {
+			const header = new TarHeader();
+			const parsedHeader = TarHeader.from(header);
+			expect(parsedHeader).toBe(header);
+		});
+	});
+
 	describe('slice()', () => {
 
 		it('returns a blank instance if the given input is not a Uint8Array', () => {

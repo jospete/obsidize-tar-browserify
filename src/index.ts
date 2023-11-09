@@ -4,7 +4,6 @@ export { TarUtility } from './common/tar-utility';
 export { Tarball } from './core/tarball';
 export { AsyncTarEntryIterator, TarEntryDelegate } from './entry/async-tar-entry-iterator';
 export { TarEntry } from './entry/tar-entry';
-export { TarEntryAttributes, TarEntryAttributesLike } from './entry/tar-entry-attributes';
 export { TarEntryIterator } from './entry/tar-entry-iterator';
 export { TarEntryMetadata, TarEntryMetadataLike } from './entry/tar-entry-metadata';
 export { TarEntryUtility } from './entry/tar-entry-utility';

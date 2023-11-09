@@ -5,7 +5,6 @@ import { TarHeader } from '../header/tar-header';
 import { TarHeaderLike } from '../header/tar-header-like';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
 import { TarHeaderUtility } from '../header/tar-header-utility';
-import { TarEntryAttributes, TarEntryAttributesLike } from './tar-entry-attributes';
 import { TarEntryMetadata, TarEntryMetadataLike } from './tar-entry-metadata';
 
 /**
@@ -32,11 +31,6 @@ export class TarEntry implements TarHeaderLike {
 	public static from(attrs: TarHeaderLike | Partial<TarHeaderLike>, content: Uint8Array | null = null): TarEntry {
 		const header = TarHeader.from(attrs);
 		return new TarEntry({ header, content, offset: 0 });
-	}
-
-	public static fromAttributes(attrs: TarEntryAttributesLike): TarEntry {
-		const { header, content } = attrs;
-		return TarEntry.from(header, content);
 	}
 
 	public static tryParse(input: Uint8Array, offset?: number): TarEntry | null {
@@ -305,10 +299,6 @@ export class TarEntry implements TarHeaderLike {
 		}
 
 		return true;
-	}
-
-	public toAttributes(): TarEntryAttributes {
-		return new TarEntryAttributes(this.header, this.content);
 	}
 
 	public toUint8Array(): Uint8Array {

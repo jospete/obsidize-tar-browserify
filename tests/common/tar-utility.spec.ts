@@ -14,6 +14,7 @@ const {
 	parseIntSafe,
 	removeTrailingZeros,
 	roundUpSectorOffset,
+	getSectorOffsetDelta,
 } = TarUtility;
 
 const {
@@ -90,6 +91,16 @@ describe('TarUtility', () => {
 		});
 	});
 
+	describe('getSectorOffsetDelta()', () => {
+
+		it('returns the remaining bytes between the given offset and what would be the next block-sized offset', () => {
+			expect(getSectorOffsetDelta(0)).toBe(0);
+			expect(getSectorOffsetDelta(SECTOR_SIZE)).toBe(0);
+			expect(getSectorOffsetDelta(SECTOR_SIZE - 5)).toBe(5);
+			expect(getSectorOffsetDelta(SECTOR_SIZE + 10)).toBe(SECTOR_SIZE - 10);
+		});
+	});
+
 	describe('decodeString()', () => {
 
 		it('returns an empty string when the given value is not a valid Uint8Array', () => {
@@ -110,6 +121,12 @@ describe('TarUtility', () => {
 			const a: any = null;
 			const b = new Uint8Array(5);
 			expect(concatUint8Arrays(a, b)).toBe(b);
+		});
+
+		it('returns the first value when the second is not a Uint8Array', () => {
+			const a = new Uint8Array(5);
+			const b: any = null;
+			expect(concatUint8Arrays(a, b)).toBe(a);
 		});
 
 		it('does nothing when given blank instances', () => {
