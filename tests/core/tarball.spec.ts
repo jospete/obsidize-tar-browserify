@@ -11,6 +11,10 @@ describe('Tarball', () => {
 		expect(() => JSON.stringify(tarball)).not.toThrowError();
 	});
 
+	it('can be instantiated with a backing buffer', () => {
+		expect(() => new Tarball(new Uint8Array(100))).not.toThrowError();
+	});
+
 	describe('extract() / create()', () => {
 
 		it('creates a tarball from the given entries', async () => {

@@ -15,6 +15,12 @@ export class Tarball {
 
 	public entries: TarEntry[] = [];
 
+	constructor(inputBuffer?: Uint8Array) {
+		if (inputBuffer) {
+			this.setBuffer(inputBuffer);
+		}
+	}
+
 	/**
 	 * Generates a tar file buffer from the given attributes list.
 	 */
