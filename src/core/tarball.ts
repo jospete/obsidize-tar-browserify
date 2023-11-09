@@ -16,8 +16,8 @@ export class Tarball {
 	public entries: TarEntry[] = [];
 
 	constructor(inputBuffer?: Uint8Array) {
-		if (inputBuffer) {
-			this.setBuffer(inputBuffer);
+		if (TarUtility.isUint8Array(inputBuffer)) {
+			this.setBuffer(inputBuffer!);
 		}
 	}
 

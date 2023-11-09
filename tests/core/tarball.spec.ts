@@ -12,7 +12,9 @@ describe('Tarball', () => {
 	});
 
 	it('can be instantiated with a backing buffer', () => {
-		expect(() => new Tarball(new Uint8Array(100))).not.toThrowError();
+		const sampleUint8 = base64ToUint8Array(tarballSampleBase64);
+		const tarball = new Tarball(sampleUint8);
+		expect(tarball.entries.length > 0).toBe(true);
 	});
 
 	describe('extract() / create()', () => {
