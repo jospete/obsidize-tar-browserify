@@ -5,7 +5,7 @@ import { TarHeader } from '../header/tar-header';
 import { TarHeaderLike } from '../header/tar-header-like';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
 import { TarHeaderUtility } from '../header/tar-header-utility';
-import { TarEntryMetadata, TarEntryMetadataLike } from './tar-entry-metadata';
+import { TarEntryUtility } from './tar-entry-utility';
 
 /**
  * Container for metadata and content of a tarball entry.
@@ -16,12 +16,12 @@ import { TarEntryMetadata, TarEntryMetadataLike } from './tar-entry-metadata';
  */
 export class TarEntry implements TarHeaderLike {
 
-	protected readonly metadata: TarEntryMetadata;
+	protected mHeader: TarHeader;
+	protected mContent: Uint8Array | null;
+	protected mOffset: number;
 
-	constructor(
-		metadata: TarEntryMetadataLike
-	) {
-		this.metadata = TarEntryMetadata.from(metadata);
+	constructor(header?: TarHeader, content?: Uint8Array | null, offset?: number) {
+		this.initialize(header, content, offset);
 	}
 
 	public static isTarEntry(v: any): boolean {
@@ -29,18 +29,55 @@ export class TarEntry implements TarHeaderLike {
 	}
 
 	public static from(attrs: TarHeaderLike | Partial<TarHeaderLike>, content: Uint8Array | null = null): TarEntry {
-		const header = TarHeader.from(attrs);
-		return new TarEntry({ header, content, offset: 0 });
+		return new TarEntry(TarHeader.from(attrs), content);
 	}
 
 	public static tryParse(input: Uint8Array, offset?: number): TarEntry | null {
-		const metadata = TarEntryMetadata.extractFrom(input, offset);
-		return metadata ? new TarEntry(metadata) : null;
+
+		if (!TarUtility.isUint8Array(input)) {
+			return null;
+		}
+
+		const ustarSectorOffset = TarEntryUtility.findNextUstarSectorOffset(input, offset);
+
+		if (ustarSectorOffset < 0) {
+			return null;
+		}
+
+		const maxOffset = input.byteLength;
+		// FIXME: replace slice with standard constructor when TarEntry is migrated to the same format
+		// const header = new TarHeader(input, ustarSectorOffset);
+		const header = TarHeader.slice(input, ustarSectorOffset);
+		const start = TarUtility.advanceSectorOffset(ustarSectorOffset, maxOffset);
+		const fileSize = header.fileSize;
+
+		let content: Uint8Array | null = null;
+
+		if (TarUtility.isNumber(fileSize) && fileSize > 0) {
+			const end = Math.min(maxOffset, start + fileSize);
+			content = input.slice(start, end);
+		}
+
+		return new TarEntry(header, content, ustarSectorOffset);
 	}
 
 	public static async tryParseAsync(input: AsyncUint8Array, offset?: number): Promise<TarEntry | null> {
-		const metadata = await TarEntryMetadata.extractFromAsync(input, offset);
-		return metadata ? new TarEntry(metadata) : null;
+		
+		if (!input) {
+			return null;
+		}
+
+		const sector = await TarEntryUtility.findNextUstarSectorAsync(input, offset);
+
+		if (!sector) {
+			return null;
+		}
+
+		const { value, offset: ustarSectorOffset } = sector;
+		const header = new TarHeader(value);
+		const content = null;
+
+		return new TarEntry(header, content, ustarSectorOffset);
 	}
 
 	public static combinePaddedFrom(entries: TarEntry[]): Uint8Array {
@@ -60,6 +97,31 @@ export class TarEntry implements TarHeaderLike {
 		}
 
 		return output;
+	}
+
+	protected initialize(
+		header?: TarHeader, 
+		content?: Uint8Array | null,
+		offset?: number
+	): this {
+
+		if (!header) header = TarHeader.seeded();
+		if (!content) content = null;
+		if (!offset) offset = 0;
+
+		const contentLength = TarUtility.sizeofUint8Array(content);
+
+		// The fileSize field metadata must always be in sync between the content and the header
+		if (header.fileSize !== contentLength && contentLength > 0) {
+			header.fileSize = contentLength;
+			header.normalize();
+		}
+
+		this.mHeader = header;
+		this.mContent = content;
+		this.mOffset = offset;
+
+		return this;
 	}
 
 	// =================================================================
@@ -195,7 +257,7 @@ export class TarEntry implements TarHeaderLike {
 	 * See TarHeaderFieldDefinition for details.
 	 */
 	public get header(): TarHeader {
-		return this.metadata.header;
+		return this.mHeader;
 	}
 
 	/**
@@ -204,7 +266,7 @@ export class TarEntry implements TarHeaderLike {
 	 * for non-file entries like directories.
 	 */
 	public get content(): Uint8Array | null | undefined {
-		return this.metadata.content;
+		return this.mContent;
 	}
 
 	/**
@@ -212,7 +274,7 @@ export class TarEntry implements TarHeaderLike {
 	 * Returns zero by default if this was not parsed by a source buffer.
 	 */
 	public get bufferStartIndex(): number {
-		return this.metadata.offset;
+		return this.mOffset;
 	}
 
 	/**

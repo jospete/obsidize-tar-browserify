@@ -5,11 +5,10 @@ import {
 	TarHeaderLinkIndicatorType,
 	TarUtility
 } from '../../src';
+import { range } from '../util';
 
 const { HEADER_SIZE } = Constants;
 const { isUint8Array } = TarUtility;
-
-import { range } from '../util';
 
 describe('TarEntry', () => {
 
@@ -65,6 +64,19 @@ describe('TarEntry', () => {
 
 			expect(entry2).toEqual(entry1);
 			expect(entryBuffer2).toEqual(entryBuffer1);
+		});
+
+		it('returns null when bad input is given', () => {
+			expect(TarEntry.tryParse(null as any)).toBe(null);
+			expect(TarEntry.tryParse(undefined as any)).toBe(null);
+		});
+	});
+
+	describe('tryParseAsync()', () => {
+
+		it('returns null when bad input is given', async () => {
+			expect(await TarEntry.tryParseAsync(null as any)).toBe(null);
+			expect(await TarEntry.tryParseAsync(undefined as any)).toBe(null);
 		});
 	});
 

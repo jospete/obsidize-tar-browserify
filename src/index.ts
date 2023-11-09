@@ -5,7 +5,6 @@ export { Tarball } from './core/tarball';
 export { AsyncTarEntryIterator, TarEntryDelegate } from './entry/async-tar-entry-iterator';
 export { TarEntry } from './entry/tar-entry';
 export { TarEntryIterator } from './entry/tar-entry-iterator';
-export { TarEntryMetadata, TarEntryMetadataLike } from './entry/tar-entry-metadata';
 export { TarEntryUtility } from './entry/tar-entry-utility';
 export { TarHeader } from './header/tar-header';
 export { TarHeaderField, TarHeaderFieldLike } from './header/tar-header-field';
