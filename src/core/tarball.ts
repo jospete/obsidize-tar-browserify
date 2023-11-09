@@ -2,7 +2,7 @@ import { AsyncUint8Array } from '../common/async-uint8array';
 import { TarUtility } from '../common/tar-utility';
 import { AsyncTarEntryIterator, TarEntryDelegate } from '../entry/async-tar-entry-iterator';
 import { TarEntry } from '../entry/tar-entry';
-import { TarEntryAttributes, TarEntryAttributesLike } from '../entry/tar-entry-attributes';
+import { TarEntryAttributesLike } from '../entry/tar-entry-attributes';
 import { TarEntryIterator } from '../entry/tar-entry-iterator';
 import { TarHeaderLike } from '../header/tar-header-like';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
@@ -19,13 +19,6 @@ export class Tarball {
 		if (TarUtility.isUint8Array(inputBuffer)) {
 			this.setBuffer(inputBuffer!);
 		}
-	}
-
-	/**
-	 * Generates a tar file buffer from the given attributes list.
-	 */
-	public static create(entries: TarEntryAttributesLike[]): Uint8Array {
-		return TarEntryAttributes.combinePaddedFrom(entries);
 	}
 
 	/**

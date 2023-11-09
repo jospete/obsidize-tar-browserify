@@ -1,6 +1,6 @@
 import { Tarball, TarHeaderLinkIndicatorType } from '../../src';
 
-import { tarballSampleBase64 } from '../generated/tarball-test-assets';
+import { fileStructures, tarballSampleBase64 } from '../generated/tarball-test-assets';
 import { MockAsyncUint8Array } from '../mocks/mock-async-uint8array';
 import { base64ToUint8Array } from '../util';
 
@@ -17,19 +17,20 @@ describe('Tarball', () => {
 		expect(tarball.entries.length > 0).toBe(true);
 	});
 
-	describe('extract() / create()', () => {
+	describe('extract()', () => {
 
-		it('creates a tarball from the given entries', async () => {
+		it('parses all entries from a given tar buffer', () => {
 			const sampleUint8 = base64ToUint8Array(tarballSampleBase64);
 			const entries = Tarball.extract(sampleUint8);
-			const outputUint8 = Tarball.create(entries.map(e => e.toAttributes()));
-			expect(outputUint8).toEqual(sampleUint8);
+			const firstFile = entries.find(v => v.isFile())!;
+			const firstFileName = fileStructures[0][0];
+			expect(firstFile.fileName).toEqual(`./${firstFileName}`);
 		});
 	});
 
 	describe('extractAsync()', () => {
 
-		it('creates a tarball from the given entries', async () => {
+		it('parses all entries from a given async tar buffer', async () => {
 			const sampleUint8 = base64ToUint8Array(tarballSampleBase64);
 			const mockAsyncBuffer = new MockAsyncUint8Array(sampleUint8);
 			const entries = await Tarball.extractAsync(mockAsyncBuffer);
