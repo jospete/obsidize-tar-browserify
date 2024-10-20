@@ -222,6 +222,8 @@ export class TarHeader implements TarHeaderLike {
 		TarHeaderField.fileNamePrefix.writeTo(this.bytes, this.offset, value);
 	}
 
+	// TODO: add logic for decoding pax headers like this guy:
+	// https://github.com/k0nsti/browser-stream-tar/blob/master/src/tar.mjs#L54
 	public get isPaxHeader(): boolean {
 		return TarHeaderUtility.isTarHeaderLinkIndicatorTypePax(this.typeFlag);
 	}

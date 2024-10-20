@@ -12,7 +12,7 @@
 	"typescript.preferences.importModuleSpecifier": "relative",
 	"[typescript]": {
 		"editor.codeActionsOnSave": {
-			"source.organizeImports": true
+			"source.organizeImports": "explicit"
 		}
 	}
 }
