@@ -1,6 +1,6 @@
 import { MockAsyncUint8Array } from '../common/async-uint8array.mock';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
-import { fileStructures, tarballSampleBase64 } from '../test/generated/tarball-test-assets';
+import { fileStructures, tarballSampleBase64 } from '../test/generated/tarball-test-content';
 import { base64ToUint8Array } from '../test/test-util';
 import { Tarball } from './tarball';
 

@@ -6,7 +6,7 @@ import {
 	fileStructures,
 	tarballSampleBase64,
 	totalFileCount,
-} from "./generated/tarball-test-assets";
+} from "./generated/tarball-test-content";
 import { base64ToUint8Array } from "./test-util";
 
 const { isUint8Array } = TarUtility;
