@@ -1,7 +1,5 @@
-import {
-	Constants,
-	TarUtility
-} from '../../src';
+import { Constants } from './constants';
+import { TarUtility } from './tar-utility';
 
 const {
 	decodeTimestamp,

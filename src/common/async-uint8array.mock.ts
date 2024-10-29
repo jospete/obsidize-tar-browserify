@@ -1,4 +1,4 @@
-import { AsyncUint8Array } from '../../src';
+import { AsyncUint8Array } from './async-uint8array';
 
 export class MockAsyncUint8Array implements AsyncUint8Array {
 

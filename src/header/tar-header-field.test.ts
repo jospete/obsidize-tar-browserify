@@ -1,11 +1,10 @@
-import {
-	Constants,
-	TarHeader,
-	TarHeaderField,
-	TarHeaderFieldType,
-	TarHeaderUtility,
-	TarUtility
-} from '../../src';
+import { Constants } from '../common/constants';
+import { TarUtility } from '../common/tar-utility';
+import { TarHeader } from '../header/tar-header';
+import { TarHeaderField } from '../header/tar-header-field';
+import { TarHeaderFieldType } from '../header/tar-header-field-type';
+import { TarHeaderUtility } from '../header/tar-header-utility';
+import { range } from '../test-util';
 
 const {
 	encodeString,
@@ -27,8 +26,6 @@ const {
 const {
 	isUstarSector
 } = TarHeaderUtility;
-
-import { range } from '../util';
 
 describe('TarHeaderField', () => {
 

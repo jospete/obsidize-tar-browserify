@@ -1,4 +1,4 @@
-import { TarHeaderFieldTransformType } from '../../src';
+import { TarHeaderFieldTransformType } from '../header/tar-header-field-transform';
 
 describe('TarHeaderFieldTransform', () => {
 

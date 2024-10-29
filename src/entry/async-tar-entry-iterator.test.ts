@@ -1,4 +1,4 @@
-import { AsyncTarEntryIterator } from '../../src';
+import { AsyncTarEntryIterator } from './async-tar-entry-iterator';
 
 describe('AsyncTarEntryIterator', () => {
 

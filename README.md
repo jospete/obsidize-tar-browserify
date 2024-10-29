@@ -3,12 +3,14 @@
 Simple utility for packing and unpacking tar files in the browser.
 
 Highlights:
+
 - No node-based requires/imports (fully compatible in browser)
 - Only one dependency (`tslib` to play nice with typescript projects)
 - Inline extraction tools (examples below)
 - Builder pattern for creating tarball files in-memory (examples below)
 
 Pairs well with these modules:
+
 - [pako](https://www.npmjs.com/package/pako) for gzip / unzip
 - [path-browserify](https://www.npmjs.com/package/path-browserify) to further process raw file names
 
@@ -31,11 +33,11 @@ import { Tarball } from '@obsidize/tar-browserify'; // TypeScript
 // The Tarball class implements several shorthand methods for
 // injecting content like so:
 const createdTarballBuffer = new Tarball()
-	.addTextFile('Test File.txt', 'This is a test file')
-	.addBinaryFile('Some binary data.bin', new Uint8Array(10))
-	.addDirectory('MyFolder')
-	.addTextFile('MyFolder/a nested file.txt', 'this is under MyFolder')
-	.toUint8Array();
+  .addTextFile('Test File.txt', 'This is a test file')
+  .addBinaryFile('Some binary data.bin', new Uint8Array(10))
+  .addDirectory('MyFolder')
+  .addTextFile('MyFolder/a nested file.txt', 'this is under MyFolder')
+  .toUint8Array();
 
 // Example 2 - Decode a tarball from some Uint8Array source.
 //
@@ -58,13 +60,12 @@ import {Tarball, AsyncUint8Array} from '@obsidize/tar-browserify';
 // Generalized wrapper for loading data in chunks.
 // The caller must wrap whatever external storage they are using with this.
 const asyncBuffer: AsyncUint8Array = {
-	
-	// fetch tarball file length from storage
-	byteLength: async () => ... /* Promise<number> */
-	
-	// read tarball data from storage
-	// allows us to read the file in chunks rather than all at once
-	read: async (offset: number, length: number) => ... /* Promise<Uint8Array> */
+
+  // fetch tarball file length from storage
+  byteLength: async (): Promise<number> => { ... }
+  // read tarball data from storage
+  // allows us to read the file in chunks rather than all at once
+  read: async (offset: number, length: number): Promise<Uint8Array> => { ... }
 };
 
 // Option 1 - extractAsync()
@@ -79,11 +80,11 @@ const firstEntryContent = await firstEntry.readContentFrom(asyncBuffer);
 // Option 2 - streamAsync()
 // Preferred for files with many entries
 await Tarball.streamAsync(asyncBuffer, async (entry, _entryIndex, buffer) => {
-	if (entry.isFile()) {
-		const content = await entry.readContentFrom(buffer);
-		console.log(`got file data from ${entry.fileName} (${content.byteLength} bytes)`);
-		// TODO: do some stuff with the content
-	}
+  if (entry.isFile()) {
+    const content = await entry.readContentFrom(buffer);
+    console.log(`got file data from ${entry.fileName} (${content.byteLength} bytes)`);
+    // TODO: do some stuff with the content
+  }
 });
 ```
 
@@ -93,8 +94,8 @@ Full API docs can be found [here](https://jospete.github.io/obsidize-tar-browser
 
 ## Testing
 
-This module has a full [Test Suite](https://github.com/jospete/obsidize-tar-browserify/tree/master/tests) 
-to ensure breaking changes are not introduced, and is tested against the output 
+This module has a full [Test Suite](https://github.com/jospete/obsidize-tar-browserify/tree/master/tests)
+to ensure breaking changes are not introduced, and is tested against the output
 of the [node-tar](https://www.npmjs.com/package/tar) package to ensure stability.
 
 - `npm test` - run unit tests with live-reload.
