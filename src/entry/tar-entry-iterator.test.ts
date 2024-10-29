@@ -1,4 +1,4 @@
-import { TarEntryIterator } from '../../src';
+import { TarEntryIterator } from './tar-entry-iterator';
 
 describe('TarEntryIterator', () => {
 

@@ -1,4 +1,5 @@
-import { AsyncUint8Array, Tarball } from '../src';
+import { AsyncUint8Array } from './common/async-uint8array';
+import { Tarball } from './core/tarball';
 
 describe('README Example', () => {
 

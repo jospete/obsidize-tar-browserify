@@ -1,7 +1,7 @@
-import { Tarball, TarUtility } from '../src';
-
+import { TarUtility } from './common/tar-utility';
+import { Tarball } from './core/tarball';
 import { tarballSampleBase64, totalFileCount } from './generated/tarball-test-assets';
-import { base64ToUint8Array } from './util';
+import { base64ToUint8Array } from './test-util';
 
 const { isUint8Array } = TarUtility;
 

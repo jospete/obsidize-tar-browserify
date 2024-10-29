@@ -1,11 +1,10 @@
-import {
-	Constants,
-	TarEntryUtility,
-	TarHeader,
-	TarHeaderField,
-	TarHeaderLinkIndicatorType,
-	TarUtility
-} from '../../src';
+import { MockAsyncUint8Array } from '../common/async-uint8array.mock';
+import { Constants } from '../common/constants';
+import { TarUtility } from '../common/tar-utility';
+import { TarEntryUtility } from '../entry/tar-entry-utility';
+import { TarHeader } from '../header/tar-header';
+import { TarHeaderField } from '../header/tar-header-field';
+import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
 
 const {
 	concatUint8Arrays,
@@ -22,8 +21,6 @@ const {
 	SECTOR_SIZE,
 	HEADER_SIZE
 } = Constants;
-
-import { MockAsyncUint8Array } from '../mocks/mock-async-uint8array';
 
 describe('TarHeader', () => {
 
@@ -112,7 +109,7 @@ describe('TarHeader', () => {
 		it('does nothing if the given attributes are malformed', () => {
 
 			const header = new TarHeader();
-			spyOn(header, 'normalize').and.callThrough();
+			jest.spyOn(header, 'normalize');
 
 			header.update(null as any);
 			expect(header.normalize).not.toHaveBeenCalled();

@@ -1,5 +1,6 @@
-import { Constants, findInAsyncUint8Array } from '../../src';
-import { MockAsyncUint8Array } from '../mocks/mock-async-uint8array';
+import { findInAsyncUint8Array } from './async-uint8array';
+import { MockAsyncUint8Array } from './async-uint8array.mock';
+import { Constants } from './constants';
 
 describe('AsyncUint8Array', () => {
 

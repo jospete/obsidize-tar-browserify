@@ -1,8 +1,8 @@
-import { Tarball, TarHeaderLinkIndicatorType } from '../../src';
-
+import { MockAsyncUint8Array } from '../common/async-uint8array.mock';
 import { fileStructures, tarballSampleBase64 } from '../generated/tarball-test-assets';
-import { MockAsyncUint8Array } from '../mocks/mock-async-uint8array';
-import { base64ToUint8Array } from '../util';
+import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
+import { base64ToUint8Array } from '../test-util';
+import { Tarball } from './tarball';
 
 describe('Tarball', () => {
 
