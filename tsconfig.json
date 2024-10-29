@@ -30,8 +30,7 @@
 		"tests/",
 		"scripts/",
 		"docs/",
-		"src/generated/",
-		"src/**/*.test.ts",
-		"src/test-util.ts"
+		"src/test/",
+		"src/**/*.test.ts"
 	]
 }

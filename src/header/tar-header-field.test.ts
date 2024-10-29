@@ -4,7 +4,7 @@ import { TarHeader } from '../header/tar-header';
 import { TarHeaderField } from '../header/tar-header-field';
 import { TarHeaderFieldType } from '../header/tar-header-field-type';
 import { TarHeaderUtility } from '../header/tar-header-utility';
-import { range } from '../test-util';
+import { range } from '../test/test-util';
 
 const {
 	encodeString,

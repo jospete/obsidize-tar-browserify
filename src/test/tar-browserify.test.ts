@@ -1,7 +1,7 @@
-import { AsyncUint8Array } from "./common/async-uint8array";
-import { TarUtility } from "./common/tar-utility";
-import { Tarball } from "./core/tarball";
-import { TarEntry } from "./entry/tar-entry";
+import { AsyncUint8Array } from "../common/async-uint8array";
+import { TarUtility } from "../common/tar-utility";
+import { Tarball } from "../core/tarball";
+import { TarEntry } from "../entry/tar-entry";
 import {
 	fileStructures,
 	tarballSampleBase64,

@@ -3,7 +3,7 @@ import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarEntry } from '../entry/tar-entry';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
-import { range } from '../test-util';
+import { range } from '../test/test-util';
 
 const { HEADER_SIZE } = Constants;
 const { isUint8Array } = TarUtility;

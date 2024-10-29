@@ -14,7 +14,7 @@ module.exports = {
 					/node_modules/,
 					/\.test\.ts$/,
 					/\.mock\.ts$/,
-					/src\/generated/
+					/src\/test\//
 				],
 			},
 		],
