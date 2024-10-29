@@ -47,24 +47,6 @@ describe('TarEntry', () => {
 		expect(entry.typeFlag = TarHeaderLinkIndicatorType.HARD_LINK).toBe(entry.typeFlag);
 	});
 
-	describe('tryParse()', () => {
-		it('attempts to extract an entry from the given buffer', async () => {
-			const entry1 = TarEntry.from({ fileName: 'Test File' }, new Uint8Array(100));
-			const entryBuffer1 = entry1.toUint8Array();
-
-			const entry2 = TarEntry.tryParse(entryBuffer1);
-			const entryBuffer2 = entry2!.toUint8Array();
-
-			expect(entry2).toEqual(entry1);
-			expect(entryBuffer2).toEqual(entryBuffer1);
-		});
-
-		it('returns null when bad input is given', () => {
-			expect(TarEntry.tryParse(null as any)).toBe(null);
-			expect(TarEntry.tryParse(undefined as any)).toBe(null);
-		});
-	});
-
 	describe('readContentFrom()', () => {
 		it('reads the contextualized slice from the given buffer', async () => {
 			const testBuffer = new Uint8Array(HEADER_SIZE + 100);

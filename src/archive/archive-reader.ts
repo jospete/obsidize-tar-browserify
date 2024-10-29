@@ -13,6 +13,8 @@ import { PaxTarHeader } from '../pax/pax-tar-header';
  */
 export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarEntry> {
 	private mGlobalPaxHeaders: PaxTarHeader[] = [];
+	private mBufferCache: Uint8Array | null = null;
+	private mOffset: number = 0;
 
 	constructor(
 		private readonly bufferIterator: AsyncUint8ArrayIterator
@@ -32,6 +34,8 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 	}
 
 	public async initialize(): Promise<void> {
+		this.mBufferCache = null;
+		this.mOffset = 0;
 		await this.bufferIterator.initialize();
 	}
 
@@ -46,56 +50,95 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		return entries;
 	}
 
-	public async next(): Promise<IteratorResult<TarEntry>> {
-		let buffer = await this.bufferIterator.tryNext();
-		let ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(buffer);
+	private async loadNextChunk(): Promise<boolean> {
+		const nextChunk = await this.bufferIterator.tryNext();
+		
+		if (!nextChunk) {
+			return false;
+		}
 
-		while (ustarOffset < 0 && buffer) {
-			buffer = await this.bufferIterator.tryNext();
-			ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(buffer);
+		if (this.mBufferCache) {
+			this.mBufferCache = TarUtility.concatUint8Arrays(this.mBufferCache!, nextChunk!);
+		} else {
+			this.mBufferCache = nextChunk!;
+			this.mOffset = 0;
+		}
+
+		return true;
+	}
+
+	public async next(): Promise<IteratorResult<TarEntry>> {
+		const defaultReturnValue: IteratorReturnResult<null> = {done: true, value: null};
+		let buffer = this.mBufferCache;
+
+		// Initialize the buffer if we don't have anything loaded
+		if (!buffer) {
+			if (!(await this.loadNextChunk())) {
+				return defaultReturnValue;
+			}
+
+			buffer = this.mBufferCache;
+		}
+
+		let ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(buffer, this.mOffset);
+
+		// Find next ustar marker
+		while (ustarOffset < 0 && (await this.loadNextChunk())) {
+			ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(buffer, this.mOffset);
 		}
 
 		if (ustarOffset < 0) {
-			return {done: true, value: null};
+			return defaultReturnValue;
 		}
 
-		while (ustarOffset + Constants.HEADER_SIZE > buffer!.byteLength) {
-			const nextChunk = await this.bufferIterator.tryNext();
-			if (nextChunk) {
-				buffer = TarUtility.concatUint8Arrays(buffer!, nextChunk);
-			} else {
-				return {done: true, value: null};
+		// load chunks until we have a full header block
+		while ((ustarOffset + Constants.HEADER_SIZE) > buffer!.byteLength) {
+			if (!(await this.loadNextChunk())) {
+				return defaultReturnValue;
 			}
 		}
 
-		const offset = ustarOffset;
+		// Construct Header
 		const headerBuffer = buffer!.slice(ustarOffset, ustarOffset + Constants.HEADER_SIZE);
 		const header = new TarHeader(headerBuffer);
+
+		// Advance cursor to process potential PAX header or entry content
+		const offset = ustarOffset;
 		let nextOffset = TarUtility.advanceSectorOffset(ustarOffset, buffer!.byteLength);
 
+		// Capture global header and advance to next sector
 		if (header.isGlobalPaxHeader) {
 			this.mGlobalPaxHeaders.push(PaxTarHeader.from(buffer!, nextOffset));
 			nextOffset = TarUtility.advanceSectorOffset(ustarOffset, buffer!.byteLength);
 
+		// Capture local header and advance to next sector
 		} else if (header.isLocalPaxHeader) {
 			header.setPax(PaxTarHeader.from(buffer!, nextOffset));
 			nextOffset = TarUtility.advanceSectorOffset(ustarOffset, buffer!.byteLength);
 		}
 
 		const context = this;
+		const contentEnd = nextOffset + header.fileSize;
 		let content: Uint8Array | null = null;
 
 		// If the buffer source is in-memory already, just read the content immediately
 		if (this.bufferIterator.input instanceof InMemoryAsyncUint8Array) {
-			const contentEnd = nextOffset + header.fileSize;
 			while (buffer!.byteLength < contentEnd) {
-				const nextChunk = await this.bufferIterator.tryNext();
-				if (nextChunk) {
-					buffer = TarUtility.concatUint8Arrays(buffer!, nextChunk);
-				} else {
-					return {done: true, value: null};
+				if (!(await this.loadNextChunk())) {
+					return defaultReturnValue;
 				}
 			}
+
+			content = buffer!.slice(nextOffset, contentEnd);
+		}
+
+		if ((contentEnd + Constants.SECTOR_SIZE) <= buffer!.byteLength) {
+			this.mBufferCache = buffer;
+			this.mOffset = contentEnd;
+
+		} else {
+			this.mBufferCache = null;
+			this.mOffset = 0;
 		}
 
 		const entry = new TarEntry({header, offset, content, context});

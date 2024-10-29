@@ -1,4 +1,4 @@
-import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from './async-uint8-array';
+import { AsyncUint8ArrayLike } from './async-uint8-array';
 import { Constants } from './constants';
 import { TarUtility } from './tar-utility';
 
@@ -41,13 +41,6 @@ export class AsyncUint8ArrayIterator implements AsyncUint8ArrayIteratorLike {
 	constructor(
 		private readonly mInput: AsyncUint8ArrayLike
 	) {
-	}
-
-	/**
-	 * Wraps an in-memory buffer as an AsyncUint8ArrayIterator.
-	 */
-	public static fromMemory(memoryBuffer: Uint8Array): AsyncUint8ArrayIterator {
-		return new AsyncUint8ArrayIterator(new InMemoryAsyncUint8Array(memoryBuffer));
 	}
 
 	[Symbol.asyncIterator](): AsyncUint8ArrayIteratorLike {
