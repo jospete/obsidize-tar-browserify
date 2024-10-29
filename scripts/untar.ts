@@ -1,7 +1,6 @@
 #! /usr/bin/env node
 
-const fs = require('fs-extra');
-const tar = require('tar');
+import tar from 'tar';
 
 async function main() {
 	const [src, dest] = process.argv.slice(2);

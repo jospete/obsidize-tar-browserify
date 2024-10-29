@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
-const { argv } = require('yargs');
-const { execSync } = require('child_process');
-const { version } = require('../package.json');
-const { smokeTest } = argv;
+import { execSync } from 'child_process';
+import { readJsonSync } from 'fs-extra';
+import yargs from 'yargs';
+const { version } = readJsonSync('../package.json');
+const { smokeTest } = <any>yargs().parse();
 
-function git(cmd) {
+function git(cmd: string): Buffer | number {
 	const fullCmd = 'git ' + cmd;
 	console.log('> ' + fullCmd);
 	return smokeTest ? 0 : execSync(fullCmd, { stdio: 'inherit' });
