@@ -1,5 +1,3 @@
-- Replace jasmine / karma with jest
-  - consolidate root test files into a single "tar-browserify.test.ts" file to de-clutter the root scope
 - Add github action(s) to require that unit tests pass before something is merged
 - Add github actions when merged into main:
   - tag a new version
