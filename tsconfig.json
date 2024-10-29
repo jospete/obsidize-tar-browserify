@@ -29,6 +29,9 @@
 		"node_modules/",
 		"tests/",
 		"scripts/",
-		"docs/"
+		"docs/",
+		"src/generated/",
+		"src/**/*.test.ts",
+		"src/test-util.ts"
 	]
 }
