@@ -1,62 +1,39 @@
-import { MockAsyncUint8Array } from '../common/async-uint8array.mock';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
 import { fileStructures, tarballSampleBase64 } from '../test/generated/tarball-test-content';
 import { base64ToUint8Array } from '../test/test-util';
-import { Tarball } from './tarball';
+import { Archive } from './archive';
 
-describe('Tarball', () => {
-
+describe('Archive', () => {
 	it('can safely be stringified when an invalid buffer is given', () => {
-		const tarball = new Tarball();
+		const tarball = new Archive();
 		expect(() => JSON.stringify(tarball)).not.toThrowError();
 	});
 
-	it('can be instantiated with a backing buffer', () => {
-		const sampleUint8 = base64ToUint8Array(tarballSampleBase64);
-		const tarball = new Tarball(sampleUint8);
-		expect(tarball.entries.length > 0).toBe(true);
-	});
-
 	describe('extract()', () => {
-
-		it('parses all entries from a given tar buffer', () => {
+		it('parses all entries from a given tar buffer', async () => {
 			const sampleUint8 = base64ToUint8Array(tarballSampleBase64);
-			const entries = Tarball.extract(sampleUint8);
+			const entries = await Archive.extract(sampleUint8);
 			const firstFile = entries.find(v => v.isFile())!;
 			const firstFileName = fileStructures[0][0];
 			expect(firstFile.fileName).toEqual(`./${firstFileName}`);
 		});
 	});
 
-	describe('extractAsync()', () => {
-
-		it('parses all entries from a given async tar buffer', async () => {
-			const sampleUint8 = base64ToUint8Array(tarballSampleBase64);
-			const mockAsyncBuffer = new MockAsyncUint8Array(sampleUint8);
-			const entries = await Tarball.extractAsync(mockAsyncBuffer);
-			expect(entries).toBeDefined();
-			expect(entries.length > 0).toBe(true);
-		});
-	});
-
-	describe('setBuffer() / toUint8Array()', () => {
-
-		it('creates a tarball from the given entries', async () => {
-			const sampleUint8 = base64ToUint8Array(tarballSampleBase64);
-			const tarball = new Tarball();
-			const outputUint8 = tarball.setBuffer(sampleUint8).toUint8Array();
-			expect(outputUint8).toEqual(sampleUint8);
-		});
-	});
+	// describe('setBuffer() / toUint8Array()', () => {
+	// 	it('creates a tarball from the given entries', async () => {
+	// 		const sampleUint8 = base64ToUint8Array(tarballSampleBase64);
+	// 		const tarball = new Archive();
+	// 		const outputUint8 = tarball.setBuffer(sampleUint8).toUint8Array();
+	// 		expect(outputUint8).toEqual(sampleUint8);
+	// 	});
+	// });
 
 	describe('addEntryWith()', () => {
-
 		it('includes the given entry in generated output', async () => {
-
-			const tarball = new Tarball();
+			const tarball = new Archive();
 
 			tarball.addEntryWith({ fileName: 'test.txt' }, new Uint8Array(10));
-			const entries = Tarball.extract(tarball.toUint8Array());
+			const entries = await Archive.extract(tarball.toUint8Array());
 
 			expect(entries.length).toBe(1);
 			expect(entries[0].fileName).toBe('test.txt');
@@ -64,10 +41,8 @@ describe('Tarball', () => {
 	});
 
 	describe('addBinaryFile()', () => {
-
 		it('is a shortcut for adding a standard file entry', () => {
-
-			const tarball = new Tarball();
+			const tarball = new Archive();
 			const fileName = 'test.txt';
 			const fileContent = new Uint8Array(10);
 
@@ -83,8 +58,7 @@ describe('Tarball', () => {
 		});
 
 		it('accepts custom header options as an additional parameter', () => {
-
-			const tarball = new Tarball();
+			const tarball = new Archive();
 			const fileName = 'test.txt';
 			const fileContent = new Uint8Array(10);
 			const overrideType = TarHeaderLinkIndicatorType.CONTIGUOUS_FILE;
@@ -98,10 +72,8 @@ describe('Tarball', () => {
 	});
 
 	describe('addTextFile()', () => {
-
 		it('is a shortcut for adding a standard file entry', () => {
-
-			const tarball = new Tarball();
+			const tarball = new Archive();
 			const fileName = 'test.txt';
 			const fileContent = 'This is some text';
 
@@ -117,8 +89,7 @@ describe('Tarball', () => {
 		});
 
 		it('accepts custom header options as an additional parameter', () => {
-
-			const tarball = new Tarball();
+			const tarball = new Archive();
 			const fileName = 'test.txt';
 			const fileContent = 'This is some text';
 			const overrideType = TarHeaderLinkIndicatorType.CONTIGUOUS_FILE;
@@ -132,10 +103,8 @@ describe('Tarball', () => {
 	});
 
 	describe('addDirectory()', () => {
-
 		it('is a shortcut for adding a standard directory entry', () => {
-
-			const tarball = new Tarball();
+			const tarball = new Archive();
 			const fileName = './sample/directory/path';
 
 			tarball.addDirectory(fileName);
@@ -151,8 +120,7 @@ describe('Tarball', () => {
 		});
 
 		it('accepts custom header options as an additional parameter', () => {
-
-			const tarball = new Tarball();
+			const tarball = new Archive();
 			const fileName = './sample/directory/path';
 			const overrideUser = 'someguy';
 

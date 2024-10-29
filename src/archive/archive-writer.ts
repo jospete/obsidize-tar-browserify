@@ -1,76 +1,20 @@
-import { AsyncUint8Array } from '../common/async-uint8array';
 import { TarUtility } from '../common/tar-utility';
-import { AsyncTarEntryIterator, TarEntryDelegate } from '../entry/async-tar-entry-iterator';
 import { TarEntry } from '../entry/tar-entry';
-import { TarEntryIterator } from '../entry/tar-entry-iterator';
 import { TarHeaderLike } from '../header/tar-header-like';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
 
 /**
- * Main entry point for extracting and creating tarballs.
- * See TarIterator and TarEntry for more granular options.
+ * Generic utility for building a tar octet stream by adding JSON-style entries.
+ * See the `add***()` options in this class definition for details.
  */
-export class Tarball {
-
+export class ArchiveWriter {
 	public entries: TarEntry[] = [];
-
-	/**
-	 * Creates a new tarball instance that can be used
-	 * to build a tar buffer from any of the `add***()` methods
-	 * @param inputBuffer - if provided, initializes the instance's
-	 * 		`entries` array to the tar entries parsed from this buffer.
-	 * 		Useful if you want to open a tarball, add to it, and then close it back up.
-	 */
-	constructor(inputBuffer?: Uint8Array) {
-		if (TarUtility.isUint8Array(inputBuffer)) {
-			this.setBuffer(inputBuffer!);
-		}
-	}
-
-	/**
-	 * Parses a set of TarEntry instances from the given buffer.
-	 * The buffer should come from a complete, uncompressed tar file.
-	 */
-	public static extract(buffer: Uint8Array): TarEntry[] {
-		return TarEntryIterator.extractAll(buffer);
-	}
-
-	/**
-	 * Parses a set of TarEntry instances from the given async buffer.
-	 * The buffer should come from a complete, uncompressed tar file.
-	 */
-	public static async extractAsync(
-		buffer: AsyncUint8Array
-	): Promise<TarEntry[]> {
-		return AsyncTarEntryIterator.extractAll(buffer);
-	}
-
-	/**
-	 * Step through entries as they are parsed from the source.
-	 * Does not collect entries into an array, and is generally more
-	 * memory-friendly.
-	 */
-	public static async streamAsync(
-		buffer: AsyncUint8Array,
-		onNext: TarEntryDelegate
-	): Promise<void> {
-		return AsyncTarEntryIterator.forEachIn(buffer, onNext);
-	}
-
+	
 	/**
 	 * @returns a complete tar buffer from all the currently set tar entries in this instance.
 	 */
 	public toUint8Array(): Uint8Array {
 		return TarEntry.serialize(this.entries);
-	}
-
-	/**
-	 * @param buffer - the tarball to parse and set our entry list to.
-	 * @returns `this` for operation chaining
-	 */
-	public setBuffer(buffer: Uint8Array): this {
-		this.entries = Tarball.extract(buffer);
-		return this;
 	}
 
 	/**

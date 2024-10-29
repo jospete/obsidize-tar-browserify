@@ -2,15 +2,15 @@ import { Constants } from './constants';
 
 export namespace TarUtility {
 
-	export function isNumber(value: any): boolean {
+	export function isNumber(value: any): value is number {
 		return typeof value === 'number' && !Number.isNaN(value);
 	}
 	
-	export function isString(value: any): boolean {
+	export function isString(value: any): value is string {
 		return typeof value === 'string';
 	}
 
-	export function isUndefined(value: any): boolean {
+	export function isUndefined(value: any): value is undefined {
 		return typeof value === 'undefined';
 	}
 
@@ -22,7 +22,7 @@ export namespace TarUtility {
 		return isString(value) && value.length > 0;
 	}
 	
-	export function isUint8Array(value: any): boolean {
+	export function isUint8Array(value: any): value is Uint8Array {
 		return !!(value && value instanceof Uint8Array);
 	}
 	

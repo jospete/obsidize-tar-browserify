@@ -1,5 +1,6 @@
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
+import { PaxTarHeader } from '../pax/pax-tar-header';
 import { TarHeaderField } from './tar-header-field';
 import { TarHeaderLike } from './tar-header-like';
 import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
@@ -13,6 +14,7 @@ import { TarHeaderUtility } from './tar-header-utility';
  * lazy loads/sets data via getters and setters.
  */
 export class TarHeader implements TarHeaderLike {
+	protected mPax: PaxTarHeader | null = null;
 
 	constructor(
 		public readonly bytes: Uint8Array = new Uint8Array(Constants.HEADER_SIZE), 
@@ -62,23 +64,6 @@ export class TarHeader implements TarHeaderLike {
 	}
 
 	/**
-	 * Creates a new `TarHeader` instance based on the content of the input at the given offset.
-	 * Instead of sharing the buffer (default behavior), this will create a new sliced copy,
-	 * ensuring that mutations on the input buffer will not affect this header.
-	 * @param input - the buffer containing header data
-	 * @param offset - the starting position of the header
-	 * @returns A new `TarHeader` instance based on the given inputs
-	 */
-	public static slice(input: Uint8Array, offset: number): TarHeader {
-
-		if (TarUtility.isUint8Array(input)) {
-			return new TarHeader(input.slice(offset, offset + Constants.HEADER_SIZE));
-		}
-
-		return new TarHeader();
-	}
-
-	/**
 	 * Short-hand for constructing a new `TarHeader` and immediately calling `toUint8Array()` on it
 	 */
 	public static serialize(attrs: TarHeaderLike | Partial<TarHeaderLike>): Uint8Array {
@@ -95,6 +80,10 @@ export class TarHeader implements TarHeaderLike {
 	 */
 	public static seeded(): TarHeader {
 		return TarHeader.from({});
+	}
+
+	public get pax(): PaxTarHeader | null {
+		return this.mPax;
 	}
 
 	public get fileName(): string {
@@ -222,11 +211,18 @@ export class TarHeader implements TarHeaderLike {
 		TarHeaderField.fileNamePrefix.writeTo(this.bytes, this.offset, value);
 	}
 
-	// TODO: add logic for decoding pax headers like these examples:
 	// https://github.com/k0nsti/browser-stream-tar/blob/master/src/tar.mjs#L54
 	// https://github.com/InvokIT/js-untar/blob/master/src/untar-worker.js#L92
 	public get isPaxHeader(): boolean {
-		return TarHeaderUtility.isTarHeaderLinkIndicatorTypePax(this.typeFlag);
+		return this.isLocalPaxHeader || this.isGlobalPaxHeader;
+	}
+
+	public get isGlobalPaxHeader(): boolean {
+		return this.typeFlag === TarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER;
+	}
+
+	public get isLocalPaxHeader(): boolean {
+		return this.typeFlag === TarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
 	}
 
 	public get isFileHeader(): boolean {
@@ -235,6 +231,10 @@ export class TarHeader implements TarHeaderLike {
 
 	public get isDirectoryHeader(): boolean {
 		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeDirectory(this.typeFlag);
+	}
+
+	public setPax(paxHeader: PaxTarHeader): void {
+		this.mPax = paxHeader;
 	}
 
 	/**

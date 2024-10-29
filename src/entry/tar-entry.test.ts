@@ -1,4 +1,4 @@
-import { AsyncUint8Array } from '../common/async-uint8array';
+import { AsyncUint8ArrayLike } from '../common/async-uint8-array';
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarEntry } from '../entry/tar-entry';
@@ -9,7 +9,6 @@ const { HEADER_SIZE } = Constants;
 const { isUint8Array } = TarUtility;
 
 describe('TarEntry', () => {
-
 	it('has an option to check if an entry is a directory', () => {
 		const directory = TarEntry.from({ typeFlag: TarHeaderLinkIndicatorType.DIRECTORY });
 		expect(TarEntry.isTarEntry(directory)).toBe(true);
@@ -17,7 +16,6 @@ describe('TarEntry', () => {
 	});
 
 	it('can safely be stringified', () => {
-
 		const rawEntry = new TarEntry(null as any);
 		expect(() => JSON.stringify(rawEntry)).not.toThrowError();
 
@@ -26,7 +24,6 @@ describe('TarEntry', () => {
 	});
 
 	it('implements the TarHeader interface with conveinence accessors', () => {
-
 		const entry = new TarEntry(null as any);
 
 		expect(entry.ustarIndicator).toBeDefined();
@@ -51,9 +48,7 @@ describe('TarEntry', () => {
 	});
 
 	describe('tryParse()', () => {
-
 		it('attempts to extract an entry from the given buffer', async () => {
-
 			const entry1 = TarEntry.from({ fileName: 'Test File' }, new Uint8Array(100));
 			const entryBuffer1 = entry1.toUint8Array();
 
@@ -70,24 +65,14 @@ describe('TarEntry', () => {
 		});
 	});
 
-	describe('tryParseAsync()', () => {
-
-		it('returns null when bad input is given', async () => {
-			expect(await TarEntry.tryParseAsync(null as any)).toBe(null);
-			expect(await TarEntry.tryParseAsync(undefined as any)).toBe(null);
-		});
-	});
-
 	describe('readContentFrom()', () => {
-
 		it('reads the contextualized slice from the given buffer', async () => {
-
 			const testBuffer = new Uint8Array(HEADER_SIZE + 100);
 
 			for (let i = HEADER_SIZE, j = 0; i < testBuffer.byteLength; i++, j++)
 				testBuffer[i] = j;
 
-			const asyncBuffer: AsyncUint8Array = {
+			const asyncBuffer: AsyncUint8ArrayLike = {
 				byteLength: async () => testBuffer.byteLength,
 				read: async (offset, length) => testBuffer.slice(offset, offset + length)
 			};
@@ -110,7 +95,7 @@ describe('TarEntry', () => {
 			for (let i = HEADER_SIZE, j = 0; i < testBuffer.byteLength; i++, j++)
 				testBuffer[i] = j;
 
-			const asyncBuffer: AsyncUint8Array = {
+			const asyncBuffer: AsyncUint8ArrayLike = {
 				byteLength: async () => testBuffer.byteLength,
 				read: async (offset, length) => testBuffer.slice(offset, offset + length)
 			};
@@ -126,7 +111,6 @@ describe('TarEntry', () => {
 	});
 
 	describe('writeTo()', () => {
-
 		it('returns false if the entry cannot be written to the given output', () => {
 			const entry = TarEntry.from({ fileName: 'Test File', fileSize: 80 });
 			expect(entry.writeTo(null as any, 0)).toBe(false);
@@ -134,7 +118,6 @@ describe('TarEntry', () => {
 	});
 
 	describe('toUint8Array()', () => {
-
 		it('works for directories', () => {
 			const entry = TarEntry.from({ fileName: 'some-directory', typeFlag: TarHeaderLinkIndicatorType.DIRECTORY });
 			const bytes = entry.toUint8Array();

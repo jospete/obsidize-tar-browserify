@@ -1,20 +1,18 @@
-import { MockAsyncUint8Array } from '../common/async-uint8array.mock';
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
-import { TarEntryUtility } from '../entry/tar-entry-utility';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderField } from '../header/tar-header-field';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
+import { TarHeaderUtility } from './tar-header-utility';
 
 const {
 	concatUint8Arrays,
-	isUint8Array
+	isUint8Array,
 } = TarUtility;
 
 const {
-	findNextUstarSectorOffset,
-	findNextUstarSectorAsync
-} = TarEntryUtility;
+	findNextUstarSectorOffset
+} = TarHeaderUtility;
 
 const {
 	FILE_MODE_DEFAULT,
@@ -23,9 +21,7 @@ const {
 } = Constants;
 
 describe('TarHeader', () => {
-
 	it('can be created with an explicit buffer and offset', () => {
-
 		const blockSize = HEADER_SIZE;
 		const offset = blockSize;
 		const bufferLength = blockSize * 2;
@@ -45,7 +41,6 @@ describe('TarHeader', () => {
 	});
 
 	describe('from()', () => {
-
 		it('returns the input value as-is if it is already a TarHeader instance', () => {
 			const header = new TarHeader();
 			const parsedHeader = TarHeader.from(header);
@@ -53,19 +48,8 @@ describe('TarHeader', () => {
 		});
 	});
 
-	describe('slice()', () => {
-
-		it('returns a blank instance if the given input is not a Uint8Array', () => {
-			const header = TarHeader.slice(null as any, 0);
-			expect(header).toBeTruthy();
-			expect(header.bytes.every(b => b === 0)).toBe(true);
-		});
-	});
-
 	describe('initialize()', () => {
-
 		it('applies default values if no custom object is given', () => {
-
 			const header = new TarHeader();
 
 			expect(header.deviceMajorNumber).toBe('');
@@ -78,7 +62,6 @@ describe('TarHeader', () => {
 		});
 
 		it('applies a combination of default values and custom ones if a custom object is given', () => {
-
 			const header = new TarHeader();
 			const fileName = 'test file.txt';
 
@@ -93,9 +76,7 @@ describe('TarHeader', () => {
 	});
 
 	describe('update()', () => {
-
 		it('applies given values to the backing buffer', () => {
-			
 			const fileMode = 511;
 			const header = new TarHeader();
 
@@ -107,7 +88,6 @@ describe('TarHeader', () => {
 		});
 
 		it('does nothing if the given attributes are malformed', () => {
-
 			const header = new TarHeader();
 			jest.spyOn(header, 'normalize');
 
@@ -123,7 +103,6 @@ describe('TarHeader', () => {
 	});
 
 	describe('normalize()', () => {
-
 		it('populates missing fields with sensible defaults', () => {
 			const header = TarHeader.seeded();
 			expect(header).not.toBeFalsy();
@@ -133,7 +112,6 @@ describe('TarHeader', () => {
 		});
 
 		it('consistently encodes and decodes the same header buffer', () => {
-
 			const header1 = TarHeader.from({
 				fileName: 'Test File.txt',
 				fileSize: 50000,
@@ -157,7 +135,6 @@ describe('TarHeader', () => {
 	});
 
 	describe('findNextUstarSectorOffset()', () => {
-
 		it('returns the offset of the next header sector', () => {
 			const testHeaderBuffer = TarHeader.serialize(null as any);
 			expect(findNextUstarSectorOffset(testHeaderBuffer)).toBe(0);
@@ -168,7 +145,6 @@ describe('TarHeader', () => {
 		});
 
 		it('uses the given offset when it is provided', () => {
-
 			const padLength = SECTOR_SIZE * 2;
 			const paddingBuffer = new Uint8Array(padLength);
 			const testHeaderBuffer = TarHeader.serialize(null as any);
@@ -183,16 +159,6 @@ describe('TarHeader', () => {
 			const testHeaderBuffer = TarHeader.serialize(null as any);
 			expect(findNextUstarSectorOffset(testHeaderBuffer, -1)).toBe(0);
 			expect(findNextUstarSectorOffset(testHeaderBuffer, -123456)).toBe(0);
-		});
-	});
-
-	describe('findNextUstarSectorAsync()', () => {
-
-		it('returns null when malformed inputs are given', async () => {
-			expect(await findNextUstarSectorAsync(null as any)).toBe(null);
-			const mockBuffer = new Uint8Array(5);
-			const mockAsyncBuffer = new MockAsyncUint8Array(mockBuffer);
-			expect(await findNextUstarSectorAsync(mockAsyncBuffer, mockBuffer.byteLength)).toBe(null);
 		});
 	});
 });
