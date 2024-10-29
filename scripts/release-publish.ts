@@ -13,30 +13,21 @@ function git(cmd: string): Buffer | number {
 };
 
 async function main() {
-
 	const versionTag = version;
-	const releaseBranchName = 'release/' + versionTag;
 	const gitStatusOutput = execSync('git status').toString();
 	const currentBranchNameMatch = /On branch (\S+)/.exec(gitStatusOutput);
+	const currentBranchName = currentBranchNameMatch && currentBranchNameMatch[1];
 
-	if (!currentBranchNameMatch) {
+	if (!currentBranchName) {
 		console.error('failed to match current branch from gitStatusOutput = ', gitStatusOutput);
 		console.log('currentBranchNameMatch = ', currentBranchNameMatch);
 		process.exit(1);
 	}
 
-	const currentBranchName = currentBranchNameMatch[1];
-
-	git('stash');
-	git('checkout -b ' + releaseBranchName);
-	git('stash apply');
 	git('add --all');
-	git('commit -m ' + versionTag);
-	git('tag ' + versionTag);
-	git('push -u origin --tags ' + releaseBranchName);
-	git('checkout ' + currentBranchName);
-	git('merge ' + releaseBranchName);
-	git('push origin ' + currentBranchName);
+	git(`commit -m v${versionTag}`);
+	git(`tag ${versionTag}`);
+	git(`push -u origin --tags ${currentBranchName}`);
 }
 
 main().catch(console.error);
