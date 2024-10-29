@@ -1,4 +1,4 @@
-name: Automated Tests
+name: Tests
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - develop
 
 jobs:
-  tests:
+  jest:
     runs-on: ubuntu-latest
     container:
       image: node:20
