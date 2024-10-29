@@ -79,7 +79,7 @@ async function main() {
 		'./dev-assets/tarball-sample/tar-root'
 	];
 
-	const tarballReadable = await tar.create({ gzip: false }, files);
+	const tarballReadable = tar.create({ gzip: false }, files);
 	const tarballContent = await readFileFromStream(tarballReadable);
 
 	await exportTestAsssets(tarballContent, files);

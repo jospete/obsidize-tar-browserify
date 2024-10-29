@@ -29,7 +29,7 @@
 		"version:publish": "run-s git:publish dist:publish",
 		"bump": "run-s version:patch version:publish",
 		"generate:tar:assets": "node ./scripts/generate-tarball-test-assets.js",
-		"generate:tar:json:postbuild": "node ./scripts/generate-tar-example-json.js",
+		"generate:tar:json:postbuild": "node ./scripts/generate-tar-sample-json.js",
 		"generate:tar:json": "run-s build generate:tar:json:postbuild",
 		"generate:tar:output:postbuild": "node ./scripts/generate-tar-example-file.js",
 		"generate:tar:output": "run-s build generate:tar:output:postbuild"

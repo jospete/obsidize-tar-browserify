@@ -1,6 +1,2 @@
-- Add github actions when merged into main:
-  - tag a new version
-  - generate docs
-  - publish to npm
 - Add new construct "PaxTarHeader" that will parse and ammend fields for an entry
 - Add logic to capture "pax context" when iterating over entries in a tarball to account for global pax headers
