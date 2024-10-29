@@ -1,4 +1,3 @@
-- Add github action(s) to require that unit tests pass before something is merged
 - Add github actions when merged into main:
   - tag a new version
   - generate docs
