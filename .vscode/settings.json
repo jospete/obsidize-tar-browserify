@@ -8,7 +8,7 @@
   "editor.detectIndentation": false,
   "html.format.wrapAttributes": "aligned-multiple",
   "editor.wordWrap": "bounded",
-  "editor.wordWrapColumn": 120,
+  "editor.wordWrapColumn": 180,
   "typescript.preferences.importModuleSpecifier": "relative",
   "[typescript]": {
     "editor.codeActionsOnSave": {
