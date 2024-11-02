@@ -371,22 +371,22 @@ export class TarEntry implements TarHeaderLike {
 	 * Overridden to prevent circular reference errors / huge memory spikes that would
 	 * include the underlying content by default.
 	 */
-	public toJSON(): any {
-
-		const { header, fileName, fileSize } = this;
+	public toJSON(): Record<string, unknown> {
+		const { header, fileName: name, fileSize: size, content } = this;
 		const isFile = this.isFile();
 		const isDirectory = this.isDirectory();
-		const content = this.content
-			? ('Uint8Array[' + this.content.byteLength + ']')
+		const type = isFile ? 'file' : isDirectory ? 'directory' : 'complex';
+		const contentType = content
+			? ('Uint8Array[' + content.byteLength + ']')
 			: 'null';
 
 		return {
-			content,
-			fileName,
-			fileSize,
-			isFile,
-			isDirectory,
-			header
+			name,
+			size,
+			type,
+			header,
+			contentType,
+			content: TarUtility.getDebugHexString(content)
 		};
 	}
 }

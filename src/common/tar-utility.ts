@@ -82,6 +82,13 @@ export namespace TarUtility {
 		return sanitizeTimestamp(Date.now());
 	}
 
+	export function getDebugHexString(v: Uint8Array | null | undefined): string {
+		if (!isUint8Array(v)) return '';
+		return Array.from(v)
+			.map(b => b.toString(16).padStart(2, '0').toUpperCase())
+			.join(' ');
+	}
+
 	export function removeTrailingZeros(str: string): string {
 		const pattern = /^([^\0]*)[\0]*$/;
 		const result = pattern.exec(str);

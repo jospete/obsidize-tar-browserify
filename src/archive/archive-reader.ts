@@ -120,8 +120,12 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 			content = buffer!.slice(contentOffset, contentEnd);
 		}
 
-		if ((contentEnd + Constants.SECTOR_SIZE) <= buffer!.byteLength) {
-			this.mBufferCache = buffer!.slice(contentEnd);
+		// `contentEnd` may not be an even division of SECTOR_SIZE, so
+		// round up to the nearest sector start point after the content end.
+		const nextSectorStart = TarUtility.roundUpSectorOffset(contentEnd);
+
+		if ((nextSectorStart + Constants.SECTOR_SIZE) <= buffer!.byteLength) {
+			this.mBufferCache = buffer!.slice(nextSectorStart);
 			this.mOffset = 0;
 
 		} else {

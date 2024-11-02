@@ -14,7 +14,7 @@ import { TarHeaderUtility } from './tar-header-utility';
  * lazy loads/sets data via getters and setters.
  */
 export class TarHeader implements TarHeaderLike {
-	protected mPax: PaxTarHeader | null = null;
+	public pax: PaxTarHeader | null = null;
 
 	constructor(
 		public readonly bytes: Uint8Array = new Uint8Array(Constants.HEADER_SIZE), 
@@ -80,14 +80,6 @@ export class TarHeader implements TarHeaderLike {
 	 */
 	public static seeded(): TarHeader {
 		return TarHeader.from({});
-	}
-
-	public get pax(): PaxTarHeader | null {
-		return this.mPax;
-	}
-
-	public set pax(value: PaxTarHeader | null) {
-		this.mPax = value;
 	}
 
 	public get fileName(): string {
@@ -242,6 +234,62 @@ export class TarHeader implements TarHeaderLike {
 	 */
 	public toUint8Array(): Uint8Array {
 		return this.bytes.slice(this.offset, this.offset + Constants.HEADER_SIZE);
+	}
+
+	public toJSON(): Record<string, unknown> {
+		const attributes = this.toAttributes();
+		const bytes = this.bytes;
+		const offset = this.offset;
+
+		const buffer = {
+			byteLength: bytes.byteLength,
+			content: TarUtility.getDebugHexString(bytes)
+		};
+
+		return {
+			attributes,
+			offset,
+			buffer
+		};
+	}
+
+	public toAttributes(): TarHeaderLike {
+		const {
+			fileName,
+			fileMode,
+			groupUserId,
+			ownerUserId,
+			fileSize,
+			lastModified,
+			headerChecksum,
+			linkedFileName,
+			typeFlag,
+			ustarIndicator,
+			ustarVersion,
+			ownerUserName,
+			ownerGroupName,
+			deviceMajorNumber,
+			deviceMinorNumber,
+			fileNamePrefix
+		} = this;
+		return {
+			fileName,
+			fileMode,
+			groupUserId,
+			ownerUserId,
+			fileSize,
+			lastModified,
+			headerChecksum,
+			linkedFileName,
+			typeFlag,
+			ustarIndicator,
+			ustarVersion,
+			ownerUserName,
+			ownerGroupName,
+			deviceMajorNumber,
+			deviceMinorNumber,
+			fileNamePrefix
+		};
 	}
 
 	/**
