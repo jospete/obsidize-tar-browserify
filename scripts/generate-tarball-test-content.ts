@@ -11,13 +11,13 @@ async function crawlTarAssets(files: string[]): Promise<string[][]> {
 }
 
 async function stream2buffer(stream: Stream): Promise<Buffer> {
-    return new Promise < Buffer > ((resolve, reject) => {
+    return new Promise<Buffer>((resolve, reject) => {
         const _buf: any[] = [];
         stream.on('data', chunk => _buf.push(chunk));
         stream.on('end', () => resolve(Buffer.concat(_buf)));
         stream.on('error', err => reject(`error converting stream - ${err}`));
     });
-} 
+}
 
 function getProjectDirectoryName() {
 	return basename(dirname(resolve(__filename, '..')));
@@ -63,6 +63,7 @@ export const tarballSampleBase64 = '${tarballSampleBase64}';
 async function exportTestAssets(tarballContent: Buffer, files: string[], outputFileName: string) {
 	const outputPath = `./src/test/generated/${outputFileName}`;
 	const fileStructures = await crawlTarAssets(files);
+	console.log(`exportTestAssets -> fileStructures = `, fileStructures);
 	const tarballSampleBase64 = tarballContent.toString('base64');
 	const totalFileCount = fileStructures.reduce((count, globPaths) => count + globPaths.length, 0);
 	const output = createOutputContent({ totalFileCount, fileStructures, tarballSampleBase64 });
