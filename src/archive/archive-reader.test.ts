@@ -1,3 +1,4 @@
+import { ArchiveContext } from '../common/archive-context';
 import { InMemoryAsyncUint8Array } from '../common/async-uint8-array';
 import { AsyncUint8ArrayIterator } from '../common/async-uint8-array-iterator';
 import { tarballSampleBase64 } from '../test/generated/pax-header-test-content';
@@ -9,6 +10,14 @@ describe('ArchiveReader', () => {
 		const iterator = new AsyncUint8ArrayIterator(new InMemoryAsyncUint8Array(new Uint8Array()));
 		const reader = new ArchiveReader(iterator);
 		expect(reader).toBeTruthy();
+	});
+
+	it('should implement ArchiveContext', () => {
+		const bufferSource = new InMemoryAsyncUint8Array(new Uint8Array());
+		const iterator = new AsyncUint8ArrayIterator(bufferSource);
+		const context: ArchiveContext = new ArchiveReader(iterator);
+		expect(context.source).toBe(bufferSource);
+		expect(context.globalPaxHeaders).toEqual([]);
 	});
 
 	it('should correctly parse pax headers', async () => {
