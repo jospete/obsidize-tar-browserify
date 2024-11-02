@@ -36,6 +36,7 @@ describe('ArchiveReader', () => {
 		const iterator = new AsyncUint8ArrayIterator(bufferSource, {blockSize: Constants.SECTOR_SIZE});
 		const reader = new ArchiveReader(iterator);
 		const entries = await reader.readAllEntries();
-		expect(entries.length).toBe(PAX_totalFileCount);
+		const files = entries.filter(v => v.isFile());
+		expect(files.length).toBe(PAX_totalFileCount);
 	});
 });

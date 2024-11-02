@@ -122,6 +122,8 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		return true;
 	}
 
+	// FIXME: figure out why `test_tar/test.json` is getting duplicated
+
 	private async tryParseNextEntry(): Promise<TarEntry | null> {
 		const headerParseResult = await this.tryParseNextHeader();
 
@@ -181,43 +183,42 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 
 		// Construct Header
 		let headerOffset = ustarOffset;
-		let headerBuffer = this.getBufferCacheSlice(ustarOffset, ustarOffset + Constants.HEADER_SIZE);
+		let headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
 		let header = new TarHeader(headerBuffer);
 
 		// Advance cursor to process potential PAX header or entry content
-		let nextOffset = TarUtility.advanceSectorOffset(ustarOffset, this.mBufferCache!.byteLength);
+		let nextOffset = TarUtility.advanceSectorOffset(headerOffset, this.mBufferCache!.byteLength);
 
 		if (header.isPaxHeader) {
 			// Make sure we've buffered the pax header region and the next sector after that (next sector contains the _actual_ header)
 			const paxHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(header.ustarFileSize);
 			const requiredBufferSize = paxHeaderSectorEnd + Constants.HEADER_SIZE;
 
-			if (!(await this.requireBufferSize(requiredBufferSize))) {
+			if (!(await this.tryRequireBufferSize(requiredBufferSize))) {
 				return null;
 			}
 
 			// Parse the pax header out from the next sector
 			const paxHeader = PaxTarHeader.from(this.mBufferCache!, nextOffset);
+			nextOffset = paxHeaderSectorEnd;
 
 			// Capture global pax header in top-level context (e.g. this instance)
 			if (header.isGlobalPaxHeader) {
 				this.mGlobalPaxHeaders.push(paxHeader);
+
 			// Capture local pax header onto the header that declared it
 			} else {
+				if (!TarHeaderUtility.isUstarSector(this.mBufferCache!, nextOffset)) {
+					return null;
+				}
+	
+				// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
+				headerOffset = nextOffset;
+				headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
+				header = new TarHeader(headerBuffer);
 				header.pax = paxHeader;
+				nextOffset = TarUtility.advanceSectorOffsetUnclamped(nextOffset);
 			}
-
-			nextOffset = paxHeaderSectorEnd;
-
-			if (!TarHeaderUtility.isUstarSector(this.mBufferCache!, nextOffset)) {
-				return null;
-			}
-
-			// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
-			headerBuffer = this.getBufferCacheSlice(nextOffset, nextOffset + Constants.HEADER_SIZE);
-			header = new TarHeader(headerBuffer);
-			header.pax = paxHeader;
-			nextOffset = TarUtility.advanceSectorOffset(nextOffset, this.mBufferCache!.byteLength);
 		}
 
 		return {header, headerOffset, contentOffset: nextOffset};
