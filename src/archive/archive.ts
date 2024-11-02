@@ -1,5 +1,4 @@
-import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array';
-import { AsyncUint8ArrayIterator } from '../common/async-uint8-array-iterator';
+import { AsyncUint8ArrayLike } from '../common/async-uint8-array';
 import { TarEntry } from '../entry/tar-entry';
 import { ArchiveReader } from './archive-reader';
 import { ArchiveWriter } from './archive-writer';
@@ -15,7 +14,7 @@ export class Archive extends ArchiveWriter {
 	 * The buffer should come from a complete, uncompressed tar file.
 	 */
 	public static extract(buffer: Uint8Array): Promise<TarEntry[]> {
-		return Archive.extractFromStream(new InMemoryAsyncUint8Array(buffer));
+		return ArchiveReader.readAllEntriesFromMemory(buffer);
 	}
 
 	/**
@@ -23,8 +22,6 @@ export class Archive extends ArchiveWriter {
 	 * This replaces the 4.x `extractAsync` option.
 	 */
 	public static extractFromStream(stream: AsyncUint8ArrayLike): Promise<TarEntry[]> {
-		const iterator = new AsyncUint8ArrayIterator(stream);
-		const reader = new ArchiveReader(iterator);
-		return reader.readAllEntries();
+		return ArchiveReader.readAllEntriesFromStream(stream);
 	}
 }
