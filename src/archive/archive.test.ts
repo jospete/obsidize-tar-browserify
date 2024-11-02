@@ -14,7 +14,7 @@ describe('Archive', () => {
 		it('is a shortcut for ArchiveReader.readAllEntriesFromMemory()', async () => {
 			const spy = jest.spyOn(ArchiveReader, 'readAllEntriesFromMemory');
 			const sampleUint8 = base64ToUint8Array(tarballSampleBase64);
-			const entries = await Archive.extract(sampleUint8);
+			const {entries} = await Archive.extract(sampleUint8);
 			const firstFile = entries.find(v => v.isFile())!;
 			const firstFileName = fileStructures[0][0];
 			expect(firstFile.fileName).toEqual(`./${firstFileName}`);

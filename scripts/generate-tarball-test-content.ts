@@ -5,8 +5,8 @@ import { globby } from 'globby';
 import { basename, dirname, resolve } from 'path';
 import { extract } from 'tar';
 
-async function crawlTarAssets(files: string[]): Promise<string[][]> {
-	return Promise.all(files.map(f => globby(f, {})));
+async function crawlTarAssets(cwd: string, files: string[]): Promise<string[][]> {
+	return Promise.all(files.map(f => globby(f, {cwd, dot: true})));
 }
 
 function getProjectDirectoryName() {
@@ -50,9 +50,9 @@ export const tarballSampleBase64 = '${tarballSampleBase64}';
 `;
 }
 
-async function exportTestAssets(tarballContent: Buffer, files: string[], outputFileName: string) {
+async function exportTestAssets(tarballContent: Buffer, files: string[], outputFileName: string, pathPrefix: string) {
 	const outputPath = `./src/test/generated/${outputFileName}`;
-	const fileStructures = await crawlTarAssets(files);
+	const fileStructures = await crawlTarAssets(pathPrefix, files);
 	console.log(`exportTestAssets -> fileStructures = `, fileStructures);
 	const tarballSampleBase64 = tarballContent.toString('base64');
 	const totalFileCount = fileStructures.reduce((count, globPaths) => count + globPaths.length, 0);
@@ -66,16 +66,16 @@ async function generateTarSampleOne() {
 	const tarFilePath = './dev-assets/tarball-sample/packed/node-tar-sample.tar';
 	const unpackedPath = './dev-assets/tarball-sample/unpacked';
 	const tarballContent = readFileSync(tarFilePath);
-	await exportTestAssets(tarballContent, [unpackedPath], 'tarball-test-content.ts');
+	await exportTestAssets(tarballContent, ['**/*'], 'tarball-test-content.ts', unpackedPath);
 }
 
 async function generateTarSampleTwo() {
 	const tarFilePath = './dev-assets/pax-tgz-sample/packed/test.tar';
-	const unpackedPath = './tmp/pax-tar-sample';
+	const unpackedPath = './dev-assets/pax-tgz-sample/unpacked';
 	const tarballContent = readFileSync(tarFilePath);
 	mkdirpSync(unpackedPath);
 	await extract({file: tarFilePath, cwd: unpackedPath});
-	await exportTestAssets(tarballContent, [unpackedPath], 'pax-header-test-content.ts');
+	await exportTestAssets(tarballContent, ['**/*'], 'pax-header-test-content.ts', unpackedPath);
 }
 
 async function main() {
