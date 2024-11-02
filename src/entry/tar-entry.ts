@@ -1,10 +1,17 @@
-import { AsyncUint8Array } from '../common/async-uint8array';
+import { ArchiveContext } from '../common/archive-context';
+import { AsyncUint8ArrayLike } from '../common/async-uint8-array';
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderLike } from '../header/tar-header-like';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
-import { TarEntryUtility } from './tar-entry-utility';
+
+export interface TarEntryOptions {
+	header?: TarHeader;
+	content?: Uint8Array | null;
+	offset?: number;
+	context?: ArchiveContext | null;
+}
 
 /**
  * Container for metadata and content of a tarball entry.
@@ -18,9 +25,10 @@ export class TarEntry implements TarHeaderLike {
 	protected mHeader: TarHeader;
 	protected mContent: Uint8Array | null;
 	protected mOffset: number;
+	protected mContext: ArchiveContext | null;
 
-	constructor(header?: TarHeader, content?: Uint8Array | null, offset?: number) {
-		this.initialize(header, content, offset);
+	constructor(options: TarEntryOptions = {}) {
+		this.initialize(options);
 	}
 
 	public static isTarEntry(v: any): boolean {
@@ -33,114 +41,29 @@ export class TarEntry implements TarHeaderLike {
 	 * @param content - content of the entry (if it is a file)
 	 */
 	public static from(attrs: TarHeaderLike | Partial<TarHeaderLike>, content: Uint8Array | null = null): TarEntry {
-		return new TarEntry(TarHeader.from(attrs), content);
+		return new TarEntry({header: TarHeader.from(attrs), content});
 	}
 
-	/**
-	 * Searches through the given input buffer for the next tar header,
-	 * and creates a new `TarEntry` for it if it is found.
-	 * @param input - the buffer to search for a tar entry in
-	 * @param offset - the offset of the buffer to begin searching at
-	 * @returns A new `TarEntry` if a header sector was found, otherwise null
-	 */
-	public static tryParse(input: Uint8Array, offset?: number): TarEntry | null {
-
-		if (!TarUtility.isUint8Array(input)) {
-			return null;
-		}
-
-		const ustarSectorOffset = TarEntryUtility.findNextUstarSectorOffset(input, offset);
-
-		if (ustarSectorOffset < 0) {
-			return null;
-		}
-
-		const maxOffset = input.byteLength;
-		// FIXME: replace slice with standard constructor when TarEntry is migrated to the same format
-		// const header = new TarHeader(input, ustarSectorOffset);
-		const header = TarHeader.slice(input, ustarSectorOffset);
-		const start = TarUtility.advanceSectorOffset(ustarSectorOffset, maxOffset);
-		const fileSize = header.fileSize;
-
-		let content: Uint8Array | null = null;
-
-		if (TarUtility.isNumber(fileSize) && fileSize > 0) {
-			const end = Math.min(maxOffset, start + fileSize);
-			content = input.slice(start, end);
-		}
-
-		return new TarEntry(header, content, ustarSectorOffset);
-	}
-
-	/**
-	 * Searches through the given input buffer for the next tar header,
-	 * and creates a new `TarEntry` for it if it is found.
-	 * @param input - the buffer to search for a tar entry in
-	 * @param offset - the offset of the buffer to begin searching at
-	 * @returns A new `TarEntry` if a header sector was found, otherwise null
-	 */
-	public static async tryParseAsync(input: AsyncUint8Array, offset?: number): Promise<TarEntry | null> {
-		
-		if (!input) {
-			return null;
-		}
-
-		const sector = await TarEntryUtility.findNextUstarSectorAsync(input, offset);
-
-		if (!sector) {
-			return null;
-		}
-
-		const { value, offset: ustarSectorOffset } = sector;
-		const header = new TarHeader(value);
-		const content = null;
-
-		return new TarEntry(header, content, ustarSectorOffset);
-	}
-
-	/**
-	 * Combines the given array of entries into a single, complete tarball buffer
-	 */
-	public static serialize(entries: TarEntry[]): Uint8Array {
-
-		let outputLength = Constants.TERMINAL_PADDING_SIZE;
-
-		for (const entry of entries) {
-			outputLength += entry.sectorByteLength;
-		}
-
-		const output = new Uint8Array(outputLength);
-		let offset = 0;
-
-		for (const entry of entries) {
-			entry.writeTo(output, offset);
-			offset += entry.sectorByteLength;
-		}
-
-		return output;
-	}
-
-	protected initialize(
-		header?: TarHeader, 
-		content?: Uint8Array | null,
-		offset?: number
-	): this {
+	protected initialize(options: TarEntryOptions): this {
+		let {header, content, offset, context} = options;
 
 		if (!header) header = TarHeader.seeded();
 		if (!content) content = null;
 		if (!offset) offset = 0;
+		if (!context) context = null;
 
 		const contentLength = TarUtility.sizeofUint8Array(content);
 
 		// The fileSize field metadata must always be in sync between the content and the header
-		if (header.fileSize !== contentLength && contentLength > 0) {
-			header.fileSize = contentLength;
+		if (!header.pax && header.fileSize !== contentLength && contentLength > 0) {
+			header.ustarFileSize = contentLength;
 			header.normalize();
 		}
 
 		this.mHeader = header;
 		this.mContent = content;
 		this.mOffset = offset;
+		this.mContext = context;
 
 		return this;
 	}
@@ -153,48 +76,24 @@ export class TarEntry implements TarHeaderLike {
 		return this.header.fileName;
 	}
 
-	public set fileName(value: string) {
-		this.header.fileName = value;
-	}
-
 	public get fileSize(): number {
 		return this.header.fileSize;
-	}
-
-	public set fileSize(value: number) {
-		this.header.fileSize = value;
 	}
 
 	public get fileMode(): number {
 		return this.header.fileMode;
 	}
 
-	public set fileMode(value: number) {
-		this.header.fileMode = value;
-	}
-
 	public get ownerUserId(): number {
 		return this.header.ownerUserId;
-	}
-
-	public set ownerUserId(value: number) {
-		this.header.ownerUserId = value;
 	}
 
 	public get groupUserId(): number {
 		return this.header.groupUserId;
 	}
 
-	public set groupUserId(value: number) {
-		this.header.groupUserId = value;
-	}
-
 	public get lastModified(): number {
 		return this.header.lastModified;
-	}
-
-	public set lastModified(value: number) {
-		this.header.lastModified = value;
 	}
 
 	public get headerChecksum(): number {
@@ -205,16 +104,8 @@ export class TarEntry implements TarHeaderLike {
 		return this.header.linkedFileName;
 	}
 
-	public set linkedFileName(value: string) {
-		this.header.linkedFileName = value;
-	}
-
 	public get typeFlag(): TarHeaderLinkIndicatorType {
 		return this.header.typeFlag;
-	}
-
-	public set typeFlag(value: TarHeaderLinkIndicatorType) {
-		this.header.typeFlag = value;
 	}
 
 	public get ustarIndicator(): string {
@@ -225,48 +116,24 @@ export class TarEntry implements TarHeaderLike {
 		return this.header.ustarVersion;
 	}
 
-	public set ustarVersion(value: string) {
-		this.header.ustarVersion = value;
-	}
-
 	public get ownerUserName(): string {
 		return this.header.ownerUserName;
-	}
-
-	public set ownerUserName(value: string) {
-		this.header.ownerUserName = value;
 	}
 
 	public get ownerGroupName(): string {
 		return this.header.ownerGroupName;
 	}
 
-	public set ownerGroupName(value: string) {
-		this.header.ownerGroupName = value;
-	}
-
 	public get deviceMajorNumber(): string {
 		return this.header.deviceMajorNumber;
-	}
-
-	public set deviceMajorNumber(value: string) {
-		this.header.deviceMajorNumber = value;
 	}
 
 	public get deviceMinorNumber(): string {
 		return this.header.deviceMinorNumber;
 	}
 
-	public set deviceMinorNumber(value: string) {
-		this.header.deviceMinorNumber = value;
-	}
-
 	public get fileNamePrefix(): string {
 		return this.header.fileNamePrefix;
-	}
-
-	public set fileNamePrefix(value: string) {
-		this.header.fileNamePrefix = value;
 	}
 
 	// =================================================================
@@ -288,6 +155,15 @@ export class TarEntry implements TarHeaderLike {
 	 */
 	public get content(): Uint8Array | null | undefined {
 		return this.mContent;
+	}
+
+	/**
+	 * The context (if any) from which this entry was parsed.
+	 * The context will include global data about things such as
+	 * the origin of the archive and global pax headers.
+	 */
+	public get context(): ArchiveContext | null | undefined {
+		return this.mContext;
 	}
 
 	/**
@@ -364,7 +240,7 @@ export class TarEntry implements TarHeaderLike {
 	 * 
 	 * If the entry was extracted synchronously, its content will be available via the "content" property.
 	 */
-	public async readContentFrom(buffer: AsyncUint8Array, offset: number = 0, length: number = 0): Promise<Uint8Array> {
+	public async readContentFrom(buffer: AsyncUint8ArrayLike, offset: number = 0, length: number = 0): Promise<Uint8Array> {
 		const { contentStartIndex, contentEndIndex, fileSize } = this;
 		const normalizedOffset = TarUtility.clamp(offset, 0, fileSize) + contentStartIndex;
 		const bytesRemaining = Math.max(0, contentEndIndex - normalizedOffset);
@@ -417,22 +293,22 @@ export class TarEntry implements TarHeaderLike {
 	 * Overridden to prevent circular reference errors / huge memory spikes that would
 	 * include the underlying content by default.
 	 */
-	public toJSON(): any {
-
-		const { header, fileName, fileSize } = this;
+	public toJSON(): Record<string, unknown> {
+		const { header, fileName: name, fileSize: size, content } = this;
 		const isFile = this.isFile();
 		const isDirectory = this.isDirectory();
-		const content = this.content
-			? ('Uint8Array[' + this.content.byteLength + ']')
+		const type = isFile ? 'file' : isDirectory ? 'directory' : 'complex';
+		const contentType = content
+			? ('Uint8Array[' + content.byteLength + ']')
 			: 'null';
 
 		return {
-			content,
-			fileName,
-			fileSize,
-			isFile,
-			isDirectory,
-			header
+			name,
+			size,
+			type,
+			header,
+			contentType,
+			content: TarUtility.getDebugHexString(content)
 		};
 	}
 }

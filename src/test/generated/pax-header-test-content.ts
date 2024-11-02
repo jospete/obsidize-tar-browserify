@@ -1,14 +1,21 @@
 // AUTO-GENERATED VIA obsidize-tar-browserify\scripts\generate-tarball-test-content.ts
 // DO NOT EDIT
 
-export const totalFileCount = 4;
+export const totalFileCount = 11;
 
 export const fileStructures = [
 	[
-		"tmp/pax-tar-sample/test_tar/test.json",
-		"tmp/pax-tar-sample/test_tar/repository/test2.json",
-		"tmp/pax-tar-sample/test_tar/repository/assets/0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895081a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt",
-		"tmp/pax-tar-sample/test_tar/repository/assets/test3.txt"
+		"._test_tar",
+		"test_tar/._repository",
+		"test_tar/._test.json",
+		"test_tar/test.json",
+		"test_tar/repository/._assets",
+		"test_tar/repository/._test2.json",
+		"test_tar/repository/test2.json",
+		"test_tar/repository/assets/._0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895081a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt",
+		"test_tar/repository/assets/._test3.txt",
+		"test_tar/repository/assets/0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895081a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt",
+		"test_tar/repository/assets/test3.txt"
 	]
 ];
 

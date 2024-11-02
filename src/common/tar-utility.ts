@@ -2,15 +2,15 @@ import { Constants } from './constants';
 
 export namespace TarUtility {
 
-	export function isNumber(value: any): boolean {
+	export function isNumber(value: any): value is number {
 		return typeof value === 'number' && !Number.isNaN(value);
 	}
 	
-	export function isString(value: any): boolean {
+	export function isString(value: any): value is string {
 		return typeof value === 'string';
 	}
 
-	export function isUndefined(value: any): boolean {
+	export function isUndefined(value: any): value is undefined {
 		return typeof value === 'undefined';
 	}
 
@@ -22,7 +22,7 @@ export namespace TarUtility {
 		return isString(value) && value.length > 0;
 	}
 	
-	export function isUint8Array(value: any): boolean {
+	export function isUint8Array(value: any): value is Uint8Array {
 		return !!(value && value instanceof Uint8Array);
 	}
 	
@@ -82,6 +82,13 @@ export namespace TarUtility {
 		return sanitizeTimestamp(Date.now());
 	}
 
+	export function getDebugHexString(v: Uint8Array | null | undefined): string {
+		if (!isUint8Array(v)) return '';
+		return Array.from(v)
+			.map(b => b.toString(16).padStart(2, '0').toUpperCase())
+			.join(' ');
+	}
+
 	export function removeTrailingZeros(str: string): string {
 		const pattern = /^([^\0]*)[\0]*$/;
 		const result = pattern.exec(str);
@@ -92,6 +99,19 @@ export namespace TarUtility {
 		if (isNumber(value)) return Math.floor(value);
 		const parsed = parseInt(value, radix);
 		return isNumber(parsed) ? parsed : defaultValue;
+	}
+
+	export function parseFloatSafe(value: any, defaultValue: number = 0): number {
+		if (isNumber(value)) return value;
+		const parsed = parseFloat(value);
+		return isNumber(parsed) ? parsed : defaultValue;
+	}
+
+	export function cloneUint8Array(source: Uint8Array | null, start?: number, end?: number): Uint8Array {
+		if (!isUint8Array(source)) return new Uint8Array(0);
+		const sliced = source.slice(start, end);
+		const bytes = Array.from(sliced);
+		return Uint8Array.from(bytes);
 	}
 	
 	export function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {

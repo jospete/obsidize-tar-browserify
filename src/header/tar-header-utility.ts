@@ -4,7 +4,6 @@ import { TarHeaderField } from './tar-header-field';
 import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
 
 export namespace TarHeaderUtility {
-
 	export const CHECKSUM_SEED_STRING = ''.padStart(TarHeaderField.headerChecksum.size, ' ');
 	export const CHECKSUM_SEED = TarUtility.generateChecksum(TarUtility.encodeString(CHECKSUM_SEED_STRING));
 	export const ALL_FIELDS = TarHeaderField.all();
@@ -38,5 +37,34 @@ export namespace TarHeaderUtility {
 			default:
 				return false;
 		}
+	}
+
+	/**
+	 * Searches the given input buffer for a USTAR header tar sector, starting at the given offset.
+	 * Returns -1 if no valid header sector is found.
+	 */
+	export function findNextUstarSectorOffset(
+		input: Uint8Array | null, 
+		offset: number = 0
+	): number {
+
+		const NOT_FOUND = -1;
+
+		if (!TarUtility.isUint8Array(input)) {
+			return NOT_FOUND;
+		}
+
+		const maxOffset = input.byteLength;
+		let nextOffset = Math.max(0, offset);
+
+		while (nextOffset < maxOffset && !isUstarSector(input, nextOffset)) {
+			nextOffset = TarUtility.advanceSectorOffset(nextOffset, maxOffset);
+		}
+
+		if (nextOffset < maxOffset) {
+			return nextOffset;
+		}
+
+		return NOT_FOUND;
 	}
 }

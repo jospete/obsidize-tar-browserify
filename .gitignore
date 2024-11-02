@@ -107,3 +107,7 @@ dist
 /dist
 /coverage
 /tmp
+
+# Git has a shit fit with super long file names,
+# so ignoring this generated output for now
+/dev-assets/pax-tgz-sample/unpacked/

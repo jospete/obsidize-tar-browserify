@@ -1,20 +1,18 @@
-import { MockAsyncUint8Array } from '../common/async-uint8array.mock';
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
-import { TarEntryUtility } from '../entry/tar-entry-utility';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderField } from '../header/tar-header-field';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
+import { TarHeaderUtility } from './tar-header-utility';
 
 const {
 	concatUint8Arrays,
-	isUint8Array
+	isUint8Array,
 } = TarUtility;
 
 const {
-	findNextUstarSectorOffset,
-	findNextUstarSectorAsync
-} = TarEntryUtility;
+	findNextUstarSectorOffset
+} = TarHeaderUtility;
 
 const {
 	FILE_MODE_DEFAULT,
@@ -23,9 +21,7 @@ const {
 } = Constants;
 
 describe('TarHeader', () => {
-
 	it('can be created with an explicit buffer and offset', () => {
-
 		const blockSize = HEADER_SIZE;
 		const offset = blockSize;
 		const bufferLength = blockSize * 2;
@@ -45,7 +41,6 @@ describe('TarHeader', () => {
 	});
 
 	describe('from()', () => {
-
 		it('returns the input value as-is if it is already a TarHeader instance', () => {
 			const header = new TarHeader();
 			const parsedHeader = TarHeader.from(header);
@@ -53,19 +48,8 @@ describe('TarHeader', () => {
 		});
 	});
 
-	describe('slice()', () => {
-
-		it('returns a blank instance if the given input is not a Uint8Array', () => {
-			const header = TarHeader.slice(null as any, 0);
-			expect(header).toBeTruthy();
-			expect(header.bytes.every(b => b === 0)).toBe(true);
-		});
-	});
-
 	describe('initialize()', () => {
-
 		it('applies default values if no custom object is given', () => {
-
 			const header = new TarHeader();
 
 			expect(header.deviceMajorNumber).toBe('');
@@ -78,7 +62,6 @@ describe('TarHeader', () => {
 		});
 
 		it('applies a combination of default values and custom ones if a custom object is given', () => {
-
 			const header = new TarHeader();
 			const fileName = 'test file.txt';
 
@@ -93,9 +76,7 @@ describe('TarHeader', () => {
 	});
 
 	describe('update()', () => {
-
 		it('applies given values to the backing buffer', () => {
-			
 			const fileMode = 511;
 			const header = new TarHeader();
 
@@ -107,7 +88,6 @@ describe('TarHeader', () => {
 		});
 
 		it('does nothing if the given attributes are malformed', () => {
-
 			const header = new TarHeader();
 			jest.spyOn(header, 'normalize');
 
@@ -123,7 +103,6 @@ describe('TarHeader', () => {
 	});
 
 	describe('normalize()', () => {
-
 		it('populates missing fields with sensible defaults', () => {
 			const header = TarHeader.seeded();
 			expect(header).not.toBeFalsy();
@@ -133,7 +112,6 @@ describe('TarHeader', () => {
 		});
 
 		it('consistently encodes and decodes the same header buffer', () => {
-
 			const header1 = TarHeader.from({
 				fileName: 'Test File.txt',
 				fileSize: 50000,
@@ -157,7 +135,6 @@ describe('TarHeader', () => {
 	});
 
 	describe('findNextUstarSectorOffset()', () => {
-
 		it('returns the offset of the next header sector', () => {
 			const testHeaderBuffer = TarHeader.serialize(null as any);
 			expect(findNextUstarSectorOffset(testHeaderBuffer)).toBe(0);
@@ -168,7 +145,6 @@ describe('TarHeader', () => {
 		});
 
 		it('uses the given offset when it is provided', () => {
-
 			const padLength = SECTOR_SIZE * 2;
 			const paddingBuffer = new Uint8Array(padLength);
 			const testHeaderBuffer = TarHeader.serialize(null as any);
@@ -186,13 +162,65 @@ describe('TarHeader', () => {
 		});
 	});
 
-	describe('findNextUstarSectorAsync()', () => {
+	describe('isPaxHeader()', () => {
+		it('should return true if the indicator is global extended type', () => {
+			const header = TarHeader.from({typeFlag: TarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER});
+			expect(header.isPaxHeader).toBe(true);
+			expect(header.isGlobalPaxHeader).toBe(true);
+			expect(header.isLocalPaxHeader).toBe(false);
+		});
 
-		it('returns null when malformed inputs are given', async () => {
-			expect(await findNextUstarSectorAsync(null as any)).toBe(null);
-			const mockBuffer = new Uint8Array(5);
-			const mockAsyncBuffer = new MockAsyncUint8Array(mockBuffer);
-			expect(await findNextUstarSectorAsync(mockAsyncBuffer, mockBuffer.byteLength)).toBe(null);
+		it('should return true if the indicator is local extended type', () => {
+			const header = TarHeader.from({typeFlag: TarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER});
+			expect(header.isPaxHeader).toBe(true);
+			expect(header.isGlobalPaxHeader).toBe(false);
+			expect(header.isLocalPaxHeader).toBe(true);
+		});
+
+		it('should return false if the indicator is not a pax header type', () => {
+			const header = TarHeader.from({typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE});
+			expect(header.isPaxHeader).toBe(false);
+			expect(header.isGlobalPaxHeader).toBe(false);
+			expect(header.isLocalPaxHeader).toBe(false);
+		});
+	});
+
+	describe('field setters', () => {
+		it('should overwrite the field value for the header', () => {
+			const header = TarHeader.seeded();
+
+			header.ustarFileName = 'potato.txt';
+			expect(header.ustarFileName).toBe('potato.txt');
+
+			header.ustarOwnerUserId = 1;
+			expect(header.ustarOwnerUserId).toBe(1);
+
+			header.ustarGroupUserId = 2;
+			expect(header.ustarGroupUserId).toBe(2);
+
+			header.ustarLinkedFileName = 'another potato.txt';
+			expect(header.ustarLinkedFileName).toBe('another potato.txt');
+
+			header.typeFlag = TarHeaderLinkIndicatorType.BLOCK_SPECIAL;
+			expect(header.typeFlag).toBe(TarHeaderLinkIndicatorType.BLOCK_SPECIAL);
+
+			header.ustarVersion = '22';
+			expect(header.ustarVersion).toBe('22');
+
+			header.ustarOwnerUserName = 'owner';
+			expect(header.ustarOwnerUserName).toBe('owner');
+
+			header.ustarOwnerGroupName = 'group';
+			expect(header.ustarOwnerGroupName).toBe('group');
+
+			header.deviceMajorNumber = '69';
+			expect(header.deviceMajorNumber).toBe('69');
+
+			header.deviceMinorNumber = '420';
+			expect(header.deviceMinorNumber).toBe('420');
+
+			header.fileNamePrefix = 'v3_final_this_time_for_sure';
+			expect(header.fileNamePrefix).toBe('v3_final_this_time_for_sure');
 		});
 	});
 });

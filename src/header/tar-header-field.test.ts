@@ -28,13 +28,11 @@ const {
 } = TarHeaderUtility;
 
 describe('TarHeaderField', () => {
-
 	it('is a collection of header metadata options to streamline tar header parsing', () => {
 		expect(fileName.type).toBe(TarHeaderFieldType.ASCII_PADDED_END);
 	});
 
 	describe('isUstarSector()', () => {
-
 		it('returns true if the buffer contains a ustar indicator', () => {
 			const testHeaderBuffer = TarHeader.serialize(null as any);
 			expect(isUstarSector(testHeaderBuffer)).toBe(true);
@@ -46,7 +44,6 @@ describe('TarHeaderField', () => {
 		});
 
 		it('allows for non-standard padding after ustar indicator header data', () => {
-
 			const targetOffset = ustarIndicator.offset;
 			const testHeaderBuffer = TarHeader.serialize(null as any);
 			const baseValue = USTAR_TAG;
@@ -71,7 +68,6 @@ describe('TarHeaderField', () => {
 	});
 
 	describe('slice()', () => {
-
 		it('defaults to offset zero when no offset is provided', () => {
 			const buffer = Uint8Array.from(range(0x1FF));
 			const headerField = fileSize;
@@ -83,7 +79,6 @@ describe('TarHeaderField', () => {
 	});
 
 	describe('serialize()', () => {
-
 		it('interprets the given value based on the given field metadata', () => {
 			const valueOctal = '777';
 			const value = parseInt(valueOctal, 8);
@@ -105,7 +100,6 @@ describe('TarHeaderField', () => {
 	});
 
 	describe('deserialize()', () => {
-
 		const defaultHeader = TarHeader.seeded();
 		const fields = TarHeaderField.all();
 
@@ -133,9 +127,7 @@ describe('TarHeaderField', () => {
 	});
 
 	describe('writeTo()', () => {
-
 		it('properly handles custom offsets', () => {
-
 			const buffer = new Uint8Array(Constants.HEADER_SIZE * 2);
 			const headerOffset = 42;
 			const valueOctal = '777';
@@ -149,7 +141,6 @@ describe('TarHeaderField', () => {
 		});
 
 		it('returns false if the content could not be injected into the output buffer', () => {
-
 			const buffer = new Uint8Array(10);
 			const headerOffset = 42;
 			const valueOctal = '777';
@@ -162,7 +153,6 @@ describe('TarHeaderField', () => {
 	});
 
 	describe('calculateChecksum()', () => {
-
 		it('returns 0 if the input buffer is not valid', () => {
 			expect(fileMode.calculateChecksum(null as any)).toBe(0);
 		});

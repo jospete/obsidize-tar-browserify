@@ -13,6 +13,8 @@ const {
 	removeTrailingZeros,
 	roundUpSectorOffset,
 	getSectorOffsetDelta,
+	parseFloatSafe,
+	cloneUint8Array
 } = TarUtility;
 
 const {
@@ -23,9 +25,7 @@ const staticDateTime = 1632419077000;
 const staticDateTimeEncoded = 1632419077;
 
 describe('TarUtility', () => {
-
 	describe('parseIntSafe', () => {
-
 		it('includes a radix parameter to match the native parseInt() api', () => {
 			expect(parseIntSafe('1000', 2)).toBe(8);
 		});
@@ -44,7 +44,6 @@ describe('TarUtility', () => {
 	});
 
 	describe('removeTrailingZeros', () => {
-
 		it('returns the given value ithout any NULL bytes at the end of it', () => {
 			expect(removeTrailingZeros('test\u0000\u0000\u0000\u0000')).toBe('test');
 		});
@@ -64,7 +63,6 @@ describe('TarUtility', () => {
 	});
 
 	describe('roundUpSectorOffset()', () => {
-
 		it('advances the offset to the next sector block starting index', () => {
 			expect(roundUpSectorOffset(SECTOR_SIZE - 2)).toBe(SECTOR_SIZE);
 			expect(roundUpSectorOffset(SECTOR_SIZE + 1)).toBe(SECTOR_SIZE * 2);
@@ -77,7 +75,6 @@ describe('TarUtility', () => {
 	});
 
 	describe('advanceSectorOffsetUnclamped()', () => {
-
 		it('advances the offset to the next sector block starting index', () => {
 			expect(advanceSectorOffsetUnclamped(SECTOR_SIZE - 2)).toBe(SECTOR_SIZE);
 			expect(advanceSectorOffsetUnclamped(SECTOR_SIZE + 1)).toBe(SECTOR_SIZE * 2);
@@ -90,7 +87,6 @@ describe('TarUtility', () => {
 	});
 
 	describe('getSectorOffsetDelta()', () => {
-
 		it('returns the remaining bytes between the given offset and what would be the next block-sized offset', () => {
 			expect(getSectorOffsetDelta(0)).toBe(0);
 			expect(getSectorOffsetDelta(SECTOR_SIZE)).toBe(0);
@@ -100,21 +96,18 @@ describe('TarUtility', () => {
 	});
 
 	describe('decodeString()', () => {
-
 		it('returns an empty string when the given value is not a valid Uint8Array', () => {
 			expect(decodeString(null as any)).toBe('');
 		});
 	});
 
 	describe('generateChecksum()', () => {
-
 		it('returns zero when the given value is not a valid Uint8Array', () => {
 			expect(generateChecksum(null as any)).toBe(0);
 		});
 	});
 
 	describe('concatUint8Arrays()', () => {
-
 		it('returns the second value when the first is not a Uint8Array', () => {
 			const a: any = null;
 			const b = new Uint8Array(5);
@@ -137,7 +130,6 @@ describe('TarUtility', () => {
 	});
 
 	describe('decodeTimestamp()', () => {
-
 		it('converts the encoded value to a valid date time', () => {
 			expect(decodeTimestamp(staticDateTimeEncoded)).toBe(staticDateTime);
 		});
@@ -148,7 +140,6 @@ describe('TarUtility', () => {
 	});
 
 	describe('encodeTimestamp()', () => {
-
 		it('encodes the value to a serializable mtime', () => {
 			expect(encodeTimestamp(staticDateTime)).toBe(staticDateTimeEncoded);
 		});
@@ -159,7 +150,6 @@ describe('TarUtility', () => {
 	});
 
 	describe('parseIntOctal()', () => {
-
 		it('translates the given octal string into a number', () => {
 			expect(parseIntOctal('777')).toBe(parseInt('777', 8));
 		});
@@ -170,6 +160,37 @@ describe('TarUtility', () => {
 
 		it('returns a default value when the given input cannot be parsed to a number', () => {
 			expect(parseIntOctal(null as any)).toBe(0);
+		});
+	});
+
+	describe('parseFloatSafe()', () => {
+		it('should properly parse a float value from a string', () => {
+			expect(parseFloatSafe('123.123')).toBe(123.123);
+		});
+
+		it('should return the given default value on parse error', () => {
+			expect(parseFloatSafe('fff123.123', 42.69)).toBe(42.69);
+		});
+
+		it('should return the given value as-is if it is already a number', () => {
+			expect(parseFloatSafe(5)).toBe(5);
+			expect(parseFloatSafe(42.69)).toBe(42.69);
+		});
+	});
+
+	describe('cloneUint8Array()', () => {
+		it('should make a completely isolated deep copy of the given input', () => {
+			const input = Uint8Array.from([1, 2, 3, 4]);
+			const cloned = cloneUint8Array(input);
+			input[0] = 5;
+			expect(cloned).not.toBe(input);
+			expect(cloned).not.toEqual(input);
+			expect(input[0]).toBe(5);
+			expect(cloned[0]).toBe(1);
+		});
+
+		it('return an empty instance if the input is not a valid Uint8Array', () => {
+			expect(cloneUint8Array(null)).toEqual(new Uint8Array(0));
 		});
 	});
 });

@@ -3,21 +3,11 @@
 import { mkdirpSync, readFileSync, writeFileSync } from 'fs-extra';
 import { globby } from 'globby';
 import { basename, dirname, resolve } from 'path';
-import { Stream } from 'stream';
-import tar from 'tar';
+import { extract } from 'tar';
 
-async function crawlTarAssets(files: string[]): Promise<string[][]> {
-	return Promise.all(files.map(f => globby(f)));
+async function crawlTarAssets(cwd: string, files: string[]): Promise<string[][]> {
+	return Promise.all(files.map(f => globby(f, {cwd, dot: true})));
 }
-
-async function stream2buffer(stream: Stream): Promise<Buffer> {
-    return new Promise < Buffer > ((resolve, reject) => {
-        const _buf: any[] = [];
-        stream.on('data', chunk => _buf.push(chunk));
-        stream.on('end', () => resolve(Buffer.concat(_buf)));
-        stream.on('error', err => reject(`error converting stream - ${err}`));
-    });
-} 
 
 function getProjectDirectoryName() {
 	return basename(dirname(resolve(__filename, '..')));
@@ -60,9 +50,10 @@ export const tarballSampleBase64 = '${tarballSampleBase64}';
 `;
 }
 
-async function exportTestAssets(tarballContent: Buffer, files: string[], outputFileName: string) {
+async function exportTestAssets(tarballContent: Buffer, files: string[], outputFileName: string, pathPrefix: string) {
 	const outputPath = `./src/test/generated/${outputFileName}`;
-	const fileStructures = await crawlTarAssets(files);
+	const fileStructures = await crawlTarAssets(pathPrefix, files);
+	console.log(`exportTestAssets -> fileStructures = `, fileStructures);
 	const tarballSampleBase64 = tarballContent.toString('base64');
 	const totalFileCount = fileStructures.reduce((count, globPaths) => count + globPaths.length, 0);
 	const output = createOutputContent({ totalFileCount, fileStructures, tarballSampleBase64 });
@@ -72,19 +63,19 @@ async function exportTestAssets(tarballContent: Buffer, files: string[], outputF
 }
 
 async function generateTarSampleOne() {
-	const files = ['./dev-assets/tarball-sample/unpacked/tar-root'];
-	const tarballReadable = tar.create({ gzip: false }, files);
-	const tarballContent = await stream2buffer(tarballReadable);
-	await exportTestAssets(tarballContent, files, 'tarball-test-content.ts');
+	const tarFilePath = './dev-assets/tarball-sample/packed/node-tar-sample.tar';
+	const unpackedPath = './dev-assets/tarball-sample/unpacked';
+	const tarballContent = readFileSync(tarFilePath);
+	await exportTestAssets(tarballContent, ['**/*'], 'tarball-test-content.ts', unpackedPath);
 }
 
 async function generateTarSampleTwo() {
 	const tarFilePath = './dev-assets/pax-tgz-sample/packed/test.tar';
-	const unpackedPath = './tmp/pax-tar-sample';
+	const unpackedPath = './dev-assets/pax-tgz-sample/unpacked';
 	const tarballContent = readFileSync(tarFilePath);
 	mkdirpSync(unpackedPath);
-	await tar.extract({file: tarFilePath, cwd: unpackedPath});
-	await exportTestAssets(tarballContent, [unpackedPath], 'pax-header-test-content.ts');
+	await extract({file: tarFilePath, cwd: unpackedPath});
+	await exportTestAssets(tarballContent, ['**/*'], 'pax-header-test-content.ts', unpackedPath);
 }
 
 async function main() {

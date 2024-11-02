@@ -30,9 +30,12 @@
 		"bump": "run-s version:patch version:publish",
 		"generate:tar:test:content": "tsx ./scripts/generate-tarball-test-content.ts",
 		"generate:tar:json:postbuild": "tsx ./scripts/generate-tar-sample-json.ts",
+		"generate:tar:json:postbuild:pax": "tsx ./scripts/generate-tar-sample-json.ts ./dev-assets/pax-tgz-sample/packed/test.tar",
 		"generate:tar:json": "run-s build generate:tar:json:postbuild",
+		"generate:tar:json:pax": "run-s build generate:tar:json:postbuild:pax",
 		"generate:tar:output:postbuild": "tsx ./scripts/generate-tar-sample-file.ts",
-		"generate:tar:output": "run-s build generate:tar:output:postbuild"
+		"generate:tar:output": "run-s build generate:tar:output:postbuild",
+		"untar:pax:sample": "cd ./dev-assets/pax-tgz-sample/packed && tsx ../../../scripts/untar.ts ./test.tar ../unpacked && cd ../../../"
 	},
 	"repository": {
 		"type": "git",
@@ -77,7 +80,7 @@
 		"open-cli": "7.1.0",
 		"pako": "2.1.0",
 		"rimraf": "4.1.1",
-		"tar": "6.1.13",
+		"tar": "7.4.3",
 		"ts-loader": "9.4.2",
 		"tsx": "4.19.2",
 		"typedoc": "0.23.24",
