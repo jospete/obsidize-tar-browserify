@@ -1,7 +1,9 @@
-import { AsyncUint8ArrayLike } from '../common/async-uint8-array';
+import { ArchiveContext } from '../common/archive-context';
+import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array';
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarEntry } from '../entry/tar-entry';
+import { TarHeader } from '../header/tar-header';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
 import { range } from '../test/test-util';
 
@@ -13,14 +15,6 @@ describe('TarEntry', () => {
 		const directory = TarEntry.from({ typeFlag: TarHeaderLinkIndicatorType.DIRECTORY });
 		expect(TarEntry.isTarEntry(directory)).toBe(true);
 		expect(directory.isDirectory()).toBe(true);
-	});
-
-	it('can safely be stringified', () => {
-		const rawEntry = new TarEntry();
-		expect(() => JSON.stringify(rawEntry)).not.toThrow();
-
-		const fileWithContent = TarEntry.from({}, Uint8Array.from(range(100)));
-		expect(() => JSON.stringify(fileWithContent)).not.toThrow();
 	});
 
 	it('implements the TarHeader interface with conveinence accessors', () => {
@@ -45,6 +39,26 @@ describe('TarEntry', () => {
 		expect(entry.fileNamePrefix = 'sample file prefix').toBe(entry.fileNamePrefix);
 
 		expect(entry.typeFlag = TarHeaderLinkIndicatorType.HARD_LINK).toBe(entry.typeFlag);
+	});
+
+	describe('toJSON()', () => {
+		it('can safely be stringified', () => {
+			const rawEntry = new TarEntry();
+			expect(() => JSON.stringify(rawEntry)).not.toThrow();
+	
+			const fileWithContent = TarEntry.from({}, Uint8Array.from(range(100)));
+			expect(() => JSON.stringify(fileWithContent)).not.toThrow();
+		});
+
+		it('should indicate when an entry is a directory', () => {
+			const entry = TarEntry.from({typeFlag: TarHeaderLinkIndicatorType.DIRECTORY}, Uint8Array.from(range(100)));
+			expect(entry.toJSON().type).toBe('directory');
+		});
+
+		it('should indicate when an entry is not a directory or file', () => {
+			const entry = TarEntry.from({typeFlag: TarHeaderLinkIndicatorType.FIFO}, Uint8Array.from(range(100)));
+			expect(entry.toJSON().type).toBe('complex');
+		});
 	});
 
 	describe('readContentFrom()', () => {
@@ -104,6 +118,44 @@ describe('TarEntry', () => {
 			const entry = TarEntry.from({ fileName: 'some-directory', typeFlag: TarHeaderLinkIndicatorType.DIRECTORY });
 			const bytes = entry.toUint8Array();
 			expect(bytes.byteLength).toBe(Constants.HEADER_SIZE);
+		});
+
+		it('should include the content value if the entry is a file and the content exists on the entry instance', () => {
+			const entry = TarEntry.from({
+				fileName: 'some-directory',
+				typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
+			}, Uint8Array.from([1, 2, 3, 4]));
+			const bytes = entry.toUint8Array();
+			expect(entry.sectorByteLength).toBe(Constants.SECTOR_SIZE * 2);
+			expect(bytes.byteLength).toBe(entry.sectorByteLength);
+		});
+	});
+
+	describe('bufferEndIndex', () => {
+		it('should be the absolute position in the underlying octet stream that this entry was parsed from', () => {
+			const entryContent = Uint8Array.from([1, 2, 3, 4]);
+			const entryHeader = TarHeader.from({
+				fileName: 'some-directory',
+				typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
+			});
+			const entry = new TarEntry({
+				header: entryHeader,
+				content: entryContent,
+				offset: 42
+			});
+			expect(entry.bufferStartIndex).toBe(42);
+			expect(entry.bufferEndIndex).toBe(entry.bufferStartIndex + (Constants.SECTOR_SIZE * 2));
+		});
+	});
+
+	describe('context', () => {
+		it('should be the context interface provided to the constructor', () => {
+			const context: ArchiveContext = {
+				source: new InMemoryAsyncUint8Array(new Uint8Array(0)),
+				globalPaxHeaders: []
+			};
+			const entry = new TarEntry({ context });
+			expect(entry.context).toBe(context);
 		});
 	});
 });
