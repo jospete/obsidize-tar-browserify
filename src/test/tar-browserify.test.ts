@@ -6,9 +6,66 @@ import {
 	tarballSampleBase64,
 	totalFileCount,
 } from './generated/tarball-test-content';
+
+import {
+	fileStructures as PAX_fileStructures,
+	tarballSampleBase64 as PAX_tarballSampleBase64
+} from './generated/pax-header-test-content';
 import { base64ToUint8Array } from './test-util';
 
 const { isUint8Array } = TarUtility;
+
+const testGeneratedContent = async (base64Str: string, expectedStructures: string[][]) => {
+	const tarballUint8 = base64ToUint8Array(base64Str);
+	const foundFiles = new Set<TarEntry>();
+	let files = await Archive.extract(tarballUint8);
+	files = files.filter((e) => e.isFile());
+
+	const fileNames = files.map((f) => f.fileName);
+	const fileSet = new Set(files);
+	const fileNamesDump = JSON.stringify(fileNames, null, '\t');
+
+	for (const subStructure of expectedStructures) {
+	  for (const path of subStructure) {
+		const target = files.find(
+		  (f) => f.fileName.endsWith(path) && fileSet.has(f)
+		);
+
+		if (!target) {
+		  throw new Error(
+			`path "${path}" not found in files: ${fileNamesDump}`
+		  );
+		}
+
+		expect(target).toBeDefined();
+
+		const targetAlreadyFound = foundFiles.has(target);
+
+		// Force an assertion error so we know which path failed
+		if (targetAlreadyFound) {
+		  throw new Error(
+			`found duplicate target "${path}" not found in files: ${fileNamesDump}`
+		  );
+		}
+
+		expect(targetAlreadyFound).toBe(false);
+
+		foundFiles.add(target);
+		fileSet.delete(target);
+	  }
+	}
+
+	if (fileSet.size > 0) {
+	  const missingFileNames = Array.from(fileSet).map((f) => f.fileName);
+	  fail(
+		`some files were not accounted for: ${JSON.stringify(
+		  missingFileNames,
+		  null,
+		  '\t'
+		)}`
+	  );
+	}
+};
 
 describe('Global Tests', () => {
   describe('Example Usage', () => {
@@ -37,56 +94,12 @@ describe('Global Tests', () => {
 
   describe('General Usage', () => {
     it('can parse tarballs created by the node-tar module', async () => {
-      const tarballUint8 = base64ToUint8Array(tarballSampleBase64);
-      const foundFiles = new Set<TarEntry>();
-	  let files = await Archive.extract(tarballUint8);
-	  files = files.filter((e) => e.isFile());
-
-      const fileNames = files.map((f) => f.fileName);
-      const fileSet = new Set(files);
-      const fileNamesDump = JSON.stringify(fileNames, null, '\t');
-
-      for (const subStructure of fileStructures) {
-        for (const path of subStructure) {
-          const target = files.find(
-            (f) => f.fileName.endsWith(path) && fileSet.has(f)
-          );
-
-          if (!target) {
-            throw new Error(
-              `path "${path}" not found in files: ${fileNamesDump}`
-            );
-          }
-
-          expect(target).toBeDefined();
-
-          const targetAlreadyFound = foundFiles.has(target);
-
-          // Force an assertion error so we know which path failed
-          if (targetAlreadyFound) {
-            throw new Error(
-              `found duplicate target "${path}" not found in files: ${fileNamesDump}`
-            );
-          }
-
-          expect(targetAlreadyFound).toBe(false);
-
-          foundFiles.add(target);
-          fileSet.delete(target);
-        }
-      }
-
-      if (fileSet.size > 0) {
-        const missingFileNames = Array.from(fileSet).map((f) => f.fileName);
-        fail(
-          `some files were not accounted for: ${JSON.stringify(
-            missingFileNames,
-            null,
-            '\t'
-          )}`
-        );
-      }
+		await testGeneratedContent(tarballSampleBase64, fileStructures);
     });
+
+	it('should be able to parse pax headers', async () => {
+		await testGeneratedContent(PAX_tarballSampleBase64, PAX_fileStructures);
+	});
   });
 
   describe('README Examples', () => {
