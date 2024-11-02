@@ -192,17 +192,18 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 			return null;
 		}
 
-		// Capture global pax header and advance to next sector
-		if (header.isGlobalPaxHeader) {
-			const globalHeader = PaxTarHeader.from(this.mBufferCache!, nextOffset);
-			this.mGlobalPaxHeaders.push(globalHeader);
-			nextOffset = TarUtility.advanceSectorOffset(globalHeader.endIndex, this.mBufferCache!.byteLength);
+		if (header.isPaxHeader) {
+			const paxHeader = PaxTarHeader.from(this.mBufferCache!, nextOffset);
+			// original header contains the size for the pax header
+			nextOffset = TarUtility.advanceSectorOffset(nextOffset + header.ustarFileSize, this.mBufferCache!.byteLength);
 
-		// Capture local pax header and advance to next sector
-		} else if (header.isLocalPaxHeader) {
-			const localHeader = PaxTarHeader.from(this.mBufferCache!, nextOffset);
-			header.pax = localHeader;
-			nextOffset = TarUtility.advanceSectorOffset(localHeader.endIndex, this.mBufferCache!.byteLength);
+			// Capture global pax header in top-level context (e.g. this instance)
+			if (header.isGlobalPaxHeader) {
+				this.mGlobalPaxHeaders.push(paxHeader);
+			// Capture local pax header onto the header that declared it
+			} else {
+				header.pax = paxHeader;
+			}
 		}
 
 		return {header, headerOffset, contentOffset: nextOffset};

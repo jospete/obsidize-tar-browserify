@@ -189,20 +189,17 @@ describe('TarHeader', () => {
 		it('should overwrite the field value for the header', () => {
 			const header = TarHeader.seeded();
 
-			header.fileName = 'potato.txt';
-			expect(header.fileName).toBe('potato.txt');
+			header.ustarFileName = 'potato.txt';
+			expect(header.ustarFileName).toBe('potato.txt');
 
-			header.ownerUserId = 1;
-			expect(header.ownerUserId).toBe(1);
+			header.ustarOwnerUserId = 1;
+			expect(header.ustarOwnerUserId).toBe(1);
 
-			header.groupUserId = 2;
-			expect(header.groupUserId).toBe(2);
+			header.ustarGroupUserId = 2;
+			expect(header.ustarGroupUserId).toBe(2);
 
-			header.groupUserId = 3;
-			expect(header.groupUserId).toBe(3);
-
-			header.linkedFileName = 'another potato.txt';
-			expect(header.linkedFileName).toBe('another potato.txt');
+			header.ustarLinkedFileName = 'another potato.txt';
+			expect(header.ustarLinkedFileName).toBe('another potato.txt');
 
 			header.typeFlag = TarHeaderLinkIndicatorType.BLOCK_SPECIAL;
 			expect(header.typeFlag).toBe(TarHeaderLinkIndicatorType.BLOCK_SPECIAL);
@@ -210,11 +207,11 @@ describe('TarHeader', () => {
 			header.ustarVersion = '22';
 			expect(header.ustarVersion).toBe('22');
 
-			header.ownerUserName = 'owner';
-			expect(header.ownerUserName).toBe('owner');
+			header.ustarOwnerUserName = 'owner';
+			expect(header.ustarOwnerUserName).toBe('owner');
 
-			header.ownerGroupName = 'group';
-			expect(header.ownerGroupName).toBe('group');
+			header.ustarOwnerGroupName = 'group';
+			expect(header.ustarOwnerGroupName).toBe('group');
 
 			header.deviceMajorNumber = '69';
 			expect(header.deviceMajorNumber).toBe('69');

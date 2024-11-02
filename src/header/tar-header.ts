@@ -1,6 +1,7 @@
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { PaxTarHeader } from '../pax/pax-tar-header';
+import { PaxTarHeaderKey } from '../pax/pax-tar-header-key';
 import { TarHeaderField } from './tar-header-field';
 import { TarHeaderLike } from './tar-header-like';
 import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
@@ -83,10 +84,14 @@ export class TarHeader implements TarHeaderLike {
 	}
 
 	public get fileName(): string {
+		return this.pax?.has(PaxTarHeaderKey.PATH) ? this.pax.path! : this.ustarFileName;
+	}
+
+	public get ustarFileName(): string {
 		return TarHeaderField.fileName.readFrom(this.bytes, this.offset)!;
 	}
 
-	public set fileName(value: string) {
+	public set ustarFileName(value: string) {
 		TarHeaderField.fileName.writeTo(this.bytes, this.offset, value);
 	}
 
@@ -99,34 +104,50 @@ export class TarHeader implements TarHeaderLike {
 	}
 
 	public get ownerUserId(): number {
+		return this.pax?.has(PaxTarHeaderKey.USER_ID) ? this.pax.userId! : this.ustarOwnerUserId;
+	}
+
+	public get ustarOwnerUserId(): number {
 		return TarHeaderField.ownerUserId.readFrom(this.bytes, this.offset)!;
 	}
 
-	public set ownerUserId(value: number) {
+	public set ustarOwnerUserId(value: number) {
 		TarHeaderField.ownerUserId.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get groupUserId(): number {
+		return this.pax?.has(PaxTarHeaderKey.GROUP_ID) ? this.pax.groupId : this.ustarGroupUserId;
+	}
+
+	public get ustarGroupUserId(): number {
 		return TarHeaderField.groupUserId.readFrom(this.bytes, this.offset)!;
 	}
 
-	public set groupUserId(value: number) {
+	public set ustarGroupUserId(value: number) {
 		TarHeaderField.groupUserId.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get fileSize(): number {
+		return this.pax?.has(PaxTarHeaderKey.SIZE) ? this.pax.size! : this.ustarFileSize;
+	}
+
+	public get ustarFileSize(): number {
 		return TarHeaderField.fileSize.readFrom(this.bytes, this.offset)!;
 	}
 
-	public set fileSize(value: number) {
+	public set ustarFileSize(value: number) {
 		TarHeaderField.fileSize.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get lastModified(): number {
+		return this.pax?.has(PaxTarHeaderKey.MODIFICATION_TIME) ? this.pax.modificationTime! : this.ustarLastModified;
+	}
+
+	public get ustarLastModified(): number {
 		return TarHeaderField.lastModified.readFrom(this.bytes, this.offset)!;
 	}
 
-	public set lastModified(value: number) {
+	public set ustarLastModified(value: number) {
 		TarHeaderField.lastModified.writeTo(this.bytes, this.offset, value);
 	}
 
@@ -139,10 +160,14 @@ export class TarHeader implements TarHeaderLike {
 	}
 
 	public get linkedFileName(): string {
+		return this.pax?.has(PaxTarHeaderKey.LINK_PATH) ? this.pax.linkPath! : this.ustarLinkedFileName;
+	}
+
+	public get ustarLinkedFileName(): string {
 		return TarHeaderField.linkedFileName.readFrom(this.bytes, this.offset)!;
 	}
 
-	public set linkedFileName(value: string) {
+	public set ustarLinkedFileName(value: string) {
 		TarHeaderField.linkedFileName.writeTo(this.bytes, this.offset, value);
 	}
 
@@ -168,18 +193,26 @@ export class TarHeader implements TarHeaderLike {
 	}
 
 	public get ownerUserName(): string {
+		return this.pax?.has(PaxTarHeaderKey.USER_NAME) ? this.pax.userName! : this.ustarOwnerUserName;
+	}
+
+	public get ustarOwnerUserName(): string {
 		return TarHeaderField.ownerUserName.readFrom(this.bytes, this.offset)!;
 	}
 
-	public set ownerUserName(value: string) {
+	public set ustarOwnerUserName(value: string) {
 		TarHeaderField.ownerUserName.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get ownerGroupName(): string {
+		return this.pax?.has(PaxTarHeaderKey.GROUP_NAME) ? this.pax.groupName! : this.ustarOwnerGroupName;
+	}
+
+	public get ustarOwnerGroupName(): string {
 		return TarHeaderField.ownerGroupName.readFrom(this.bytes, this.offset)!;
 	}
 
-	public set ownerGroupName(value: string) {
+	public set ustarOwnerGroupName(value: string) {
 		TarHeaderField.ownerGroupName.writeTo(this.bytes, this.offset, value);
 	}
 
@@ -308,8 +341,7 @@ export class TarHeader implements TarHeaderLike {
 	 * @returns `this` for operation chaining
 	 */
 	public normalize(): this {
-
-		this.lastModified = TarUtility.sanitizeTimestamp(this.lastModified!);
+		this.ustarLastModified = TarUtility.sanitizeTimestamp(this.ustarLastModified!);
 		let checksum = TarHeaderUtility.CHECKSUM_SEED;
 
 		for (const field of TarHeaderUtility.CHECKSUM_FIELDS) {
@@ -326,7 +358,6 @@ export class TarHeader implements TarHeaderLike {
 	 * @returns `this` for operation chaining
 	 */
 	public update(attrs: TarHeaderLike | Partial<TarHeaderLike>): this {
-
 		if (!attrs) {
 			return this;
 		}

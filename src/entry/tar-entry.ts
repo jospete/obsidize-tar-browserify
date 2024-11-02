@@ -77,8 +77,8 @@ export class TarEntry implements TarHeaderLike {
 		const contentLength = TarUtility.sizeofUint8Array(content);
 
 		// The fileSize field metadata must always be in sync between the content and the header
-		if (header.fileSize !== contentLength && contentLength > 0) {
-			header.fileSize = contentLength;
+		if (!header.pax && header.fileSize !== contentLength && contentLength > 0) {
+			header.ustarFileSize = contentLength;
 			header.normalize();
 		}
 
