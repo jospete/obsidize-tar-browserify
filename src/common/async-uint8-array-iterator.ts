@@ -25,6 +25,24 @@ export interface AsyncUint8ArrayBlock {
  */
 export type AsyncUint8ArrayIteratorLike = AsyncIterableIterator<AsyncUint8ArrayBlock>;
 
+export interface AsyncUint8ArrayIteratorOptions {
+	/**
+	 * Custom block size to read chunks in.
+	 * Must be a multiple of `SECTOR_SIZE`.
+	 * Cannot be smaller than `SECTOR_SIZE`.
+	 */
+	blockSize: number;
+}
+
+function sanitizeOptions(options: Partial<AsyncUint8ArrayIteratorOptions>): AsyncUint8ArrayIteratorOptions {
+	return Object.assign({
+		blockSize: Constants.SECTOR_SIZE * 16 // 8Kb
+	}, options);
+}
+
+const MIN_BLOCK_SIZE = Constants.SECTOR_SIZE;
+const MAX_BLOCK_SIZE = Constants.SECTOR_SIZE * 10000;
+
 /**
  * Generalized abstraction for pulling in raw octet data, whether its
  * over the network or from disk or in memory.
@@ -34,13 +52,18 @@ export type AsyncUint8ArrayIteratorLike = AsyncIterableIterator<AsyncUint8ArrayB
  * the same streaming interface.
  */
 export class AsyncUint8ArrayIterator implements AsyncUint8ArrayIteratorLike {
-	private readonly blockSize = Constants.HEADER_SIZE * 16; // 8Kb
+	private readonly blockSize: number;
 	private mByteLength: number | undefined;
 	private mOffset: number = 0;
 
 	constructor(
-		private readonly mInput: AsyncUint8ArrayLike
+		private readonly mInput: AsyncUint8ArrayLike,
+		options: AsyncUint8ArrayIteratorOptions | Partial<AsyncUint8ArrayIteratorOptions> = {}
 	) {
+		let {blockSize} = sanitizeOptions(options);
+		blockSize = TarUtility.clamp(blockSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
+		blockSize = TarUtility.roundUpSectorOffset(blockSize);
+ 		this.blockSize = blockSize;
 	}
 
 	[Symbol.asyncIterator](): AsyncUint8ArrayIteratorLike {
