@@ -75,7 +75,7 @@ async function exportTestAssets(tarballContent: Buffer, files: string[], outputF
 async function generateTarSampleOne() {
 	const files = ['./dev-assets/tarball-sample/unpacked/tar-root'];
 	const tarOutputFile = './tmp/test-node-tar.tar';
-	create({ gzip: false, file: tarOutputFile, sync: true, strict: true,  }, files);
+	create({ gzip: false, file: tarOutputFile, sync: true, strict: true, noMtime: true }, files);
 	const tarballContent = readFileSync(tarOutputFile);
 	await exportTestAssets(tarballContent, files, 'tarball-test-content.ts');
 }
