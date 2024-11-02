@@ -75,6 +75,22 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		this.mOffset = 0;
 	}
 
+	private async tryRequireBufferSize(size: number): Promise<boolean> {
+		const buffer = await this.requireBufferSize(size);
+		return buffer !== null;
+	}
+
+	private async requireBufferSize(size: number): Promise<Uint8Array | null> {
+		while (!this.mBufferCache || this.mBufferCache!.byteLength < size) {
+			if (!(await this.loadNextChunk())) {
+				this.clearBufferCache();
+				return null;
+			}
+		}
+
+		return this.mBufferCache;
+	}
+
 	private async loadNextChunk(): Promise<boolean> {
 		const nextChunk = await this.bufferIterator.tryNext();
 		
@@ -105,94 +121,72 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		const contentEnd = contentOffset + header.fileSize;
 		const offset = headerOffset;
 
-		let content: Uint8Array | null = null;
-		let buffer = this.mBufferCache;
-
-		// If the buffer source is in-memory already, just read the content immediately
-		if (this.mHasSyncInput) {
-			while (buffer!.byteLength < contentEnd) {
-				if (!(await this.loadNextChunk())) {
-					this.clearBufferCache();
-					return null;
-				}
-			}
-
-			content = buffer!.slice(contentOffset, contentEnd);
-		}
-
 		// `contentEnd` may not be an even division of SECTOR_SIZE, so
 		// round up to the nearest sector start point after the content end.
 		const nextSectorStart = TarUtility.roundUpSectorOffset(contentEnd);
 
-		if ((nextSectorStart + Constants.SECTOR_SIZE) <= buffer!.byteLength) {
-			this.mBufferCache = buffer!.slice(nextSectorStart);
+		let content: Uint8Array | null = null;
+
+		// If the buffer source is in-memory already, just read the content immediately
+		if (this.mHasSyncInput) {
+			if (!(await this.tryRequireBufferSize(nextSectorStart))) {
+				return null;
+			}
+
+			content = this.mBufferCache!.slice(contentOffset, contentEnd);
+		}
+
+		if ((nextSectorStart + Constants.SECTOR_SIZE) <= this.mBufferCache!.byteLength) {
+			this.mBufferCache = this.mBufferCache!.slice(nextSectorStart);
 			this.mOffset = 0;
 
 		} else {
-			this.clearBufferCache();
+			this.mOffset = nextSectorStart;
 		}
 
 		return new TarEntry({header, offset, content, context});
 	}
 
 	private async tryParseNextHeader(): Promise<TarHeaderParseResult | null> {
-		let buffer = this.mBufferCache;
-
-		// Initialize the buffer if we don't have anything loaded
-		if (!buffer) {
-			if (!(await this.loadNextChunk())) {
-				this.clearBufferCache();
-				return null;
-			}
-
-			buffer = this.mBufferCache;
+		if (!(await this.tryRequireBufferSize(Constants.HEADER_SIZE))) {
+			return null;
 		}
 
-		let ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(buffer, this.mOffset);
+		let ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(this.mBufferCache, this.mOffset);
 
 		// Find next ustar marker
-		while (ustarOffset < 0 && buffer!.byteLength < MAX_LOADED_BYTES && (await this.loadNextChunk())) {
-			ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(buffer, ustarOffset);
+		while (ustarOffset < 0 && this.mBufferCache!.byteLength < MAX_LOADED_BYTES && (await this.loadNextChunk())) {
+			ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(this.mBufferCache, ustarOffset);
 		}
 
+		// No header marker found and we ran out of bytes to load, bomb out
 		if (ustarOffset < 0) {
 			this.clearBufferCache();
 			return null;
 		}
 
-		// load chunks until we have a full header block
-		while ((ustarOffset + Constants.HEADER_SIZE) > buffer!.byteLength) {
-			if (!(await this.loadNextChunk())) {
-				this.clearBufferCache();
-				return null;
-			}
-		}
-
 		// Construct Header
 		const headerOffset = ustarOffset;
-		const headerBuffer = buffer!.slice(ustarOffset, ustarOffset + Constants.HEADER_SIZE);
+		const headerBuffer = this.mBufferCache!.slice(ustarOffset, ustarOffset + Constants.HEADER_SIZE);
 		const header = new TarHeader(headerBuffer);
 
 		// Advance cursor to process potential PAX header or entry content
-		let nextOffset = TarUtility.advanceSectorOffset(ustarOffset, buffer!.byteLength);
+		let nextOffset = TarUtility.advanceSectorOffset(ustarOffset, this.mBufferCache!.byteLength);
 
-		// load chunks until we have a full PAX header block
-		while ((nextOffset + Constants.HEADER_SIZE) > buffer!.byteLength) {
-			if (!(await this.loadNextChunk())) {
-				this.clearBufferCache();
-				return null;
-			}
+		// Ensure we have enough buffered for potential pax header
+		if (!(await this.tryRequireBufferSize(nextOffset + Constants.HEADER_SIZE))) {
+			return null;
 		}
 
-		// Capture global header and advance to next sector
+		// Capture global pax header and advance to next sector
 		if (header.isGlobalPaxHeader) {
-			this.mGlobalPaxHeaders.push(PaxTarHeader.from(buffer!, nextOffset));
-			nextOffset = TarUtility.advanceSectorOffset(ustarOffset, buffer!.byteLength);
+			this.mGlobalPaxHeaders.push(PaxTarHeader.from(this.mBufferCache!, nextOffset));
+			nextOffset = TarUtility.advanceSectorOffset(ustarOffset, this.mBufferCache!.byteLength);
 
-		// Capture local header and advance to next sector
+		// Capture local pax header and advance to next sector
 		} else if (header.isLocalPaxHeader) {
-			header.pax = PaxTarHeader.from(buffer!, nextOffset);
-			nextOffset = TarUtility.advanceSectorOffset(ustarOffset, buffer!.byteLength);
+			header.pax = PaxTarHeader.from(this.mBufferCache!, nextOffset);
+			nextOffset = TarUtility.advanceSectorOffset(ustarOffset, this.mBufferCache!.byteLength);
 		}
 
 		return {header, headerOffset, contentOffset: nextOffset};
