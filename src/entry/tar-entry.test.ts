@@ -16,15 +16,15 @@ describe('TarEntry', () => {
 	});
 
 	it('can safely be stringified', () => {
-		const rawEntry = new TarEntry(null as any);
-		expect(() => JSON.stringify(rawEntry)).not.toThrowError();
+		const rawEntry = new TarEntry();
+		expect(() => JSON.stringify(rawEntry)).not.toThrow();
 
-		const fileWithContent = TarEntry.from(null as any, Uint8Array.from(range(100)));
-		expect(() => JSON.stringify(fileWithContent)).not.toThrowError();
+		const fileWithContent = TarEntry.from({}, Uint8Array.from(range(100)));
+		expect(() => JSON.stringify(fileWithContent)).not.toThrow();
 	});
 
 	it('implements the TarHeader interface with conveinence accessors', () => {
-		const entry = new TarEntry(null as any);
+		const entry = new TarEntry();
 
 		expect(entry.ustarIndicator).toBeDefined();
 		expect(entry.headerChecksum).toBeDefined();

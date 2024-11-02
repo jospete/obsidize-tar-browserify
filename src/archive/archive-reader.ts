@@ -8,6 +8,14 @@ import { TarHeader } from '../header/tar-header';
 import { TarHeaderUtility } from '../header/tar-header-utility';
 import { PaxTarHeader } from '../pax/pax-tar-header';
 
+const MAX_LOADED_BYTES = Constants.SECTOR_SIZE * 100000; // ~50Mb
+
+interface TarHeaderParseResult {
+	header: TarHeader;
+	headerOffset: number;
+	contentOffset: number;
+}
+
 /**
  * Generic utility for parsing tar entries from a stream of octets via `AsyncUint8ArrayIterator`
  */
@@ -50,6 +58,21 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		return entries;
 	}
 
+	public async next(): Promise<IteratorResult<TarEntry>> {
+		const entry = await this.tryParseNextEntry();
+
+		if (entry !== null) {
+			return {done: false, value: entry};
+		}
+		
+		return {done: true, value: null};
+	}
+
+	private clearBufferCache(): void {
+		this.mBufferCache = null;
+		this.mOffset = 0;
+	}
+
 	private async loadNextChunk(): Promise<boolean> {
 		const nextChunk = await this.bufferIterator.tryNext();
 		
@@ -67,14 +90,52 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		return true;
 	}
 
-	public async next(): Promise<IteratorResult<TarEntry>> {
-		const defaultReturnValue: IteratorReturnResult<null> = {done: true, value: null};
+	private async tryParseNextEntry(): Promise<TarEntry | null> {
+		const headerParseResult = await this.tryParseNextHeader();
+
+		if (headerParseResult === null) {
+			this.clearBufferCache();
+			return null;
+		}
+
+		const {header, headerOffset, contentOffset} = headerParseResult;
+		const context = this;
+		const contentEnd = contentOffset + header.fileSize;
+		const offset = headerOffset;
+		let content: Uint8Array | null = null;
+		let buffer = this.mBufferCache;
+
+		// If the buffer source is in-memory already, just read the content immediately
+		if (this.bufferIterator.input instanceof InMemoryAsyncUint8Array) {
+			while (buffer!.byteLength < contentEnd) {
+				if (!(await this.loadNextChunk())) {
+					this.clearBufferCache();
+					return null;
+				}
+			}
+
+			content = buffer!.slice(contentOffset, contentEnd);
+		}
+
+		if ((contentEnd + Constants.SECTOR_SIZE) <= buffer!.byteLength) {
+			this.mBufferCache = buffer!.slice(contentEnd);
+			this.mOffset = 0;
+
+		} else {
+			this.clearBufferCache();
+		}
+
+		return new TarEntry({header, offset, content, context});
+	}
+
+	private async tryParseNextHeader(): Promise<TarHeaderParseResult | null> {
 		let buffer = this.mBufferCache;
 
 		// Initialize the buffer if we don't have anything loaded
 		if (!buffer) {
 			if (!(await this.loadNextChunk())) {
-				return defaultReturnValue;
+				this.clearBufferCache();
+				return null;
 			}
 
 			buffer = this.mBufferCache;
@@ -83,28 +144,38 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		let ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(buffer, this.mOffset);
 
 		// Find next ustar marker
-		while (ustarOffset < 0 && (await this.loadNextChunk())) {
-			ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(buffer, this.mOffset);
+		while (ustarOffset < 0 && buffer!.byteLength < MAX_LOADED_BYTES && (await this.loadNextChunk())) {
+			ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(buffer, ustarOffset);
 		}
 
 		if (ustarOffset < 0) {
-			return defaultReturnValue;
+			this.clearBufferCache();
+			return null;
 		}
 
 		// load chunks until we have a full header block
 		while ((ustarOffset + Constants.HEADER_SIZE) > buffer!.byteLength) {
 			if (!(await this.loadNextChunk())) {
-				return defaultReturnValue;
+				this.clearBufferCache();
+				return null;
 			}
 		}
 
 		// Construct Header
+		const headerOffset = ustarOffset;
 		const headerBuffer = buffer!.slice(ustarOffset, ustarOffset + Constants.HEADER_SIZE);
 		const header = new TarHeader(headerBuffer);
 
 		// Advance cursor to process potential PAX header or entry content
-		const offset = ustarOffset;
 		let nextOffset = TarUtility.advanceSectorOffset(ustarOffset, buffer!.byteLength);
+
+		// load chunks until we have a full PAX header block
+		while ((nextOffset + Constants.HEADER_SIZE) > buffer!.byteLength) {
+			if (!(await this.loadNextChunk())) {
+				this.clearBufferCache();
+				return null;
+			}
+		}
 
 		// Capture global header and advance to next sector
 		if (header.isGlobalPaxHeader) {
@@ -113,36 +184,10 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 
 		// Capture local header and advance to next sector
 		} else if (header.isLocalPaxHeader) {
-			header.setPax(PaxTarHeader.from(buffer!, nextOffset));
+			header.pax = PaxTarHeader.from(buffer!, nextOffset);
 			nextOffset = TarUtility.advanceSectorOffset(ustarOffset, buffer!.byteLength);
 		}
 
-		const context = this;
-		const contentEnd = nextOffset + header.fileSize;
-		let content: Uint8Array | null = null;
-
-		// If the buffer source is in-memory already, just read the content immediately
-		if (this.bufferIterator.input instanceof InMemoryAsyncUint8Array) {
-			while (buffer!.byteLength < contentEnd) {
-				if (!(await this.loadNextChunk())) {
-					return defaultReturnValue;
-				}
-			}
-
-			content = buffer!.slice(nextOffset, contentEnd);
-		}
-
-		if ((contentEnd + Constants.SECTOR_SIZE) <= buffer!.byteLength) {
-			this.mBufferCache = buffer;
-			this.mOffset = contentEnd;
-
-		} else {
-			this.mBufferCache = null;
-			this.mOffset = 0;
-		}
-
-		const entry = new TarEntry({header, offset, content, context});
-		
-		return {done: false, value: entry};
+		return {header, headerOffset, contentOffset: nextOffset};
 	}
 }

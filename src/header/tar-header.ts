@@ -86,6 +86,10 @@ export class TarHeader implements TarHeaderLike {
 		return this.mPax;
 	}
 
+	public set pax(value: PaxTarHeader | null) {
+		this.mPax = value;
+	}
+
 	public get fileName(): string {
 		return TarHeaderField.fileName.readFrom(this.bytes, this.offset)!;
 	}
@@ -231,10 +235,6 @@ export class TarHeader implements TarHeaderLike {
 
 	public get isDirectoryHeader(): boolean {
 		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeDirectory(this.typeFlag);
-	}
-
-	public setPax(paxHeader: PaxTarHeader): void {
-		this.mPax = paxHeader;
 	}
 
 	/**
