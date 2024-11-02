@@ -98,48 +98,24 @@ export class TarEntry implements TarHeaderLike {
 		return this.header.fileName;
 	}
 
-	public set fileName(value: string) {
-		this.header.fileName = value;
-	}
-
 	public get fileSize(): number {
 		return this.header.fileSize;
-	}
-
-	public set fileSize(value: number) {
-		this.header.fileSize = value;
 	}
 
 	public get fileMode(): number {
 		return this.header.fileMode;
 	}
 
-	public set fileMode(value: number) {
-		this.header.fileMode = value;
-	}
-
 	public get ownerUserId(): number {
 		return this.header.ownerUserId;
-	}
-
-	public set ownerUserId(value: number) {
-		this.header.ownerUserId = value;
 	}
 
 	public get groupUserId(): number {
 		return this.header.groupUserId;
 	}
 
-	public set groupUserId(value: number) {
-		this.header.groupUserId = value;
-	}
-
 	public get lastModified(): number {
 		return this.header.lastModified;
-	}
-
-	public set lastModified(value: number) {
-		this.header.lastModified = value;
 	}
 
 	public get headerChecksum(): number {
@@ -150,16 +126,8 @@ export class TarEntry implements TarHeaderLike {
 		return this.header.linkedFileName;
 	}
 
-	public set linkedFileName(value: string) {
-		this.header.linkedFileName = value;
-	}
-
 	public get typeFlag(): TarHeaderLinkIndicatorType {
 		return this.header.typeFlag;
-	}
-
-	public set typeFlag(value: TarHeaderLinkIndicatorType) {
-		this.header.typeFlag = value;
 	}
 
 	public get ustarIndicator(): string {
@@ -170,48 +138,24 @@ export class TarEntry implements TarHeaderLike {
 		return this.header.ustarVersion;
 	}
 
-	public set ustarVersion(value: string) {
-		this.header.ustarVersion = value;
-	}
-
 	public get ownerUserName(): string {
 		return this.header.ownerUserName;
-	}
-
-	public set ownerUserName(value: string) {
-		this.header.ownerUserName = value;
 	}
 
 	public get ownerGroupName(): string {
 		return this.header.ownerGroupName;
 	}
 
-	public set ownerGroupName(value: string) {
-		this.header.ownerGroupName = value;
-	}
-
 	public get deviceMajorNumber(): string {
 		return this.header.deviceMajorNumber;
-	}
-
-	public set deviceMajorNumber(value: string) {
-		this.header.deviceMajorNumber = value;
 	}
 
 	public get deviceMinorNumber(): string {
 		return this.header.deviceMinorNumber;
 	}
 
-	public set deviceMinorNumber(value: string) {
-		this.header.deviceMinorNumber = value;
-	}
-
 	public get fileNamePrefix(): string {
 		return this.header.fileNamePrefix;
-	}
-
-	public set fileNamePrefix(value: string) {
-		this.header.fileNamePrefix = value;
 	}
 
 	// =================================================================

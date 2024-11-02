@@ -257,11 +257,13 @@ export class PaxTarHeader {
 	}
 
 	public toJSON(): Record<string, unknown> {
-		const {valueMap, bytes} = this;
+		const {valueMap, bytes, offset, endIndex} = this;
 		const byteLength = bytes?.byteLength ?? 0;
 		const content = TarUtility.getDebugHexString(bytes);
 
 		return {
+			offset,
+			endIndex,
 			valueMap,
 			byteLength,
 			content

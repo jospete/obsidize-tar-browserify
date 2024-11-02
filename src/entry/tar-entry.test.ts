@@ -18,27 +18,44 @@ describe('TarEntry', () => {
 	});
 
 	it('implements the TarHeader interface with conveinence accessors', () => {
-		const entry = new TarEntry();
+		const header = TarHeader.from({
+			fileMode: 1,
+			fileSize: 2,
+			ownerUserId: 3,
+			groupUserId: 4,
+			lastModified: TarUtility.getTarTimestamp(),
+			fileName: 'file name test',
+			linkedFileName: 'link name test',
+			ustarVersion: '42',
+			ownerUserName: 'test owner user',
+			ownerGroupName: 'test owner group',
+			deviceMajorNumber: '11',
+			deviceMinorNumber: '22',
+			fileNamePrefix: 'sample file prefix',
+			typeFlag: TarHeaderLinkIndicatorType.HARD_LINK
+		});
+
+		const entry = new TarEntry({ header });
 
 		expect(entry.ustarIndicator).toBeDefined();
 		expect(entry.headerChecksum).toBeDefined();
 
-		expect(entry.fileMode = 1).toBe(entry.fileMode);
-		expect(entry.fileSize = 2).toBe(entry.fileSize);
-		expect(entry.ownerUserId = 3).toBe(entry.ownerUserId);
-		expect(entry.groupUserId = 4).toBe(entry.groupUserId);
-		expect(entry.lastModified = TarUtility.getTarTimestamp()).toBe(entry.lastModified);
+		expect(entry.fileMode).toBe(1);
+		expect(entry.fileSize).toBe(2);
+		expect(entry.ownerUserId).toBe(3);
+		expect(entry.groupUserId).toBe(4);
+		expect(entry.lastModified).toBe(header.lastModified);
 
-		expect(entry.fileName = 'file name test').toBe(entry.fileName);
-		expect(entry.linkedFileName = 'link name test').toBe(entry.linkedFileName);
-		expect(entry.ustarVersion = '42').toBe(entry.ustarVersion);
-		expect(entry.ownerUserName = 'test owner user').toBe(entry.ownerUserName);
-		expect(entry.ownerGroupName = 'test owner group').toBe(entry.ownerGroupName);
-		expect(entry.deviceMajorNumber = '11').toBe(entry.deviceMajorNumber);
-		expect(entry.deviceMinorNumber = '22').toBe(entry.deviceMinorNumber);
-		expect(entry.fileNamePrefix = 'sample file prefix').toBe(entry.fileNamePrefix);
+		expect(entry.fileName).toBe('file name test');
+		expect(entry.linkedFileName).toBe('link name test');
+		expect(entry.ustarVersion).toBe('42');
+		expect(entry.ownerUserName).toBe('test owner user');
+		expect(entry.ownerGroupName).toBe('test owner group');
+		expect(entry.deviceMajorNumber).toBe('11');
+		expect(entry.deviceMinorNumber).toBe('22');
+		expect(entry.fileNamePrefix).toBe('sample file prefix');
 
-		expect(entry.typeFlag = TarHeaderLinkIndicatorType.HARD_LINK).toBe(entry.typeFlag);
+		expect(entry.typeFlag).toBe(TarHeaderLinkIndicatorType.HARD_LINK);
 	});
 
 	describe('toJSON()', () => {
