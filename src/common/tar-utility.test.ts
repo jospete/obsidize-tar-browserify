@@ -13,6 +13,7 @@ const {
 	removeTrailingZeros,
 	roundUpSectorOffset,
 	getSectorOffsetDelta,
+	parseFloatSafe
 } = TarUtility;
 
 const {
@@ -158,6 +159,21 @@ describe('TarUtility', () => {
 
 		it('returns a default value when the given input cannot be parsed to a number', () => {
 			expect(parseIntOctal(null as any)).toBe(0);
+		});
+	});
+
+	describe('parseFloatSafe()', () => {
+		it('should properly parse a float value from a string', () => {
+			expect(parseFloatSafe('123.123')).toBe(123.123);
+		});
+
+		it('should return the given default value on parse error', () => {
+			expect(parseFloatSafe('fff123.123', 42.69)).toBe(42.69);
+		});
+
+		it('should return the given value as-is if it is already a number', () => {
+			expect(parseFloatSafe(5)).toBe(5);
+			expect(parseFloatSafe(42.69)).toBe(42.69);
 		});
 	});
 });

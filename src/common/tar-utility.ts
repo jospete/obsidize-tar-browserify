@@ -100,6 +100,12 @@ export namespace TarUtility {
 		const parsed = parseInt(value, radix);
 		return isNumber(parsed) ? parsed : defaultValue;
 	}
+
+	export function parseFloatSafe(value: any, defaultValue: number = 0): number {
+		if (isNumber(value)) return value;
+		const parsed = parseFloat(value);
+		return isNumber(parsed) ? parsed : defaultValue;
+	}
 	
 	export function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {
 	
