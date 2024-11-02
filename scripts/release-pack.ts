@@ -4,7 +4,7 @@ import { execSync } from 'child_process';
 import { existsSync, mkdirSync, readJsonSync, renameSync, rmSync } from 'fs-extra';
 import { resolve } from 'path';
 
-const {version} = readJsonSync('../package.json');
+const {version} = readJsonSync('./package.json');
 
 async function run(distDirectory: string, outputDirectory: string): Promise<void> {
 

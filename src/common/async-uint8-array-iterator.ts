@@ -97,7 +97,7 @@ export class AsyncUint8ArrayIterator implements AsyncUint8ArrayIteratorLike {
 	}
 
 	/**
-	 * Grab the next {blockSize} chunk of data from the input.
+	 * Grab the next `blockSize` chunk of data from the input.
 	 * See `AsyncIterableIterator` for more info.
 	 */
 	public async next(): Promise<IteratorResult<AsyncUint8ArrayBlock>> {
