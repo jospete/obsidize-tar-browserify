@@ -15,4 +15,5 @@ export { TarHeaderLike } from './header/tar-header-like';
 export { TarHeaderLinkIndicatorType } from './header/tar-header-link-indicator-type';
 export { TarHeaderUtility } from './header/tar-header-utility';
 export { PaxTarHeader } from './pax/pax-tar-header';
+export { PaxTarHeaderKey } from './pax/pax-tar-header-key';
 
