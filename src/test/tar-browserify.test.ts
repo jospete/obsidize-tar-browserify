@@ -57,7 +57,7 @@ const testGeneratedContent = async (base64Str: string, expectedStructures: strin
 
 	if (fileSet.size > 0) {
 	  const missingFileNames = Array.from(fileSet).map((f) => f.fileName);
-	  fail(
+	  throw new Error(
 		`some files were not accounted for: ${JSON.stringify(
 		  missingFileNames,
 		  null,

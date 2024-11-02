@@ -181,21 +181,28 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 
 		// Construct Header
 		const headerOffset = ustarOffset;
-		const headerBuffer = this.getBufferCacheSlice(ustarOffset, ustarOffset + Constants.HEADER_SIZE);
-		const header = new TarHeader(headerBuffer);
+		let headerBuffer = this.getBufferCacheSlice(ustarOffset, ustarOffset + Constants.HEADER_SIZE);
+		let header = new TarHeader(headerBuffer);
 
 		// Advance cursor to process potential PAX header or entry content
 		let nextOffset = TarUtility.advanceSectorOffset(ustarOffset, this.mBufferCache!.byteLength);
 
 		// Ensure we have enough buffered for potential pax header
-		if (!(await this.tryRequireBufferSize(nextOffset + Constants.HEADER_SIZE))) {
+		if (!(await this.tryRequireBufferSize(nextOffset + (Constants.HEADER_SIZE * 2)))) {
 			return null;
 		}
 
 		if (header.isPaxHeader) {
+			// Make sure we've buffered the pax header region and the next sector after that (next sector contains the _actual_ header)
+			const paxHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(header.ustarFileSize);
+			const requiredBufferSize = paxHeaderSectorEnd + Constants.HEADER_SIZE;
+
+			if (!(await this.requireBufferSize(requiredBufferSize))) {
+				return null;
+			}
+
+			// Parse the pax header out from the next sector
 			const paxHeader = PaxTarHeader.from(this.mBufferCache!, nextOffset);
-			// original header contains the size for the pax header
-			nextOffset = TarUtility.advanceSectorOffset(nextOffset + header.ustarFileSize, this.mBufferCache!.byteLength);
 
 			// Capture global pax header in top-level context (e.g. this instance)
 			if (header.isGlobalPaxHeader) {
@@ -204,6 +211,17 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 			} else {
 				header.pax = paxHeader;
 			}
+
+			nextOffset = paxHeaderSectorEnd;
+
+			if (!TarHeaderUtility.isUstarSector(this.mBufferCache!, nextOffset)) {
+				return null;
+			}
+
+			// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
+			headerBuffer = this.getBufferCacheSlice(nextOffset, nextOffset + Constants.HEADER_SIZE);
+			header = new TarHeader(headerBuffer);
+			header.pax = paxHeader;
 		}
 
 		return {header, headerOffset, contentOffset: nextOffset};
