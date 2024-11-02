@@ -161,4 +161,27 @@ describe('TarHeader', () => {
 			expect(findNextUstarSectorOffset(testHeaderBuffer, -123456)).toBe(0);
 		});
 	});
+
+	describe('isPaxHeader()', () => {
+		it('should return true if the indicator is global extended type', () => {
+			const header = TarHeader.from({typeFlag: TarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER});
+			expect(header.isPaxHeader).toBe(true);
+			expect(header.isGlobalPaxHeader).toBe(true);
+			expect(header.isLocalPaxHeader).toBe(false);
+		});
+
+		it('should return true if the indicator is local extended type', () => {
+			const header = TarHeader.from({typeFlag: TarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER});
+			expect(header.isPaxHeader).toBe(true);
+			expect(header.isGlobalPaxHeader).toBe(false);
+			expect(header.isLocalPaxHeader).toBe(true);
+		});
+
+		it('should return false if the indicator is not a pax header type', () => {
+			const header = TarHeader.from({typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE});
+			expect(header.isPaxHeader).toBe(false);
+			expect(header.isGlobalPaxHeader).toBe(false);
+			expect(header.isLocalPaxHeader).toBe(false);
+		});
+	});
 });
