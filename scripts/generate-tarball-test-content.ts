@@ -4,7 +4,7 @@ import { mkdirpSync, readFileSync, writeFileSync } from 'fs-extra';
 import { globby } from 'globby';
 import { basename, dirname, resolve } from 'path';
 import { Stream } from 'stream';
-import tar from 'tar';
+import { create, extract } from 'tar';
 
 async function crawlTarAssets(files: string[]): Promise<string[][]> {
 	return Promise.all(files.map(f => globby(f)));
@@ -75,7 +75,7 @@ async function exportTestAssets(tarballContent: Buffer, files: string[], outputF
 async function generateTarSampleOne() {
 	const files = ['./dev-assets/tarball-sample/unpacked/tar-root'];
 	const tarOutputFile = './tmp/test-node-tar.tar';
-	tar.create({ gzip: false, file: tarOutputFile, sync: true }, files);
+	create({ gzip: false, file: tarOutputFile, sync: true, strict: true,  }, files);
 	const tarballContent = readFileSync(tarOutputFile);
 	await exportTestAssets(tarballContent, files, 'tarball-test-content.ts');
 }
@@ -85,7 +85,7 @@ async function generateTarSampleTwo() {
 	const unpackedPath = './tmp/pax-tar-sample';
 	const tarballContent = readFileSync(tarFilePath);
 	mkdirpSync(unpackedPath);
-	await tar.extract({file: tarFilePath, cwd: unpackedPath});
+	await extract({file: tarFilePath, cwd: unpackedPath});
 	await exportTestAssets(tarballContent, [unpackedPath], 'pax-header-test-content.ts');
 }
 
