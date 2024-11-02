@@ -3,7 +3,8 @@
 import { execSync } from 'child_process';
 import { readJsonSync } from 'fs-extra';
 import yargs from 'yargs';
-const { version } = readJsonSync('../package.json');
+
+const { version } = readJsonSync('./package.json');
 const { smokeTest } = <any>yargs().parse();
 
 function git(cmd: string): Buffer | number {

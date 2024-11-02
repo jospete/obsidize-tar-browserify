@@ -16,7 +16,7 @@
 <li><a href="TarHeaderUtility.html">TarHeaderUtility</a></li></ul>
 <h1>Namespace TarHeaderUtility</h1></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/443aaa2/src/header/tar-header-utility.ts#L6">header/tar-header-utility.ts:6</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/e5e61f6/src/header/tar-header-utility.ts#L6">header/tar-header-utility.ts:6</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <h3 class="tsd-index-heading uppercase">Index</h3>
@@ -29,8 +29,10 @@
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Functions</h3>
-<div class="tsd-index-list"><a href="../functions/TarHeaderUtility.isTarHeaderLinkIndicatorTypeDirectory.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-namespace"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-function)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-64-path"></rect><path d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z" fill="var(--color-text)" id="icon-64-text"></path></svg><span>is<wbr/>Tar<wbr/>Header<wbr/>Link<wbr/>Indicator<wbr/>Type<wbr/>Directory</span></a>
+<div class="tsd-index-list"><a href="../functions/TarHeaderUtility.findNextUstarSectorOffset.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-namespace"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-function)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-64-path"></rect><path d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z" fill="var(--color-text)" id="icon-64-text"></path></svg><span>find<wbr/>Next<wbr/>Ustar<wbr/>Sector<wbr/>Offset</span></a>
+<a href="../functions/TarHeaderUtility.isTarHeaderLinkIndicatorTypeDirectory.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-namespace"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>is<wbr/>Tar<wbr/>Header<wbr/>Link<wbr/>Indicator<wbr/>Type<wbr/>Directory</span></a>
 <a href="../functions/TarHeaderUtility.isTarHeaderLinkIndicatorTypeFile.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-namespace"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>is<wbr/>Tar<wbr/>Header<wbr/>Link<wbr/>Indicator<wbr/>Type<wbr/>File</span></a>
+<a href="../functions/TarHeaderUtility.isTarHeaderLinkIndicatorTypePax.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-namespace"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>is<wbr/>Tar<wbr/>Header<wbr/>Link<wbr/>Indicator<wbr/>Type<wbr/>Pax</span></a>
 <a href="../functions/TarHeaderUtility.isUstarSector.html" class="tsd-index-link tsd-kind-function tsd-parent-kind-namespace"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg><span>is<wbr/>Ustar<wbr/>Sector</span></a>
 </div></section></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -54,7 +56,6 @@
 <li class="current"><a href="../modules.html">@obsidize/tar-<wbr/>browserify</a>
 <ul>
 <li class="tsd-kind-namespace"><a href="Constants.html">Constants</a></li>
-<li class="tsd-kind-namespace"><a href="TarEntryUtility.html">Tar<wbr/>Entry<wbr/>Utility</a></li>
 <li class="tsd-kind-namespace"><a href="TarHeaderFieldTransformType.html">Tar<wbr/>Header<wbr/>Field<wbr/>Transform<wbr/>Type</a></li>
 <li class="current selected tsd-kind-namespace"><a href="TarHeaderUtility.html">Tar<wbr/>Header<wbr/>Utility</a></li>
 <li class="tsd-kind-namespace"><a href="TarUtility.html">Tar<wbr/>Utility</a></li></ul></li></ul></div></details></nav>
@@ -64,8 +65,10 @@
 <li class="tsd-kind-variable tsd-parent-kind-namespace"><a href="../variables/TarHeaderUtility.CHECKSUM_FIELDS.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-32-path"></use><use href="#icon-32-text"></use></svg>CHECKSUM_<wbr/>FIELDS</a></li>
 <li class="tsd-kind-variable tsd-parent-kind-namespace"><a href="../variables/TarHeaderUtility.CHECKSUM_SEED.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-32-path"></use><use href="#icon-32-text"></use></svg>CHECKSUM_<wbr/>SEED</a></li>
 <li class="tsd-kind-variable tsd-parent-kind-namespace"><a href="../variables/TarHeaderUtility.CHECKSUM_SEED_STRING.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-32-path"></use><use href="#icon-32-text"></use></svg>CHECKSUM_<wbr/>SEED_<wbr/>STRING</a></li>
+<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="../functions/TarHeaderUtility.findNextUstarSectorOffset.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>find<wbr/>Next<wbr/>Ustar<wbr/>Sector<wbr/>Offset</a></li>
 <li class="tsd-kind-function tsd-parent-kind-namespace"><a href="../functions/TarHeaderUtility.isTarHeaderLinkIndicatorTypeDirectory.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>is<wbr/>Tar<wbr/>Header<wbr/>Link<wbr/>Indicator<wbr/>Type<wbr/>Directory</a></li>
 <li class="tsd-kind-function tsd-parent-kind-namespace"><a href="../functions/TarHeaderUtility.isTarHeaderLinkIndicatorTypeFile.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>is<wbr/>Tar<wbr/>Header<wbr/>Link<wbr/>Indicator<wbr/>Type<wbr/>File</a></li>
+<li class="tsd-kind-function tsd-parent-kind-namespace"><a href="../functions/TarHeaderUtility.isTarHeaderLinkIndicatorTypePax.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>is<wbr/>Tar<wbr/>Header<wbr/>Link<wbr/>Indicator<wbr/>Type<wbr/>Pax</a></li>
 <li class="tsd-kind-function tsd-parent-kind-namespace"><a href="../functions/TarHeaderUtility.isUstarSector.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>is<wbr/>Ustar<wbr/>Sector</a></li></ul></nav></div></div>
 <div class="container tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
