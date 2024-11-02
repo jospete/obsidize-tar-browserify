@@ -18,7 +18,7 @@ const { isUint8Array } = TarUtility;
 const testGeneratedContent = async (base64Str: string, expectedStructures: string[][]) => {
 	const tarballUint8 = base64ToUint8Array(base64Str);
 	const foundFiles = new Set<TarEntry>();
-	let files = await Archive.extract(tarballUint8);
+	let {entries: files} = await Archive.extract(tarballUint8);
 	files = files.filter((e) => e.isFile());
 
 	const fileNames = files.map((f) => f.fileName);
@@ -76,7 +76,7 @@ describe('Global Tests', () => {
       const tarballUint8 = base64ToUint8Array(tarballSampleBase64);
 
       // 2. Get the entries you are interested in (AKA ignore directory entries)
-      let entries = await Archive.extract(tarballUint8);
+      let {entries} = await Archive.extract(tarballUint8);
 	  entries = entries.filter((e) => e.isFile());
 
       // 3. Do whatever work you need to with the entries
@@ -121,7 +121,7 @@ describe('Global Tests', () => {
         // Here we use the tarball we just created for demonstration purposes,
         // but this could just as easily be a blob from a server, or a local file;
         // as long as the content is a Uint8Array that implements the tar format correctly.
-        const entries = await Archive.extract(createdTarballBuffer);
+        const {entries} = await Archive.extract(createdTarballBuffer);
         const [mainFile] = entries;
 
         expect(mainFile.getContentAsText()).toBe('This is a test file');

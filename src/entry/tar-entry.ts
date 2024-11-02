@@ -44,28 +44,6 @@ export class TarEntry implements TarHeaderLike {
 		return new TarEntry({header: TarHeader.from(attrs), content});
 	}
 
-	/**
-	 * Combines the given array of entries into a single, complete tarball buffer
-	 */
-	public static serialize(entries: TarEntry[]): Uint8Array {
-
-		let outputLength = Constants.TERMINAL_PADDING_SIZE;
-
-		for (const entry of entries) {
-			outputLength += entry.sectorByteLength;
-		}
-
-		const output = new Uint8Array(outputLength);
-		let offset = 0;
-
-		for (const entry of entries) {
-			entry.writeTo(output, offset);
-			offset += entry.sectorByteLength;
-		}
-
-		return output;
-	}
-
 	protected initialize(options: TarEntryOptions): this {
 		let {header, content, offset, context} = options;
 

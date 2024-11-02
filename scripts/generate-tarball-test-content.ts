@@ -3,20 +3,10 @@
 import { mkdirpSync, readFileSync, writeFileSync } from 'fs-extra';
 import { globby } from 'globby';
 import { basename, dirname, resolve } from 'path';
-import { Stream } from 'stream';
-import { create, extract } from 'tar';
+import { extract } from 'tar';
 
 async function crawlTarAssets(files: string[]): Promise<string[][]> {
-	return Promise.all(files.map(f => globby(f)));
-}
-
-async function stream2buffer(stream: Stream): Promise<Buffer> {
-    return new Promise<Buffer>((resolve, reject) => {
-        const _buf: any[] = [];
-        stream.on('data', chunk => _buf.push(chunk));
-        stream.on('end', () => resolve(Buffer.concat(_buf)));
-        stream.on('error', err => reject(`error converting stream - ${err}`));
-    });
+	return Promise.all(files.map(f => globby(f, {})));
 }
 
 function getProjectDirectoryName() {
@@ -73,11 +63,10 @@ async function exportTestAssets(tarballContent: Buffer, files: string[], outputF
 }
 
 async function generateTarSampleOne() {
-	const files = ['./dev-assets/tarball-sample/unpacked/tar-root'];
-	const tarOutputFile = './tmp/test-node-tar.tar';
-	create({ gzip: false, file: tarOutputFile, sync: true, strict: true, noMtime: true }, files);
-	const tarballContent = readFileSync(tarOutputFile);
-	await exportTestAssets(tarballContent, files, 'tarball-test-content.ts');
+	const tarFilePath = './dev-assets/tarball-sample/packed/node-tar-sample.tar';
+	const unpackedPath = './dev-assets/tarball-sample/unpacked';
+	const tarballContent = readFileSync(tarFilePath);
+	await exportTestAssets(tarballContent, [unpackedPath], 'tarball-test-content.ts');
 }
 
 async function generateTarSampleTwo() {

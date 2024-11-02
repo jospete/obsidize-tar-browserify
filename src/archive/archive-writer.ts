@@ -1,3 +1,4 @@
+import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarEntry } from '../entry/tar-entry';
 import { TarHeaderLike } from '../header/tar-header-like';
@@ -8,13 +9,37 @@ import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-
  * See the `add***()` options in this class definition for details.
  */
 export class ArchiveWriter {
-	public entries: TarEntry[] = [];
+	constructor(
+		public entries: TarEntry[] = []
+	) {	
+	}
+
+	/**
+	 * Combines the given array of entries into a single, complete tarball buffer
+	 */
+	public static serialize(entries: TarEntry[]): Uint8Array {
+		let outputLength = Constants.TERMINAL_PADDING_SIZE;
+
+		for (const entry of entries) {
+			outputLength += entry.sectorByteLength;
+		}
+
+		const output = new Uint8Array(outputLength);
+		let offset = 0;
+
+		for (const entry of entries) {
+			entry.writeTo(output, offset);
+			offset += entry.sectorByteLength;
+		}
+
+		return output;
+	}
 	
 	/**
 	 * @returns a complete tar buffer from all the currently set tar entries in this instance.
 	 */
 	public toUint8Array(): Uint8Array {
-		return TarEntry.serialize(this.entries);
+		return ArchiveWriter.serialize(this.entries);
 	}
 
 	/**
