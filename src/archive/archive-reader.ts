@@ -122,8 +122,6 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		return true;
 	}
 
-	// FIXME: figure out why `test_tar/test.json` is getting duplicated
-
 	private async tryParseNextEntry(): Promise<TarEntry | null> {
 		const headerParseResult = await this.tryParseNextHeader();
 
@@ -164,7 +162,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 	}
 
 	private async tryParseNextHeader(): Promise<TarHeaderParseResult | null> {
-		if (!(await this.tryRequireBufferSize(Constants.HEADER_SIZE))) {
+		if (!(await this.tryRequireBufferSize(this.mOffset + Constants.HEADER_SIZE))) {
 			return null;
 		}
 
@@ -172,7 +170,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 
 		// Find next ustar marker
 		while (ustarOffset < 0 && this.mBufferCache!.byteLength < MAX_LOADED_BYTES && (await this.loadNextChunk())) {
-			ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(this.mBufferCache, ustarOffset);
+			ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(this.mBufferCache, this.mOffset);
 		}
 
 		// No header marker found and we ran out of bytes to load, bomb out
