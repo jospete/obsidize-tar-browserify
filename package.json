@@ -30,7 +30,9 @@
 		"bump": "run-s version:patch version:publish",
 		"generate:tar:test:content": "tsx ./scripts/generate-tarball-test-content.ts",
 		"generate:tar:json:postbuild": "tsx ./scripts/generate-tar-sample-json.ts",
+		"generate:tar:json:postbuild:pax": "tsx ./scripts/generate-tar-sample-json.ts ./dev-assets/pax-tgz-sample/packed/test.tar",
 		"generate:tar:json": "run-s build generate:tar:json:postbuild",
+		"generate:tar:json:pax": "run-s build generate:tar:json:postbuild:pax",
 		"generate:tar:output:postbuild": "tsx ./scripts/generate-tar-sample-file.ts",
 		"generate:tar:output": "run-s build generate:tar:output:postbuild"
 	},

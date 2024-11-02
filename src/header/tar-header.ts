@@ -238,8 +238,7 @@ export class TarHeader implements TarHeaderLike {
 
 	public toJSON(): Record<string, unknown> {
 		const attributes = this.toAttributes();
-		const bytes = this.bytes;
-		const offset = this.offset;
+		const {pax, bytes, offset} = this;
 
 		const buffer = {
 			byteLength: bytes.byteLength,
@@ -248,6 +247,7 @@ export class TarHeader implements TarHeaderLike {
 
 		return {
 			attributes,
+			pax,
 			offset,
 			buffer
 		};
