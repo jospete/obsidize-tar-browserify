@@ -23,6 +23,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 	private mGlobalPaxHeaders: PaxTarHeader[] = [];
 	private mBufferCache: Uint8Array | null = null;
 	private mOffset: number = 0;
+	private mHasSyncInput: boolean = false;
 
 	constructor(
 		private readonly bufferIterator: AsyncUint8ArrayIterator
@@ -44,6 +45,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 	public async initialize(): Promise<void> {
 		this.mBufferCache = null;
 		this.mOffset = 0;
+		this.mHasSyncInput = this.bufferIterator.input instanceof InMemoryAsyncUint8Array;
 		await this.bufferIterator.initialize();
 	}
 
@@ -98,15 +100,16 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 			return null;
 		}
 
-		const {header, headerOffset, contentOffset} = headerParseResult;
 		const context = this;
+		const {header, headerOffset, contentOffset} = headerParseResult;
 		const contentEnd = contentOffset + header.fileSize;
 		const offset = headerOffset;
+
 		let content: Uint8Array | null = null;
 		let buffer = this.mBufferCache;
 
 		// If the buffer source is in-memory already, just read the content immediately
-		if (this.bufferIterator.input instanceof InMemoryAsyncUint8Array) {
+		if (this.mHasSyncInput) {
 			while (buffer!.byteLength < contentEnd) {
 				if (!(await this.loadNextChunk())) {
 					this.clearBufferCache();
