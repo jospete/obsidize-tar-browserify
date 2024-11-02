@@ -102,6 +102,11 @@ interface PaxKeyValuePairParseResult {
 	byteLength: number;
 }
 
+interface PaxParseResult {
+	pairs: PaxKeyValuePair[];
+	endIndex: number;
+}
+
 const ASCII_SPACE = 0x20;
 
 /**
@@ -114,7 +119,8 @@ export class PaxTarHeader {
 	constructor(
 		keyValuePairs: PaxKeyValuePair[] = [],
 		public readonly bytes: Uint8Array | null = null,
-		public readonly offset: number = 0
+		public readonly offset: number = 0,
+		public readonly endIndex: number = 0
 	) {
 		this.valueMap = {};
 		for (const [key, value] of keyValuePairs) {
@@ -122,25 +128,27 @@ export class PaxTarHeader {
 		}
 	}
 
-	public static from(buffer: Uint8Array, offset: number = 0): PaxTarHeader {
-		return new PaxTarHeader(PaxTarHeader.parseKeyValuePairs(buffer, offset), buffer, offset);
+	public static from(buffer: Uint8Array, offset: number): PaxTarHeader {
+		const {pairs, endIndex} = PaxTarHeader.parseKeyValuePairs(buffer, offset);
+		const slicedBuffer = TarUtility.cloneUint8Array(buffer, offset, endIndex);
+		return new PaxTarHeader(pairs, slicedBuffer, offset, endIndex);
 	}
 
-	private static parseKeyValuePairs(buffer: Uint8Array, offset: number = 0): PaxKeyValuePair[] {
-		const result: PaxKeyValuePair[] = [];
+	private static parseKeyValuePairs(buffer: Uint8Array, offset: number): PaxParseResult {
+		const pairs: PaxKeyValuePair[] = [];
 		let cursor = offset;
 		let next = PaxTarHeader.parseNextKeyValuePair(buffer, cursor);
 
 		while (next?.pair !== null) {
-			result.push(next.pair);
-			cursor = next.byteLength + 1;
+			pairs.push(next.pair);
+			cursor += next.byteLength;
 			next = PaxTarHeader.parseNextKeyValuePair(buffer, cursor);
 		}
 
-		return result;
+		return {pairs, endIndex: cursor};
 	}
 
-	private static parseNextKeyValuePair(buffer: Uint8Array, offset: number = 0): PaxKeyValuePairParseResult {
+	private static parseNextKeyValuePair(buffer: Uint8Array, offset: number): PaxKeyValuePairParseResult {
 		let pair: PaxKeyValuePair | null = null;
 		const bufferOffset = offset;
 		let lengthEnd = offset;
@@ -156,12 +164,7 @@ export class PaxTarHeader {
 			const kvpData = decodeString(buffer.slice(lengthEnd + 1, end));
 			const equalsDelimiterIndex = kvpData.indexOf('=');
 			const key = kvpData.substring(0, equalsDelimiterIndex);
-			let value = kvpData.substring(equalsDelimiterIndex + 1);
-
-			if (value.endsWith('\n')) {
-				value = value.substring(0, value.length - 1);
-			}
-
+			const value = kvpData.substring(equalsDelimiterIndex + 1).replace(/\n$/, '');
 			pair = [key, value];
 		}
 

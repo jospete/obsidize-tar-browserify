@@ -13,7 +13,8 @@ const {
 	removeTrailingZeros,
 	roundUpSectorOffset,
 	getSectorOffsetDelta,
-	parseFloatSafe
+	parseFloatSafe,
+	cloneUint8Array
 } = TarUtility;
 
 const {
@@ -174,6 +175,22 @@ describe('TarUtility', () => {
 		it('should return the given value as-is if it is already a number', () => {
 			expect(parseFloatSafe(5)).toBe(5);
 			expect(parseFloatSafe(42.69)).toBe(42.69);
+		});
+	});
+
+	describe('cloneUint8Array()', () => {
+		it('should make a completely isolated deep copy of the given input', () => {
+			const input = Uint8Array.from([1, 2, 3, 4]);
+			const cloned = cloneUint8Array(input);
+			input[0] = 5;
+			expect(cloned).not.toBe(input);
+			expect(cloned).not.toEqual(input);
+			expect(input[0]).toBe(5);
+			expect(cloned[0]).toBe(1);
+		});
+
+		it('return an empty instance if the input is not a valid Uint8Array', () => {
+			expect(cloneUint8Array(null)).toEqual(new Uint8Array(0));
 		});
 	});
 });

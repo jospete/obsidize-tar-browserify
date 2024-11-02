@@ -21,6 +21,9 @@ export class InMemoryAsyncUint8Array implements AsyncUint8ArrayLike {
 	}
 
 	public read(offset: number, length: number): Promise<Uint8Array> {
-		return Promise.resolve(this.input.slice(offset, offset + length));
+		const max = this.input.byteLength;
+		const start = Math.min(offset, max);
+		const end = Math.min(start + length, max);
+		return Promise.resolve(this.input.slice(start, end));
 	}
 }

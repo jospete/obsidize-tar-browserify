@@ -106,6 +106,13 @@ export namespace TarUtility {
 		const parsed = parseFloat(value);
 		return isNumber(parsed) ? parsed : defaultValue;
 	}
+
+	export function cloneUint8Array(source: Uint8Array | null, start?: number, end?: number): Uint8Array {
+		if (!isUint8Array(source)) return new Uint8Array(0);
+		const sliced = source.slice(start, end);
+		const bytes = Array.from(sliced);
+		return Uint8Array.from(bytes);
+	}
 	
 	export function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {
 	

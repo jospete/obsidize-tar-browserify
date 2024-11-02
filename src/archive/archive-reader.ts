@@ -85,6 +85,10 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		this.mOffset = 0;
 	}
 
+	private getBufferCacheSlice(start: number, end?: number): Uint8Array {
+		return TarUtility.cloneUint8Array(this.mBufferCache!, start, end);
+	}
+
 	private async tryRequireBufferSize(size: number): Promise<boolean> {
 		const buffer = await this.requireBufferSize(size);
 		return buffer !== null;
@@ -143,11 +147,11 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 				return null;
 			}
 
-			content = this.mBufferCache!.slice(contentOffset, contentEnd);
+			content = this.getBufferCacheSlice(contentOffset, contentEnd);
 		}
 
 		if ((nextSectorStart + Constants.SECTOR_SIZE) <= this.mBufferCache!.byteLength) {
-			this.mBufferCache = this.mBufferCache!.slice(nextSectorStart);
+			this.mBufferCache = this.getBufferCacheSlice(nextSectorStart);
 			this.mOffset = 0;
 
 		} else {
@@ -177,7 +181,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 
 		// Construct Header
 		const headerOffset = ustarOffset;
-		const headerBuffer = this.mBufferCache!.slice(ustarOffset, ustarOffset + Constants.HEADER_SIZE);
+		const headerBuffer = this.getBufferCacheSlice(ustarOffset, ustarOffset + Constants.HEADER_SIZE);
 		const header = new TarHeader(headerBuffer);
 
 		// Advance cursor to process potential PAX header or entry content
@@ -190,13 +194,15 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 
 		// Capture global pax header and advance to next sector
 		if (header.isGlobalPaxHeader) {
-			this.mGlobalPaxHeaders.push(PaxTarHeader.from(this.mBufferCache!, nextOffset));
-			nextOffset = TarUtility.advanceSectorOffset(ustarOffset, this.mBufferCache!.byteLength);
+			const globalHeader = PaxTarHeader.from(this.mBufferCache!, nextOffset);
+			this.mGlobalPaxHeaders.push(globalHeader);
+			nextOffset = TarUtility.advanceSectorOffset(globalHeader.endIndex, this.mBufferCache!.byteLength);
 
 		// Capture local pax header and advance to next sector
 		} else if (header.isLocalPaxHeader) {
-			header.pax = PaxTarHeader.from(this.mBufferCache!, nextOffset);
-			nextOffset = TarUtility.advanceSectorOffset(ustarOffset, this.mBufferCache!.byteLength);
+			const localHeader = PaxTarHeader.from(this.mBufferCache!, nextOffset);
+			header.pax = localHeader;
+			nextOffset = TarUtility.advanceSectorOffset(localHeader.endIndex, this.mBufferCache!.byteLength);
 		}
 
 		return {header, headerOffset, contentOffset: nextOffset};
