@@ -180,17 +180,12 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		}
 
 		// Construct Header
-		const headerOffset = ustarOffset;
+		let headerOffset = ustarOffset;
 		let headerBuffer = this.getBufferCacheSlice(ustarOffset, ustarOffset + Constants.HEADER_SIZE);
 		let header = new TarHeader(headerBuffer);
 
 		// Advance cursor to process potential PAX header or entry content
 		let nextOffset = TarUtility.advanceSectorOffset(ustarOffset, this.mBufferCache!.byteLength);
-
-		// Ensure we have enough buffered for potential pax header
-		if (!(await this.tryRequireBufferSize(nextOffset + (Constants.HEADER_SIZE * 2)))) {
-			return null;
-		}
 
 		if (header.isPaxHeader) {
 			// Make sure we've buffered the pax header region and the next sector after that (next sector contains the _actual_ header)
@@ -222,6 +217,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 			headerBuffer = this.getBufferCacheSlice(nextOffset, nextOffset + Constants.HEADER_SIZE);
 			header = new TarHeader(headerBuffer);
 			header.pax = paxHeader;
+			nextOffset = TarUtility.advanceSectorOffset(nextOffset, this.mBufferCache!.byteLength);
 		}
 
 		return {header, headerOffset, contentOffset: nextOffset};
