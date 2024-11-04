@@ -227,7 +227,6 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 				throw ArchiveReadError.ERR_HEADER_MISSING_POST_PAX_SEGMENT;
 			}
 
-
 			// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
 			headerOffset = nextOffset;
 			headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
