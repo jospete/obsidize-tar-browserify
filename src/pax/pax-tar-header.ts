@@ -6,7 +6,7 @@ const {
 	decodeString
 } = TarUtility;
 
-export interface PaxKeyValuePair {
+interface PaxKeyValuePair {
 	key: PaxTarHeaderKey;
 	value: string;
 }
@@ -18,49 +18,90 @@ interface PaxKeyValuePairParseResult {
 }
 
 interface PaxParseResult {
-	pairs: PaxKeyValuePair[];
+	attributes: PaxTarHeaderAttributes;
 	endIndex: number;
 }
 
 const ASCII_SPACE = 0x20;
 
 /**
+ * Object of key-value pairs for raw PAX attributes to populate a `PaxTarHeader` instance with.
+ */
+export interface PaxTarHeaderAttributes extends Record<PaxTarHeaderKey | string, string> {
+}
+
+/**
  * Adds support for extended headers.
  * https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html#tag_20_92_13_03
  */
 export class PaxTarHeader {
-	private readonly valueMap: Record<string, string>;
+	private readonly valueMap: PaxTarHeaderAttributes;
 
 	constructor(
-		keyValuePairs: PaxKeyValuePair[] = [],
+		attributes: PaxTarHeaderAttributes = {},
 		public readonly bytes: Uint8Array | null = null,
 		public readonly offset: number = 0,
 		public readonly endIndex: number = 0
 	) {
-		this.valueMap = {};
-		for (const {key, value} of keyValuePairs) {
-			this.valueMap[key] = value;
-		}
+		this.valueMap = Object.freeze(Object.assign({}, attributes));
 	}
 
-	public static from(buffer: Uint8Array, offset: number): PaxTarHeader {
-		const {pairs, endIndex} = PaxTarHeader.parseKeyValuePairs(buffer, offset);
+	public static from(buffer: Uint8Array, offset: number = 0): PaxTarHeader {
+		const {attributes, endIndex} = PaxTarHeader.parseKeyValuePairs(buffer, offset);
 		const slicedBuffer = TarUtility.cloneUint8Array(buffer, offset, endIndex);
-		return new PaxTarHeader(pairs, slicedBuffer, offset, endIndex);
+		return new PaxTarHeader(attributes, slicedBuffer, offset, endIndex);
+	}
+
+	public static serialize(attributes: PaxTarHeaderAttributes | null): Uint8Array {
+		if (!TarUtility.isObject(attributes)) {
+			return new Uint8Array(0);
+		}
+
+		let totalLength = 0;
+		let segmentBuffers: Uint8Array[] = [];
+
+		for (const [key, value] of Object.entries(attributes)) {
+			const segmentSuffix = ` ${key}=${value}\n`;
+			const preCalculatedLength = segmentSuffix.length.toString().length;
+			let segmentLength = segmentSuffix.length + preCalculatedLength;
+
+			// Calculation caused decimal rollover, increase combined length by 1
+			// (e.g. including the length part caused combined length to go from something like '99' to '101')
+			if (segmentLength < (segmentLength.toString().length + segmentSuffix.length)) {
+				segmentLength += 1;
+			}
+
+			const segment = segmentLength.toString() + segmentSuffix;
+			const encodedSegment = TarUtility.encodeString(segment);
+
+			segmentBuffers.push(encodedSegment);
+			totalLength += encodedSegment.byteLength;
+		}
+
+		const resultBuffer = new Uint8Array(totalLength);
+		let offset = 0;
+
+		for (const segmentBuffer of segmentBuffers) {
+			resultBuffer.set(segmentBuffer, offset);
+			offset += segmentBuffer.byteLength;
+		}
+
+		return resultBuffer;
 	}
 
 	private static parseKeyValuePairs(buffer: Uint8Array, offset: number): PaxParseResult {
-		const pairs: PaxKeyValuePair[] = [];
+		const attributes: PaxTarHeaderAttributes = {};
 		let cursor = offset;
 		let next = PaxTarHeader.parseNextKeyValuePair(buffer, cursor);
 
-		while (next?.pair !== null) {
-			pairs.push(next.pair);
+		while (next.pair !== null) {
+			const {key, value} = next.pair;
+			attributes[key] = value;
 			cursor += next.byteLength;
 			next = PaxTarHeader.parseNextKeyValuePair(buffer, cursor);
 		}
 
-		return {pairs, endIndex: cursor};
+		return {attributes, endIndex: cursor};
 	}
 
 	private static parseNextKeyValuePair(buffer: Uint8Array, offset: number): PaxKeyValuePairParseResult {
@@ -169,6 +210,30 @@ export class PaxTarHeader {
 	 */
 	public get(key: PaxTarHeaderKey | string): string | undefined {
 		return this.valueMap[key];
+	}
+
+	/**
+	 * Serializes the underlying value map of this instance into a set of PAX sectors.
+	 */
+	public toUint8Array(): Uint8Array {
+		return PaxTarHeader.serialize(this.valueMap);
+	}
+
+	/**
+	 * Adds any necessary padding to the serialized output to ensure the length
+	 * of the output is a multiple of `SECTOR_SIZE`.
+	 * 
+	 * See `toUint8Array()` for more info.
+	 */
+	public toUint8ArrayPadded(): Uint8Array {
+		const serializedBuffer = this.toUint8Array();
+		let delta = TarUtility.getSectorOffsetDelta(serializedBuffer.byteLength);
+
+		if (delta > 0) {
+			return TarUtility.concatUint8Arrays(serializedBuffer, new Uint8Array(delta));
+		}
+
+		return serializedBuffer;
 	}
 
 	public toJSON(): Record<string, unknown> {

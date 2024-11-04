@@ -14,6 +14,6 @@ export { TarHeaderFieldType } from './header/tar-header-field-type';
 export { TarHeaderLike } from './header/tar-header-like';
 export { TarHeaderLinkIndicatorType } from './header/tar-header-link-indicator-type';
 export { TarHeaderUtility } from './header/tar-header-utility';
-export { PaxKeyValuePair, PaxTarHeader } from './pax/pax-tar-header';
+export { PaxTarHeader, PaxTarHeaderAttributes } from './pax/pax-tar-header';
 export { PaxTarHeaderKey } from './pax/pax-tar-header-key';
 
