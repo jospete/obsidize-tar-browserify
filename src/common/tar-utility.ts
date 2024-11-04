@@ -14,6 +14,10 @@ export namespace TarUtility {
 		return typeof value === 'undefined';
 	}
 
+	export function isObject(value: any): value is object {
+		return typeof value === 'object' && value !== null;
+	}
+
 	export function isDefined(value: any): boolean {
 		return !isUndefined(value);
 	}

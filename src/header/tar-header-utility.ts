@@ -47,7 +47,6 @@ export namespace TarHeaderUtility {
 		input: Uint8Array | null, 
 		offset: number = 0
 	): number {
-
 		const NOT_FOUND = -1;
 
 		if (!TarUtility.isUint8Array(input)) {

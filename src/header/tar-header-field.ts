@@ -23,7 +23,6 @@ export interface TarHeaderFieldLike {
  * https://en.wikipedia.org/wiki/Tar_(computing)
  */
 export class TarHeaderField<T> implements TarHeaderFieldLike {
-
 	public readonly name: keyof TarHeaderLike;
 	public readonly offset: number;
 	public readonly size: number;
@@ -208,7 +207,6 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 	 * @returns the slice of the given input Uint8Array that this field resides in.
 	 */
 	public slice(input: Uint8Array, offset: number = 0): Uint8Array {
-		
 		if (!TarUtility.isUint8Array(input)) {
 			return new Uint8Array(0);
 		}
@@ -224,7 +222,6 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 	 * or `undefined` on error.
 	 */
 	public deserialize(input: Uint8Array, offset: number = 0): T | undefined {
-
 		if (TarUtility.isUint8Array(input)) {
 			return this.transform.deserialize(input, this.size, offset);
 		}
@@ -237,7 +234,6 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 	 * @returns the serialized value as a Uint8Array
 	 */
 	public serialize(input: T): Uint8Array {
-
 		const result = new Uint8Array(this.size);
 		const value = this.transform.serialize(input, this.size);
 		const valueLength = value.byteLength;
@@ -265,7 +261,6 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 	 * @returns true if the buffer was updated
 	 */
 	public writeTo(output: Uint8Array, headerOffset: number, value: T): boolean {
-
 		headerOffset = Math.max(headerOffset, 0);
 		
 		const valueBytes = this.serialize(value);
@@ -290,7 +285,6 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 	 * @returns the checksum value for this specific field
 	 */
 	public calculateChecksum(input: Uint8Array, offset: number = 0): number {
-
 		let checksum = 0;
 
 		if (!TarUtility.isUint8Array(input)) {

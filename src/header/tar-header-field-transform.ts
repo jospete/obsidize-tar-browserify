@@ -12,7 +12,6 @@ export interface TarHeaderFieldTransform<T> {
 }
 
 export namespace TarHeaderFieldTransformType {
-
 	function serializeIntegerOctalToString(value: number, maxLength: number): string {
 		return TarUtility.parseIntSafe(value)
 			.toString(Constants.OCTAL_RADIX)

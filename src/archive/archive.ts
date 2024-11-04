@@ -17,7 +17,8 @@ export class Archive extends ArchiveWriter {
 	 * The buffer should come from a complete, uncompressed tar file.
 	 */
 	public static async extract(buffer: Uint8Array): Promise<Archive> {
-		return new Archive(await ArchiveReader.readAllEntriesFromMemory(buffer));
+		const entries = await ArchiveReader.readAllEntriesFromMemory(buffer);
+		return new Archive(entries);
 	}
 
 	/**
@@ -25,6 +26,7 @@ export class Archive extends ArchiveWriter {
 	 * This replaces the 4.x `extractAsync` option.
 	 */
 	public static async extractFromStream(stream: AsyncUint8ArrayLike): Promise<Archive> {
-		return new Archive(await ArchiveReader.readAllEntriesFromStream(stream));
+		const entries = await ArchiveReader.readAllEntriesFromStream(stream);
+		return new Archive(entries);
 	}
 }
