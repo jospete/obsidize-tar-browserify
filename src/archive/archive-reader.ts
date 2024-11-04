@@ -17,10 +17,31 @@ interface TarHeaderParseResult {
 }
 
 /**
+ * Errors that will be thrown if the reader encounters an invalid data layout
+ */
+export enum ArchiveReadError {
+	/**
+	 * Occurs when the reader fails to fully load the content buffer of an entry
+	 * due to the input data stream ending prematurely.
+	 */
+	ERR_ENTRY_CONTENT_MIN_BUFFER_LENGTH_NOT_MET = 'ERR_ENTRY_CONTENT_MIN_BUFFER_LENGTH_NOT_MET',
+	/**
+	 * Occurs when the reader fails to fully load a PAX header
+	 * due to the input data stream ending prematurely.
+	 */
+	ERR_HEADER_PAX_MIN_BUFFER_LENGTH_NOT_MET = 'ERR_HEADER_PAX_MIN_BUFFER_LENGTH_NOT_MET',
+	/**
+	 * Occurs when the reader fails to fully load a PAX header
+	 * due to the third and final segment not appearing in the input data stream.
+	 */
+	ERR_HEADER_MISSING_POST_PAX_SEGMENT = 'ERR_HEADER_MISSING_POST_PAX_SEGMENT'
+}
+
+/**
  * Generic utility for parsing tar entries from a stream of octets via `AsyncUint8ArrayIterator`
  */
 export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarEntry> {
-	private mGlobalPaxHeaders: PaxTarHeader[] = [];
+	private mGlobalPaxHeaders: TarHeader[] = [];
 	private mBufferCache: Uint8Array | null = null;
 	private mOffset: number = 0;
 	private mHasSyncInput: boolean = false;
@@ -48,7 +69,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		return this.bufferIterator.input;
 	}
 
-	public get globalPaxHeaders(): PaxTarHeader[] {
+	public get globalPaxHeaders(): TarHeader[] {
 		return this.mGlobalPaxHeaders;
 	}
 
@@ -142,9 +163,9 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		let content: Uint8Array | null = null;
 
 		// If the buffer source is in-memory already, just read the content immediately
-		if (this.mHasSyncInput) {
+		if (this.mHasSyncInput && header.fileSize > 0) {
 			if (!(await this.tryRequireBufferSize(nextSectorStart))) {
-				return null;
+				throw ArchiveReadError.ERR_ENTRY_CONTENT_MIN_BUFFER_LENGTH_NOT_MET;
 			}
 
 			content = this.getBufferCacheSlice(contentOffset, contentEnd);
@@ -173,7 +194,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 			ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(this.mBufferCache, this.mOffset);
 		}
 
-		// No header marker found and we ran out of bytes to load, bomb out
+		// No header marker found and we ran out of bytes to load, terminate
 		if (ustarOffset < 0) {
 			this.clearBufferCache();
 			return null;
@@ -191,31 +212,29 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 			// Make sure we've buffered the pax header region and the next sector after that (next sector contains the _actual_ header)
 			const paxHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(header.ustarFileSize);
 			const requiredBufferSize = paxHeaderSectorEnd + Constants.HEADER_SIZE;
+			const isGlobalPax = header.isGlobalPaxHeader;
 
 			if (!(await this.tryRequireBufferSize(requiredBufferSize))) {
-				return null;
+				throw ArchiveReadError.ERR_HEADER_PAX_MIN_BUFFER_LENGTH_NOT_MET;
 			}
 
 			// Parse the pax header out from the next sector
 			const paxHeader = PaxTarHeader.from(this.mBufferCache!, nextOffset);
 			nextOffset = paxHeaderSectorEnd;
 
-			// Capture global pax header in top-level context (e.g. this instance)
-			if (header.isGlobalPaxHeader) {
-				this.mGlobalPaxHeaders.push(paxHeader);
+			if (!TarHeaderUtility.isUstarSector(this.mBufferCache!, nextOffset)) {
+				throw ArchiveReadError.ERR_HEADER_MISSING_POST_PAX_SEGMENT;
+			}
 
-			// Capture local pax header onto the header that declared it
-			} else {
-				if (!TarHeaderUtility.isUstarSector(this.mBufferCache!, nextOffset)) {
-					return null;
-				}
-	
-				// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
-				headerOffset = nextOffset;
-				headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
-				header = new TarHeader(headerBuffer);
-				header.pax = paxHeader;
-				nextOffset = TarUtility.advanceSectorOffsetUnclamped(nextOffset);
+			// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
+			headerOffset = nextOffset;
+			headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
+			header = new TarHeader(headerBuffer);
+			header.pax = paxHeader;
+			nextOffset = TarUtility.advanceSectorOffsetUnclamped(nextOffset);
+
+			if (isGlobalPax) {
+				this.mGlobalPaxHeaders.push(header);
 			}
 		}
 
