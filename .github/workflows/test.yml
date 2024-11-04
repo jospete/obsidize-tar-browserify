@@ -20,12 +20,11 @@ jobs:
       - name: 'Install dependencies'
         run: npm ci
       
-      # - name: 'Run Tests'
-      #   run: npm test
+      - name: 'Run Tests'
+        run: npm test
       
       - name: 'Tests and Coverage'
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
-          test-script: npm test
           coverage-file: ./coverage/report.json
           base-coverage-file: ./coverage/report.json
