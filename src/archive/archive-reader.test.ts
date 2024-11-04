@@ -15,7 +15,7 @@ import { ArchiveReader } from './archive-reader';
 // TODO: move this logic into `ArchiveWriter` as a formal implementation for adding PAX headers
 const createPaxHeaderBuffer = (
 	headerAttrs: Partial<TarHeaderLike>,
-	paxAttrs: PaxTarHeaderAttributes,
+	paxAttrs: Partial<PaxTarHeaderAttributes>,
 	global?: boolean
 ): Uint8Array => {
 	const typeFlag = global ? TarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER : TarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
@@ -131,7 +131,7 @@ describe('ArchiveReader', () => {
 			fileName: 'Some Global Garbage',
 			typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
 		};
-		const paxAttrs: PaxTarHeaderAttributes = {
+		const paxAttrs: Partial<PaxTarHeaderAttributes> = {
 			[PaxTarHeaderKey.PATH]: 'A an extra name override or something',
 			[PaxTarHeaderKey.SIZE]: '0'
 		};
@@ -151,7 +151,7 @@ describe('ArchiveReader', () => {
 			fileName: 'Some Global Garbage',
 			typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
 		};
-		const paxAttrs: PaxTarHeaderAttributes = {
+		const paxAttrs: Partial<PaxTarHeaderAttributes> = {
 			fileName: 'A an extra name override or something'
 		};
 
@@ -170,7 +170,7 @@ describe('ArchiveReader', () => {
 			fileName: 'Some Local Garbage',
 			typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
 		};
-		const paxAttrs: PaxTarHeaderAttributes = {
+		const paxAttrs: Partial<PaxTarHeaderAttributes> = {
 			fileName: 'A an extra name override or something'
 		};
 		

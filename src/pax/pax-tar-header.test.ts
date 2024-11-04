@@ -59,7 +59,7 @@ describe('PaxTarHeader', () => {
 		});
 
 		it('should account for length attribute decimal rollovers', () => {
-			const attrs: PaxTarHeaderAttributes = {
+			const attrs: Partial<PaxTarHeaderAttributes> = {
 				// 92 characters + 7 metadata characters will give us 99, which should force a rollover into the 100s when length field is added
 				[PaxTarHeaderKey.PATH]: '81a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt'
 			};
