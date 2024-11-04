@@ -213,6 +213,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 			const paxHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(header.ustarFileSize);
 			const requiredBufferSize = paxHeaderSectorEnd + Constants.HEADER_SIZE;
 			const isGlobalPax = header.isGlobalPaxHeader;
+			const preambleHeader = header;
 
 			if (!(await this.tryRequireBufferSize(requiredBufferSize))) {
 				throw ArchiveReadError.ERR_HEADER_PAX_MIN_BUFFER_LENGTH_NOT_MET;
@@ -226,11 +227,13 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 				throw ArchiveReadError.ERR_HEADER_MISSING_POST_PAX_SEGMENT;
 			}
 
+
 			// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
 			headerOffset = nextOffset;
 			headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
 			header = new TarHeader(headerBuffer);
 			header.pax = paxHeader;
+			header.paxPreamble = preambleHeader;
 			nextOffset = TarUtility.advanceSectorOffsetUnclamped(nextOffset);
 
 			if (isGlobalPax) {

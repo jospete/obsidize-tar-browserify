@@ -16,6 +16,7 @@ import { TarHeaderUtility } from './tar-header-utility';
  */
 export class TarHeader implements TarHeaderLike {
 	public pax: PaxTarHeader | null = null;
+	public paxPreamble: TarHeader | null = null;
 
 	constructor(
 		public readonly bytes: Uint8Array = new Uint8Array(Constants.HEADER_SIZE), 
@@ -238,18 +239,32 @@ export class TarHeader implements TarHeaderLike {
 		TarHeaderField.fileNamePrefix.writeTo(this.bytes, this.offset, value);
 	}
 
-	// https://github.com/k0nsti/browser-stream-tar/blob/master/src/tar.mjs#L54
-	// https://github.com/InvokIT/js-untar/blob/master/src/untar-worker.js#L92
 	public get isPaxHeader(): boolean {
 		return this.isLocalPaxHeader || this.isGlobalPaxHeader;
 	}
 
 	public get isGlobalPaxHeader(): boolean {
-		return this.typeFlag === TarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER;
+		return this.isGlobalPaxPreHeader || this.isGlobalPaxPostHeader;
 	}
 
 	public get isLocalPaxHeader(): boolean {
+		return this.isLocalPaxPreHeader || this.isLocalPaxPostHeader;
+	}
+
+	public get isGlobalPaxPreHeader(): boolean {
+		return this.typeFlag === TarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER;
+	}
+
+	public get isLocalPaxPreHeader(): boolean {
 		return this.typeFlag === TarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
+	}
+
+	public get isGlobalPaxPostHeader(): boolean {
+		return this.paxPreamble?.isGlobalPaxHeader ?? false;
+	}
+
+	public get isLocalPaxPostHeader(): boolean {
+		return this.paxPreamble?.isLocalPaxHeader ?? false;
 	}
 
 	public get isFileHeader(): boolean {
@@ -269,7 +284,7 @@ export class TarHeader implements TarHeaderLike {
 
 	public toJSON(): Record<string, unknown> {
 		const attributes = this.toAttributes();
-		const {pax, bytes, offset} = this;
+		const {pax, paxPreamble: preamble, bytes, offset} = this;
 
 		const buffer = {
 			byteLength: bytes.byteLength,
@@ -277,10 +292,11 @@ export class TarHeader implements TarHeaderLike {
 		};
 
 		return {
-			attributes,
-			pax,
 			offset,
-			buffer
+			attributes,
+			buffer,
+			preamble,
+			pax
 		};
 	}
 
