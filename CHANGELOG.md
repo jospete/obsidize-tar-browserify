@@ -2,11 +2,11 @@
 
 ## 5.0.0
 
-- Add PAX header support
 - Rename `Tarball` class to `Archive`
 - Split out read and write functionality into new classes `ArchiveReader` and `ArchiveWriter`
 - Rename `AsyncUint8Array` interface to `AsyncUint8ArrayLike`
 - Refactor all parsing logic to run through the `AsyncUint8ArrayLike` interface to de-duplicate sync vs async operations
+- Add PAX header read support
 
 ## 4.0.0
 
