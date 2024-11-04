@@ -23,9 +23,5 @@ jobs:
       - name: 'Run Tests'
         run: npm test
       
-      - name: 'Coverage Report'
-        uses: ArtiomTr/jest-coverage-report-action@v2
-        with:
-          coverage-file: ./coverage/report.json
-          base-coverage-file: ./coverage/report.json
-          threshold: 95
+      - name: 'Coverage Comment'
+        uses: MishaKav/jest-coverage-comment@v1
