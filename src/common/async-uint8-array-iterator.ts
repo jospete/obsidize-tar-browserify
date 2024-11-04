@@ -7,15 +7,16 @@ import { TarUtility } from './tar-utility';
  */
 export interface AsyncUint8ArrayBlock {
 	/**
-	 * The input object that the data 
+	 * The input object that has provided the data from some external mechanism
 	 */
 	source: AsyncUint8ArrayLike;
 	/**
-	 * The value read from the source
+	 * The value read from `source`
 	 */
 	buffer: Uint8Array;
 	/**
-	 * The absolute offset in the source that the value was read from
+	 * The absolute offset in `source` that `buffer` was read from.
+	 * This will be in range [0, source.byteLength]
 	 */
 	offset: number;
 }
@@ -103,11 +104,12 @@ export class AsyncUint8ArrayIterator implements AsyncUint8ArrayIteratorLike {
 	public async next(): Promise<IteratorResult<AsyncUint8ArrayBlock>> {
 		const source = this.input;
 		const offset = this.mOffset;
-		const canAdvanceOffset = TarUtility.isNumber(this.mByteLength) && this.mOffset < this.mByteLength;
+		const length = this.mByteLength;
+		const canAdvanceOffset = TarUtility.isNumber(length) && offset < length;
 		
 		if (canAdvanceOffset) {
-			const targetLength = Math.min(this.blockSize, this.mByteLength! - offset);
-			const buffer = await source.read(this.mOffset, targetLength);
+			const targetLength = Math.min(this.blockSize, length - offset);
+			const buffer = await source.read(offset, targetLength);
 			this.mOffset += targetLength;
 			return {done: false, value: {source, buffer, offset}};
 		}

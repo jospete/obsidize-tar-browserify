@@ -55,7 +55,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 	public async initialize(): Promise<void> {
 		this.mBufferCache = null;
 		this.mOffset = 0;
-		this.mHasSyncInput = this.bufferIterator.input instanceof InMemoryAsyncUint8Array;
+		this.mHasSyncInput = (this.bufferIterator.input instanceof InMemoryAsyncUint8Array);
 		await this.bufferIterator.initialize();
 	}
 

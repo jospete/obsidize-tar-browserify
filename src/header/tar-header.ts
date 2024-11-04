@@ -56,7 +56,6 @@ export class TarHeader implements TarHeaderLike {
 	 * Note that if the given value is already a TarHeader instance, this will return it as-is.
 	 */
 	public static from(attrs: TarHeaderLike | Partial<TarHeaderLike>): TarHeader {
-
 		if (TarHeader.isTarHeader(attrs)) {
 			return attrs as TarHeader;
 		}
@@ -68,7 +67,6 @@ export class TarHeader implements TarHeaderLike {
 	 * Short-hand for constructing a new `TarHeader` and immediately calling `toUint8Array()` on it
 	 */
 	public static serialize(attrs: TarHeaderLike | Partial<TarHeaderLike>): Uint8Array {
-
 		if (TarHeader.isTarHeader(attrs)) {
 			return (attrs as TarHeader).toUint8Array();
 		}
