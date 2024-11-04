@@ -23,7 +23,5 @@ jobs:
       - name: 'Run Tests'
         run: npm test
       
-      - name: 'Jest Coverage Comment'
-        uses: MishaKav/jest-coverage-comment@v1
-        with:
-          coverage-summary-path: ./coverage/coverage-final.json
+      - name: 'Coverage Report'
+        uses: ArtiomTr/jest-coverage-report-action@v2
