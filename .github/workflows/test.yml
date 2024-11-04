@@ -24,7 +24,15 @@ jobs:
         run: npm test
       
       - name: 'Coverage Report'
+        id: coverage
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
+          skip-step: install
           coverage-file: ./coverage/report.json
           base-coverage-file: ./coverage/report.json
+      
+      - name: 'Coverage Comment'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+            # pass output from the previous step by id.
+            message: ${{ steps.coverage.outputs.report }}
