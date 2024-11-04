@@ -3,6 +3,7 @@ import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderField } from '../header/tar-header-field';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
+import { PaxTarHeader } from '../pax/pax-tar-header';
 import { TarHeaderUtility } from './tar-header-utility';
 
 const {
@@ -221,6 +222,29 @@ describe('TarHeader', () => {
 
 			header.fileNamePrefix = 'v3_final_this_time_for_sure';
 			expect(header.fileNamePrefix).toBe('v3_final_this_time_for_sure');
+		});
+	});
+
+	describe('PAX fields', () => {
+		it('should use the PAX field variant as an override to the USTAR variant when it exists', () => {
+			const header = TarHeader.seeded();
+			header.pax = new PaxTarHeader({
+				uname: 'That one guy',
+				uid: '123',
+				gname: 'The best group',
+				gid: '456',
+				size: '69420',
+				mtime: '1234.1234',
+				linkpath: 'this-way/over-here'
+			});
+
+			expect(header.ownerUserId).toBe(123);
+			expect(header.groupUserId).toBe(456);
+			expect(header.fileSize).toBe(69420);
+			expect(header.lastModified).toBe(1234.1234);
+			expect(header.linkedFileName).toBe('this-way/over-here');
+			expect(header.ownerUserName).toBe('That one guy');
+			expect(header.ownerGroupName).toBe('The best group');
 		});
 	});
 });

@@ -18,7 +18,7 @@ interface PaxKeyValuePairParseResult {
 }
 
 interface PaxParseResult {
-	attributes: PaxTarHeaderAttributes;
+	attributes: Partial<PaxTarHeaderAttributes>;
 	endIndex: number;
 }
 
@@ -28,6 +28,16 @@ const ASCII_SPACE = 0x20;
  * Object of key-value pairs for raw PAX attributes to populate a `PaxTarHeader` instance with.
  */
 export interface PaxTarHeaderAttributes extends Record<PaxTarHeaderKey | string, string> {
+	comment: string;
+	gid: string;
+	gname: string;
+	hdrcharset: string;
+	linkpath: string;
+	mtime: string;
+	path: string;
+	size: string;
+	uid: string;
+	uname: string;
 }
 
 /**
@@ -35,10 +45,10 @@ export interface PaxTarHeaderAttributes extends Record<PaxTarHeaderKey | string,
  * https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html#tag_20_92_13_03
  */
 export class PaxTarHeader {
-	private readonly valueMap: PaxTarHeaderAttributes;
+	private readonly valueMap: Partial<PaxTarHeaderAttributes>;
 
 	constructor(
-		attributes: PaxTarHeaderAttributes = {},
+		attributes: PaxTarHeaderAttributes | Partial<PaxTarHeaderAttributes> = {},
 		public readonly bytes: Uint8Array | null = null,
 		public readonly offset: number = 0,
 		public readonly endIndex: number = 0
@@ -52,7 +62,7 @@ export class PaxTarHeader {
 		return new PaxTarHeader(attributes, slicedBuffer, offset, endIndex);
 	}
 
-	public static serialize(attributes: PaxTarHeaderAttributes | null): Uint8Array {
+	public static serialize(attributes: Partial<PaxTarHeaderAttributes> | null): Uint8Array {
 		if (!TarUtility.isObject(attributes)) {
 			return new Uint8Array(0);
 		}
@@ -90,7 +100,7 @@ export class PaxTarHeader {
 	}
 
 	private static parseKeyValuePairs(buffer: Uint8Array, offset: number): PaxParseResult {
-		const attributes: PaxTarHeaderAttributes = {};
+		const attributes: Partial<PaxTarHeaderAttributes> = {};
 		let cursor = offset;
 		let next = PaxTarHeader.parseNextKeyValuePair(buffer, cursor);
 
