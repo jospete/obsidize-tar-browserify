@@ -12,9 +12,18 @@ jobs:
     container:
       image: node:20
     steps:
-      - uses: actions/checkout@v3
+      - name: 'Checkout repository'
+        uses: actions/checkout@v3
         with:
           node-version: 20
-      - run: npm ci
-      - run: npm test
-
+      
+      - name: 'Install dependencies'
+        run: npm ci
+      
+      - name: 'Run Tests'
+        run: npm test
+      
+      - name: 'Jest Coverage Comment'
+        uses: MishaKav/jest-coverage-comment@v1
+        with:
+          coverage-summary-path: ./coverage/coverage-final.json
