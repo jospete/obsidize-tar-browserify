@@ -22,7 +22,7 @@ const createPaxHeaderBuffer = (
 	const actualHeader = TarHeader.serialize(headerAttrs);
 	const paxHeader = PaxTarHeader.serialize(paxAttrs);
 	const preambleHeader = TarHeader.serialize({
-		fileName: Constants.PAX_HEADER_PREFIX + headerAttrs.fileName,
+		fileName: Constants.PAX_HEADER_PREFIX + '/' + headerAttrs.fileName,
 		fileSize: paxHeader.byteLength,
 		typeFlag
 	});

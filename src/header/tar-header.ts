@@ -1,11 +1,31 @@
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
-import { PaxTarHeader } from '../pax/pax-tar-header';
+import { PaxTarHeader, PaxTarHeaderAttributes } from '../pax/pax-tar-header';
 import { PaxTarHeaderKey } from '../pax/pax-tar-header-key';
 import { TarHeaderField } from './tar-header-field';
 import { TarHeaderLike } from './tar-header-like';
 import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
 import { TarHeaderUtility } from './tar-header-utility';
+
+/**
+ * Options that can be passed to `TarHeader.from()` to customize
+ * how the resulting object will be built.
+ */
+export interface TarHeaderBuilderOptions {
+	/**
+	 * When true, will cause the generated header
+	 * to contain PAX metadata if needed.
+	 * 
+	 * For example, the header may be converted to a pax header
+	 * if the file name field exceeds the default USTAR limit
+	 * of 100 bytes.
+	 */
+	pax?: boolean;
+}
+
+const defaultOptions: TarHeaderBuilderOptions = {
+	pax: true
+};
 
 /**
  * Facade over a backing Uint8Array buffer to consume/edit header data
@@ -56,12 +76,15 @@ export class TarHeader implements TarHeaderLike {
 	 * @returns A new `TarHeader` instance based on the given attributes (if they are a POJO).
 	 * Note that if the given value is already a TarHeader instance, this will return it as-is.
 	 */
-	public static from(attrs: TarHeaderLike | Partial<TarHeaderLike>): TarHeader {
+	public static from(
+		attrs: TarHeaderLike | Partial<TarHeaderLike>,
+		options?: TarHeaderBuilderOptions
+	): TarHeader {
 		if (TarHeader.isTarHeader(attrs)) {
 			return attrs as TarHeader;
 		}
 
-		return new TarHeader().initialize(attrs);
+		return new TarHeader().initialize(attrs, options);
 	}
 
 	/**
@@ -80,6 +103,34 @@ export class TarHeader implements TarHeaderLike {
 	 */
 	public static seeded(): TarHeader {
 		return TarHeader.from({});
+	}
+	
+	private static collectPaxRequiredAttributes(attrs: TarHeaderLike | Partial<TarHeaderLike>): Partial<PaxTarHeaderAttributes> | null {
+		if (!attrs) {
+			return null;
+		}
+
+		let collected: Partial<PaxTarHeaderAttributes> = {};
+
+		if (attrs.fileName && attrs.fileName.length > TarHeaderField.fileName.size) {
+			collected.path = attrs.fileName;
+		}
+
+		if (Object.keys(collected).length > 0) {
+			return collected;
+		}
+
+		return null;
+	}
+
+	public get byteLength(): number {
+		let result = Constants.HEADER_SIZE;
+		
+		if (this.pax && this.paxPreamble) {
+			result += (this.pax.calculateSectorByteLength() + this.paxPreamble!.byteLength);
+		}
+
+		return result;
 	}
 
 	public get fileName(): string {
@@ -279,6 +330,26 @@ export class TarHeader implements TarHeaderLike {
 	 * @returns A snapshot of the underlying buffer for this header
 	 */
 	public toUint8Array(): Uint8Array {
+		if (this.isPaxHeader && this.pax && this.paxPreamble) {
+			const preambleBytes = this.paxPreamble.bytes;
+			const paxBytes = this.pax.toUint8Array();
+			const ownBytes = this.bytes;
+			const paxSectorSize = TarUtility.roundUpSectorOffset(paxBytes.byteLength);
+			const totalSize = preambleBytes.byteLength + paxSectorSize + ownBytes.byteLength;
+			const result = new Uint8Array(totalSize);
+			let offset = 0;
+
+			result.set(this.paxPreamble.bytes, offset);
+			offset += preambleBytes.byteLength;
+
+			result.set(paxBytes, offset);
+			offset += paxSectorSize;
+
+			result.set(ownBytes, offset);
+
+			return result;
+		}
+
 		return this.bytes.slice(this.offset, this.offset + Constants.HEADER_SIZE);
 	}
 
@@ -339,15 +410,40 @@ export class TarHeader implements TarHeaderLike {
 		};
 	}
 
+	private asLocalPaxPreamble(): TarHeader {
+		const attrs = Object.assign(this.toAttributes(), {
+			fileName: PaxTarHeader.wrapFileName(this.fileName),
+			typeFlag: TarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER
+		});
+
+		return TarHeader.from(attrs, {pax: false});
+	}
+
 	/**
 	 * Override all values in the header.
 	 * Any values not provided in `attrs` will be filled in with default values.
 	 * @returns `this` for operation chaining
 	 */
-	public initialize(attrs: TarHeaderLike | Partial<TarHeaderLike> = {}): this {
-		const completeAttrs = TarHeader.defaultValues();
-		Object.assign(completeAttrs, (attrs || {}));
-		return this.update(completeAttrs);
+	public initialize(
+		attrs: TarHeaderLike | Partial<TarHeaderLike> = {},
+		options: TarHeaderBuilderOptions = {}
+	): this {
+		const completeAttrs: TarHeaderLike = Object.assign(TarHeader.defaultValues(), (attrs || {}));
+		const combinedOptions = Object.assign({}, defaultOptions, (options || {}));
+		const paxRequiredAttributes = TarHeader.collectPaxRequiredAttributes(completeAttrs);
+
+		this.update(completeAttrs);
+
+		if (combinedOptions.pax && paxRequiredAttributes) {
+			this.paxPreamble = this.asLocalPaxPreamble();
+			this.pax = new PaxTarHeader(paxRequiredAttributes);
+
+		} else {
+			this.paxPreamble = null;
+			this.pax = null;
+		}
+		
+		return this;
 	}
 
 	/**
