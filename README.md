@@ -8,7 +8,7 @@ Highlights:
 - Only one dependency (`tslib` to play nice with typescript projects)
 - Inline extraction tools (examples below)
 - Builder pattern for creating tarball files in-memory (examples below)
-- Supports PAX header parsing (PAX headers not supported in builder pattern yet)
+- Supports PAX header reading/writing
 
 Pairs well with these modules:
 

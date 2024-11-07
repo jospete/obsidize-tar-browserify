@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.0
+
+- Add PAX write capability for `ArchiveWriter`
+  - Note: PAX headers will only be added as necessary for files / directories that exceed original field bounds of the USTAR header (namely, the `fileName` field)
+
 ## 5.0.0
 
 - Rename `Tarball` class to `Archive`
