@@ -1,3 +1,4 @@
+import { TarHeaderField } from '../header/tar-header-field';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
 import { ArchiveReader } from './archive-reader';
 import { ArchiveWriter } from './archive-writer';
@@ -109,6 +110,30 @@ describe('ArchiveWriter', () => {
 			const [entry] = tarball.entries;
 
 			expect(entry.ownerUserName).toBe(overrideUser);
+		});
+	});
+
+	describe('PAX header construction', () => {
+		it('should NOT serialize with a PAX header when the name does not exceed the default max USTAR filename field size', async () => {
+			const fileName = ''.padEnd(TarHeaderField.fileName.size, 'a');
+			const writer = new ArchiveWriter();
+			writer.addTextFile(fileName, 'test content for long file name');
+			const entries = await ArchiveReader.readAllEntriesFromMemory(writer.toUint8Array());
+			expect(entries.length).toBe(1);
+			const [entry] = entries;
+			expect(entry.fileName).toBe(fileName);
+			expect(entry.header.isPaxHeader).toBe(false);
+		});
+
+		it('should serialize with a PAX header when the name exceeds the default max USTAR filename field size', async () => {
+			const fileName = ''.padEnd(TarHeaderField.fileName.size + 1, 'a');
+			const writer = new ArchiveWriter();
+			writer.addTextFile(fileName, 'test content for long file name');
+			const entries = await ArchiveReader.readAllEntriesFromMemory(writer.toUint8Array());
+			expect(entries.length).toBe(1);
+			const [entry] = entries;
+			expect(entry.fileName).toBe(fileName);
+			expect(entry.header.isPaxHeader).toBe(true);
 		});
 	});
 });

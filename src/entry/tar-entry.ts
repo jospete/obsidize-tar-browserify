@@ -1,6 +1,5 @@
 import { ArchiveContext } from '../common/archive-context';
 import { AsyncUint8ArrayLike } from '../common/async-uint8-array';
-import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderLike } from '../header/tar-header-like';
@@ -186,7 +185,7 @@ export class TarEntry implements TarHeaderLike {
 	 * The total exact byte length of this entry, including the header.
 	 */
 	public get byteLength(): number {
-		return Constants.HEADER_SIZE + this.fileSize;
+		return this.header.byteLength + this.fileSize;
 	}
 
 	/**
@@ -203,7 +202,7 @@ export class TarEntry implements TarHeaderLike {
 	 * whether or not this is a file.
 	 */
 	public get contentStartIndex(): number {
-		return Constants.HEADER_SIZE + this.bufferStartIndex;
+		return this.header.byteLength + this.bufferStartIndex;
 	}
 
 	/**

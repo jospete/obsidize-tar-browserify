@@ -1,3 +1,4 @@
+import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { PaxTarHeaderKey } from './pax-tar-header-key';
 
@@ -46,6 +47,7 @@ export interface PaxTarHeaderAttributes extends Record<PaxTarHeaderKey | string,
  */
 export class PaxTarHeader {
 	private readonly valueMap: Partial<PaxTarHeaderAttributes>;
+	private mSectorByteLength: number | undefined;
 
 	constructor(
 		attributes: PaxTarHeaderAttributes | Partial<PaxTarHeaderAttributes> = {},
@@ -97,6 +99,35 @@ export class PaxTarHeader {
 		}
 
 		return resultBuffer;
+	}
+
+	/**
+	 * Wraps the given file name (if necessary) with the 'PaxHeader' metadata indicator.
+	 * If the indicator already exists in the given file name, this does nothing.
+	 */
+	public static wrapFileName(fileName: string): string {
+		if (!TarUtility.isString(fileName) || fileName.includes(Constants.PAX_HEADER_PREFIX)) {
+			return fileName;
+		}
+
+		let sepIndex = fileName.lastIndexOf('/');
+
+		const insertWithSeperator = (seperator: string) =>
+			fileName.substring(0, sepIndex)
+			+ seperator + Constants.PAX_HEADER_PREFIX
+			+ fileName.substring(sepIndex)
+
+		if (sepIndex >= 0) {
+			return insertWithSeperator('/');
+		}
+
+		sepIndex = fileName.lastIndexOf('\\');
+
+		if (sepIndex >= 0) {
+			return insertWithSeperator('\\');
+		}
+
+		return Constants.PAX_HEADER_PREFIX + '/' + fileName;
 	}
 
 	private static parseKeyValuePairs(buffer: Uint8Array, offset: number): PaxParseResult {
@@ -205,6 +236,17 @@ export class PaxTarHeader {
 	 */
 	public get userName(): string | undefined {
 		return this.get(PaxTarHeaderKey.USER_NAME);
+	}
+
+	public calculateSectorByteLength(): number {
+		if (TarUtility.isNumber(this.mSectorByteLength)) {
+			return this.mSectorByteLength;
+		}
+
+		const bytes = this.toUint8Array();
+		this.mSectorByteLength = TarUtility.roundUpSectorOffset(bytes.byteLength);
+		
+		return this.mSectorByteLength;
 	}
 
 	/**
