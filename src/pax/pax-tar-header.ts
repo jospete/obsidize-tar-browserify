@@ -243,7 +243,7 @@ export class PaxTarHeader {
 			return this.mSectorByteLength;
 		}
 
-		const bytes = TarUtility.isUint8Array(this.bytes) ? this.bytes : this.toUint8Array();
+		const bytes = this.toUint8Array();
 		this.mSectorByteLength = TarUtility.roundUpSectorOffset(bytes.byteLength);
 		
 		return this.mSectorByteLength;

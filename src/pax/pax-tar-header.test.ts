@@ -91,4 +91,35 @@ describe('PaxTarHeader', () => {
 			expect(serializedBuffer.byteLength).toBe(targetLength);
 		});
 	});
+
+	describe('wrapFileName()', () => {
+		it('should return the value as-is if it is not a string', () => {
+			expect(PaxTarHeader.wrapFileName(0 as any)).toBe(0);
+		});
+
+		it('should return the value as-is if it already contains the pax header marker', () => {
+			const value = Constants.PAX_HEADER_PREFIX + 'blah';
+			expect(PaxTarHeader.wrapFileName(value)).toBe(value);
+		});
+
+		it('should use back slashes when they are detected', () => {
+			const value = 'path\\to\\file.txt';
+			expect(PaxTarHeader.wrapFileName(value)).toBe(`path\\to\\${Constants.PAX_HEADER_PREFIX}\\file.txt`);
+		});
+
+		it('should forward slashes when they are detected', () => {
+			const value = 'path/to/file.txt';
+			expect(PaxTarHeader.wrapFileName(value)).toBe(`path/to/${Constants.PAX_HEADER_PREFIX}/file.txt`);
+		});
+
+		it('should add the header as a prefix when no slashes are detected', () => {
+			const value = 'file.txt';
+			expect(PaxTarHeader.wrapFileName(value)).toBe(`${Constants.PAX_HEADER_PREFIX}/file.txt`);
+		});
+
+		it('should properly handle file paths that start with a slash', () => {
+			const value = '/file.txt';
+			expect(PaxTarHeader.wrapFileName(value)).toBe(`/${Constants.PAX_HEADER_PREFIX}/file.txt`);
+		});
+	});
 });

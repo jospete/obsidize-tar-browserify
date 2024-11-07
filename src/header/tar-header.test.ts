@@ -62,6 +62,18 @@ describe('TarHeader', () => {
 			expect(header.fileMode).toBe(Constants.FILE_MODE_DEFAULT);
 		});
 
+		it('applies default options if the options parameter is falsy', () => {
+			const header = new TarHeader();
+
+			expect(header.deviceMajorNumber).toBe('');
+			expect(header.fileMode).toBe(0);
+
+			header.initialize({}, null);
+
+			expect(header.deviceMajorNumber).toBe('00');
+			expect(header.fileMode).toBe(Constants.FILE_MODE_DEFAULT);
+		});
+
 		it('applies a combination of default values and custom ones if a custom object is given', () => {
 			const header = new TarHeader();
 			const fileName = 'test file.txt';

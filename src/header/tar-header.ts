@@ -105,11 +105,9 @@ export class TarHeader implements TarHeaderLike {
 		return TarHeader.from({});
 	}
 	
-	private static collectPaxRequiredAttributes(attrs: TarHeaderLike | Partial<TarHeaderLike>): Partial<PaxTarHeaderAttributes> | null {
-		if (!attrs) {
-			return null;
-		}
-
+	private static collectPaxRequiredAttributes(
+		attrs: TarHeaderLike | Partial<TarHeaderLike>
+	): Partial<PaxTarHeaderAttributes> | null {
 		let collected: Partial<PaxTarHeaderAttributes> = {};
 
 		if (attrs.fileName && attrs.fileName.length > TarHeaderField.fileName.size) {
@@ -426,7 +424,7 @@ export class TarHeader implements TarHeaderLike {
 	 */
 	public initialize(
 		attrs: TarHeaderLike | Partial<TarHeaderLike> = {},
-		options: TarHeaderBuilderOptions = {}
+		options: TarHeaderBuilderOptions | null = {}
 	): this {
 		const completeAttrs: TarHeaderLike = Object.assign(TarHeader.defaultValues(), (attrs || {}));
 		const combinedOptions = Object.assign({}, defaultOptions, (options || {}));
