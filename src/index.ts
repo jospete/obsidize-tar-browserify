@@ -7,7 +7,7 @@ export { AsyncUint8ArrayBlock, AsyncUint8ArrayIterator, AsyncUint8ArrayIteratorL
 export { Constants } from './common/constants';
 export { TarUtility } from './common/tar-utility';
 export { TarEntry, TarEntryOptions } from './entry/tar-entry';
-export { TarHeader } from './header/tar-header';
+export { TarHeader, TarHeaderBuilderOptions } from './header/tar-header';
 export { TarHeaderField, TarHeaderFieldLike } from './header/tar-header-field';
 export { TarHeaderFieldTransform, TarHeaderFieldTransformType } from './header/tar-header-field-transform';
 export { TarHeaderFieldType } from './header/tar-header-field-type';
