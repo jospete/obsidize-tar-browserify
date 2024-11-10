@@ -8,6 +8,7 @@ import { Archive } from '../dist';
 async function main() {
 	const src = './dev-assets/pax-tgz-sample/packed/test.tar.gz';
 	const destDirectory = './tmp/test/pax-unpack-repack';
+	const destDeflated = `${destDirectory}/unpack-repack-sample.tar`;
 	const dest = `${destDirectory}/unpack-repack-sample.tar.gz`;
 
 	if (existsSync(destDirectory)) {
@@ -37,6 +38,7 @@ async function main() {
 	const reconstructedBuffer = reconstructedArchive.toUint8Array();
 	const reconstructedGzip = gzip(reconstructedBuffer);
 
+	writeFileSync(destDeflated, reconstructedBuffer);
 	writeFileSync(dest, reconstructedGzip);
 
 	const cmd = `tar -tvf ${dest}`;
