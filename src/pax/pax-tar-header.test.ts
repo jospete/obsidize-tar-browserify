@@ -121,5 +121,12 @@ describe('PaxTarHeader', () => {
 			const value = '/file.txt';
 			expect(PaxTarHeader.wrapFileName(value)).toBe(`/${Constants.PAX_HEADER_PREFIX}/file.txt`);
 		});
+
+		it('should properly truncate massive file names', () => {
+			const fileName = 'test_tar/repository/assets/._0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895081a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr';
+			const wrapped = 'PaxHeader/._0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703e\0\0';
+			const result = PaxTarHeader.wrapFileName(fileName);
+			expect(result).toBe(wrapped);
+		});
 	});
 });

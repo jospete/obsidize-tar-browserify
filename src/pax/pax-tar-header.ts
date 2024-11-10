@@ -1,5 +1,6 @@
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
+import { TarHeaderField } from '../header/tar-header-field';
 import { PaxTarHeaderKey } from './pax-tar-header-key';
 
 const {
@@ -112,22 +113,43 @@ export class PaxTarHeader {
 
 		let sepIndex = fileName.lastIndexOf('/');
 
-		const insertWithSeperator = (seperator: string) =>
-			fileName.substring(0, sepIndex)
-			+ seperator + Constants.PAX_HEADER_PREFIX
-			+ fileName.substring(sepIndex)
-
 		if (sepIndex >= 0) {
-			return insertWithSeperator('/');
+			return PaxTarHeader.insertPaxAt(fileName, '/', sepIndex);
 		}
 
 		sepIndex = fileName.lastIndexOf('\\');
 
 		if (sepIndex >= 0) {
-			return insertWithSeperator('\\');
+			return PaxTarHeader.insertPaxAt(fileName, '\\', sepIndex);
 		}
 
-		return Constants.PAX_HEADER_PREFIX + '/' + fileName;
+		return PaxTarHeader.makeTopLevelPrefix(fileName, '/', 0);
+	}
+
+	private static insertPaxAt(fileName: string, separator: string, offset: number): string {
+		const maxLength = TarHeaderField.fileName.size;
+
+		if (fileName.length < maxLength) {
+			return fileName.substring(0, offset)
+				+ separator + Constants.PAX_HEADER_PREFIX
+				+ fileName.substring(offset);
+		}
+
+		return PaxTarHeader.makeTopLevelPrefix(fileName, '/', offset + 1);
+	}
+
+	private static makeTopLevelPrefix(fileName: string, separator: string, offset: number): string {
+		const maxLength = TarHeaderField.fileName.size;
+
+		// Dark magic observed from existing tar files
+		let result = Constants.PAX_HEADER_PREFIX + separator + fileName.substring(offset);
+
+		if (result.length > maxLength) {
+			// Dark magic observed from existing tar files
+			result = result.substring(0, maxLength - 2) + '\0\0';
+		}
+
+		return result;
 	}
 
 	private static parseKeyValuePairs(buffer: Uint8Array, offset: number): PaxParseResult {

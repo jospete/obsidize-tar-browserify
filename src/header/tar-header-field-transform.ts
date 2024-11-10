@@ -37,6 +37,10 @@ export namespace TarHeaderFieldTransformType {
 		return input.slice(offset, offset + fieldLength);
 	}
 	
+	function serializeAscii(input: string, fieldLength: number): Uint8Array {
+		return TarUtility.encodeString(String(input).substring(0, fieldLength));
+	}
+	
 	function deserializeAscii(input: Uint8Array, fieldLength: number, offset: number): string {
 		const bytes = getScopedBytes(input, fieldLength, offset);
 		return TarUtility.decodeString(bytes);
@@ -65,12 +69,12 @@ export namespace TarHeaderFieldTransformType {
 	}
 	
 	export const ASCII: TarHeaderFieldTransform<string> = Object.freeze({
-		serialize: TarUtility.encodeString,
+		serialize: serializeAscii,
 		deserialize: deserializeAscii
 	});
 	
 	export const ASCII_PADDED_END: TarHeaderFieldTransform<string> = Object.freeze({
-		serialize: TarUtility.encodeString,
+		serialize: serializeAscii,
 		deserialize: deserializeAsciiPadded
 	});
 	
