@@ -8,10 +8,10 @@ import { Archive } from '../dist';
 async function main() {
 	const src = './dev-assets/pax-tgz-sample/packed/test.tar.gz';
 	const destDirectory = './tmp/test/pax-unpack-repack';
-	const dest = destDirectory + '/unpack-repack-sample.tar.gz';
+	const dest = `${destDirectory}/unpack-repack-sample.tar.gz`;
 
 	if (existsSync(destDirectory)) {
-		console.log('removing existing output directory -> ' + destDirectory);
+		console.log(`removing existing output directory -> ${destDirectory}`);
 		rmSync(destDirectory, {recursive: true});
 	}
 	
@@ -31,7 +31,7 @@ async function main() {
 	}
 
 	for (const entry of reconstructedArchive.entries) {
-		console.log('reconstructed > ' + entry.fileName);
+		console.log(`reconstructed > ${entry.fileName}`);
 	}
 
 	const reconstructedBuffer = reconstructedArchive.toUint8Array();
@@ -40,8 +40,7 @@ async function main() {
 	writeFileSync(dest, reconstructedGzip);
 
 	const cmd = `tar -tvf ${dest}`;
-	console.log('> ' + cmd);
-	
+	console.log(`> ${cmd}`);
 	execSync(cmd, { stdio: 'inherit' });
 }
 
