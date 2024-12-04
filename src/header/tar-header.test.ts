@@ -259,4 +259,15 @@ describe('TarHeader', () => {
 			expect(header.ownerGroupName).toBe('The best group');
 		});
 	});
+
+	describe('toUint8Array()', () => {
+		const fileName = 'test_tar/repository/assets/._0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895081a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt';
+		const header = TarHeader.from({fileName, fileSize: 42, typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE});
+		const headerBytes = header.toUint8Array();
+		const start = Constants.SECTOR_SIZE * 2;
+		const end = start + 100;
+		const truncatedNameBytes = headerBytes.slice(start, end);
+		const truncatedName = TarUtility.decodeString(truncatedNameBytes);
+		expect(truncatedName).toBe(fileName.substring(0, 100));
+	});
 });
