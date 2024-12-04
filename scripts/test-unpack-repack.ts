@@ -3,7 +3,7 @@
 import { execSync } from 'child_process';
 import { existsSync, mkdirpSync, readFileSync, rmSync, writeFileSync } from 'fs-extra';
 import { gzip, ungzip } from 'pako';
-import { Archive } from '../dist';
+import { Archive, TarEntry } from '../dist';
 
 async function main() {
 	const src = './dev-assets/pax-tgz-sample/packed/test.tar.gz';
@@ -22,6 +22,7 @@ async function main() {
 	const ungzippedFileUint8 = ungzip(gzippedFileBuffer);
 	const archive = await Archive.extract(ungzippedFileUint8);
 	const reconstructedArchive = new Archive();
+	const isMacOSMetaFile = (entry: TarEntry) => entry.fileName.startsWith('._') || entry.fileName.includes('/._');
 
 	for (const entry of archive.entries) {
 		if (entry.isDirectory()) {

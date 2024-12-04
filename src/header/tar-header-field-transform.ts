@@ -46,6 +46,14 @@ export namespace TarHeaderFieldTransformType {
 		return TarUtility.decodeString(bytes);
 	}
 	
+	function serializeAsciiPadded(input: string, fieldLength: number): Uint8Array {
+		input = String(input);
+		if (input.length > fieldLength) {
+			return TarUtility.encodeString(input.substring(0, fieldLength - 1) + '\0');
+		}
+		return TarUtility.encodeString(input.padEnd(fieldLength, '\0'));
+	}
+	
 	function deserializeAsciiPadded(input: Uint8Array, fieldLength: number, offset: number): string {
 		const bytes = getScopedBytes(input, fieldLength, offset);
 		return TarUtility.removeTrailingZeros(TarUtility.decodeString(bytes));
@@ -74,7 +82,7 @@ export namespace TarHeaderFieldTransformType {
 	});
 	
 	export const ASCII_PADDED_END: TarHeaderFieldTransform<string> = Object.freeze({
-		serialize: serializeAscii,
+		serialize: serializeAsciiPadded,
 		deserialize: deserializeAsciiPadded
 	});
 	

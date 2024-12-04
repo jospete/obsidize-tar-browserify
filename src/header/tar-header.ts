@@ -121,6 +121,22 @@ export class TarHeader implements TarHeaderLike {
 		return null;
 	}
 
+	private static splitBaseFileName(fileName: string): string[] {
+		let offset = fileName.lastIndexOf('/');
+		
+		if (offset >= 0) {
+			return [fileName.substring(0, offset), fileName.substring(offset + 1)];
+		}
+
+		offset = fileName.lastIndexOf('\\');
+		
+		if (offset >= 0) {
+			return [fileName.substring(0, offset), fileName.substring(offset + 1)];
+		}
+
+		return ['', fileName];
+	}
+
 	public get byteLength(): number {
 		let result = Constants.HEADER_SIZE;
 		
@@ -433,6 +449,12 @@ export class TarHeader implements TarHeaderLike {
 		this.update(completeAttrs);
 
 		if (combinedOptions.pax && paxRequiredAttributes) {
+			if (paxRequiredAttributes.path) {
+				const [directoryName, fileName] = TarHeader.splitBaseFileName(paxRequiredAttributes.path);
+				this.ustarFileName = fileName;
+				this.fileNamePrefix = directoryName;
+			}
+
 			this.paxPreamble = this.asLocalPaxPreamble();
 			this.pax = new PaxTarHeader(paxRequiredAttributes);
 
