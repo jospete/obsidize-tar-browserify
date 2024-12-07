@@ -2,6 +2,7 @@ import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarHeaderField } from '../header/tar-header-field';
 import { PaxTarHeaderKey } from './pax-tar-header-key';
+import { PaxTarHeaderUtility } from './pax-tar-header-utility';
 
 const {
 	parseIntSafe,
@@ -56,7 +57,7 @@ export class PaxTarHeader {
 		public readonly offset: number = 0,
 		public readonly endIndex: number = 0
 	) {
-		this.valueMap = Object.freeze(Object.assign({}, attributes));
+		this.valueMap = Object.assign({}, attributes);
 	}
 
 	public static from(buffer: Uint8Array, offset: number = 0): PaxTarHeader {
@@ -260,6 +261,23 @@ export class PaxTarHeader {
 		return this.get(PaxTarHeaderKey.USER_NAME);
 	}
 
+	/**
+	 * Removes any unknown or un-standardized keys from this header.
+	 * @returns `this` for operation chaining
+	 */
+	public clean(): this {
+		for (const key of Object.keys(this.valueMap)) {
+			if (!PaxTarHeaderUtility.isKnownHeaderKey(key)) {
+				delete this.valueMap[key];
+			}
+		}
+
+		return this;
+	}
+
+	/**
+	 * @returns The total byte-length of this header in serialized form.
+	 */
 	public calculateSectorByteLength(): number {
 		if (TarUtility.isNumber(this.mSectorByteLength)) {
 			return this.mSectorByteLength;

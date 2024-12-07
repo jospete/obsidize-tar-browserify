@@ -341,6 +341,19 @@ export class TarHeader implements TarHeaderLike {
 	}
 
 	/**
+	 * Removes any unknown or un-standardized keys from
+	 * the PAX portion of this header (if one exists).
+	 * 
+	 * See also `PaxTarHeader.clean()`.
+	 * 
+	 * @returns `this` for operation chaining
+	 */
+	public clean(): this {
+		this.pax?.clean();
+		return this;
+	}
+
+	/**
 	 * @returns A snapshot of the underlying buffer for this header
 	 */
 	public toUint8Array(): Uint8Array {

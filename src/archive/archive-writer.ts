@@ -4,6 +4,8 @@ import { TarEntry } from '../entry/tar-entry';
 import { TarHeaderLike } from '../header/tar-header-like';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
 
+export type TarEntryPredicate = (entry: TarEntry) => boolean;
+
 /**
  * Generic utility for building a tar octet stream by adding JSON-style entries.
  * See the `add***()` options in this class definition for details.
@@ -103,5 +105,26 @@ export class ArchiveWriter {
 			typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
 		}, headerOptions);
 		return this.addEntryWith(combinedHeaderOptions);
+	}
+
+	/**
+	 * Removes any entries from this writer's cache that meet the given predicate condition.
+	 * @param predicate - delegate that will return true for any entry that should be removed.
+	 * @returns `this` for operation chaining
+	 */
+	public removeEntriesWhere(predicate: TarEntryPredicate): this {
+		this.entries = this.entries.filter((v) => !predicate(v));
+		return this;
+	}
+
+	/**
+	 * Convenience option for cleaning the header of each listed entry.
+	 * See also `TarHeader.clean()`.
+	 */
+	public cleanAllHeaders(): this {
+		for (const entry of this.entries) {
+			entry.header.clean();
+		}
+		return this;
 	}
 }

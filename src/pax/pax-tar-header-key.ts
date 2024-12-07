@@ -4,6 +4,17 @@
  */
 export enum PaxTarHeaderKey {
 	/**
+	 * The file access time for the following file(s), equivalent to the value of the st_atime member of the stat structure for a file, as
+	 * described by the stat() function. The access time shall be restored if the process has appropriate privileges required to do so. The
+	 * format of the <value> shall be as described in pax Extended Header File Times.
+	 */
+	ACCESS_TIME = 'atime',
+	/**
+	 * The name of the character set used to encode the data in the following file(s). The entries in the following table are defined to refer to
+	 * known standards; additional names may be agreed on between the originator and recipient.
+	 */
+	CHARSET = 'charset',
+	/**
 	 * A series of characters used as a comment. All characters in the <value> field shall be ignored by pax.
 	 */
 	COMMENT = 'comment',
