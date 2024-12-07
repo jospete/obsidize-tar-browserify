@@ -6,8 +6,9 @@ import { gzip, ungzip } from 'pako';
 import { Archive, TarEntry } from '../dist';
 
 async function main() {
-	const src = './dev-assets/pax-tgz-sample/packed/test.tar.gz';
-	const destDirectory = './tmp/test/pax-unpack-repack';
+	const args = process.argv.slice(2);
+	const src = args[0] || './dev-assets/pax-tgz-sample/packed/test.tar.gz';
+	const destDirectory = args[1] || './tmp/test/pax-unpack-repack';
 	const destDeflated = `${destDirectory}/unpack-repack-sample.tar`;
 	const dest = `${destDirectory}/unpack-repack-sample.tar.gz`;
 
@@ -18,9 +19,16 @@ async function main() {
 	
 	mkdirpSync(destDirectory);
 
-	const gzippedFileBuffer = readFileSync(src);
-	const ungzippedFileUint8 = ungzip(gzippedFileBuffer);
-	const archive = await Archive.extract(ungzippedFileUint8);
+	let tarBuffer: Uint8Array;
+
+	if (src.endsWith('.gz')) {
+		const gzippedFileBuffer = readFileSync(src);
+		tarBuffer = ungzip(gzippedFileBuffer);
+	} else {
+		tarBuffer = readFileSync(src);
+	}
+
+	const archive = await Archive.extract(tarBuffer);
 	const isMacOSMetaFile = (entry: TarEntry) => entry.fileName.startsWith('._') || entry.fileName.includes('/._');
 
 	archive.removeEntriesWhere(isMacOSMetaFile).cleanAllHeaders();
