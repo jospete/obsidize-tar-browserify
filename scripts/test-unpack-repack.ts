@@ -21,22 +21,15 @@ async function main() {
 	const gzippedFileBuffer = readFileSync(src);
 	const ungzippedFileUint8 = ungzip(gzippedFileBuffer);
 	const archive = await Archive.extract(ungzippedFileUint8);
-	const reconstructedArchive = new Archive();
 	const isMacOSMetaFile = (entry: TarEntry) => entry.fileName.startsWith('._') || entry.fileName.includes('/._');
 
-	for (const entry of archive.entries) {
-		if (entry.isDirectory()) {
-			reconstructedArchive.addDirectory(entry.fileName);
-		} else if (entry.isFile()) {
-			reconstructedArchive.addBinaryFile(entry.fileName, entry.content!);
-		}
-	}
+	archive.removeEntriesWhere(isMacOSMetaFile).cleanAllHeaders();
 
-	for (const entry of reconstructedArchive.entries) {
+	for (const entry of archive.entries) {
 		console.log(`reconstructed > ${entry.fileName}`);
 	}
 
-	const reconstructedBuffer = reconstructedArchive.toUint8Array();
+	const reconstructedBuffer = archive.toUint8Array();
 	const reconstructedGzip = gzip(reconstructedBuffer);
 
 	writeFileSync(destDeflated, reconstructedBuffer);
@@ -44,7 +37,15 @@ async function main() {
 
 	const cmd = `tar -tvf ${dest}`;
 	console.log(`> ${cmd}`);
-	execSync(cmd, { stdio: 'inherit' });
+	
+	try {
+		execSync(cmd, { stdio: 'inherit' });
+	} catch (e) {
+		console.error(`tar command failed: ${e}`);
+	}
+
+	const jsonDebugOutput = `${destDirectory}/archive-state.json`;
+	writeFileSync(jsonDebugOutput, JSON.stringify(archive, null, '\t'), 'utf8');
 }
 
 main().catch(console.error);
