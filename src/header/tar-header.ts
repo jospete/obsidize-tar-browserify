@@ -204,7 +204,9 @@ export class TarHeader implements TarHeaderLike {
 	}
 
 	public get lastModified(): number {
-		return this.pax?.has(PaxTarHeaderKey.MODIFICATION_TIME) ? this.pax.modificationTime! : this.ustarLastModified;
+		return this.pax?.has(PaxTarHeaderKey.MODIFICATION_TIME)
+			? TarUtility.paxTimeToDate(this.pax.modificationTime!)
+			: this.ustarLastModified;
 	}
 
 	public get ustarLastModified(): number {
@@ -212,7 +214,7 @@ export class TarHeader implements TarHeaderLike {
 	}
 
 	public set ustarLastModified(value: number) {
-		TarHeaderField.lastModified.writeTo(this.bytes, this.offset, value);
+		TarHeaderField.lastModified.writeTo(this.bytes, this.offset, TarUtility.dateTimeToUstar(value));
 	}
 
 	public get headerChecksum(): number {
@@ -468,8 +470,9 @@ export class TarHeader implements TarHeaderLike {
 				this.fileNamePrefix = directoryName;
 			}
 
-			this.paxPreamble = this.asLocalPaxPreamble();
 			this.pax = new PaxTarHeader(paxRequiredAttributes);
+			this.ustarLastModified = this.lastModified; // sync modification time between the two headers
+			this.paxPreamble = this.asLocalPaxPreamble();
 
 		} else {
 			this.paxPreamble = null;

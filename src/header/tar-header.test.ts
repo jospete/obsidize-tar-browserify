@@ -253,7 +253,7 @@ describe('TarHeader', () => {
 			expect(header.ownerUserId).toBe(123);
 			expect(header.groupUserId).toBe(456);
 			expect(header.fileSize).toBe(69420);
-			expect(header.lastModified).toBe(1234.1234);
+			expect(header.lastModified).toBe(1234123);
 			expect(header.linkedFileName).toBe('this-way/over-here');
 			expect(header.ownerUserName).toBe('That one guy');
 			expect(header.ownerGroupName).toBe('The best group');

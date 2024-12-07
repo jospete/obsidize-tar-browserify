@@ -15,7 +15,8 @@ export namespace TarHeaderFieldTransformType {
 	function serializeIntegerOctalToString(value: number, maxLength: number): string {
 		return TarUtility.parseIntSafe(value)
 			.toString(Constants.OCTAL_RADIX)
-			.padStart(maxLength, '0');
+			.padStart(maxLength, '0')
+			.substring(0, maxLength);
 	}
 	
 	function serializeIntegerOctalWithSuffix(
@@ -69,11 +70,11 @@ export namespace TarHeaderFieldTransformType {
 	}
 	
 	function serializeIntegerOctalTimestamp(value: number, fieldLength: number): Uint8Array {
-		return serializeIntegerOctalWithSuffix(TarUtility.encodeTimestamp(value), fieldLength, '');
+		return serializeIntegerOctalWithSuffix(TarUtility.dateTimeToUstar(value), fieldLength, '');
 	}
 	
 	function deserializeIntegerOctalTimestamp(input: Uint8Array, fieldLength: number, offset: number): number {
-		return TarUtility.decodeTimestamp(deserializeIntegerOctal(input, fieldLength, offset));
+		return TarUtility.ustarTimeToDate(deserializeIntegerOctal(input, fieldLength, offset));
 	}
 	
 	export const ASCII: TarHeaderFieldTransform<string> = Object.freeze({
