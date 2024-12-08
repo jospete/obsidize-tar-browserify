@@ -1,5 +1,5 @@
 import { Constants } from '../common/constants';
-import { TarUtility } from '../common/tar-utility';
+import { TarSerializable, TarUtility } from '../common/tar-utility';
 import { PaxTarHeader, PaxTarHeaderAttributes } from '../pax/pax-tar-header';
 import { PaxTarHeaderKey } from '../pax/pax-tar-header-key';
 import { TarHeaderField } from './tar-header-field';
@@ -34,7 +34,7 @@ const defaultOptions: TarHeaderBuilderOptions = {
  * Does not perform any mutations or reads on creation, and
  * lazy loads/sets data via getters and setters.
  */
-export class TarHeader implements TarHeaderLike {
+export class TarHeader implements TarHeaderLike, TarSerializable {
 	public pax: PaxTarHeader | null = null;
 	public paxPreamble: TarHeader | null = null;
 

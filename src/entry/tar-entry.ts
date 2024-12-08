@@ -1,6 +1,6 @@
 import { ArchiveContext } from '../common/archive-context';
 import { AsyncUint8ArrayLike } from '../common/async-uint8-array';
-import { TarUtility } from '../common/tar-utility';
+import { TarSerializable, TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderLike } from '../header/tar-header-like';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
@@ -19,7 +19,7 @@ export interface TarEntryOptions {
  * 1. The parsed USTAR header sector content (AKA TarHeader)
  * 2. The aggregate of the proceeding file content sectors, based on the header's file size attribute
  */
-export class TarEntry implements TarHeaderLike {
+export class TarEntry implements TarHeaderLike, TarSerializable {
 
 	protected mHeader: TarHeader;
 	protected mContent: Uint8Array | null;

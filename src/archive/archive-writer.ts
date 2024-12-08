@@ -1,5 +1,5 @@
 import { Constants } from '../common/constants';
-import { TarUtility } from '../common/tar-utility';
+import { TarSerializable, TarUtility } from '../common/tar-utility';
 import { TarEntry } from '../entry/tar-entry';
 import { TarHeaderLike } from '../header/tar-header-like';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
@@ -10,7 +10,7 @@ export type TarEntryPredicate = (entry: TarEntry) => boolean;
  * Generic utility for building a tar octet stream by adding JSON-style entries.
  * See the `add***()` options in this class definition for details.
  */
-export class ArchiveWriter {
+export class ArchiveWriter implements TarSerializable {
 	constructor(
 		public entries: TarEntry[] = []
 	) {	

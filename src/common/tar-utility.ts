@@ -1,5 +1,9 @@
 import { Constants } from './constants';
 
+export interface TarSerializable {
+	toUint8Array(): Uint8Array;
+}
+
 export namespace TarUtility {
 
 	export function isNumber(value: any): value is number {

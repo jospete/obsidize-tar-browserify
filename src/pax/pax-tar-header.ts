@@ -1,6 +1,7 @@
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarHeaderField } from '../header/tar-header-field';
+import { TarSerializable } from './../common/tar-utility';
 import { PaxTarHeaderKey } from './pax-tar-header-key';
 import { PaxTarHeaderUtility } from './pax-tar-header-utility';
 
@@ -47,7 +48,7 @@ export interface PaxTarHeaderAttributes extends Record<PaxTarHeaderKey | string,
  * Adds support for extended headers.
  * https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html#tag_20_92_13_03
  */
-export class PaxTarHeader {
+export class PaxTarHeader implements TarSerializable {
 	private readonly valueMap: Partial<PaxTarHeaderAttributes>;
 	private mSectorByteLength: number | undefined;
 
@@ -229,7 +230,7 @@ export class PaxTarHeader {
 	/**
 	 * See `PaxTarHeaderKey.MODIFICATION_TIME` for more info
 	 */
-	public get modificationTime(): number {
+	public get modificationTime(): number | undefined {
 		return TarUtility.parseFloatSafe(this.get(PaxTarHeaderKey.MODIFICATION_TIME));
 	}
 
