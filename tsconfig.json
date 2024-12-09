@@ -32,6 +32,7 @@
 		"scripts/",
 		"docs/",
 		"src/test/",
-		"src/**/*.test.ts"
+		"src/**/*.test.ts",
+		"dist/"
 	]
 }
