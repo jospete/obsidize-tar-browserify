@@ -2,11 +2,13 @@ import { Constants } from './constants';
 import { TarUtility } from './tar-utility';
 
 const {
-	decodeTimestamp,
-	encodeTimestamp,
+	ustarTimeToDate,
+	dateTimeToUstar,
+	paxTimeToUstar,
 	advanceSectorOffsetUnclamped,
 	concatUint8Arrays,
 	decodeString,
+	encodeString,
 	generateChecksum,
 	parseIntOctal,
 	parseIntSafe,
@@ -101,6 +103,14 @@ describe('TarUtility', () => {
 		});
 	});
 
+	describe('encodeString()', () => {
+		it('returns an empty Uint8Array when the value is not a populated string', () => {
+			const emptyUint8 = new Uint8Array(0);
+			expect(encodeString(null as any)).toEqual(emptyUint8);
+			expect(encodeString('')).toEqual(emptyUint8);
+		});
+	});
+
 	describe('generateChecksum()', () => {
 		it('returns zero when the given value is not a valid Uint8Array', () => {
 			expect(generateChecksum(null as any)).toBe(0);
@@ -129,23 +139,29 @@ describe('TarUtility', () => {
 		});
 	});
 
-	describe('decodeTimestamp()', () => {
+	describe('ustarTimeToDate()', () => {
 		it('converts the encoded value to a valid date time', () => {
-			expect(decodeTimestamp(staticDateTimeEncoded)).toBe(staticDateTime);
+			expect(ustarTimeToDate(staticDateTimeEncoded)).toBe(staticDateTime);
 		});
 
 		it('floors floating point values', () => {
-			expect(decodeTimestamp(staticDateTimeEncoded + 0.9)).toBe(staticDateTime);
+			expect(ustarTimeToDate(staticDateTimeEncoded + 0.9)).toBe(staticDateTime);
 		});
 	});
 
-	describe('encodeTimestamp()', () => {
+	describe('dateTimeToUstar()', () => {
 		it('encodes the value to a serializable mtime', () => {
-			expect(encodeTimestamp(staticDateTime)).toBe(staticDateTimeEncoded);
+			expect(dateTimeToUstar(staticDateTime)).toBe(staticDateTimeEncoded);
 		});
 
 		it('floors floating point values', () => {
-			expect(encodeTimestamp(staticDateTime + 0.9)).toBe(staticDateTimeEncoded);
+			expect(dateTimeToUstar(staticDateTime + 0.9)).toBe(staticDateTimeEncoded);
+		});
+	});
+
+	describe('paxTimeToUstar()', () => {
+		it('converts a pax mtime to a ustar mtime', () => {
+			expect(paxTimeToUstar(123.789)).toBe(123);
 		});
 	});
 

@@ -31,6 +31,8 @@ describe('PaxTarHeader', () => {
 			expect(header.has(PaxTarHeaderKey.PATH)).toBe(true);
 			expect(header.path).toBe('test_tar/repository/assets/0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895081a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt');
 			
+			expect(header.accessTime).not.toBeDefined();
+			expect(header.charset).not.toBeDefined();
 			expect(header.modificationTime).toBe(1729129075.4069762);
 			expect(header.comment).not.toBeDefined();
 			expect(header.groupId).not.toBeDefined();
@@ -127,6 +129,62 @@ describe('PaxTarHeader', () => {
 			const wrapped = 'PaxHeader/._0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703e\0\0';
 			const result = PaxTarHeader.wrapFileName(fileName);
 			expect(result).toBe(wrapped);
+		});
+	});
+
+	describe('parseSegmentsFromAttributes()', () => {
+		it('returns an empty array on invalid input', () => {
+			expect(PaxTarHeader.parseSegmentsFromAttributes(null as any)).toEqual([]);
+		});
+	});
+
+	describe('keys()', () => {
+		it('returns an array of the keys in the header', () => {
+			const header = PaxTarHeader.fromAttributes(paxHeaderHex2Decoded);
+			const keys = header.keys();
+			expect(keys).toEqual(Object.keys(paxHeaderHex2Decoded));
+		});
+	});
+
+	describe('entries()', () => {
+		it('returns an array of the keys in the header', () => {
+			const header = PaxTarHeader.fromAttributes(paxHeaderHex2Decoded);
+			const entries = header.entries();
+			for (const [key, segment] of entries) {
+				expect(paxHeaderHex2Decoded[key]).toBeDefined();
+				expect(segment.key).toBe(key);
+			}
+		});
+	});
+
+	describe('clean()', () => {
+		it('removes non-standard pax segments', () => {
+			const header = PaxTarHeader.fromAttributes({
+				path: 'potato.txt',
+				someOtherGarbage: 'yep'
+			});
+			expect(header.keys().length).toBe(2);
+
+			header.clean();
+			expect(header.keys().length).toBe(1);
+
+			// running it again should have no effect
+			header.clean();
+			expect(header.keys().length).toBe(1);
+		});
+	});
+
+	describe('getInt()', () => {
+		it('should return undefined on parse error', () => {
+			const header = PaxTarHeader.fromAttributes({path: 'potato.txt'});
+			expect(header.getInt('path')).not.toBeDefined();
+		});
+	});
+
+	describe('getFloat()', () => {
+		it('should return undefined on parse error', () => {
+			const header = PaxTarHeader.fromAttributes({path: 'potato.txt'});
+			expect(header.getFloat('path')).not.toBeDefined();
 		});
 	});
 });

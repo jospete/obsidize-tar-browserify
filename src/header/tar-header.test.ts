@@ -70,6 +70,13 @@ describe('TarHeader', () => {
 
 			expect(header.fileName).toBe(fileName);
 			expect(header.fileMode).toBe(Constants.FILE_MODE_DEFAULT);
+			expect(header.pax).toBe(null);
+		});
+
+		it('should create pax segments when long file name is detected', () => {
+			const fileName = 'test_tar\\repository\\assets\\._0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895081a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt';
+			const header = TarHeader.from({fileName, fileSize: 42, typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE});
+			expect(header.pax).toBeDefined();
 		});
 	});
 
@@ -246,14 +253,16 @@ describe('TarHeader', () => {
 	});
 
 	describe('toUint8Array()', () => {
-		const fileName = 'test_tar/repository/assets/._0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895081a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt';
-		const fileNameTruncated = '._0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895\0';
-		const header = TarHeader.from({fileName, fileSize: 42, typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE});
-		const headerBytes = header.toUint8Array();
-		const start = Constants.SECTOR_SIZE * 2;
-		const end = start + 100;
-		const truncatedNameBytes = headerBytes.slice(start, end);
-		const truncatedName = TarUtility.decodeString(truncatedNameBytes);
-		expect(truncatedName).toBe(fileNameTruncated);
+		it('should correctly encode long pax file names', () => {
+			const fileName = 'test_tar/repository/assets/._0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895081a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt';
+			const fileNameTruncated = '._0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895\0';
+			const header = TarHeader.from({fileName, fileSize: 42, typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE});
+			const headerBytes = header.toUint8Array();
+			const start = Constants.SECTOR_SIZE * 2;
+			const end = start + 100;
+			const truncatedNameBytes = headerBytes.slice(start, end);
+			const truncatedName = TarUtility.decodeString(truncatedNameBytes);
+			expect(truncatedName).toBe(fileNameTruncated);
+		});
 	});
 });

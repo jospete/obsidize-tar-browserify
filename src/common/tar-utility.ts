@@ -90,10 +90,6 @@ export namespace TarUtility {
 		return sanitizeDateTimeAsUstar(Date.now());
 	}
 
-	export function dateTimeToPax(dateTime: number): number {
-		return parseIntSafe(dateTime) / 1000;
-	}
-
 	export function paxTimeToDate(paxTime: number): number {
 		return Math.floor(paxTime * 1000);
 	}

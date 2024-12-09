@@ -63,7 +63,7 @@ export class PaxTarHeaderSegment implements TarSerializable {
 		return new PaxTarHeaderSegment(key, value, segmentBytes);
 	}
 
-	private static findNextLengthEndIndex(bytes: Uint8Array, offset: number = 0): number {
+	private static findNextLengthEndIndex(bytes: Uint8Array, offset: number): number {
 		const NONE = -1;
 
 		let lengthEnd = offset + 1;

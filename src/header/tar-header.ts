@@ -460,11 +460,11 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 		this.update(completeAttrs);
 
 		if (combinedOptions.pax && paxRequiredAttributes) {
-			if (paxRequiredAttributes.path) {
-				const [directoryName, fileName] = TarHeader.splitBaseFileName(paxRequiredAttributes.path);
-				this.ustarFileName = fileName;
-				this.fileNamePrefix = directoryName;
-			}
+			// The path property is the only reason we fall back to PAX as of now.
+			// This block may need to be wrapped in a check for the path property if other attributes are added later on.
+			const [directoryName, fileName] = TarHeader.splitBaseFileName(paxRequiredAttributes.path!);
+			this.ustarFileName = fileName;
+			this.fileNamePrefix = directoryName;
 
 			this.pax = PaxTarHeader.fromAttributes(paxRequiredAttributes);
 			this.ustarLastModified = this.lastModified; // sync modification time between the two headers
