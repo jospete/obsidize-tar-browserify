@@ -6,24 +6,9 @@ import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-
 import { PaxTarHeader } from '../pax/pax-tar-header';
 import { TarHeaderUtility } from './tar-header-utility';
 
-const {
-	concatUint8Arrays,
-	isUint8Array,
-} = TarUtility;
-
-const {
-	findNextUstarSectorOffset
-} = TarHeaderUtility;
-
-const {
-	FILE_MODE_DEFAULT,
-	SECTOR_SIZE,
-	HEADER_SIZE
-} = Constants;
-
 describe('TarHeader', () => {
 	it('can be created with an explicit buffer and offset', () => {
-		const blockSize = HEADER_SIZE;
+		const blockSize = Constants.HEADER_SIZE;
 		const offset = blockSize;
 		const bufferLength = blockSize * 2;
 		const buffer = new Uint8Array(bufferLength);
@@ -120,7 +105,7 @@ describe('TarHeader', () => {
 			const header = TarHeader.seeded();
 			expect(header).not.toBeFalsy();
 			expect(header.bytes.length).toBe(Constants.HEADER_SIZE);
-			expect(header.fileMode).toBe(FILE_MODE_DEFAULT);
+			expect(header.fileMode).toBe(Constants.FILE_MODE_DEFAULT);
 			expect(header.typeFlag).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
 		});
 
@@ -132,8 +117,8 @@ describe('TarHeader', () => {
 			});
 	
 			const headerBuffer1 = TarHeader.serialize(header1);
-			expect(isUint8Array(headerBuffer1)).toBe(true);
-			expect(headerBuffer1.byteLength).toBe(HEADER_SIZE);
+			expect(TarUtility.isUint8Array(headerBuffer1)).toBe(true);
+			expect(headerBuffer1.byteLength).toBe(Constants.HEADER_SIZE);
 	
 			const header2 = new TarHeader(headerBuffer1);
 			const headerBuffer2 = header2.toUint8Array();
@@ -150,28 +135,28 @@ describe('TarHeader', () => {
 	describe('findNextUstarSectorOffset()', () => {
 		it('returns the offset of the next header sector', () => {
 			const testHeaderBuffer = TarHeader.serialize(null as any);
-			expect(findNextUstarSectorOffset(testHeaderBuffer)).toBe(0);
+			expect(TarHeaderUtility.findNextUstarSectorOffset(testHeaderBuffer)).toBe(0);
 		});
 
 		it('returns -1 when there is no ustar sector in the given scope', () => {
-			expect(findNextUstarSectorOffset(null as any)).toBe(-1);
+			expect(TarHeaderUtility.findNextUstarSectorOffset(null as any)).toBe(-1);
 		});
 
 		it('uses the given offset when it is provided', () => {
-			const padLength = SECTOR_SIZE * 2;
+			const padLength = Constants.SECTOR_SIZE * 2;
 			const paddingBuffer = new Uint8Array(padLength);
 			const testHeaderBuffer = TarHeader.serialize(null as any);
-			const combinedBuffer = concatUint8Arrays(paddingBuffer, testHeaderBuffer);
+			const combinedBuffer = TarUtility.concatUint8Arrays(paddingBuffer, testHeaderBuffer);
 
-			expect(findNextUstarSectorOffset(combinedBuffer)).toBe(padLength);
-			expect(findNextUstarSectorOffset(combinedBuffer, padLength)).toBe(padLength);
-			expect(findNextUstarSectorOffset(combinedBuffer, combinedBuffer.byteLength - 10)).toBe(-1);
+			expect(TarHeaderUtility.findNextUstarSectorOffset(combinedBuffer)).toBe(padLength);
+			expect(TarHeaderUtility.findNextUstarSectorOffset(combinedBuffer, padLength)).toBe(padLength);
+			expect(TarHeaderUtility.findNextUstarSectorOffset(combinedBuffer, combinedBuffer.byteLength - 10)).toBe(-1);
 		});
 
 		it('snaps negative offsets to zero', () => {
 			const testHeaderBuffer = TarHeader.serialize(null as any);
-			expect(findNextUstarSectorOffset(testHeaderBuffer, -1)).toBe(0);
-			expect(findNextUstarSectorOffset(testHeaderBuffer, -123456)).toBe(0);
+			expect(TarHeaderUtility.findNextUstarSectorOffset(testHeaderBuffer, -1)).toBe(0);
+			expect(TarHeaderUtility.findNextUstarSectorOffset(testHeaderBuffer, -123456)).toBe(0);
 		});
 	});
 

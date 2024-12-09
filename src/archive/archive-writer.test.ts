@@ -136,4 +136,35 @@ describe('ArchiveWriter', () => {
 			expect(entry.header.isPaxHeader).toBe(true);
 		});
 	});
+
+	describe('removeEntriesWhere()', () => {
+		it('should remove entries from the entries array that meet the given predicate condition', () => {
+			const writer = new ArchiveWriter()
+				.addTextFile('sample1.txt', 'this is a file')
+				.addTextFile('another file.txt', 'this is a file with white-space in the name');
+			expect(writer.entries.length).toBe(2);
+
+			writer.removeEntriesWhere(v => / /.test(v.fileName));
+			expect(writer.entries.length).toBe(1);
+
+			// doing it again should have no effect
+			writer.removeEntriesWhere(v => / /.test(v.fileName));
+			expect(writer.entries.length).toBe(1);
+		});
+	});
+
+	describe('cleanAllHeaders()', () => {
+		it('should call clean() on the header of each entry', async () => {
+			const writer = new ArchiveWriter()
+				.addTextFile('sample1.txt', 'this is a file')
+				.addTextFile('another file.txt', 'this is a file with white-space in the name');
+			
+			const entry1Spy = jest.spyOn(writer.entries[0].header, 'clean');
+			const entry2Spy = jest.spyOn(writer.entries[0].header, 'clean');
+			writer.cleanAllHeaders();
+			
+			expect(entry1Spy).toHaveBeenCalledTimes(1);
+			expect(entry2Spy).toHaveBeenCalledTimes(1);
+		});
+	});
 });
