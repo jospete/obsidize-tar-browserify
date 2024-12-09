@@ -1,7 +1,6 @@
 import { Constants } from '../common/constants';
 import { TarSerializable, TarUtility } from '../common/tar-utility';
 import { PaxTarHeader, PaxTarHeaderAttributes } from '../pax/pax-tar-header';
-import { PaxTarHeaderKey } from '../pax/pax-tar-header-key';
 import { TarHeaderField } from './tar-header-field';
 import { TarHeaderLike } from './tar-header-like';
 import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
@@ -148,7 +147,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	}
 
 	public get fileName(): string {
-		return this.pax?.has(PaxTarHeaderKey.PATH) ? this.pax.path! : this.ustarFileName;
+		return this.pax?.path || this.ustarFileName;
 	}
 
 	public get ustarFileName(): string {
@@ -168,7 +167,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	}
 
 	public get ownerUserId(): number {
-		return this.pax?.has(PaxTarHeaderKey.USER_ID) ? this.pax.userId! : this.ustarOwnerUserId;
+		return this.pax?.userId || this.ustarOwnerUserId;
 	}
 
 	public get ustarOwnerUserId(): number {
@@ -180,7 +179,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	}
 
 	public get groupUserId(): number {
-		return this.pax?.has(PaxTarHeaderKey.GROUP_ID) ? this.pax.groupId : this.ustarGroupUserId;
+		return this.pax?.groupId || this.ustarGroupUserId;
 	}
 
 	public get ustarGroupUserId(): number {
@@ -192,7 +191,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	}
 
 	public get fileSize(): number {
-		return this.pax?.has(PaxTarHeaderKey.SIZE) ? this.pax.size! : this.ustarFileSize;
+		return this.pax?.size || this.ustarFileSize;
 	}
 
 	public get ustarFileSize(): number {
@@ -204,9 +203,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	}
 
 	public get lastModified(): number {
-		return this.pax?.has(PaxTarHeaderKey.MODIFICATION_TIME)
-			? TarUtility.paxTimeToDate(this.pax.modificationTime!)
-			: this.ustarLastModified;
+		return this.pax?.lastModified || this.ustarLastModified;
 	}
 
 	public get ustarLastModified(): number {
@@ -226,7 +223,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	}
 
 	public get linkedFileName(): string {
-		return this.pax?.has(PaxTarHeaderKey.LINK_PATH) ? this.pax.linkPath! : this.ustarLinkedFileName;
+		return this.pax?.linkPath || this.ustarLinkedFileName;
 	}
 
 	public get ustarLinkedFileName(): string {
@@ -259,7 +256,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	}
 
 	public get ownerUserName(): string {
-		return this.pax?.has(PaxTarHeaderKey.USER_NAME) ? this.pax.userName! : this.ustarOwnerUserName;
+		return this.pax?.userName || this.ustarOwnerUserName;
 	}
 
 	public get ustarOwnerUserName(): string {
@@ -271,7 +268,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	}
 
 	public get ownerGroupName(): string {
-		return this.pax?.has(PaxTarHeaderKey.GROUP_NAME) ? this.pax.groupName! : this.ustarOwnerGroupName;
+		return this.pax?.groupName || this.ustarOwnerGroupName;
 	}
 
 	public get ustarOwnerGroupName(): string {
@@ -361,10 +358,9 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	public toUint8Array(): Uint8Array {
 		if (this.isPaxHeader && this.pax && this.paxPreamble) {
 			const preambleBytes = this.paxPreamble.bytes;
-			const paxBytes = this.pax.toUint8Array();
+			const paxBytes = this.pax.toUint8ArrayPadded();
 			const ownBytes = this.bytes;
-			const paxSectorSize = TarUtility.roundUpSectorOffset(paxBytes.byteLength);
-			const totalSize = preambleBytes.byteLength + paxSectorSize + ownBytes.byteLength;
+			const totalSize = preambleBytes.byteLength + paxBytes.byteLength + ownBytes.byteLength;
 			const result = new Uint8Array(totalSize);
 			let offset = 0;
 
@@ -372,7 +368,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 			offset += preambleBytes.byteLength;
 
 			result.set(paxBytes, offset);
-			offset += paxSectorSize;
+			offset += paxBytes.byteLength;
 
 			result.set(ownBytes, offset);
 
@@ -470,7 +466,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 				this.fileNamePrefix = directoryName;
 			}
 
-			this.pax = new PaxTarHeader(paxRequiredAttributes);
+			this.pax = PaxTarHeader.fromAttributes(paxRequiredAttributes);
 			this.ustarLastModified = this.lastModified; // sync modification time between the two headers
 			this.paxPreamble = this.asLocalPaxPreamble();
 

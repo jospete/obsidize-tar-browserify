@@ -240,7 +240,7 @@ describe('TarHeader', () => {
 	describe('PAX fields', () => {
 		it('should use the PAX field variant as an override to the USTAR variant when it exists', () => {
 			const header = TarHeader.seeded();
-			header.pax = new PaxTarHeader({
+			header.pax = PaxTarHeader.fromAttributes({
 				uname: 'That one guy',
 				uid: '123',
 				gname: 'The best group',

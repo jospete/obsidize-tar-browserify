@@ -3,30 +3,8 @@ import { TarUtility } from '../common/tar-utility';
 import { TarHeaderField } from '../header/tar-header-field';
 import { TarSerializable } from './../common/tar-utility';
 import { PaxTarHeaderKey } from './pax-tar-header-key';
+import { PaxTarHeaderSegment } from './pax-tar-header-segment';
 import { PaxTarHeaderUtility } from './pax-tar-header-utility';
-
-const {
-	parseIntSafe,
-	decodeString
-} = TarUtility;
-
-interface PaxKeyValuePair {
-	key: PaxTarHeaderKey;
-	value: string;
-}
-
-interface PaxKeyValuePairParseResult {
-	pair: PaxKeyValuePair | null;
-	bufferOffset: number;
-	byteLength: number;
-}
-
-interface PaxParseResult {
-	attributes: Partial<PaxTarHeaderAttributes>;
-	endIndex: number;
-}
-
-const ASCII_SPACE = 0x20;
 
 /**
  * Object of key-value pairs for raw PAX attributes to populate a `PaxTarHeader` instance with.
@@ -49,46 +27,57 @@ export interface PaxTarHeaderAttributes extends Record<PaxTarHeaderKey | string,
  * https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html#tag_20_92_13_03
  */
 export class PaxTarHeader implements TarSerializable {
-	private readonly valueMap: Partial<PaxTarHeaderAttributes>;
+	private readonly valueMap: Record<string, PaxTarHeaderSegment>;
 	private mSectorByteLength: number | undefined;
 
 	constructor(
-		attributes: PaxTarHeaderAttributes | Partial<PaxTarHeaderAttributes> = {},
-		public readonly bytes: Uint8Array | null = null,
-		public readonly offset: number = 0,
-		public readonly endIndex: number = 0
+		segments: PaxTarHeaderSegment[] = []
 	) {
-		this.valueMap = Object.assign({}, attributes);
+		this.valueMap = {};
+		for (const segment of segments) {
+			this.valueMap[segment.key] = segment;
+		}
 	}
 
 	public static from(buffer: Uint8Array, offset: number = 0): PaxTarHeader {
-		const {attributes, endIndex} = PaxTarHeader.parseKeyValuePairs(buffer, offset);
-		const slicedBuffer = TarUtility.cloneUint8Array(buffer, offset, endIndex);
-		return new PaxTarHeader(attributes, slicedBuffer, offset, endIndex);
+		const segments = PaxTarHeader.parseSegments(buffer, offset);
+		return new PaxTarHeader(segments);
 	}
 
-	public static serialize(attributes: Partial<PaxTarHeaderAttributes> | null): Uint8Array {
+	public static fromAttributes(attributes: Partial<PaxTarHeaderAttributes>): PaxTarHeader {
+		const segments = PaxTarHeader.parseSegmentsFromAttributes(attributes);
+		return new PaxTarHeader(segments);
+	}
+
+	public static serializeAttributes(attributes: Partial<PaxTarHeaderAttributes>): Uint8Array {
+		const segments = PaxTarHeader.parseSegmentsFromAttributes(attributes);
+		return PaxTarHeader.serialize(segments);
+	}
+
+	public static parseSegmentsFromAttributes(attributes: Partial<PaxTarHeaderAttributes>): PaxTarHeaderSegment[] {
 		if (!TarUtility.isObject(attributes)) {
+			return [];
+		}
+		
+		const segments: PaxTarHeaderSegment[] = [];
+		
+		for (const [key, value] of Object.entries(attributes)) {
+			segments.push(new PaxTarHeaderSegment(key, value));
+		}
+
+		return segments;
+	}
+
+	public static serialize(segments: PaxTarHeaderSegment[]): Uint8Array {
+		if (!Array.isArray(segments) || segments.length <= 0) {
 			return new Uint8Array(0);
 		}
 
 		let totalLength = 0;
 		let segmentBuffers: Uint8Array[] = [];
 
-		for (const [key, value] of Object.entries(attributes)) {
-			const segmentSuffix = ` ${key}=${value}\n`;
-			const preCalculatedLength = segmentSuffix.length.toString().length;
-			let segmentLength = segmentSuffix.length + preCalculatedLength;
-
-			// Calculation caused decimal rollover, increase combined length by 1
-			// (e.g. including the length part caused combined length to go from something like '99' to '101')
-			if (segmentLength < (segmentLength.toString().length + segmentSuffix.length)) {
-				segmentLength += 1;
-			}
-
-			const segment = segmentLength.toString() + segmentSuffix;
-			const encodedSegment = TarUtility.encodeString(segment);
-
+		for (const segment of segments) {
+			const encodedSegment = segment.toUint8Array();
 			segmentBuffers.push(encodedSegment);
 			totalLength += encodedSegment.byteLength;
 		}
@@ -154,42 +143,32 @@ export class PaxTarHeader implements TarSerializable {
 		return result;
 	}
 
-	private static parseKeyValuePairs(buffer: Uint8Array, offset: number): PaxParseResult {
-		const attributes: Partial<PaxTarHeaderAttributes> = {};
+	private static parseSegments(buffer: Uint8Array, offset: number): PaxTarHeaderSegment[] {
+		const result: PaxTarHeaderSegment[] = [];
 		let cursor = offset;
-		let next = PaxTarHeader.parseNextKeyValuePair(buffer, cursor);
+		let next = PaxTarHeaderSegment.tryParse(buffer, cursor);
 
-		while (next.pair !== null) {
-			const {key, value} = next.pair;
-			attributes[key] = value;
-			cursor += next.byteLength;
-			next = PaxTarHeader.parseNextKeyValuePair(buffer, cursor);
+		while (next !== null) {
+			result.push(next);
+			cursor += next.bytes.byteLength;
+			next = PaxTarHeaderSegment.tryParse(buffer, cursor);
 		}
 
-		return {attributes, endIndex: cursor};
+		return result;
 	}
 
-	private static parseNextKeyValuePair(buffer: Uint8Array, offset: number): PaxKeyValuePairParseResult {
-		let pair: PaxKeyValuePair | null = null;
-		const bufferOffset = offset;
-		let lengthEnd = offset;
+	/**
+	 * See `PaxTarHeaderKey.ACCESS_TIME` for more info
+	 */
+	public get accessTime(): number | undefined {
+		return this.getFloat(PaxTarHeaderKey.ACCESS_TIME);
+	}
 
-		while (lengthEnd < buffer.length && buffer[lengthEnd] !== ASCII_SPACE) {
-			lengthEnd += 1;
-		}
-
-		const byteLength = parseIntSafe(decodeString(buffer.slice(bufferOffset, lengthEnd)));
-		const end = bufferOffset + byteLength;
-
-		if (byteLength > 0) {
-			const kvpData = decodeString(buffer.slice(lengthEnd + 1, end));
-			const equalsDelimiterIndex = kvpData.indexOf('=');
-			const key = kvpData.substring(0, equalsDelimiterIndex) as PaxTarHeaderKey;
-			const value: string = kvpData.substring(equalsDelimiterIndex + 1).replace(/\n$/, '');
-			pair = {key, value};
-		}
-
-		return {pair, bufferOffset, byteLength};
+	/**
+	 * See `PaxTarHeaderKey.CHARSET` for more info
+	 */
+	public get charset(): string | undefined {
+		return this.get(PaxTarHeaderKey.CHARSET);
 	}
 
 	/**
@@ -202,8 +181,8 @@ export class PaxTarHeader implements TarSerializable {
 	/**
 	 * See `PaxTarHeaderKey.GROUP_ID` for more info
 	 */
-	public get groupId(): number {
-		return TarUtility.parseIntSafe(this.get(PaxTarHeaderKey.GROUP_ID));
+	public get groupId(): number | undefined {
+		return this.getInt(PaxTarHeaderKey.GROUP_ID);
 	}
 
 	/**
@@ -231,7 +210,7 @@ export class PaxTarHeader implements TarSerializable {
 	 * See `PaxTarHeaderKey.MODIFICATION_TIME` for more info
 	 */
 	public get modificationTime(): number | undefined {
-		return TarUtility.parseFloatSafe(this.get(PaxTarHeaderKey.MODIFICATION_TIME));
+		return this.getFloat(PaxTarHeaderKey.MODIFICATION_TIME);
 	}
 
 	/**
@@ -244,15 +223,15 @@ export class PaxTarHeader implements TarSerializable {
 	/**
 	 * See `PaxTarHeaderKey.SIZE` for more info
 	 */
-	public get size(): number {
-		return TarUtility.parseIntSafe(this.get(PaxTarHeaderKey.SIZE));
+	public get size(): number | undefined {
+		return this.getInt(PaxTarHeaderKey.SIZE);
 	}
 
 	/**
 	 * See `PaxTarHeaderKey.USER_ID` for more info
 	 */
-	public get userId(): number {
-		return TarUtility.parseIntSafe(this.get(PaxTarHeaderKey.USER_ID));
+	public get userId(): number | undefined {
+		return this.getInt(PaxTarHeaderKey.USER_ID);
 	}
 
 	/**
@@ -260,6 +239,14 @@ export class PaxTarHeader implements TarSerializable {
 	 */
 	public get userName(): string | undefined {
 		return this.get(PaxTarHeaderKey.USER_NAME);
+	}
+
+	/**
+	 * Converts modificationTime to standard javascript epoch time.
+	 */
+	public get lastModified(): number | undefined {
+		const mtime = this.modificationTime;
+		return mtime ? TarUtility.paxTimeToDate(mtime!) : undefined;
 	}
 
 	/**
@@ -302,14 +289,34 @@ export class PaxTarHeader implements TarSerializable {
 	 * or `undefined` if the key did not exist in the header.
 	 */
 	public get(key: PaxTarHeaderKey | string): string | undefined {
-		return this.valueMap[key];
+		return this.valueMap[key]?.value;
+	}
+
+	/**
+	 * Convenience wrapper around the base `get()` method that tries to parse the value as an int.
+	 */
+	public getInt(key: PaxTarHeaderKey | string, radix?: number): number | undefined {
+		const str = this.get(key);
+		if (!TarUtility.isDefined(str)) return undefined;
+		const parsed = parseInt(str!, radix);
+		return isNaN(parsed) ? undefined : parsed;
+	}
+
+	/**
+	 * Convenience wrapper around the base `get()` method that tries to parse the value as a float.
+	 */
+	public getFloat(key: PaxTarHeaderKey | string): number | undefined {
+		const str = this.get(key);
+		if (!TarUtility.isDefined(str)) return undefined;
+		const parsed = parseFloat(str!);
+		return isNaN(parsed) ? undefined : parsed;
 	}
 
 	/**
 	 * Serializes the underlying value map of this instance into a set of PAX sectors.
 	 */
 	public toUint8Array(): Uint8Array {
-		return PaxTarHeader.serialize(this.valueMap);
+		return PaxTarHeader.serialize(Object.values(this.valueMap));
 	}
 
 	/**
@@ -330,13 +337,12 @@ export class PaxTarHeader implements TarSerializable {
 	}
 
 	public toJSON(): Record<string, unknown> {
-		const {valueMap, bytes, offset, endIndex} = this;
-		const byteLength = bytes?.byteLength ?? 0;
+		const {valueMap} = this;
+		const bytes = this.toUint8Array();
+		const byteLength = bytes.byteLength;
 		const content = TarUtility.getDebugHexString(bytes);
 
 		return {
-			offset,
-			endIndex,
 			valueMap,
 			byteLength,
 			content
