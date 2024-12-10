@@ -37,7 +37,9 @@
 		"generate:tar:output": "run-s build generate:tar:output:postbuild",
 		"untar:pax:sample": "cd ./dev-assets/pax-tgz-sample/packed && tsx ../../../scripts/untar.ts ./test.tar ../unpacked && cd ../../../",
 		"test:unpack:repack:postbuild": "tsx ./scripts/test-unpack-repack.ts",
-		"test:unpack:repack": "run-s build test:unpack:repack:postbuild"
+		"test:unpack:repack": "run-s build test:unpack:repack:postbuild",
+		"test:pax:single:postbuild": "tsx ./scripts/test-pax-single-file.ts",
+		"test:pax:single": "run-s build test:pax:single:postbuild"
 	},
 	"repository": {
 		"type": "git",
