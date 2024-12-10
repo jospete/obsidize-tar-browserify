@@ -236,12 +236,7 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 	public serialize(input: T): Uint8Array {
 		const result = new Uint8Array(this.size);
 		const value = this.transform.serialize(input, this.size);
-		const valueLength = value.byteLength;
-
-		if (valueLength > 0 && valueLength <= result.byteLength) {
-			result.set(value!, 0);
-		}
-
+		result.set(value, 0);
 		return result;
 	}
 

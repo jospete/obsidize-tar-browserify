@@ -96,6 +96,22 @@ export class PaxTarHeaderSegment implements TarSerializable {
 		return this.toUint8Array();
 	}
 
+	/**
+	 * the value parsed as an integer, or undefined if the parse operation fails
+	 */
+	public get intValue(): number | undefined {
+		const parsed = parseInt(this.value);
+		return isNaN(parsed) ? undefined : parsed;
+	}
+
+	/**
+	 * the value parsed as a float, or undefined if the parse operation fails
+	 */
+	public get floatValue(): number | undefined {
+		const parsed = parseFloat(this.value);
+		return isNaN(parsed) ? undefined : parsed;
+	}
+
 	public toUint8Array(): Uint8Array {
 		if (!TarUtility.isUint8Array(this.mBytes)) {
 			this.mBytes = PaxTarHeaderSegment.serialize(this.key, this.value);

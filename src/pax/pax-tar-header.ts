@@ -307,23 +307,19 @@ export class PaxTarHeader implements TarSerializable {
 	}
 
 	/**
-	 * Convenience wrapper around the base `get()` method that tries to parse the value as an int.
+	 * Parse the value for the given key as an int.
+	 * @returns undefined if the key does not exist or the parse operation fails.
 	 */
-	public getInt(key: PaxTarHeaderKey | string, radix?: number): number | undefined {
-		const str = this.get(key);
-		if (!TarUtility.isDefined(str)) return undefined;
-		const parsed = parseInt(str!, radix);
-		return isNaN(parsed) ? undefined : parsed;
+	public getInt(key: PaxTarHeaderKey | string): number | undefined {
+		return this.valueMap[key]?.intValue;
 	}
 
 	/**
-	 * Convenience wrapper around the base `get()` method that tries to parse the value as a float.
+	 * Parse the value for the given key as a float.
+	 * @returns undefined if the key does not exist or the parse operation fails.
 	 */
 	public getFloat(key: PaxTarHeaderKey | string): number | undefined {
-		const str = this.get(key);
-		if (!TarUtility.isDefined(str)) return undefined;
-		const parsed = parseFloat(str!);
-		return isNaN(parsed) ? undefined : parsed;
+		return this.valueMap[key]?.floatValue;
 	}
 
 	/**
