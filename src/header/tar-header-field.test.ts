@@ -8,7 +8,7 @@ import { range } from '../test/test-util';
 
 const {
 	encodeString,
-	sanitizeTimestamp,
+	sanitizeDateTimeAsUstar,
 } = TarUtility;
 
 const {
@@ -88,7 +88,7 @@ describe('TarHeaderField', () => {
 		});
 
 		it('decodes mtime values to proper Date timestamps', () => {
-			const now = sanitizeTimestamp(Date.now());
+			const now = sanitizeDateTimeAsUstar(Date.now());
 			const field = lastModified;
 			const fieldValue = field.serialize(now);
 			expect(field.deserialize(fieldValue)).toBe(now);
