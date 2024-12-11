@@ -20,7 +20,7 @@ const createPaxHeaderBuffer = (
 ): Uint8Array => {
 	const typeFlag = global ? TarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER : TarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
 	const actualHeader = TarHeader.serialize(headerAttrs);
-	const paxHeader = PaxTarHeader.serialize(paxAttrs);
+	const paxHeader = PaxTarHeader.serializeAttributes(paxAttrs);
 	const preambleHeader = TarHeader.serialize({
 		fileName: Constants.PAX_HEADER_PREFIX + '/' + headerAttrs.fileName,
 		fileSize: paxHeader.byteLength,
