@@ -1,6 +1,6 @@
 import { Constants } from '../../common/constants';
 import { TarSerializable, TarUtility } from '../../common/tar-utility';
-import { TarHeaderField } from '../ustar/tar-header-field';
+import { UstarHeaderField } from '../ustar/ustar-header-field';
 import { PaxTarHeaderKey } from './pax-tar-header-key';
 import { PaxTarHeaderSegment } from './pax-tar-header-segment';
 import { PaxTarHeaderUtility } from './pax-tar-header-utility';
@@ -117,7 +117,7 @@ export class PaxTarHeader implements TarSerializable {
 	}
 
 	private static insertPaxAt(fileName: string, separator: string, offset: number): string {
-		const maxLength = TarHeaderField.fileName.size;
+		const maxLength = UstarHeaderField.fileName.size;
 
 		if (fileName.length < maxLength) {
 			return fileName.substring(0, offset)
@@ -129,7 +129,7 @@ export class PaxTarHeader implements TarSerializable {
 	}
 
 	private static makeTopLevelPrefix(fileName: string, separator: string, offset: number): string {
-		const maxLength = TarHeaderField.fileName.size;
+		const maxLength = UstarHeaderField.fileName.size;
 
 		// Dark magic observed from existing tar files
 		let result = Constants.PAX_HEADER_PREFIX + separator + fileName.substring(offset);

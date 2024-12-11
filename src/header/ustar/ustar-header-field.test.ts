@@ -3,7 +3,7 @@ import { TarUtility } from '../../common/tar-utility';
 import { range } from '../../test/test-util';
 import { TarHeader } from '../tar-header';
 import { TarHeaderUtility } from '../tar-header-utility';
-import { TarHeaderField } from './tar-header-field';
+import { UstarHeaderField } from './ustar-header-field';
 import { UstarHeaderFieldType } from './ustar-header-field-type';
 
 const {
@@ -21,7 +21,7 @@ const {
 	fileSize,
 	lastModified,
 	ustarIndicator
-} = TarHeaderField;
+} = UstarHeaderField;
 
 const {
 	isUstarSector
@@ -101,7 +101,7 @@ describe('TarHeaderField', () => {
 
 	describe('deserialize()', () => {
 		const defaultHeader = TarHeader.seeded();
-		const fields = TarHeaderField.all();
+		const fields = UstarHeaderField.all();
 
 		for (const field of fields) {
 

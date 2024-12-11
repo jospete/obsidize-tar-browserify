@@ -2,7 +2,7 @@ import { Constants } from '../common/constants';
 import { TarSerializable, TarUtility } from '../common/tar-utility';
 import { PaxTarHeader, PaxTarHeaderAttributes } from './pax/pax-tar-header';
 import { TarHeaderUtility } from './tar-header-utility';
-import { TarHeaderField } from './ustar/tar-header-field';
+import { UstarHeaderField } from './ustar/ustar-header-field';
 import { UstarHeaderLike } from './ustar/ustar-header-like';
 import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicator-type';
 
@@ -109,7 +109,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	): Partial<PaxTarHeaderAttributes> | null {
 		let collected: Partial<PaxTarHeaderAttributes> = {};
 
-		if (attrs.fileName && attrs.fileName.length > TarHeaderField.fileName.size) {
+		if (attrs.fileName && attrs.fileName.length > UstarHeaderField.fileName.size) {
 			collected.path = attrs.fileName;
 		}
 
@@ -151,19 +151,19 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public get ustarFileName(): string {
-		return TarHeaderField.fileName.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.fileName.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set ustarFileName(value: string) {
-		TarHeaderField.fileName.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.fileName.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get fileMode(): number {
-		return TarHeaderField.fileMode.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.fileMode.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set fileMode(value: number) {
-		TarHeaderField.fileMode.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.fileMode.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get ownerUserId(): number {
@@ -171,11 +171,11 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public get ustarOwnerUserId(): number {
-		return TarHeaderField.ownerUserId.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.ownerUserId.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set ustarOwnerUserId(value: number) {
-		TarHeaderField.ownerUserId.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.ownerUserId.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get groupUserId(): number {
@@ -183,11 +183,11 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public get ustarGroupUserId(): number {
-		return TarHeaderField.groupUserId.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.groupUserId.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set ustarGroupUserId(value: number) {
-		TarHeaderField.groupUserId.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.groupUserId.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get fileSize(): number {
@@ -195,11 +195,11 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public get ustarFileSize(): number {
-		return TarHeaderField.fileSize.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.fileSize.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set ustarFileSize(value: number) {
-		TarHeaderField.fileSize.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.fileSize.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get lastModified(): number {
@@ -207,19 +207,19 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public get ustarLastModified(): number {
-		return TarHeaderField.lastModified.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.lastModified.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set ustarLastModified(value: number) {
-		TarHeaderField.lastModified.writeTo(this.bytes, this.offset, TarUtility.dateTimeToUstar(value));
+		UstarHeaderField.lastModified.writeTo(this.bytes, this.offset, TarUtility.dateTimeToUstar(value));
 	}
 
 	public get headerChecksum(): number {
-		return TarHeaderField.headerChecksum.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.headerChecksum.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set headerChecksum(value: number) {
-		TarHeaderField.headerChecksum.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.headerChecksum.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get linkedFileName(): string {
@@ -227,32 +227,32 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public get ustarLinkedFileName(): string {
-		return TarHeaderField.linkedFileName.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.linkedFileName.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set ustarLinkedFileName(value: string) {
-		TarHeaderField.linkedFileName.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.linkedFileName.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get typeFlag(): UstarHeaderLinkIndicatorType {
-		return (TarHeaderField.typeFlag.readFrom(this.bytes, this.offset) as UstarHeaderLinkIndicatorType)
+		return (UstarHeaderField.typeFlag.readFrom(this.bytes, this.offset) as UstarHeaderLinkIndicatorType)
 			|| UstarHeaderLinkIndicatorType.UNKNOWN;
 	}
 
 	public set typeFlag(value: UstarHeaderLinkIndicatorType) {
-		TarHeaderField.typeFlag.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.typeFlag.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get ustarIndicator(): string {
-		return TarHeaderField.ustarIndicator.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.ustarIndicator.readFrom(this.bytes, this.offset)!;
 	}
 
 	public get ustarVersion(): string {
-		return TarHeaderField.ustarVersion.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.ustarVersion.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set ustarVersion(value: string) {
-		TarHeaderField.ustarVersion.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.ustarVersion.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get ownerUserName(): string {
@@ -260,11 +260,11 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public get ustarOwnerUserName(): string {
-		return TarHeaderField.ownerUserName.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.ownerUserName.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set ustarOwnerUserName(value: string) {
-		TarHeaderField.ownerUserName.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.ownerUserName.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get ownerGroupName(): string {
@@ -272,35 +272,35 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public get ustarOwnerGroupName(): string {
-		return TarHeaderField.ownerGroupName.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.ownerGroupName.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set ustarOwnerGroupName(value: string) {
-		TarHeaderField.ownerGroupName.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.ownerGroupName.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get deviceMajorNumber(): string {
-		return TarHeaderField.deviceMajorNumber.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.deviceMajorNumber.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set deviceMajorNumber(value: string) {
-		TarHeaderField.deviceMajorNumber.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.deviceMajorNumber.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get deviceMinorNumber(): string {
-		return TarHeaderField.deviceMinorNumber.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.deviceMinorNumber.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set deviceMinorNumber(value: string) {
-		TarHeaderField.deviceMinorNumber.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.deviceMinorNumber.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get fileNamePrefix(): string {
-		return TarHeaderField.fileNamePrefix.readFrom(this.bytes, this.offset)!;
+		return UstarHeaderField.fileNamePrefix.readFrom(this.bytes, this.offset)!;
 	}
 
 	public set fileNamePrefix(value: string) {
-		TarHeaderField.fileNamePrefix.writeTo(this.bytes, this.offset, value);
+		UstarHeaderField.fileNamePrefix.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get isPaxHeader(): boolean {

@@ -3,7 +3,7 @@ import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
 import { PaxTarHeader } from './pax/pax-tar-header';
 import { TarHeaderUtility } from './tar-header-utility';
-import { TarHeaderField } from './ustar/tar-header-field';
+import { UstarHeaderField } from './ustar/ustar-header-field';
 import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicator-type';
 
 describe('TarHeader', () => {
@@ -18,7 +18,7 @@ describe('TarHeader', () => {
 		expect(header.fileMode).toBe(0);
 
 		header.fileMode = updatedFileMode;
-		expect(TarHeaderField.fileMode.readFrom(buffer, offset)).toBe(updatedFileMode);
+		expect(UstarHeaderField.fileMode.readFrom(buffer, offset)).toBe(updatedFileMode);
 	});
 
 	it('returns a type flag of UNKNOWN when it fails to retrieve the type flag info', () => {
@@ -86,7 +86,7 @@ describe('TarHeader', () => {
 			const header = new TarHeader();
 
 			header.update({fileMode});
-			const bufferText = TarUtility.decodeString(TarHeaderField.fileMode.slice(header.bytes));
+			const bufferText = TarUtility.decodeString(UstarHeaderField.fileMode.slice(header.bytes));
 
 			expect(header.fileMode).toBe(fileMode);
 			expect(bufferText).toBe('000777 \0');

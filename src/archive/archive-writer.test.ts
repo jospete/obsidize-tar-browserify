@@ -1,4 +1,4 @@
-import { TarHeaderField } from '../header/ustar/tar-header-field';
+import { UstarHeaderField } from '../header/ustar/ustar-header-field';
 import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 import { ArchiveReader } from './archive-reader';
 import { ArchiveWriter } from './archive-writer';
@@ -115,7 +115,7 @@ describe('ArchiveWriter', () => {
 
 	describe('PAX header construction', () => {
 		it('should NOT serialize with a PAX header when the name does not exceed the default max USTAR filename field size', async () => {
-			const fileName = ''.padEnd(TarHeaderField.fileName.size, 'a');
+			const fileName = ''.padEnd(UstarHeaderField.fileName.size, 'a');
 			const writer = new ArchiveWriter();
 			writer.addTextFile(fileName, 'test content for long file name');
 			const entries = await ArchiveReader.readAllEntriesFromMemory(writer.toUint8Array());
@@ -126,7 +126,7 @@ describe('ArchiveWriter', () => {
 		});
 
 		it('should serialize with a PAX header when the name exceeds the default max USTAR filename field size', async () => {
-			const fileName = ''.padEnd(TarHeaderField.fileName.size + 1, 'a');
+			const fileName = ''.padEnd(UstarHeaderField.fileName.size + 1, 'a');
 			const writer = new ArchiveWriter();
 			writer.addTextFile(fileName, 'test content for long file name');
 			const entries = await ArchiveReader.readAllEntriesFromMemory(writer.toUint8Array());

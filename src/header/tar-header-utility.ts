@@ -1,16 +1,16 @@
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
-import { TarHeaderField } from './ustar/tar-header-field';
+import { UstarHeaderField } from './ustar/ustar-header-field';
 import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicator-type';
 
 export namespace TarHeaderUtility {
-	export const CHECKSUM_SEED_STRING = ''.padStart(TarHeaderField.headerChecksum.size, ' ');
+	export const CHECKSUM_SEED_STRING = ''.padStart(UstarHeaderField.headerChecksum.size, ' ');
 	export const CHECKSUM_SEED = TarUtility.generateChecksum(TarUtility.encodeString(CHECKSUM_SEED_STRING));
-	export const ALL_FIELDS = TarHeaderField.all();
-	export const CHECKSUM_FIELDS = TarHeaderField.checksumSet();
+	export const ALL_FIELDS = UstarHeaderField.all();
+	export const CHECKSUM_FIELDS = UstarHeaderField.checksumSet();
 
 	export function isUstarSector(input: Uint8Array, offset?: number): boolean {
-		return TarHeaderField.ustarIndicator.sliceString(input, offset).startsWith(Constants.USTAR_TAG);
+		return UstarHeaderField.ustarIndicator.sliceString(input, offset).startsWith(Constants.USTAR_TAG);
 	}
 
 	export function isTarHeaderLinkIndicatorTypeDirectory(type: UstarHeaderLinkIndicatorType | string): boolean {
