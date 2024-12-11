@@ -4,9 +4,9 @@ import { AsyncUint8ArrayIterator } from '../common/async-uint8-array-iterator';
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarEntry } from '../entry/tar-entry';
+import { PaxTarHeader } from '../header/pax/pax-tar-header';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderUtility } from '../header/tar-header-utility';
-import { PaxTarHeader } from '../pax/pax-tar-header';
 
 const MAX_LOADED_BYTES = Constants.SECTOR_SIZE * 100000; // ~50Mb
 

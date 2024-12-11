@@ -1,6 +1,6 @@
 import { Constants } from '../common/constants';
 import { TarSerializable, TarUtility } from '../common/tar-utility';
-import { PaxTarHeader, PaxTarHeaderAttributes } from '../pax/pax-tar-header';
+import { PaxTarHeader, PaxTarHeaderAttributes } from './pax/pax-tar-header';
 import { TarHeaderField } from './tar-header-field';
 import { TarHeaderLike } from './tar-header-like';
 import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';

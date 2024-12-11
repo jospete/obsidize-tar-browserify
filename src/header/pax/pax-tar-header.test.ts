@@ -1,5 +1,5 @@
-import { Constants } from '../common/constants';
-import { hexToUint8Array } from '../test/test-util';
+import { Constants } from '../../common/constants';
+import { hexToUint8Array } from '../../test/test-util';
 import { PaxTarHeader, PaxTarHeaderAttributes } from './pax-tar-header';
 import { PaxTarHeaderKey } from './pax-tar-header-key';
 

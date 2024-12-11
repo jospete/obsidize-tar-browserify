@@ -7,6 +7,9 @@ export { AsyncUint8ArrayBlock, AsyncUint8ArrayIterator, AsyncUint8ArrayIteratorL
 export { Constants } from './common/constants';
 export { TarSerializable, TarUtility } from './common/tar-utility';
 export { TarEntry, TarEntryOptions } from './entry/tar-entry';
+export { PaxTarHeader, PaxTarHeaderAttributes } from './header/pax/pax-tar-header';
+export { PaxTarHeaderKey } from './header/pax/pax-tar-header-key';
+export { PaxTarHeaderSegment } from './header/pax/pax-tar-header-segment';
 export { TarHeader, TarHeaderBuilderOptions } from './header/tar-header';
 export { TarHeaderField, TarHeaderFieldLike } from './header/tar-header-field';
 export { TarHeaderFieldTransform, TarHeaderFieldTransformType } from './header/tar-header-field-transform';
@@ -14,7 +17,4 @@ export { TarHeaderFieldType } from './header/tar-header-field-type';
 export { TarHeaderLike } from './header/tar-header-like';
 export { TarHeaderLinkIndicatorType } from './header/tar-header-link-indicator-type';
 export { TarHeaderUtility } from './header/tar-header-utility';
-export { PaxTarHeader, PaxTarHeaderAttributes } from './pax/pax-tar-header';
-export { PaxTarHeaderKey } from './pax/pax-tar-header-key';
-export { PaxTarHeaderSegment } from './pax/pax-tar-header-segment';
 

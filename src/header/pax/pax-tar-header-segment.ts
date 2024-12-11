@@ -1,4 +1,4 @@
-import { TarSerializable, TarUtility } from '../common/tar-utility';
+import { TarSerializable, TarUtility } from '../../common/tar-utility';
 
 const ASCII_SPACE = 0x20;
 const KEY_VALUE_SEPARATOR = '=';

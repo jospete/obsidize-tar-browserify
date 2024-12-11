@@ -3,7 +3,7 @@ import { TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderField } from '../header/tar-header-field';
 import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
-import { PaxTarHeader } from '../pax/pax-tar-header';
+import { PaxTarHeader } from './pax/pax-tar-header';
 import { TarHeaderUtility } from './tar-header-utility';
 
 describe('TarHeader', () => {

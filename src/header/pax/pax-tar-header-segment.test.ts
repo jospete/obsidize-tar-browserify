@@ -1,5 +1,5 @@
-import { TarUtility } from '../../dist';
-import { hexToUint8Array, range } from '../test/test-util';
+import { TarUtility } from '../../common/tar-utility';
+import { hexToUint8Array, range } from '../../test/test-util';
 import { PaxTarHeaderKey } from './pax-tar-header-key';
 import { PaxTarHeaderSegment } from './pax-tar-header-segment';
 
