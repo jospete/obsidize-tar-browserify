@@ -3,7 +3,7 @@ import { AsyncUint8ArrayLike } from '../common/async-uint8-array';
 import { TarSerializable, TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderLike } from '../header/ustar/tar-header-like';
-import { TarHeaderLinkIndicatorType } from '../header/ustar/tar-header-link-indicator-type';
+import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 
 export interface TarEntryOptions {
 	header?: TarHeader;
@@ -103,7 +103,7 @@ export class TarEntry implements TarHeaderLike, TarSerializable {
 		return this.header.linkedFileName;
 	}
 
-	public get typeFlag(): TarHeaderLinkIndicatorType {
+	public get typeFlag(): UstarHeaderLinkIndicatorType {
 		return this.header.typeFlag;
 	}
 

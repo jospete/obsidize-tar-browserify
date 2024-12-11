@@ -7,7 +7,7 @@ import { PaxTarHeader, PaxTarHeaderAttributes } from '../header/pax/pax-tar-head
 import { PaxTarHeaderKey } from '../header/pax/pax-tar-header-key';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderLike } from '../header/ustar/tar-header-like';
-import { TarHeaderLinkIndicatorType } from '../header/ustar/tar-header-link-indicator-type';
+import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 import { tarballSampleBase64 as PAX_tarballSampleBase64, totalFileCount as PAX_totalFileCount } from '../test/generated/pax-header-test-content';
 import { base64ToUint8Array, range } from '../test/test-util';
 import { ArchiveReader, ArchiveReadError } from './archive-reader';
@@ -18,7 +18,7 @@ const createPaxHeaderBuffer = (
 	paxAttrs: Partial<PaxTarHeaderAttributes>,
 	global?: boolean
 ): Uint8Array => {
-	const typeFlag = global ? TarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER : TarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
+	const typeFlag = global ? UstarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER : UstarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
 	const actualHeader = TarHeader.serialize(headerAttrs);
 	const paxHeader = PaxTarHeader.serializeAttributes(paxAttrs);
 	const preambleHeader = TarHeader.serialize({
@@ -92,7 +92,7 @@ describe('ArchiveReader', () => {
 
 		const header = TarHeader.from({
 			fileName: 'truncated.bin',
-			typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE,
+			typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE,
 			fileSize: contentLength
 		}).toUint8Array();
 
@@ -116,7 +116,7 @@ describe('ArchiveReader', () => {
 
 		const header = TarHeader.from({
 			fileName: 'truncated.bin',
-			typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE,
+			typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE,
 			fileSize: contentLength
 		}).toUint8Array();
 
@@ -138,7 +138,7 @@ describe('ArchiveReader', () => {
 	it('should append global pax headers to reader context interface array', async () => {
 		const headerAttrs: Partial<TarHeaderLike> = {
 			fileName: 'Some Global Garbage',
-			typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
+			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
 		};
 		const paxAttrs: Partial<PaxTarHeaderAttributes> = {
 			[PaxTarHeaderKey.PATH]: 'A an extra name override or something',
@@ -158,7 +158,7 @@ describe('ArchiveReader', () => {
 	it('should blow up on malformed global pax header entries', async () => {
 		const headerAttrs: Partial<TarHeaderLike> = {
 			fileName: 'Some Global Garbage',
-			typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
+			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
 		};
 		const paxAttrs: Partial<PaxTarHeaderAttributes> = {
 			fileName: 'A an extra name override or something'
@@ -181,7 +181,7 @@ describe('ArchiveReader', () => {
 	it('should blow up on malformed local pax header entries', async () => {
 		const headerAttrs: Partial<TarHeaderLike> = {
 			fileName: 'Some Local Garbage',
-			typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
+			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
 		};
 		const paxAttrs: Partial<PaxTarHeaderAttributes> = {
 			fileName: 'A an extra name override or something'

@@ -2,7 +2,7 @@ import { Constants } from '../common/constants';
 import { TarSerializable, TarUtility } from '../common/tar-utility';
 import { TarEntry } from '../entry/tar-entry';
 import { TarHeaderLike } from '../header/ustar/tar-header-like';
-import { TarHeaderLinkIndicatorType } from '../header/ustar/tar-header-link-indicator-type';
+import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 
 export type TarEntryPredicate = (entry: TarEntry) => boolean;
 
@@ -88,7 +88,7 @@ export class ArchiveWriter implements TarSerializable {
 		const combinedHeaderOptions = Object.assign({
 			fileName: path,
 			fileSize: content.byteLength,
-			typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE
+			typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE
 		}, headerOptions);
 		return this.addEntryWith(combinedHeaderOptions, content);
 	}
@@ -102,7 +102,7 @@ export class ArchiveWriter implements TarSerializable {
 	public addDirectory(path: string, headerOptions: Partial<TarHeaderLike> = {}): this {
 		const combinedHeaderOptions = Object.assign({
 			fileName: path,
-			typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
+			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
 		}, headerOptions);
 		return this.addEntryWith(combinedHeaderOptions);
 	}

@@ -4,7 +4,7 @@ import { PaxTarHeader, PaxTarHeaderAttributes } from './pax/pax-tar-header';
 import { TarHeaderUtility } from './tar-header-utility';
 import { TarHeaderField } from './ustar/tar-header-field';
 import { TarHeaderLike } from './ustar/tar-header-like';
-import { TarHeaderLinkIndicatorType } from './ustar/tar-header-link-indicator-type';
+import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicator-type';
 
 /**
  * Options that can be passed to `TarHeader.from()` to customize
@@ -56,7 +56,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 			lastModified: TarUtility.getTarTimestamp(),
 			headerChecksum: 0,
 			linkedFileName: '',
-			typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE,
+			typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE,
 			ustarIndicator: Constants.USTAR_INDICATOR_VALUE,
 			ustarVersion: Constants.USTAR_VERSION_VALUE,
 			ownerUserName: '',
@@ -234,12 +234,12 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 		TarHeaderField.linkedFileName.writeTo(this.bytes, this.offset, value);
 	}
 
-	public get typeFlag(): TarHeaderLinkIndicatorType {
-		return (TarHeaderField.typeFlag.readFrom(this.bytes, this.offset) as TarHeaderLinkIndicatorType)
-			|| TarHeaderLinkIndicatorType.UNKNOWN;
+	public get typeFlag(): UstarHeaderLinkIndicatorType {
+		return (TarHeaderField.typeFlag.readFrom(this.bytes, this.offset) as UstarHeaderLinkIndicatorType)
+			|| UstarHeaderLinkIndicatorType.UNKNOWN;
 	}
 
-	public set typeFlag(value: TarHeaderLinkIndicatorType) {
+	public set typeFlag(value: UstarHeaderLinkIndicatorType) {
 		TarHeaderField.typeFlag.writeTo(this.bytes, this.offset, value);
 	}
 
@@ -316,11 +316,11 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	}
 
 	public get isGlobalPaxPreHeader(): boolean {
-		return this.typeFlag === TarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER;
+		return this.typeFlag === UstarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER;
 	}
 
 	public get isLocalPaxPreHeader(): boolean {
-		return this.typeFlag === TarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
+		return this.typeFlag === UstarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
 	}
 
 	public get isGlobalPaxPostHeader(): boolean {
@@ -438,7 +438,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	private asLocalPaxPreamble(): TarHeader {
 		const attrs = Object.assign(this.toAttributes(), {
 			fileName: PaxTarHeader.wrapFileName(this.fileName),
-			typeFlag: TarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER
+			typeFlag: UstarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER
 		});
 
 		return TarHeader.from(attrs, {pax: false});

@@ -1,5 +1,5 @@
 import { TarHeaderField } from '../header/ustar/tar-header-field';
-import { TarHeaderLinkIndicatorType } from '../header/ustar/tar-header-link-indicator-type';
+import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 import { ArchiveReader } from './archive-reader';
 import { ArchiveWriter } from './archive-writer';
 
@@ -35,14 +35,14 @@ describe('ArchiveWriter', () => {
 			expect(entry.isFile()).toBe(true);
 			expect(entry.fileName).toBe(fileName);
 			expect(entry.fileSize).toBe(fileContent.byteLength);
-			expect(entry.typeFlag).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
+			expect(entry.typeFlag).toBe(UstarHeaderLinkIndicatorType.NORMAL_FILE);
 		});
 
 		it('accepts custom header options as an additional parameter', () => {
 			const tarball = new ArchiveWriter();
 			const fileName = 'test.txt';
 			const fileContent = new Uint8Array(10);
-			const overrideType = TarHeaderLinkIndicatorType.CONTIGUOUS_FILE;
+			const overrideType = UstarHeaderLinkIndicatorType.CONTIGUOUS_FILE;
 
 			tarball.addBinaryFile(fileName, fileContent, { typeFlag: overrideType });
 
@@ -66,14 +66,14 @@ describe('ArchiveWriter', () => {
 			expect(entry.isFile()).toBe(true);
 			expect(entry.fileName).toBe(fileName);
 			expect(entry.getContentAsText()).toBe(fileContent);
-			expect(entry.typeFlag).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
+			expect(entry.typeFlag).toBe(UstarHeaderLinkIndicatorType.NORMAL_FILE);
 		});
 
 		it('accepts custom header options as an additional parameter', () => {
 			const tarball = new ArchiveWriter();
 			const fileName = 'test.txt';
 			const fileContent = 'This is some text';
-			const overrideType = TarHeaderLinkIndicatorType.CONTIGUOUS_FILE;
+			const overrideType = UstarHeaderLinkIndicatorType.CONTIGUOUS_FILE;
 
 			tarball.addTextFile(fileName, fileContent, { typeFlag: overrideType });
 
@@ -96,7 +96,7 @@ describe('ArchiveWriter', () => {
 			expect(entry.fileName).toBe(fileName);
 			expect(entry.fileSize).toBe(0);
 			expect(entry.isDirectory()).toBe(true);
-			expect(entry.typeFlag).toBe(TarHeaderLinkIndicatorType.DIRECTORY);
+			expect(entry.typeFlag).toBe(UstarHeaderLinkIndicatorType.DIRECTORY);
 			expect(entry.ownerUserName).toBe('');
 		});
 
