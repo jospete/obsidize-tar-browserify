@@ -1,6 +1,6 @@
 import { Constants } from '../../common/constants';
 import { TarSerializable, TarUtility } from '../../common/tar-utility';
-import { TarHeaderField } from '../tar-header-field';
+import { TarHeaderField } from '../ustar/tar-header-field';
 import { PaxTarHeaderKey } from './pax-tar-header-key';
 import { PaxTarHeaderSegment } from './pax-tar-header-segment';
 import { PaxTarHeaderUtility } from './pax-tar-header-utility';

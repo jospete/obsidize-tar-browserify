@@ -1,5 +1,5 @@
-import { Constants } from '../common/constants';
-import { TarUtility } from '../common/tar-utility';
+import { Constants } from '../../common/constants';
+import { TarUtility } from '../../common/tar-utility';
 import { TarHeaderFieldTransform, TarHeaderFieldTransformType } from './tar-header-field-transform';
 import { TarHeaderFieldType } from './tar-header-field-type';
 import { TarHeaderLike } from './tar-header-like';

@@ -1,8 +1,8 @@
 import { Constants } from '../common/constants';
 import { TarSerializable, TarUtility } from '../common/tar-utility';
 import { TarEntry } from '../entry/tar-entry';
-import { TarHeaderLike } from '../header/tar-header-like';
-import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
+import { TarHeaderLike } from '../header/ustar/tar-header-like';
+import { TarHeaderLinkIndicatorType } from '../header/ustar/tar-header-link-indicator-type';
 
 export type TarEntryPredicate = (entry: TarEntry) => boolean;
 

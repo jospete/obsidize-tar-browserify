@@ -1,10 +1,10 @@
-import { Constants } from '../common/constants';
-import { TarUtility } from '../common/tar-utility';
-import { TarHeader } from '../header/tar-header';
-import { TarHeaderField } from '../header/tar-header-field';
-import { TarHeaderFieldType } from '../header/tar-header-field-type';
-import { TarHeaderUtility } from '../header/tar-header-utility';
-import { range } from '../test/test-util';
+import { Constants } from '../../common/constants';
+import { TarUtility } from '../../common/tar-utility';
+import { range } from '../../test/test-util';
+import { TarHeader } from '../tar-header';
+import { TarHeaderUtility } from '../tar-header-utility';
+import { TarHeaderField } from './tar-header-field';
+import { TarHeaderFieldType } from './tar-header-field-type';
 
 const {
 	encodeString,

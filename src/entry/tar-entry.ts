@@ -2,8 +2,8 @@ import { ArchiveContext } from '../common/archive-context';
 import { AsyncUint8ArrayLike } from '../common/async-uint8-array';
 import { TarSerializable, TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
-import { TarHeaderLike } from '../header/tar-header-like';
-import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
+import { TarHeaderLike } from '../header/ustar/tar-header-like';
+import { TarHeaderLinkIndicatorType } from '../header/ustar/tar-header-link-indicator-type';
 
 export interface TarEntryOptions {
 	header?: TarHeader;

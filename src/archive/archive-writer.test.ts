@@ -1,5 +1,5 @@
-import { TarHeaderField } from '../header/tar-header-field';
-import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
+import { TarHeaderField } from '../header/ustar/tar-header-field';
+import { TarHeaderLinkIndicatorType } from '../header/ustar/tar-header-link-indicator-type';
 import { ArchiveReader } from './archive-reader';
 import { ArchiveWriter } from './archive-writer';
 

@@ -1,5 +1,5 @@
-import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
 import { TarHeaderUtility } from './tar-header-utility';
+import { TarHeaderLinkIndicatorType } from './ustar/tar-header-link-indicator-type';
 
 const {isTarHeaderLinkIndicatorTypePax} = TarHeaderUtility;
 

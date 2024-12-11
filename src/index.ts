@@ -11,10 +11,10 @@ export { PaxTarHeader, PaxTarHeaderAttributes } from './header/pax/pax-tar-heade
 export { PaxTarHeaderKey } from './header/pax/pax-tar-header-key';
 export { PaxTarHeaderSegment } from './header/pax/pax-tar-header-segment';
 export { TarHeader, TarHeaderBuilderOptions } from './header/tar-header';
-export { TarHeaderField, TarHeaderFieldLike } from './header/tar-header-field';
-export { TarHeaderFieldTransform, TarHeaderFieldTransformType } from './header/tar-header-field-transform';
-export { TarHeaderFieldType } from './header/tar-header-field-type';
-export { TarHeaderLike } from './header/tar-header-like';
-export { TarHeaderLinkIndicatorType } from './header/tar-header-link-indicator-type';
 export { TarHeaderUtility } from './header/tar-header-utility';
+export { TarHeaderField, TarHeaderFieldLike } from './header/ustar/tar-header-field';
+export { TarHeaderFieldTransform, TarHeaderFieldTransformType } from './header/ustar/tar-header-field-transform';
+export { TarHeaderFieldType } from './header/ustar/tar-header-field-type';
+export { TarHeaderLike } from './header/ustar/tar-header-like';
+export { TarHeaderLinkIndicatorType } from './header/ustar/tar-header-link-indicator-type';
 
