@@ -1,6 +1,6 @@
 import { Constants } from '../../common/constants';
 import { TarUtility } from '../../common/tar-utility';
-import { TarHeaderFieldTransform, TarHeaderFieldTransformType } from './tar-header-field-transform';
+import { UstarHeaderFieldTransform, UstarHeaderFieldTransformType } from './ustar-header-field-transform';
 import { UstarHeaderFieldType } from './ustar-header-field-type';
 import { UstarHeaderLike } from './ustar-header-like';
 
@@ -28,7 +28,7 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 	public readonly size: number;
 	public readonly type: UstarHeaderFieldType;
 	public readonly constantValue: any;
-	public readonly transform: TarHeaderFieldTransform<T>;
+	public readonly transform: UstarHeaderFieldTransform<T>;
 
 	constructor(config: TarHeaderFieldLike) {
 		this.name = config.name;
@@ -36,7 +36,7 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 		this.size = config.size;
 		this.type = config.type;
 		this.constantValue = config.constantValue || undefined;
-		this.transform = TarHeaderFieldTransformType.from(this.type)!;
+		this.transform = UstarHeaderFieldTransformType.from(this.type)!;
 	}
 
 	public static frozen<T>(config: TarHeaderFieldLike): TarHeaderField<T> {

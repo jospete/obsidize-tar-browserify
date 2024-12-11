@@ -6,12 +6,12 @@ import { UstarHeaderFieldType } from './ustar-header-field-type';
  * Generalized transformation interface for header fields.
  * Used TarHeader getter/setter functionality.
  */
-export interface TarHeaderFieldTransform<T> {
+export interface UstarHeaderFieldTransform<T> {
 	serialize(input: T, fieldLength: number): Uint8Array;
 	deserialize(input: Uint8Array, fieldLength: number, offset: number): T;
 }
 
-export namespace TarHeaderFieldTransformType {
+export namespace UstarHeaderFieldTransformType {
 	function serializeIntegerOctalToString(value: number, maxLength: number): string {
 		return TarUtility.parseIntSafe(value)
 			.toString(Constants.OCTAL_RADIX)
@@ -77,27 +77,27 @@ export namespace TarHeaderFieldTransformType {
 		return TarUtility.ustarTimeToDate(deserializeIntegerOctal(input, fieldLength, offset));
 	}
 	
-	export const ASCII: TarHeaderFieldTransform<string> = Object.freeze({
+	export const ASCII: UstarHeaderFieldTransform<string> = Object.freeze({
 		serialize: serializeAscii,
 		deserialize: deserializeAscii
 	});
 	
-	export const ASCII_PADDED_END: TarHeaderFieldTransform<string> = Object.freeze({
+	export const ASCII_PADDED_END: UstarHeaderFieldTransform<string> = Object.freeze({
 		serialize: serializeAsciiPadded,
 		deserialize: deserializeAsciiPadded
 	});
 	
-	export const INTEGER_OCTAL: TarHeaderFieldTransform<number> = Object.freeze({
+	export const INTEGER_OCTAL: UstarHeaderFieldTransform<number> = Object.freeze({
 		serialize: serializeIntegerOctal,
 		deserialize: deserializeIntegerOctal
 	});
 	
-	export const INTEGER_OCTAL_TIMESTAMP: TarHeaderFieldTransform<number> = Object.freeze({
+	export const INTEGER_OCTAL_TIMESTAMP: UstarHeaderFieldTransform<number> = Object.freeze({
 		serialize: serializeIntegerOctalTimestamp,
 		deserialize: deserializeIntegerOctalTimestamp
 	});
 
-	export function from(fieldType: UstarHeaderFieldType): TarHeaderFieldTransform<any> | undefined {
+	export function from(fieldType: UstarHeaderFieldType): UstarHeaderFieldTransform<any> | undefined {
 		switch (fieldType) {
 			case UstarHeaderFieldType.ASCII:
 				return ASCII;

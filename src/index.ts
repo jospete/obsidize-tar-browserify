@@ -13,7 +13,7 @@ export { PaxTarHeaderSegment } from './header/pax/pax-tar-header-segment';
 export { TarHeader, TarHeaderBuilderOptions } from './header/tar-header';
 export { TarHeaderUtility } from './header/tar-header-utility';
 export { TarHeaderField, TarHeaderFieldLike } from './header/ustar/tar-header-field';
-export { TarHeaderFieldTransform, TarHeaderFieldTransformType } from './header/ustar/tar-header-field-transform';
+export { UstarHeaderFieldTransform, UstarHeaderFieldTransformType } from './header/ustar/ustar-header-field-transform';
 export { UstarHeaderFieldType } from './header/ustar/ustar-header-field-type';
 export { UstarHeaderLike } from './header/ustar/ustar-header-like';
 export { UstarHeaderLinkIndicatorType } from './header/ustar/ustar-header-link-indicator-type';
