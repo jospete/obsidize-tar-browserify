@@ -1,7 +1,7 @@
 import { Constants } from '../../common/constants';
 import { TarUtility } from '../../common/tar-utility';
 import { TarHeaderFieldTransform, TarHeaderFieldTransformType } from './tar-header-field-transform';
-import { TarHeaderFieldType } from './tar-header-field-type';
+import { UstarHeaderFieldType } from './ustar-header-field-type';
 import { UstarHeaderLike } from './ustar-header-like';
 
 /**
@@ -14,7 +14,7 @@ export interface TarHeaderFieldLike {
 	readonly name: keyof UstarHeaderLike;
 	readonly offset: number;
 	readonly size: number;
-	readonly type: TarHeaderFieldType;
+	readonly type: UstarHeaderFieldType;
 	constantValue?: any;
 }
 
@@ -26,7 +26,7 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 	public readonly name: keyof UstarHeaderLike;
 	public readonly offset: number;
 	public readonly size: number;
-	public readonly type: TarHeaderFieldType;
+	public readonly type: UstarHeaderFieldType;
 	public readonly constantValue: any;
 	public readonly transform: TarHeaderFieldTransform<T>;
 
@@ -51,63 +51,63 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 		name: 'fileName',
 		offset: 0,
 		size: 100,
-		type: TarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END
 	});
 
 	public static readonly fileMode: TarHeaderField<number> = TarHeaderField.frozen({
 		name: 'fileMode',
 		offset: 100,
 		size: 8,
-		type: TarHeaderFieldType.INTEGER_OCTAL
+		type: UstarHeaderFieldType.INTEGER_OCTAL
 	});
 
 	public static readonly ownerUserId: TarHeaderField<number> = TarHeaderField.frozen({
 		name: 'ownerUserId',
 		offset: 108,
 		size: 8,
-		type: TarHeaderFieldType.INTEGER_OCTAL
+		type: UstarHeaderFieldType.INTEGER_OCTAL
 	});
 
 	public static readonly groupUserId: TarHeaderField<number> = TarHeaderField.frozen({
 		name: 'groupUserId',
 		offset: 116,
 		size: 8,
-		type: TarHeaderFieldType.INTEGER_OCTAL
+		type: UstarHeaderFieldType.INTEGER_OCTAL
 	});
 
 	public static readonly fileSize: TarHeaderField<number> = TarHeaderField.frozen({
 		name: 'fileSize',
 		offset: 124,
 		size: 12,
-		type: TarHeaderFieldType.INTEGER_OCTAL
+		type: UstarHeaderFieldType.INTEGER_OCTAL
 	});
 
 	public static readonly lastModified: TarHeaderField<number> = TarHeaderField.frozen({
 		name: 'lastModified',
 		offset: 136,
 		size: 12,
-		type: TarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP
+		type: UstarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP
 	});
 
 	public static readonly headerChecksum: TarHeaderField<number> = TarHeaderField.frozen({
 		name: 'headerChecksum',
 		offset: 148,
 		size: 8,
-		type: TarHeaderFieldType.INTEGER_OCTAL
+		type: UstarHeaderFieldType.INTEGER_OCTAL
 	});
 
 	public static readonly typeFlag: TarHeaderField<string> = TarHeaderField.frozen({
 		name: 'typeFlag',
 		offset: 156,
 		size: 1,
-		type: TarHeaderFieldType.ASCII
+		type: UstarHeaderFieldType.ASCII
 	});
 
 	public static readonly linkedFileName: TarHeaderField<string> = TarHeaderField.frozen({
 		name: 'linkedFileName',
 		offset: 157,
 		size: 100,
-		type: TarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END
 	});
 
 	// =====================================================================
@@ -118,7 +118,7 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 		name: 'ustarIndicator',
 		offset: 257,
 		size: 6,
-		type: TarHeaderFieldType.ASCII,
+		type: UstarHeaderFieldType.ASCII,
 		constantValue: Constants.USTAR_INDICATOR_VALUE
 	});
 
@@ -126,7 +126,7 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 		name: 'ustarVersion',
 		offset: 263,
 		size: 2,
-		type: TarHeaderFieldType.ASCII,
+		type: UstarHeaderFieldType.ASCII,
 		constantValue: Constants.USTAR_VERSION_VALUE
 	});
 
@@ -134,35 +134,35 @@ export class TarHeaderField<T> implements TarHeaderFieldLike {
 		name: 'ownerUserName',
 		offset: 265,
 		size: 32,
-		type: TarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END
 	});
 
 	public static readonly ownerGroupName: TarHeaderField<string> = TarHeaderField.frozen({
 		name: 'ownerGroupName',
 		offset: 297,
 		size: 32,
-		type: TarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END
 	});
 
 	public static readonly deviceMajorNumber: TarHeaderField<string> = TarHeaderField.frozen({
 		name: 'deviceMajorNumber',
 		offset: 329,
 		size: 8,
-		type: TarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END
 	});
 
 	public static readonly deviceMinorNumber: TarHeaderField<string> = TarHeaderField.frozen({
 		name: 'deviceMinorNumber',
 		offset: 337,
 		size: 8,
-		type: TarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END
 	});
 
 	public static readonly fileNamePrefix: TarHeaderField<string> = TarHeaderField.frozen({
 		name: 'fileNamePrefix',
 		offset: 345,
 		size: 155,
-		type: TarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END
 	});
 
 	public static all(): TarHeaderField<any>[] {

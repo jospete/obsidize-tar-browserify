@@ -1,6 +1,6 @@
 import { Constants } from '../../common/constants';
 import { TarUtility } from '../../common/tar-utility';
-import { TarHeaderFieldType } from './tar-header-field-type';
+import { UstarHeaderFieldType } from './ustar-header-field-type';
 
 /**
  * Generalized transformation interface for header fields.
@@ -97,15 +97,15 @@ export namespace TarHeaderFieldTransformType {
 		deserialize: deserializeIntegerOctalTimestamp
 	});
 
-	export function from(fieldType: TarHeaderFieldType): TarHeaderFieldTransform<any> | undefined {
+	export function from(fieldType: UstarHeaderFieldType): TarHeaderFieldTransform<any> | undefined {
 		switch (fieldType) {
-			case TarHeaderFieldType.ASCII:
+			case UstarHeaderFieldType.ASCII:
 				return ASCII;
-			case TarHeaderFieldType.ASCII_PADDED_END:
+			case UstarHeaderFieldType.ASCII_PADDED_END:
 				return ASCII_PADDED_END;
-			case TarHeaderFieldType.INTEGER_OCTAL:
+			case UstarHeaderFieldType.INTEGER_OCTAL:
 				return INTEGER_OCTAL;
-			case TarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP:
+			case UstarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP:
 				return INTEGER_OCTAL_TIMESTAMP;
 			default:
 				return undefined;

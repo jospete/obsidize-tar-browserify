@@ -4,7 +4,7 @@ import { range } from '../../test/test-util';
 import { TarHeader } from '../tar-header';
 import { TarHeaderUtility } from '../tar-header-utility';
 import { TarHeaderField } from './tar-header-field';
-import { TarHeaderFieldType } from './tar-header-field-type';
+import { UstarHeaderFieldType } from './ustar-header-field-type';
 
 const {
 	encodeString,
@@ -29,7 +29,7 @@ const {
 
 describe('TarHeaderField', () => {
 	it('is a collection of header metadata options to streamline tar header parsing', () => {
-		expect(fileName.type).toBe(TarHeaderFieldType.ASCII_PADDED_END);
+		expect(fileName.type).toBe(UstarHeaderFieldType.ASCII_PADDED_END);
 	});
 
 	describe('isUstarSector()', () => {
