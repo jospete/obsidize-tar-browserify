@@ -1,7 +1,7 @@
 import { Constants } from '../common/constants';
 import { TarSerializable, TarUtility } from '../common/tar-utility';
 import { TarEntry } from '../entry/tar-entry';
-import { TarHeaderLike } from '../header/ustar/tar-header-like';
+import { UstarHeaderLike } from '../header/ustar/ustar-header-like';
 import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 
 export type TarEntryPredicate = (entry: TarEntry) => boolean;
@@ -58,7 +58,7 @@ export class ArchiveWriter implements TarSerializable {
 	 * Uses `TarEntry.from()` on the given parameters to create the entry.
 	 * @returns `this` for operation chaining
 	 */
-	public addEntryWith(header: TarHeaderLike | Partial<TarHeaderLike>, content?: Uint8Array): this {
+	public addEntryWith(header: UstarHeaderLike | Partial<UstarHeaderLike>, content?: Uint8Array): this {
 		return this.addEntry(TarEntry.from(header, content));
 	}
 
@@ -69,7 +69,7 @@ export class ArchiveWriter implements TarSerializable {
 	 * @param headerOptions - custom options for this entry
 	 * @returns `this` for operation chaining
 	 */
-	public addTextFile(path: string, content: string, headerOptions?: Partial<TarHeaderLike>): this {
+	public addTextFile(path: string, content: string, headerOptions?: Partial<UstarHeaderLike>): this {
 		return this.addBinaryFile(
 			path, 
 			TarUtility.encodeString(content), 
@@ -84,7 +84,7 @@ export class ArchiveWriter implements TarSerializable {
 	 * @param headerOptions - custom options for this entry
 	 * @returns `this` for operation chaining
 	 */
-	public addBinaryFile(path: string, content: Uint8Array, headerOptions: Partial<TarHeaderLike> = {}): this {
+	public addBinaryFile(path: string, content: Uint8Array, headerOptions: Partial<UstarHeaderLike> = {}): this {
 		const combinedHeaderOptions = Object.assign({
 			fileName: path,
 			fileSize: content.byteLength,
@@ -99,7 +99,7 @@ export class ArchiveWriter implements TarSerializable {
 	 * @param headerOptions - custom options for this entry
 	 * @returns `this` for operation chaining
 	 */
-	public addDirectory(path: string, headerOptions: Partial<TarHeaderLike> = {}): this {
+	public addDirectory(path: string, headerOptions: Partial<UstarHeaderLike> = {}): this {
 		const combinedHeaderOptions = Object.assign({
 			fileName: path,
 			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY

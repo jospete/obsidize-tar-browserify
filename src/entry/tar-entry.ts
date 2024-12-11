@@ -2,7 +2,7 @@ import { ArchiveContext } from '../common/archive-context';
 import { AsyncUint8ArrayLike } from '../common/async-uint8-array';
 import { TarSerializable, TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
-import { TarHeaderLike } from '../header/ustar/tar-header-like';
+import { UstarHeaderLike } from '../header/ustar/ustar-header-like';
 import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 
 export interface TarEntryOptions {
@@ -19,7 +19,7 @@ export interface TarEntryOptions {
  * 1. The parsed USTAR header sector content (AKA TarHeader)
  * 2. The aggregate of the proceeding file content sectors, based on the header's file size attribute
  */
-export class TarEntry implements TarHeaderLike, TarSerializable {
+export class TarEntry implements UstarHeaderLike, TarSerializable {
 
 	protected mHeader: TarHeader;
 	protected mContent: Uint8Array | null;
@@ -39,7 +39,7 @@ export class TarEntry implements TarHeaderLike, TarSerializable {
 	 * @param attrs - partial header data POJO
 	 * @param content - content of the entry (if it is a file)
 	 */
-	public static from(attrs: TarHeaderLike | Partial<TarHeaderLike>, content: Uint8Array | null = null): TarEntry {
+	public static from(attrs: UstarHeaderLike | Partial<UstarHeaderLike>, content: Uint8Array | null = null): TarEntry {
 		return new TarEntry({header: TarHeader.from(attrs), content});
 	}
 

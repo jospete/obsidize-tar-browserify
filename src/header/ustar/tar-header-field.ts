@@ -2,7 +2,7 @@ import { Constants } from '../../common/constants';
 import { TarUtility } from '../../common/tar-utility';
 import { TarHeaderFieldTransform, TarHeaderFieldTransformType } from './tar-header-field-transform';
 import { TarHeaderFieldType } from './tar-header-field-type';
-import { TarHeaderLike } from './tar-header-like';
+import { UstarHeaderLike } from './ustar-header-like';
 
 /**
  * Metadata about a single field for a tar header.
@@ -11,7 +11,7 @@ import { TarHeaderLike } from './tar-header-like';
  * See extractTarEntry() and TarUtility for more info.
  */
 export interface TarHeaderFieldLike {
-	readonly name: keyof TarHeaderLike;
+	readonly name: keyof UstarHeaderLike;
 	readonly offset: number;
 	readonly size: number;
 	readonly type: TarHeaderFieldType;
@@ -23,7 +23,7 @@ export interface TarHeaderFieldLike {
  * https://en.wikipedia.org/wiki/Tar_(computing)
  */
 export class TarHeaderField<T> implements TarHeaderFieldLike {
-	public readonly name: keyof TarHeaderLike;
+	public readonly name: keyof UstarHeaderLike;
 	public readonly offset: number;
 	public readonly size: number;
 	public readonly type: TarHeaderFieldType;

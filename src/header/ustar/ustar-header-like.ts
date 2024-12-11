@@ -3,7 +3,7 @@ import { UstarHeaderLinkIndicatorType } from './ustar-header-link-indicator-type
 /**
  * Core content parsed from a tar header sector.
  */
-export interface TarHeaderLike {
+export interface UstarHeaderLike {
 	readonly fileName: string;
 	readonly fileMode: number;
 	readonly ownerUserId: number;

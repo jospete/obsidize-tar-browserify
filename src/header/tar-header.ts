@@ -3,7 +3,7 @@ import { TarSerializable, TarUtility } from '../common/tar-utility';
 import { PaxTarHeader, PaxTarHeaderAttributes } from './pax/pax-tar-header';
 import { TarHeaderUtility } from './tar-header-utility';
 import { TarHeaderField } from './ustar/tar-header-field';
-import { TarHeaderLike } from './ustar/tar-header-like';
+import { UstarHeaderLike } from './ustar/ustar-header-like';
 import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicator-type';
 
 /**
@@ -33,7 +33,7 @@ const defaultOptions: TarHeaderBuilderOptions = {
  * Does not perform any mutations or reads on creation, and
  * lazy loads/sets data via getters and setters.
  */
-export class TarHeader implements TarHeaderLike, TarSerializable {
+export class TarHeader implements UstarHeaderLike, TarSerializable {
 	public pax: PaxTarHeader | null = null;
 	public paxPreamble: TarHeader | null = null;
 
@@ -46,7 +46,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	/**
 	 * @returns A copy of the defaults used by all headers
 	 */
-	public static defaultValues(): TarHeaderLike {
+	public static defaultValues(): UstarHeaderLike {
 		return {
 			fileName: '',
 			fileMode: Constants.FILE_MODE_DEFAULT,
@@ -76,7 +76,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	 * Note that if the given value is already a TarHeader instance, this will return it as-is.
 	 */
 	public static from(
-		attrs: TarHeaderLike | Partial<TarHeaderLike>,
+		attrs: UstarHeaderLike | Partial<UstarHeaderLike>,
 		options?: TarHeaderBuilderOptions
 	): TarHeader {
 		if (TarHeader.isTarHeader(attrs)) {
@@ -89,7 +89,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	/**
 	 * Short-hand for constructing a new `TarHeader` and immediately calling `toUint8Array()` on it
 	 */
-	public static serialize(attrs: TarHeaderLike | Partial<TarHeaderLike>): Uint8Array {
+	public static serialize(attrs: UstarHeaderLike | Partial<UstarHeaderLike>): Uint8Array {
 		if (TarHeader.isTarHeader(attrs)) {
 			return (attrs as TarHeader).toUint8Array();
 		}
@@ -105,7 +105,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	}
 	
 	private static collectPaxRequiredAttributes(
-		attrs: TarHeaderLike | Partial<TarHeaderLike>
+		attrs: UstarHeaderLike | Partial<UstarHeaderLike>
 	): Partial<PaxTarHeaderAttributes> | null {
 		let collected: Partial<PaxTarHeaderAttributes> = {};
 
@@ -396,7 +396,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 		};
 	}
 
-	public toAttributes(): TarHeaderLike {
+	public toAttributes(): UstarHeaderLike {
 		const {
 			fileName,
 			fileMode,
@@ -450,10 +450,10 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	 * @returns `this` for operation chaining
 	 */
 	public initialize(
-		attrs: TarHeaderLike | Partial<TarHeaderLike> = {},
+		attrs: UstarHeaderLike | Partial<UstarHeaderLike> = {},
 		options: TarHeaderBuilderOptions | null = {}
 	): this {
-		const completeAttrs: TarHeaderLike = Object.assign(TarHeader.defaultValues(), (attrs || {}));
+		const completeAttrs: UstarHeaderLike = Object.assign(TarHeader.defaultValues(), (attrs || {}));
 		const combinedOptions = Object.assign({}, defaultOptions, (options || {}));
 		const paxRequiredAttributes = TarHeader.collectPaxRequiredAttributes(completeAttrs);
 
@@ -499,7 +499,7 @@ export class TarHeader implements TarHeaderLike, TarSerializable {
 	 * Automatically normalizes the header if any changes were made.
 	 * @returns `this` for operation chaining
 	 */
-	public update(attrs: TarHeaderLike | Partial<TarHeaderLike>): this {
+	public update(attrs: UstarHeaderLike | Partial<UstarHeaderLike>): this {
 		if (!attrs) {
 			return this;
 		}

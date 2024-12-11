@@ -6,7 +6,7 @@ import { TarUtility } from '../common/tar-utility';
 import { PaxTarHeader, PaxTarHeaderAttributes } from '../header/pax/pax-tar-header';
 import { PaxTarHeaderKey } from '../header/pax/pax-tar-header-key';
 import { TarHeader } from '../header/tar-header';
-import { TarHeaderLike } from '../header/ustar/tar-header-like';
+import { UstarHeaderLike } from '../header/ustar/ustar-header-like';
 import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 import { tarballSampleBase64 as PAX_tarballSampleBase64, totalFileCount as PAX_totalFileCount } from '../test/generated/pax-header-test-content';
 import { base64ToUint8Array, range } from '../test/test-util';
@@ -14,7 +14,7 @@ import { ArchiveReader, ArchiveReadError } from './archive-reader';
 
 // TODO: move this logic into `ArchiveWriter` as a formal implementation for adding PAX headers
 const createPaxHeaderBuffer = (
-	headerAttrs: Partial<TarHeaderLike>,
+	headerAttrs: Partial<UstarHeaderLike>,
 	paxAttrs: Partial<PaxTarHeaderAttributes>,
 	global?: boolean
 ): Uint8Array => {
@@ -136,7 +136,7 @@ describe('ArchiveReader', () => {
 	});
 
 	it('should append global pax headers to reader context interface array', async () => {
-		const headerAttrs: Partial<TarHeaderLike> = {
+		const headerAttrs: Partial<UstarHeaderLike> = {
 			fileName: 'Some Global Garbage',
 			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
 		};
@@ -156,7 +156,7 @@ describe('ArchiveReader', () => {
 	});
 
 	it('should blow up on malformed global pax header entries', async () => {
-		const headerAttrs: Partial<TarHeaderLike> = {
+		const headerAttrs: Partial<UstarHeaderLike> = {
 			fileName: 'Some Global Garbage',
 			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
 		};
@@ -179,7 +179,7 @@ describe('ArchiveReader', () => {
 	});
 
 	it('should blow up on malformed local pax header entries', async () => {
-		const headerAttrs: Partial<TarHeaderLike> = {
+		const headerAttrs: Partial<UstarHeaderLike> = {
 			fileName: 'Some Local Garbage',
 			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
 		};

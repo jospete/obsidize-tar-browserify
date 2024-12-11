@@ -15,6 +15,6 @@ export { TarHeaderUtility } from './header/tar-header-utility';
 export { TarHeaderField, TarHeaderFieldLike } from './header/ustar/tar-header-field';
 export { TarHeaderFieldTransform, TarHeaderFieldTransformType } from './header/ustar/tar-header-field-transform';
 export { TarHeaderFieldType } from './header/ustar/tar-header-field-type';
-export { TarHeaderLike } from './header/ustar/tar-header-like';
+export { UstarHeaderLike } from './header/ustar/ustar-header-like';
 export { UstarHeaderLinkIndicatorType } from './header/ustar/ustar-header-link-indicator-type';
 
