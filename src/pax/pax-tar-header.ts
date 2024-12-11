@@ -281,12 +281,10 @@ export class PaxTarHeader implements TarSerializable {
 	 * @returns The total byte-length of this header in serialized form.
 	 */
 	public calculateSectorByteLength(): number {
-		if (TarUtility.isNumber(this.mSectorByteLength)) {
-			return this.mSectorByteLength;
+		if (!TarUtility.isNumber(this.mSectorByteLength)) {			
+			const bytes = this.toUint8Array();
+			this.mSectorByteLength = TarUtility.roundUpSectorOffset(bytes.byteLength);
 		}
-
-		const bytes = this.toUint8Array();
-		this.mSectorByteLength = TarUtility.roundUpSectorOffset(bytes.byteLength);
 		
 		return this.mSectorByteLength;
 	}
