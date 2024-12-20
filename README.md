@@ -72,14 +72,14 @@ const asyncBuffer: AsyncUint8ArrayLike = {
   read: async (offset: number, length: number): Promise<Uint8Array> => { /* TODO: return buffer from some source */ }
 };
 
+// Option 1 - extractFromStream()
+// Preferred for files with few entries
 async function readBigTarFileMetadata() {
-  // Option 1 - extractFromStream()
-  // Preferred for files with few entries
-  const entriesFromBigFile = await Archive.extractFromStream(asyncBuffer);
+  const bigFileArchive = await Archive.extractFromStream(asyncBuffer);
   
   // IMPORTANT - async entries do not load file content by default to conserve memory.
   // The caller must read file contents from an async entry like so:
-  const [firstEntry] = entriesFromBigFile;
+  const [firstEntry] = bigFileArchive.entries;
   const firstEntryContent = await firstEntry.readContentFrom(asyncBuffer);
 }
 
