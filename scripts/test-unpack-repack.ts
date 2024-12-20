@@ -3,7 +3,7 @@
 import { execSync } from 'child_process';
 import { existsSync, mkdirpSync, readFileSync, rmSync, writeFileSync } from 'fs-extra';
 import { gzip, ungzip } from 'pako';
-import { Archive, TarEntry } from '../dist';
+import { Archive } from '../dist';
 
 async function main() {
 	const args = process.argv.slice(2);
@@ -29,9 +29,7 @@ async function main() {
 	}
 
 	const archive = await Archive.extract(tarBuffer);
-	const isMacOSMetaFile = (entry: TarEntry) => entry.fileName.startsWith('._') || entry.fileName.includes('/._');
-
-	archive.removeEntriesWhere(isMacOSMetaFile).cleanAllHeaders();
+	archive.cleanAllHeaders();
 
 	for (const entry of archive.entries) {
 		console.log(`reconstructed > ${entry.fileName}`);

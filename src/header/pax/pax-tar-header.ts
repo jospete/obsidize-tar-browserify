@@ -27,8 +27,6 @@ export interface PaxTarHeaderAttributes extends Record<PaxTarHeaderKey | string,
  */
 export class PaxTarHeader implements TarSerializable {
 	private readonly valueMap: Record<string, PaxTarHeaderSegment>;
-	private mSectorByteLength: number | undefined;
-	private mByteLength: number | undefined;
 
 	constructor(
 		segments: PaxTarHeaderSegment[] = []
@@ -259,8 +257,8 @@ export class PaxTarHeader implements TarSerializable {
 	/**
 	 * @returns an array of the key/value pair entries in this header
 	 */
-	public entries(): [string, PaxTarHeaderSegment][] {
-		return Object.entries(this.valueMap);
+	public values(): PaxTarHeaderSegment[] {
+		return Object.values(this.valueMap);
 	}
 
 	/**
@@ -277,30 +275,28 @@ export class PaxTarHeader implements TarSerializable {
 		return this;
 	}
 	
-	/**
-	 * @returns The total byte-length of this header in serialized form.
-	 */
-	public calculateByteLength(): number {
-		this.calculateByteLengthAttributes();
-		return this.mByteLength!;
-	}
+	// /**
+	//  * @returns The total byte-length of this header in serialized form.
+	//  */
+	// public calculateByteLength(): number {
+	// 	this.calculateByteLengthAttributes();
+	// 	return this.mByteLength!;
+	// }
 
-	/**
-	 * @returns The total byte-length of this header in serialized form,
-	 * padded to be a multiple of SECTOR_SIZE.
-	 */
-	public calculateSectorByteLength(): number {
-		this.calculateByteLengthAttributes();
-		return this.mSectorByteLength!;
-	}
+	// /**
+	//  * @returns The total byte-length of this header in serialized form,
+	//  * padded to be a multiple of SECTOR_SIZE.
+	//  */
+	// public calculateSectorByteLength(): number {
+	// 	this.calculateByteLengthAttributes();
+	// 	return this.mSectorByteLength!;
+	// }
 
-	private calculateByteLengthAttributes(): void {
-		if (!TarUtility.isNumber(this.mSectorByteLength)) {			
-			const bytes = this.toUint8Array();
-			this.mByteLength = bytes.byteLength;
-			this.mSectorByteLength = TarUtility.roundUpSectorOffset(this.mByteLength);
-		}
-	}
+	// private calculateByteLengthAttributes(): void {
+	// 	const bytes = this.toUint8Array();
+	// 	this.mByteLength = bytes.byteLength;
+	// 	this.mSectorByteLength = TarUtility.roundUpSectorOffset(this.mByteLength);
+	// }
 
 	/**
 	 * @returns true if the value map of this parsed header contains the given key
@@ -337,7 +333,7 @@ export class PaxTarHeader implements TarSerializable {
 	 * Serializes the underlying value map of this instance into a set of PAX sectors.
 	 */
 	public toUint8Array(): Uint8Array {
-		return PaxTarHeader.serialize(Object.values(this.valueMap));
+		return PaxTarHeader.serialize(this.values());
 	}
 
 	/**

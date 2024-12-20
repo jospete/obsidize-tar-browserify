@@ -153,13 +153,12 @@ describe('PaxTarHeader', () => {
 		});
 	});
 
-	describe('entries()', () => {
+	describe('values()', () => {
 		it('returns an array of the keys in the header', () => {
 			const header = PaxTarHeader.fromAttributes(paxHeaderHex2Decoded);
-			const entries = header.entries();
-			for (const [key, segment] of entries) {
-				expect(paxHeaderHex2Decoded[key]).toBeDefined();
-				expect(segment.key).toBe(key);
+			const values = header.values();
+			for (const segment of values) {
+				expect(paxHeaderHex2Decoded[segment.key]).toBeDefined();
 			}
 		});
 	});

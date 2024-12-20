@@ -23,13 +23,15 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	public readonly ustar: UstarHeader;
 	public readonly pax: PaxTarHeader | undefined;
 	private mPreamble: UstarHeader | undefined;
+	private mIsGlobal: boolean;
 
 	constructor(options: TarHeaderOptions) {
 		const {ustar, pax, preamble, isPaxGlobal} = options;
 		this.ustar = ustar;
 		this.pax = pax;
 		this.mPreamble = preamble;
-		this.trySyncPaxHeader(!!isPaxGlobal);
+		this.mIsGlobal = !!isPaxGlobal;
+		this.trySyncPaxHeader();
 	}
 
 	public static isTarHeader(value: any): boolean {
@@ -119,7 +121,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 
 	public get byteLength(): number {
 		const primary = this.ustar.byteLength;
-		const pax = this.pax?.calculateSectorByteLength() ?? 0;
+		const pax = this.pax?.toUint8ArrayPadded().byteLength ?? 0;
 		const preamble = this.preamble?.byteLength ?? 0;
 		return primary + pax + preamble;
 	}
@@ -245,7 +247,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	 */
 	private normalize(): this {
 		this.ustar.updateChecksum();
-		this.preamble?.updateChecksum();
+		this.trySyncPaxHeader();
 		return this;
 	}
 
@@ -298,23 +300,30 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 		};
 	}
 
-	private trySyncPaxHeader(isPaxGlobal: boolean): void {
-		if (!this.pax || this.preamble) {
+	private trySyncPaxHeader(): void {
+		if (!this.pax) {
 			return;
 		}
 
 		const fileName = this.fileName;
-		const fileSize = this.pax.calculateByteLength();
+		const fileSize = this.pax.toUint8Array().byteLength;
 		const lastModified = this.pax.lastModified;
-		const typeFlag = isPaxGlobal
+		const typeFlag = this.mIsGlobal
 			? UstarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER
 			: UstarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
 
-		this.mPreamble = UstarHeader.from({
+		const preambleAttrs = {
 			fileName,
 			typeFlag,
 			lastModified,
 			fileSize
-		});
+		};
+
+		if (this.mPreamble) {
+			this.mPreamble.update(preambleAttrs);
+
+		} else {
+			this.mPreamble = UstarHeader.from(preambleAttrs);
+		}
 	}
 }

@@ -230,6 +230,7 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 	 * @returns A snapshot of the underlying buffer for this header
 	 */
 	public toUint8Array(): Uint8Array {
+		this.updateChecksum();
 		return this.bytes.slice(this.offset, this.offset + Constants.HEADER_SIZE);
 	}
 
