@@ -24,9 +24,13 @@ See the <code>add***()</code> options in this class definition for details.</p>
 <ul class="tsd-hierarchy">
 <li><span class="target">ArchiveWriter</span>
 <ul class="tsd-hierarchy">
-<li><a href="Archive.html" class="tsd-signature-type" data-tsd-kind="Class">Archive</a></li></ul></li></ul></section><aside class="tsd-sources">
+<li><a href="Archive.html" class="tsd-signature-type" data-tsd-kind="Class">Archive</a></li></ul></li></ul></section>
+<section class="tsd-panel">
+<h4>Implements</h4>
+<ul class="tsd-hierarchy">
+<li><a href="../interfaces/TarSerializable.html" class="tsd-signature-type" data-tsd-kind="Interface">TarSerializable</a></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/81ffe3e/src/archive/archive-writer.ts#L11">archive/archive-writer.ts:11</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/ba69017/src/archive/archive-writer.ts#L13">archive/archive-writer.ts:13</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -47,6 +51,8 @@ See the <code>add***()</code> options in this class definition for details.</p>
 <a href="ArchiveWriter.html#addEntry" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>add<wbr/>Entry</span></a>
 <a href="ArchiveWriter.html#addEntryWith" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>add<wbr/>Entry<wbr/>With</span></a>
 <a href="ArchiveWriter.html#addTextFile" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>add<wbr/>Text<wbr/>File</span></a>
+<a href="ArchiveWriter.html#cleanAllHeaders" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>clean<wbr/>All<wbr/>Headers</span></a>
+<a href="ArchiveWriter.html#removeEntriesWhere" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>remove<wbr/>Entries<wbr/>Where</span></a>
 <a href="ArchiveWriter.html#toUint8Array" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>to<wbr/>Uint8<wbr/>Array</span></a>
 <a href="ArchiveWriter.html#serialize" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>serialize</span></a>
 </div></section></div></details></section></section>
@@ -64,20 +70,20 @@ See the <code>add***()</code> options in this class definition for details.</p>
 <h5>entries: <a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/81ffe3e/src/archive/archive-writer.ts#L12">archive/archive-writer.ts:12</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/ba69017/src/archive/archive-writer.ts#L14">archive/archive-writer.ts:14</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="entries" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>entries</span><a href="#entries" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">entries<span class="tsd-signature-symbol">:</span> <a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/81ffe3e/src/archive/archive-writer.ts#L13">archive/archive-writer.ts:13</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/ba69017/src/archive/archive-writer.ts#L15">archive/archive-writer.ts:15</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="addBinaryFile" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>add<wbr/>Binary<wbr/>File</span><a href="#addBinaryFile" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="addBinaryFile.addBinaryFile-1">add<wbr/>Binary<wbr/>File<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, headerOptions<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a><a href="#addBinaryFile.addBinaryFile-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="addBinaryFile.addBinaryFile-1">add<wbr/>Binary<wbr/>File<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Uint8Array</span>, headerOptions<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/UstarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">UstarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a><a href="#addBinaryFile.addBinaryFile-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Convenience option for building tarball data</p>
 
@@ -95,16 +101,16 @@ See the <code>add***()</code> options in this class definition for details.</p>
 <div class="tsd-comment tsd-typography"><p>the content of the file (shocker!)</p>
 </div></li>
 <li>
-<h5>headerOptions: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = {}</span></h5>
+<h5>headerOptions: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/UstarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">UstarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = {}</span></h5>
 <div class="tsd-comment tsd-typography"><p>custom options for this entry</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/81ffe3e/src/archive/archive-writer.ts#L85">archive/archive-writer.ts:85</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/ba69017/src/archive/archive-writer.ts#L87">archive/archive-writer.ts:87</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="addDirectory" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>add<wbr/>Directory</span><a href="#addDirectory" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="addDirectory.addDirectory-1">add<wbr/>Directory<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, headerOptions<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a><a href="#addDirectory.addDirectory-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="addDirectory.addDirectory-1">add<wbr/>Directory<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, headerOptions<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/UstarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">UstarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a><a href="#addDirectory.addDirectory-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Convenience option for building tarball data</p>
 
@@ -118,12 +124,12 @@ See the <code>add***()</code> options in this class definition for details.</p>
 <div class="tsd-comment tsd-typography"><p>the directory name, e.g. &#39;./relative/path/to/your/dir&#39;</p>
 </div></li>
 <li>
-<h5>headerOptions: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = {}</span></h5>
+<h5>headerOptions: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/UstarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">UstarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = {}</span></h5>
 <div class="tsd-comment tsd-typography"><p>custom options for this entry</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/81ffe3e/src/archive/archive-writer.ts#L100">archive/archive-writer.ts:100</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/ba69017/src/archive/archive-writer.ts#L102">archive/archive-writer.ts:102</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="addEntry" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>add<wbr/>Entry</span><a href="#addEntry" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -140,11 +146,11 @@ See the <code>add***()</code> options in this class definition for details.</p>
 <h5>entry: <a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/81ffe3e/src/archive/archive-writer.ts#L49">archive/archive-writer.ts:49</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/ba69017/src/archive/archive-writer.ts#L51">archive/archive-writer.ts:51</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="addEntryWith" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>add<wbr/>Entry<wbr/>With</span><a href="#addEntryWith" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="addEntryWith.addEntryWith-1">add<wbr/>Entry<wbr/>With<span class="tsd-signature-symbol">(</span>header<span class="tsd-signature-symbol">: </span><a href="../interfaces/TarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderLike</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span>, content<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a><a href="#addEntryWith.addEntryWith-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="addEntryWith.addEntryWith-1">add<wbr/>Entry<wbr/>With<span class="tsd-signature-symbol">(</span>header<span class="tsd-signature-symbol">: </span><a href="../interfaces/UstarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">UstarHeaderLike</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/UstarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">UstarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span>, content<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Uint8Array</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a><a href="#addEntryWith.addEntryWith-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Convenience for appending a new entry to the existing <code>entries</code> array.
 Uses <code>TarEntry.from()</code> on the given parameters to create the entry.</p>
@@ -155,16 +161,16 @@ Uses <code>TarEntry.from()</code> on the given parameters to create the entry.</
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>header: <a href="../interfaces/TarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderLike</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span></h5></li>
+<h5>header: <a href="../interfaces/UstarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">UstarHeaderLike</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/UstarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">UstarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span></h5></li>
 <li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> content: <span class="tsd-signature-type">Uint8Array</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/81ffe3e/src/archive/archive-writer.ts#L59">archive/archive-writer.ts:59</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/ba69017/src/archive/archive-writer.ts#L61">archive/archive-writer.ts:61</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="addTextFile" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>add<wbr/>Text<wbr/>File</span><a href="#addTextFile" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="addTextFile.addTextFile-1">add<wbr/>Text<wbr/>File<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, headerOptions<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a><a href="#addTextFile.addTextFile-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="addTextFile.addTextFile-1">add<wbr/>Text<wbr/>File<span class="tsd-signature-symbol">(</span>path<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, headerOptions<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/UstarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">UstarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a><a href="#addTextFile.addTextFile-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Convenience option for building tarball data</p>
 
@@ -182,12 +188,42 @@ Uses <code>TarEntry.from()</code> on the given parameters to create the entry.</
 <div class="tsd-comment tsd-typography"><p>the content of the file (shocker!)</p>
 </div></li>
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> headerOptions: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/TarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">TarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span></h5>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> headerOptions: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/UstarHeaderLike.html" class="tsd-signature-type" data-tsd-kind="Interface">UstarHeaderLike</a><span class="tsd-signature-symbol">&gt;</span></h5>
 <div class="tsd-comment tsd-typography"><p>custom options for this entry</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/81ffe3e/src/archive/archive-writer.ts#L70">archive/archive-writer.ts:70</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/ba69017/src/archive/archive-writer.ts#L72">archive/archive-writer.ts:72</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="cleanAllHeaders" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>clean<wbr/>All<wbr/>Headers</span><a href="#cleanAllHeaders" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="cleanAllHeaders.cleanAllHeaders-1">clean<wbr/>All<wbr/>Headers<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a><a href="#cleanAllHeaders.cleanAllHeaders-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Convenience option for cleaning the header of each listed entry.
+See also <code>TarHeader.clean()</code>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/ba69017/src/archive/archive-writer.ts#L124">archive/archive-writer.ts:124</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="removeEntriesWhere" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>remove<wbr/>Entries<wbr/>Where</span><a href="#removeEntriesWhere" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="removeEntriesWhere.removeEntriesWhere-1">remove<wbr/>Entries<wbr/>Where<span class="tsd-signature-symbol">(</span>predicate<span class="tsd-signature-symbol">: </span><a href="../types/TarEntryPredicate.html" class="tsd-signature-type" data-tsd-kind="Type alias">TarEntryPredicate</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a><a href="#removeEntriesWhere.removeEntriesWhere-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Removes any entries from this writer&#39;s cache that meet the given predicate condition.</p>
+
+<h3>Returns</h3><p><code>this</code> for operation chaining</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>predicate: <a href="../types/TarEntryPredicate.html" class="tsd-signature-type" data-tsd-kind="Type alias">TarEntryPredicate</a></h5>
+<div class="tsd-comment tsd-typography"><p>delegate that will return true for any entry that should be removed.</p>
+</div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="ArchiveWriter.html" class="tsd-signature-type" data-tsd-kind="Class">ArchiveWriter</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/ba69017/src/archive/archive-writer.ts#L115">archive/archive-writer.ts:115</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="toUint8Array" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>to<wbr/>Uint8<wbr/>Array</span><a href="#toUint8Array" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -197,8 +233,9 @@ Uses <code>TarEntry.from()</code> on the given parameters to create the entry.</
 <h3>Returns</h3><p>a complete tar buffer from all the currently set tar entries in this instance.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4><aside class="tsd-sources">
+<p>Implementation of <a href="../interfaces/TarSerializable.html">TarSerializable</a>.<a href="../interfaces/TarSerializable.html#toUint8Array">toUint8Array</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/81ffe3e/src/archive/archive-writer.ts#L41">archive/archive-writer.ts:41</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/ba69017/src/archive/archive-writer.ts#L43">archive/archive-writer.ts:43</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="serialize" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>serialize</span><a href="#serialize" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -213,7 +250,7 @@ Uses <code>TarEntry.from()</code> on the given parameters to create the entry.</
 <h5>entries: <a href="TarEntry.html" class="tsd-signature-type" data-tsd-kind="Class">TarEntry</a><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Uint8Array</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/81ffe3e/src/archive/archive-writer.ts#L20">archive/archive-writer.ts:20</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/jospete/obsidize-tar-browserify/blob/ba69017/src/archive/archive-writer.ts#L22">archive/archive-writer.ts:22</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
@@ -235,9 +272,9 @@ Uses <code>TarEntry.from()</code> on the given parameters to create the entry.</
 <li><a href="../modules.html">@obsidize/tar-<wbr/>browserify</a>
 <ul>
 <li class="tsd-kind-namespace"><a href="../modules/Constants.html">Constants</a></li>
-<li class="tsd-kind-namespace"><a href="../modules/TarHeaderFieldTransformType.html">Tar<wbr/>Header<wbr/>Field<wbr/>Transform<wbr/>Type</a></li>
 <li class="tsd-kind-namespace"><a href="../modules/TarHeaderUtility.html">Tar<wbr/>Header<wbr/>Utility</a></li>
-<li class="tsd-kind-namespace"><a href="../modules/TarUtility.html">Tar<wbr/>Utility</a></li></ul></li></ul></div></details></nav>
+<li class="tsd-kind-namespace"><a href="../modules/TarUtility.html">Tar<wbr/>Utility</a></li>
+<li class="tsd-kind-namespace"><a href="../modules/UstarHeaderFieldTransformType.html">Ustar<wbr/>Header<wbr/>Field<wbr/>Transform<wbr/>Type</a></li></ul></li></ul></div></details></nav>
 <nav class="tsd-navigation secondary menu-sticky">
 <ul>
 <li class="current tsd-kind-class"><a href="ArchiveWriter.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-class)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-128-path"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)" id="icon-128-text"></path></svg><span>Archive<wbr/>Writer</span></a>
@@ -249,6 +286,8 @@ Uses <code>TarEntry.from()</code> on the given parameters to create the entry.</
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="ArchiveWriter.html#addEntry" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>add<wbr/>Entry</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="ArchiveWriter.html#addEntryWith" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>add<wbr/>Entry<wbr/>With</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="ArchiveWriter.html#addTextFile" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>add<wbr/>Text<wbr/>File</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="ArchiveWriter.html#cleanAllHeaders" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>clean<wbr/>All<wbr/>Headers</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="ArchiveWriter.html#removeEntriesWhere" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>remove<wbr/>Entries<wbr/>Where</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="ArchiveWriter.html#toUint8Array" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>to<wbr/>Uint8<wbr/>Array</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="ArchiveWriter.html#serialize" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>serialize</a></li></ul></li></ul></nav></div></div>
 <div class="container tsd-generator">
