@@ -1,31 +1,16 @@
-import { Constants } from '../common/constants';
-import { TarUtility } from '../common/tar-utility';
-import { PaxTarHeader, PaxTarHeaderAttributes } from '../pax/pax-tar-header';
-import { PaxTarHeaderKey } from '../pax/pax-tar-header-key';
-import { TarHeaderField } from './tar-header-field';
-import { TarHeaderLike } from './tar-header-like';
-import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
-import { TarHeaderUtility } from './tar-header-utility';
+import { TarSerializable, TarUtility } from '../common/tar-utility';
+import { PaxTarHeader, PaxTarHeaderAttributes } from './pax/pax-tar-header';
+import { UstarHeader } from './ustar/ustar-header';
+import { UstarHeaderField } from './ustar/ustar-header-field';
+import { UstarHeaderLike } from './ustar/ustar-header-like';
+import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicator-type';
 
-/**
- * Options that can be passed to `TarHeader.from()` to customize
- * how the resulting object will be built.
- */
-export interface TarHeaderBuilderOptions {
-	/**
-	 * When true, will cause the generated header
-	 * to contain PAX metadata if needed.
-	 * 
-	 * For example, the header may be converted to a pax header
-	 * if the file name field exceeds the default USTAR limit
-	 * of 100 bytes.
-	 */
-	pax?: boolean;
+export interface TarHeaderOptions {
+	ustar: UstarHeader;
+	pax?: PaxTarHeader;
+	preamble?: UstarHeader;
+	isPaxGlobal?: boolean;
 }
-
-const defaultOptions: TarHeaderBuilderOptions = {
-	pax: true
-};
 
 /**
  * Facade over a backing Uint8Array buffer to consume/edit header data
@@ -34,68 +19,23 @@ const defaultOptions: TarHeaderBuilderOptions = {
  * Does not perform any mutations or reads on creation, and
  * lazy loads/sets data via getters and setters.
  */
-export class TarHeader implements TarHeaderLike {
-	public pax: PaxTarHeader | null = null;
-	public paxPreamble: TarHeader | null = null;
+export class TarHeader implements UstarHeaderLike, TarSerializable {
+	public readonly ustar: UstarHeader;
+	public readonly pax: PaxTarHeader | undefined;
+	private mPreamble: UstarHeader | undefined;
+	private mIsGlobal: boolean;
 
-	constructor(
-		public readonly bytes: Uint8Array = new Uint8Array(Constants.HEADER_SIZE), 
-		public readonly offset: number = 0
-	) {
-	}
-
-	/**
-	 * @returns A copy of the defaults used by all headers
-	 */
-	public static defaultValues(): TarHeaderLike {
-		return {
-			fileName: '',
-			fileMode: Constants.FILE_MODE_DEFAULT,
-			groupUserId: 0,
-			ownerUserId: 0,
-			fileSize: 0,
-			lastModified: TarUtility.getTarTimestamp(),
-			headerChecksum: 0,
-			linkedFileName: '',
-			typeFlag: TarHeaderLinkIndicatorType.NORMAL_FILE,
-			ustarIndicator: Constants.USTAR_INDICATOR_VALUE,
-			ustarVersion: Constants.USTAR_VERSION_VALUE,
-			ownerUserName: '',
-			ownerGroupName: '',
-			deviceMajorNumber: '00',
-			deviceMinorNumber: '00',
-			fileNamePrefix: ''
-		};
+	constructor(options: TarHeaderOptions) {
+		const {ustar, pax, preamble, isPaxGlobal} = options;
+		this.ustar = ustar;
+		this.pax = pax;
+		this.mPreamble = preamble;
+		this.mIsGlobal = !!isPaxGlobal;
+		this.trySyncPaxHeader();
 	}
 
 	public static isTarHeader(value: any): boolean {
 		return !!(value && (value instanceof TarHeader));
-	}
-
-	/**
-	 * @returns A new `TarHeader` instance based on the given attributes (if they are a POJO).
-	 * Note that if the given value is already a TarHeader instance, this will return it as-is.
-	 */
-	public static from(
-		attrs: TarHeaderLike | Partial<TarHeaderLike>,
-		options?: TarHeaderBuilderOptions
-	): TarHeader {
-		if (TarHeader.isTarHeader(attrs)) {
-			return attrs as TarHeader;
-		}
-
-		return new TarHeader().initialize(attrs, options);
-	}
-
-	/**
-	 * Short-hand for constructing a new `TarHeader` and immediately calling `toUint8Array()` on it
-	 */
-	public static serialize(attrs: TarHeaderLike | Partial<TarHeaderLike>): Uint8Array {
-		if (TarHeader.isTarHeader(attrs)) {
-			return (attrs as TarHeader).toUint8Array();
-		}
-
-		return TarHeader.from(attrs).toUint8Array();
 	}
 
 	/**
@@ -104,188 +44,150 @@ export class TarHeader implements TarHeaderLike {
 	public static seeded(): TarHeader {
 		return TarHeader.from({});
 	}
-	
-	private static collectPaxRequiredAttributes(
-		attrs: TarHeaderLike | Partial<TarHeaderLike>
-	): Partial<PaxTarHeaderAttributes> | null {
-		let collected: Partial<PaxTarHeaderAttributes> = {};
 
-		if (attrs.fileName && attrs.fileName.length > TarHeaderField.fileName.size) {
-			collected.path = attrs.fileName;
+	/**
+	 * @returns A new `TarHeader` instance based on the given attributes (if they are a POJO).
+	 * Note that if the given value is already a TarHeader instance, this will return it as-is.
+	 */
+	public static from(attrs: Partial<UstarHeaderLike>): TarHeader {
+		if (TarHeader.isTarHeader(attrs)) {
+			return attrs as TarHeader;
 		}
 
-		if (Object.keys(collected).length > 0) {
-			return collected;
+		const ustar = UstarHeader.from(attrs);
+		const paxRequiredAttributes = TarHeader.collectPaxRequiredAttributes(attrs);
+		let pax: PaxTarHeader | undefined;
+
+		if (paxRequiredAttributes) {
+			// The path property is the only reason we fall back to PAX as of now.
+			// This block may need to be wrapped in a check for the path property if other attributes are added later on.
+			const [directoryName, fileName] = TarHeader.splitBaseFileName(paxRequiredAttributes.path!);
+			ustar.fileName = fileName;
+			ustar.fileNamePrefix = directoryName;
+			pax = PaxTarHeader.fromAttributes(paxRequiredAttributes);
+		}
+
+		return new TarHeader({ustar, pax});
+	}
+
+	/**
+	 * Short-hand for constructing a new `TarHeader` and immediately calling `toUint8Array()` on it
+	 */
+	public static serialize(attrs: UstarHeaderLike | Partial<UstarHeaderLike>): Uint8Array {
+		if (TarHeader.isTarHeader(attrs)) {
+			return (attrs as TarHeader).toUint8Array();
+		}
+
+		return TarHeader.from(attrs).toUint8Array();
+	}
+	
+	private static collectPaxRequiredAttributes(
+		attrs: UstarHeaderLike | Partial<UstarHeaderLike>
+	): Partial<PaxTarHeaderAttributes> | null {
+		if (TarUtility.isObject(attrs)) {
+			let collected: Partial<PaxTarHeaderAttributes> = {};
+
+			if (attrs.fileName && attrs.fileName.length > UstarHeaderField.fileName.size) {
+				collected.path = attrs.fileName;
+			}
+	
+			if (Object.keys(collected).length > 0) {
+				return collected;
+			}
 		}
 
 		return null;
 	}
 
-	public get byteLength(): number {
-		let result = Constants.HEADER_SIZE;
+	private static splitBaseFileName(fileName: string): string[] {
+		let offset = fileName.lastIndexOf('/');
 		
-		if (this.pax && this.paxPreamble) {
-			result += (this.pax.calculateSectorByteLength() + this.paxPreamble!.byteLength);
+		if (offset >= 0) {
+			return [fileName.substring(0, offset), fileName.substring(offset + 1)];
 		}
 
-		return result;
+		offset = fileName.lastIndexOf('\\');
+		
+		if (offset >= 0) {
+			return [fileName.substring(0, offset), fileName.substring(offset + 1)];
+		}
+
+		return ['', fileName];
+	}
+
+	public get preamble(): UstarHeader | undefined {
+		return this.mPreamble;
+	}
+
+	public get byteLength(): number {
+		const primary = this.ustar.byteLength;
+		const pax = this.pax?.toUint8ArrayPadded().byteLength ?? 0;
+		const preamble = this.preamble?.byteLength ?? 0;
+		return primary + pax + preamble;
 	}
 
 	public get fileName(): string {
-		return this.pax?.has(PaxTarHeaderKey.PATH) ? this.pax.path! : this.ustarFileName;
-	}
-
-	public get ustarFileName(): string {
-		return TarHeaderField.fileName.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set ustarFileName(value: string) {
-		TarHeaderField.fileName.writeTo(this.bytes, this.offset, value);
+		return this.pax?.path || this.ustar.fileName;
 	}
 
 	public get fileMode(): number {
-		return TarHeaderField.fileMode.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set fileMode(value: number) {
-		TarHeaderField.fileMode.writeTo(this.bytes, this.offset, value);
+		return this.ustar.fileMode;
 	}
 
 	public get ownerUserId(): number {
-		return this.pax?.has(PaxTarHeaderKey.USER_ID) ? this.pax.userId! : this.ustarOwnerUserId;
-	}
-
-	public get ustarOwnerUserId(): number {
-		return TarHeaderField.ownerUserId.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set ustarOwnerUserId(value: number) {
-		TarHeaderField.ownerUserId.writeTo(this.bytes, this.offset, value);
+		return this.pax?.userId || this.ustar.ownerUserId;
 	}
 
 	public get groupUserId(): number {
-		return this.pax?.has(PaxTarHeaderKey.GROUP_ID) ? this.pax.groupId : this.ustarGroupUserId;
-	}
-
-	public get ustarGroupUserId(): number {
-		return TarHeaderField.groupUserId.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set ustarGroupUserId(value: number) {
-		TarHeaderField.groupUserId.writeTo(this.bytes, this.offset, value);
+		return this.pax?.groupId || this.ustar.groupUserId;
 	}
 
 	public get fileSize(): number {
-		return this.pax?.has(PaxTarHeaderKey.SIZE) ? this.pax.size! : this.ustarFileSize;
-	}
-
-	public get ustarFileSize(): number {
-		return TarHeaderField.fileSize.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set ustarFileSize(value: number) {
-		TarHeaderField.fileSize.writeTo(this.bytes, this.offset, value);
+		return this.pax?.size || this.ustar.fileSize;
 	}
 
 	public get lastModified(): number {
-		return this.pax?.has(PaxTarHeaderKey.MODIFICATION_TIME) ? this.pax.modificationTime! : this.ustarLastModified;
-	}
-
-	public get ustarLastModified(): number {
-		return TarHeaderField.lastModified.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set ustarLastModified(value: number) {
-		TarHeaderField.lastModified.writeTo(this.bytes, this.offset, value);
+		return this.pax?.lastModified || this.ustar.lastModified;
 	}
 
 	public get headerChecksum(): number {
-		return TarHeaderField.headerChecksum.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set headerChecksum(value: number) {
-		TarHeaderField.headerChecksum.writeTo(this.bytes, this.offset, value);
+		return this.ustar.headerChecksum;
 	}
 
 	public get linkedFileName(): string {
-		return this.pax?.has(PaxTarHeaderKey.LINK_PATH) ? this.pax.linkPath! : this.ustarLinkedFileName;
+		return this.pax?.linkPath || this.ustar.linkedFileName;
 	}
 
-	public get ustarLinkedFileName(): string {
-		return TarHeaderField.linkedFileName.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set ustarLinkedFileName(value: string) {
-		TarHeaderField.linkedFileName.writeTo(this.bytes, this.offset, value);
-	}
-
-	public get typeFlag(): TarHeaderLinkIndicatorType {
-		return (TarHeaderField.typeFlag.readFrom(this.bytes, this.offset) as TarHeaderLinkIndicatorType)
-			|| TarHeaderLinkIndicatorType.UNKNOWN;
-	}
-
-	public set typeFlag(value: TarHeaderLinkIndicatorType) {
-		TarHeaderField.typeFlag.writeTo(this.bytes, this.offset, value);
+	public get typeFlag(): UstarHeaderLinkIndicatorType {
+		return this.ustar.typeFlag;
 	}
 
 	public get ustarIndicator(): string {
-		return TarHeaderField.ustarIndicator.readFrom(this.bytes, this.offset)!;
+		return this.ustar.ustarIndicator;
 	}
 
 	public get ustarVersion(): string {
-		return TarHeaderField.ustarVersion.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set ustarVersion(value: string) {
-		TarHeaderField.ustarVersion.writeTo(this.bytes, this.offset, value);
+		return this.ustar.ustarVersion;
 	}
 
 	public get ownerUserName(): string {
-		return this.pax?.has(PaxTarHeaderKey.USER_NAME) ? this.pax.userName! : this.ustarOwnerUserName;
-	}
-
-	public get ustarOwnerUserName(): string {
-		return TarHeaderField.ownerUserName.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set ustarOwnerUserName(value: string) {
-		TarHeaderField.ownerUserName.writeTo(this.bytes, this.offset, value);
+		return this.pax?.userName || this.ustar.ownerUserName;
 	}
 
 	public get ownerGroupName(): string {
-		return this.pax?.has(PaxTarHeaderKey.GROUP_NAME) ? this.pax.groupName! : this.ustarOwnerGroupName;
-	}
-
-	public get ustarOwnerGroupName(): string {
-		return TarHeaderField.ownerGroupName.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set ustarOwnerGroupName(value: string) {
-		TarHeaderField.ownerGroupName.writeTo(this.bytes, this.offset, value);
+		return this.pax?.groupName || this.ustar.ownerGroupName;
 	}
 
 	public get deviceMajorNumber(): string {
-		return TarHeaderField.deviceMajorNumber.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set deviceMajorNumber(value: string) {
-		TarHeaderField.deviceMajorNumber.writeTo(this.bytes, this.offset, value);
+		return this.ustar.deviceMajorNumber;
 	}
 
 	public get deviceMinorNumber(): string {
-		return TarHeaderField.deviceMinorNumber.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set deviceMinorNumber(value: string) {
-		TarHeaderField.deviceMinorNumber.writeTo(this.bytes, this.offset, value);
+		return this.ustar.deviceMinorNumber;
 	}
 
 	public get fileNamePrefix(): string {
-		return TarHeaderField.fileNamePrefix.readFrom(this.bytes, this.offset)!;
-	}
-
-	public set fileNamePrefix(value: string) {
-		TarHeaderField.fileNamePrefix.writeTo(this.bytes, this.offset, value);
+		return this.ustar.fileNamePrefix;
 	}
 
 	public get isPaxHeader(): boolean {
@@ -301,59 +203,88 @@ export class TarHeader implements TarHeaderLike {
 	}
 
 	public get isGlobalPaxPreHeader(): boolean {
-		return this.typeFlag === TarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER;
+		return this.ustar.isGlobalPaxHeader;
 	}
 
 	public get isLocalPaxPreHeader(): boolean {
-		return this.typeFlag === TarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
+		return this.ustar.isLocalPaxHeader;
 	}
 
 	public get isGlobalPaxPostHeader(): boolean {
-		return this.paxPreamble?.isGlobalPaxHeader ?? false;
+		return this.preamble?.isGlobalPaxHeader ?? false;
 	}
 
 	public get isLocalPaxPostHeader(): boolean {
-		return this.paxPreamble?.isLocalPaxHeader ?? false;
+		return this.preamble?.isLocalPaxHeader ?? false;
 	}
 
 	public get isFileHeader(): boolean {
-		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeFile(this.typeFlag);
+		return this.ustar.isFileHeader;
 	}
 
 	public get isDirectoryHeader(): boolean {
-		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeDirectory(this.typeFlag);
+		return this.ustar.isDirectoryHeader;
+	}
+
+	/**
+	 * Removes any unknown or un-standardized keys from
+	 * the PAX portion of this header (if one exists).
+	 * 
+	 * See also `PaxTarHeader.clean()`.
+	 * 
+	 * @returns `this` for operation chaining
+	 */
+	public clean(): this {
+		this.pax?.clean();
+		return this;
+	}
+
+	/**
+	 * Ensures that things such as checksum values are
+	 * synchronized with the current underlying header states.
+	 * 
+	 * @returns `this` for operation chaining
+	 */
+	private normalize(): this {
+		this.ustar.updateChecksum();
+		this.trySyncPaxHeader();
+		return this;
 	}
 
 	/**
 	 * @returns A snapshot of the underlying buffer for this header
 	 */
 	public toUint8Array(): Uint8Array {
-		if (this.isPaxHeader && this.pax && this.paxPreamble) {
-			const preambleBytes = this.paxPreamble.bytes;
-			const paxBytes = this.pax.toUint8Array();
-			const ownBytes = this.bytes;
-			const paxSectorSize = TarUtility.roundUpSectorOffset(paxBytes.byteLength);
-			const totalSize = preambleBytes.byteLength + paxSectorSize + ownBytes.byteLength;
-			const result = new Uint8Array(totalSize);
-			let offset = 0;
+		this.normalize();
+		
+		const isPax = !!(this.isPaxHeader && this.pax && this.preamble);
 
-			result.set(this.paxPreamble.bytes, offset);
-			offset += preambleBytes.byteLength;
-
-			result.set(paxBytes, offset);
-			offset += paxSectorSize;
-
-			result.set(ownBytes, offset);
-
-			return result;
+		if (!isPax) {
+			return this.ustar.bytes;
 		}
 
-		return this.bytes.slice(this.offset, this.offset + Constants.HEADER_SIZE);
+		const preambleBytes = this.preamble!.bytes;
+		const paxBytes = this.pax!.toUint8ArrayPadded();
+		const ownBytes = this.ustar.bytes;
+		const totalSize = preambleBytes.byteLength + paxBytes.byteLength + ownBytes.byteLength;
+		const result = new Uint8Array(totalSize);
+		let offset = 0;
+
+		result.set(this.preamble!.bytes, offset);
+		offset += preambleBytes.byteLength;
+
+		result.set(paxBytes, offset);
+		offset += paxBytes.byteLength;
+
+		result.set(ownBytes, offset);
+
+		return result;
 	}
 
 	public toJSON(): Record<string, unknown> {
-		const attributes = this.toAttributes();
-		const {pax, paxPreamble: preamble, bytes, offset} = this;
+		const attributes = this.ustar.toAttributes();
+		const {pax, preamble, ustar} = this;
+		const {bytes, offset} = ustar;
 
 		const buffer = {
 			byteLength: bytes.byteLength,
@@ -369,122 +300,30 @@ export class TarHeader implements TarHeaderLike {
 		};
 	}
 
-	public toAttributes(): TarHeaderLike {
-		const {
+	private trySyncPaxHeader(): void {
+		if (!this.pax) {
+			return;
+		}
+
+		const fileName = this.fileName;
+		const fileSize = this.pax.toUint8Array().byteLength;
+		const lastModified = this.pax.lastModified;
+		const typeFlag = this.mIsGlobal
+			? UstarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER
+			: UstarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
+
+		const preambleAttrs = {
 			fileName,
-			fileMode,
-			groupUserId,
-			ownerUserId,
-			fileSize,
-			lastModified,
-			headerChecksum,
-			linkedFileName,
 			typeFlag,
-			ustarIndicator,
-			ustarVersion,
-			ownerUserName,
-			ownerGroupName,
-			deviceMajorNumber,
-			deviceMinorNumber,
-			fileNamePrefix
-		} = this;
-		return {
-			fileName,
-			fileMode,
-			groupUserId,
-			ownerUserId,
-			fileSize,
 			lastModified,
-			headerChecksum,
-			linkedFileName,
-			typeFlag,
-			ustarIndicator,
-			ustarVersion,
-			ownerUserName,
-			ownerGroupName,
-			deviceMajorNumber,
-			deviceMinorNumber,
-			fileNamePrefix
+			fileSize
 		};
-	}
 
-	private asLocalPaxPreamble(): TarHeader {
-		const attrs = Object.assign(this.toAttributes(), {
-			fileName: PaxTarHeader.wrapFileName(this.fileName),
-			typeFlag: TarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER
-		});
-
-		return TarHeader.from(attrs, {pax: false});
-	}
-
-	/**
-	 * Override all values in the header.
-	 * Any values not provided in `attrs` will be filled in with default values.
-	 * @returns `this` for operation chaining
-	 */
-	public initialize(
-		attrs: TarHeaderLike | Partial<TarHeaderLike> = {},
-		options: TarHeaderBuilderOptions | null = {}
-	): this {
-		const completeAttrs: TarHeaderLike = Object.assign(TarHeader.defaultValues(), (attrs || {}));
-		const combinedOptions = Object.assign({}, defaultOptions, (options || {}));
-		const paxRequiredAttributes = TarHeader.collectPaxRequiredAttributes(completeAttrs);
-
-		this.update(completeAttrs);
-
-		if (combinedOptions.pax && paxRequiredAttributes) {
-			this.paxPreamble = this.asLocalPaxPreamble();
-			this.pax = new PaxTarHeader(paxRequiredAttributes);
+		if (this.mPreamble) {
+			this.mPreamble.update(preambleAttrs);
 
 		} else {
-			this.paxPreamble = null;
-			this.pax = null;
+			this.mPreamble = UstarHeader.from(preambleAttrs);
 		}
-		
-		return this;
-	}
-
-	/**
-	 * Ensures the state of the header is synced after changes have been made.
-	 * @returns `this` for operation chaining
-	 */
-	public normalize(): this {
-		this.ustarLastModified = TarUtility.sanitizeTimestamp(this.ustarLastModified!);
-		let checksum = TarHeaderUtility.CHECKSUM_SEED;
-
-		for (const field of TarHeaderUtility.CHECKSUM_FIELDS) {
-			checksum += field.calculateChecksum(this.bytes, this.offset);
-		}
-
-		this.headerChecksum = checksum;
-		return this;
-	}
-
-	/**
-	 * Mechanism to batch-update properties.
-	 * Automatically normalizes the header if any changes were made.
-	 * @returns `this` for operation chaining
-	 */
-	public update(attrs: TarHeaderLike | Partial<TarHeaderLike>): this {
-		if (!attrs) {
-			return this;
-		}
-		
-		let didModifyAnyField = false;
-
-		for (const field of TarHeaderUtility.ALL_FIELDS) {
-			const value = (attrs as any)[field.name];
-
-			if (TarUtility.isDefined(value)) {
-				const modified = field.writeTo(this.bytes, this.offset, value);
-				didModifyAnyField = didModifyAnyField || modified;
-			}
-		}
-
-		if (didModifyAnyField) {
-			this.normalize();
-		}
-
-		return this;
 	}
 }

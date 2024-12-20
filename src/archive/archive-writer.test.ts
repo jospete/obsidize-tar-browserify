@@ -1,5 +1,5 @@
-import { TarHeaderField } from '../header/tar-header-field';
-import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
+import { UstarHeaderField } from '../header/ustar/ustar-header-field';
+import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 import { ArchiveReader } from './archive-reader';
 import { ArchiveWriter } from './archive-writer';
 
@@ -35,14 +35,14 @@ describe('ArchiveWriter', () => {
 			expect(entry.isFile()).toBe(true);
 			expect(entry.fileName).toBe(fileName);
 			expect(entry.fileSize).toBe(fileContent.byteLength);
-			expect(entry.typeFlag).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
+			expect(entry.typeFlag).toBe(UstarHeaderLinkIndicatorType.NORMAL_FILE);
 		});
 
 		it('accepts custom header options as an additional parameter', () => {
 			const tarball = new ArchiveWriter();
 			const fileName = 'test.txt';
 			const fileContent = new Uint8Array(10);
-			const overrideType = TarHeaderLinkIndicatorType.CONTIGUOUS_FILE;
+			const overrideType = UstarHeaderLinkIndicatorType.CONTIGUOUS_FILE;
 
 			tarball.addBinaryFile(fileName, fileContent, { typeFlag: overrideType });
 
@@ -66,14 +66,14 @@ describe('ArchiveWriter', () => {
 			expect(entry.isFile()).toBe(true);
 			expect(entry.fileName).toBe(fileName);
 			expect(entry.getContentAsText()).toBe(fileContent);
-			expect(entry.typeFlag).toBe(TarHeaderLinkIndicatorType.NORMAL_FILE);
+			expect(entry.typeFlag).toBe(UstarHeaderLinkIndicatorType.NORMAL_FILE);
 		});
 
 		it('accepts custom header options as an additional parameter', () => {
 			const tarball = new ArchiveWriter();
 			const fileName = 'test.txt';
 			const fileContent = 'This is some text';
-			const overrideType = TarHeaderLinkIndicatorType.CONTIGUOUS_FILE;
+			const overrideType = UstarHeaderLinkIndicatorType.CONTIGUOUS_FILE;
 
 			tarball.addTextFile(fileName, fileContent, { typeFlag: overrideType });
 
@@ -96,7 +96,7 @@ describe('ArchiveWriter', () => {
 			expect(entry.fileName).toBe(fileName);
 			expect(entry.fileSize).toBe(0);
 			expect(entry.isDirectory()).toBe(true);
-			expect(entry.typeFlag).toBe(TarHeaderLinkIndicatorType.DIRECTORY);
+			expect(entry.typeFlag).toBe(UstarHeaderLinkIndicatorType.DIRECTORY);
 			expect(entry.ownerUserName).toBe('');
 		});
 
@@ -115,7 +115,7 @@ describe('ArchiveWriter', () => {
 
 	describe('PAX header construction', () => {
 		it('should NOT serialize with a PAX header when the name does not exceed the default max USTAR filename field size', async () => {
-			const fileName = ''.padEnd(TarHeaderField.fileName.size, 'a');
+			const fileName = ''.padEnd(UstarHeaderField.fileName.size, 'a');
 			const writer = new ArchiveWriter();
 			writer.addTextFile(fileName, 'test content for long file name');
 			const entries = await ArchiveReader.readAllEntriesFromMemory(writer.toUint8Array());
@@ -126,7 +126,7 @@ describe('ArchiveWriter', () => {
 		});
 
 		it('should serialize with a PAX header when the name exceeds the default max USTAR filename field size', async () => {
-			const fileName = ''.padEnd(TarHeaderField.fileName.size + 1, 'a');
+			const fileName = ''.padEnd(UstarHeaderField.fileName.size + 1, 'a');
 			const writer = new ArchiveWriter();
 			writer.addTextFile(fileName, 'test content for long file name');
 			const entries = await ArchiveReader.readAllEntriesFromMemory(writer.toUint8Array());
@@ -134,6 +134,37 @@ describe('ArchiveWriter', () => {
 			const [entry] = entries;
 			expect(entry.fileName).toBe(fileName);
 			expect(entry.header.isPaxHeader).toBe(true);
+		});
+	});
+
+	describe('removeEntriesWhere()', () => {
+		it('should remove entries from the entries array that meet the given predicate condition', () => {
+			const writer = new ArchiveWriter()
+				.addTextFile('sample1.txt', 'this is a file')
+				.addTextFile('another file.txt', 'this is a file with white-space in the name');
+			expect(writer.entries.length).toBe(2);
+
+			writer.removeEntriesWhere(v => / /.test(v.fileName));
+			expect(writer.entries.length).toBe(1);
+
+			// doing it again should have no effect
+			writer.removeEntriesWhere(v => / /.test(v.fileName));
+			expect(writer.entries.length).toBe(1);
+		});
+	});
+
+	describe('cleanAllHeaders()', () => {
+		it('should call clean() on the header of each entry', async () => {
+			const writer = new ArchiveWriter()
+				.addTextFile('sample1.txt', 'this is a file')
+				.addTextFile('another file.txt', 'this is a file with white-space in the name');
+			
+			const entry1Spy = jest.spyOn(writer.entries[0].header, 'clean');
+			const entry2Spy = jest.spyOn(writer.entries[0].header, 'clean');
+			writer.cleanAllHeaders();
+			
+			expect(entry1Spy).toHaveBeenCalledTimes(1);
+			expect(entry2Spy).toHaveBeenCalledTimes(1);
 		});
 	});
 });

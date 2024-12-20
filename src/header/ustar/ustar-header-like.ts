@@ -1,9 +1,9 @@
-import { TarHeaderLinkIndicatorType } from './tar-header-link-indicator-type';
+import { UstarHeaderLinkIndicatorType } from './ustar-header-link-indicator-type';
 
 /**
  * Core content parsed from a tar header sector.
  */
-export interface TarHeaderLike {
+export interface UstarHeaderLike {
 	readonly fileName: string;
 	readonly fileMode: number;
 	readonly ownerUserId: number;
@@ -12,7 +12,7 @@ export interface TarHeaderLike {
 	readonly lastModified: number;
 	readonly headerChecksum: number;
 	readonly linkedFileName: string;
-	readonly typeFlag: TarHeaderLinkIndicatorType;
+	readonly typeFlag: UstarHeaderLinkIndicatorType;
 	readonly ustarIndicator: string;
 	readonly ustarVersion: string;
 	readonly ownerUserName: string;

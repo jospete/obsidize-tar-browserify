@@ -1,9 +1,9 @@
 import { ArchiveContext } from '../common/archive-context';
 import { AsyncUint8ArrayLike } from '../common/async-uint8-array';
-import { TarUtility } from '../common/tar-utility';
+import { TarSerializable, TarUtility } from '../common/tar-utility';
 import { TarHeader } from '../header/tar-header';
-import { TarHeaderLike } from '../header/tar-header-like';
-import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
+import { UstarHeaderLike } from '../header/ustar/ustar-header-like';
+import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 
 export interface TarEntryOptions {
 	header?: TarHeader;
@@ -19,7 +19,7 @@ export interface TarEntryOptions {
  * 1. The parsed USTAR header sector content (AKA TarHeader)
  * 2. The aggregate of the proceeding file content sectors, based on the header's file size attribute
  */
-export class TarEntry implements TarHeaderLike {
+export class TarEntry implements UstarHeaderLike, TarSerializable {
 
 	protected mHeader: TarHeader;
 	protected mContent: Uint8Array | null;
@@ -39,7 +39,7 @@ export class TarEntry implements TarHeaderLike {
 	 * @param attrs - partial header data POJO
 	 * @param content - content of the entry (if it is a file)
 	 */
-	public static from(attrs: TarHeaderLike | Partial<TarHeaderLike>, content: Uint8Array | null = null): TarEntry {
+	public static from(attrs: UstarHeaderLike | Partial<UstarHeaderLike>, content: Uint8Array | null = null): TarEntry {
 		return new TarEntry({header: TarHeader.from(attrs), content});
 	}
 
@@ -55,8 +55,8 @@ export class TarEntry implements TarHeaderLike {
 
 		// The fileSize field metadata must always be in sync between the content and the header
 		if (!header.pax && header.fileSize !== contentLength && contentLength > 0) {
-			header.ustarFileSize = contentLength;
-			header.normalize();
+			header.ustar.fileSize = contentLength;
+			header.ustar.updateChecksum();
 		}
 
 		this.mHeader = header;
@@ -103,7 +103,7 @@ export class TarEntry implements TarHeaderLike {
 		return this.header.linkedFileName;
 	}
 
-	public get typeFlag(): TarHeaderLinkIndicatorType {
+	public get typeFlag(): UstarHeaderLinkIndicatorType {
 		return this.header.typeFlag;
 	}
 
@@ -259,7 +259,7 @@ export class TarEntry implements TarHeaderLike {
 			return false;
 		}
 
-		const headerBytes = this.header.normalize().toUint8Array();
+		const headerBytes = this.header.toUint8Array();
 
 		output.set(headerBytes, offset);
 		offset += headerBytes.byteLength;
@@ -275,7 +275,7 @@ export class TarEntry implements TarHeaderLike {
 	 * @returns This instance serialized as a single slice for a tar buffer
 	 */
 	public toUint8Array(): Uint8Array {
-		const headerBytes = this.header.normalize().toUint8Array();
+		const headerBytes = this.header.toUint8Array();
 		const result = new Uint8Array(this.sectorByteLength);
 		result.set(headerBytes, 0);
 

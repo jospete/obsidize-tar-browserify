@@ -4,7 +4,7 @@ import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarEntry } from '../entry/tar-entry';
 import { TarHeader } from '../header/tar-header';
-import { TarHeaderLinkIndicatorType } from '../header/tar-header-link-indicator-type';
+import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 import { range } from '../test/test-util';
 
 const { HEADER_SIZE } = Constants;
@@ -12,7 +12,7 @@ const { isUint8Array } = TarUtility;
 
 describe('TarEntry', () => {
 	it('has an option to check if an entry is a directory', () => {
-		const directory = TarEntry.from({ typeFlag: TarHeaderLinkIndicatorType.DIRECTORY });
+		const directory = TarEntry.from({ typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY });
 		expect(TarEntry.isTarEntry(directory)).toBe(true);
 		expect(directory.isDirectory()).toBe(true);
 	});
@@ -32,7 +32,7 @@ describe('TarEntry', () => {
 			deviceMajorNumber: '11',
 			deviceMinorNumber: '22',
 			fileNamePrefix: 'sample file prefix',
-			typeFlag: TarHeaderLinkIndicatorType.HARD_LINK
+			typeFlag: UstarHeaderLinkIndicatorType.HARD_LINK
 		});
 
 		const entry = new TarEntry({ header });
@@ -55,7 +55,7 @@ describe('TarEntry', () => {
 		expect(entry.deviceMinorNumber).toBe('22');
 		expect(entry.fileNamePrefix).toBe('sample file prefix');
 
-		expect(entry.typeFlag).toBe(TarHeaderLinkIndicatorType.HARD_LINK);
+		expect(entry.typeFlag).toBe(UstarHeaderLinkIndicatorType.HARD_LINK);
 	});
 
 	describe('toJSON()', () => {
@@ -68,12 +68,12 @@ describe('TarEntry', () => {
 		});
 
 		it('should indicate when an entry is a directory', () => {
-			const entry = TarEntry.from({typeFlag: TarHeaderLinkIndicatorType.DIRECTORY}, Uint8Array.from(range(100)));
+			const entry = TarEntry.from({typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY}, Uint8Array.from(range(100)));
 			expect(entry.toJSON().type).toBe('directory');
 		});
 
 		it('should indicate when an entry is not a directory or file', () => {
-			const entry = TarEntry.from({typeFlag: TarHeaderLinkIndicatorType.FIFO}, Uint8Array.from(range(100)));
+			const entry = TarEntry.from({typeFlag: UstarHeaderLinkIndicatorType.FIFO}, Uint8Array.from(range(100)));
 			expect(entry.toJSON().type).toBe('complex');
 		});
 	});
@@ -132,7 +132,7 @@ describe('TarEntry', () => {
 
 	describe('toUint8Array()', () => {
 		it('works for directories', () => {
-			const entry = TarEntry.from({ fileName: 'some-directory', typeFlag: TarHeaderLinkIndicatorType.DIRECTORY });
+			const entry = TarEntry.from({ fileName: 'some-directory', typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY });
 			const bytes = entry.toUint8Array();
 			expect(bytes.byteLength).toBe(Constants.HEADER_SIZE);
 		});
@@ -140,7 +140,7 @@ describe('TarEntry', () => {
 		it('should include the content value if the entry is a file and the content exists on the entry instance', () => {
 			const entry = TarEntry.from({
 				fileName: 'some-directory',
-				typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
+				typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
 			}, Uint8Array.from([1, 2, 3, 4]));
 			const bytes = entry.toUint8Array();
 			expect(entry.sectorByteLength).toBe(Constants.SECTOR_SIZE * 2);
@@ -153,7 +153,7 @@ describe('TarEntry', () => {
 			const entryContent = Uint8Array.from([1, 2, 3, 4]);
 			const entryHeader = TarHeader.from({
 				fileName: 'some-directory',
-				typeFlag: TarHeaderLinkIndicatorType.DIRECTORY
+				typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
 			});
 			const entry = new TarEntry({
 				header: entryHeader,

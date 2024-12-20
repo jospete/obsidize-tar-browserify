@@ -1,5 +1,9 @@
 import { Constants } from './constants';
 
+export interface TarSerializable {
+	toUint8Array(): Uint8Array;
+}
+
 export namespace TarUtility {
 
 	export function isNumber(value: any): value is number {
@@ -69,22 +73,50 @@ export namespace TarUtility {
 	export function parseIntOctal(input: string): number {
 		return parseIntSafe(input, Constants.OCTAL_RADIX);
 	}
-	
-	export function decodeTimestamp(value: number): number {
-		return Math.floor(parseIntSafe(value)) * 1000;
+
+	export function dateTimeToUstar(dateTime: number): number {
+		return Math.floor(parseIntSafe(dateTime) / 1000);
 	}
 	
-	export function encodeTimestamp(value: number): number {
-		return Math.floor(parseIntSafe(value) / 1000);
-	}
-	
-	export function sanitizeTimestamp(value: number): number {
-		return decodeTimestamp(encodeTimestamp(value));
+	export function ustarTimeToDate(ustarTime: number): number {
+		return Math.floor(parseIntSafe(ustarTime)) * 1000;
 	}
 
-	export function getTarTimestamp(): number {
-		return sanitizeTimestamp(Date.now());
+	export function sanitizeDateTimeAsUstar(dateTime: number): number {
+		return ustarTimeToDate(dateTimeToUstar(dateTime));
 	}
+
+	export function getUstarTimestamp(): number {
+		return sanitizeDateTimeAsUstar(Date.now());
+	}
+
+	export function paxTimeToDate(paxTime: number): number {
+		return Math.floor(paxTime * 1000);
+	}
+
+	export function paxTimeToUstar(paxTime: number): number {
+		return Math.floor(paxTime); // USTAR is just the seconds part of PAX as an integer
+	}
+
+	/**
+	 * @deprecated - use dateTimeToUstar
+	 */
+	export const encodeTimestamp = dateTimeToUstar;
+
+	/**
+	 * @deprecated - use ustarTimeToDate
+	 */
+	export const decodeTimestamp = ustarTimeToDate;
+
+	/**
+	 * @deprecated - use sanitizeDateTimeAsUstar
+	 */
+	export const sanitizeTimestamp = sanitizeDateTimeAsUstar;
+
+	/**
+	 * @deprecated - use getUstarTimestamp
+	 */
+	export const getTarTimestamp = getUstarTimestamp;
 
 	export function getDebugHexString(v: Uint8Array | null | undefined): string {
 		if (!isUint8Array(v)) return '';

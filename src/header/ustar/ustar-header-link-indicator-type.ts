@@ -8,8 +8,7 @@
  * 'A'–'Z' - Vendor specific extensions (POSIX.1-1988)
  * All other values	- Reserved for future standardization
  */
-export enum TarHeaderLinkIndicatorType {
-
+export enum UstarHeaderLinkIndicatorType {
 	/**
 	 * Special local indicator for this module to indicate a parse failure
 	 */

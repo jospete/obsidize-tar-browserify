@@ -1,7 +1,7 @@
 /**
  * Determines how a tar header field is interpreted to and from a Uint8Array.
  */
-export enum TarHeaderFieldType {
+export enum UstarHeaderFieldType {
 	/**
 	 * Bytes interpreted as char codes.
 	 */

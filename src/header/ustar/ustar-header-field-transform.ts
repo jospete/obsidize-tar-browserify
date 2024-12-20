@@ -1,21 +1,22 @@
-import { Constants } from '../common/constants';
-import { TarUtility } from '../common/tar-utility';
-import { TarHeaderFieldType } from './tar-header-field-type';
+import { Constants } from '../../common/constants';
+import { TarUtility } from '../../common/tar-utility';
+import { UstarHeaderFieldType } from './ustar-header-field-type';
 
 /**
  * Generalized transformation interface for header fields.
  * Used TarHeader getter/setter functionality.
  */
-export interface TarHeaderFieldTransform<T> {
+export interface UstarHeaderFieldTransform<T> {
 	serialize(input: T, fieldLength: number): Uint8Array;
 	deserialize(input: Uint8Array, fieldLength: number, offset: number): T;
 }
 
-export namespace TarHeaderFieldTransformType {
+export namespace UstarHeaderFieldTransformType {
 	function serializeIntegerOctalToString(value: number, maxLength: number): string {
 		return TarUtility.parseIntSafe(value)
 			.toString(Constants.OCTAL_RADIX)
-			.padStart(maxLength, '0');
+			.padStart(maxLength, '0')
+			.substring(0, maxLength);
 	}
 	
 	function serializeIntegerOctalWithSuffix(
@@ -37,9 +38,21 @@ export namespace TarHeaderFieldTransformType {
 		return input.slice(offset, offset + fieldLength);
 	}
 	
+	function serializeAscii(input: string, fieldLength: number): Uint8Array {
+		return TarUtility.encodeString(String(input).substring(0, fieldLength));
+	}
+	
 	function deserializeAscii(input: Uint8Array, fieldLength: number, offset: number): string {
 		const bytes = getScopedBytes(input, fieldLength, offset);
 		return TarUtility.decodeString(bytes);
+	}
+	
+	function serializeAsciiPadded(input: string, fieldLength: number): Uint8Array {
+		input = String(input);
+		if (input.length > fieldLength) {
+			return TarUtility.encodeString(input.substring(0, fieldLength - 1) + '\0');
+		}
+		return TarUtility.encodeString(input.padEnd(fieldLength, '\0'));
 	}
 	
 	function deserializeAsciiPadded(input: Uint8Array, fieldLength: number, offset: number): string {
@@ -57,42 +70,42 @@ export namespace TarHeaderFieldTransformType {
 	}
 	
 	function serializeIntegerOctalTimestamp(value: number, fieldLength: number): Uint8Array {
-		return serializeIntegerOctalWithSuffix(TarUtility.encodeTimestamp(value), fieldLength, '');
+		return serializeIntegerOctalWithSuffix(TarUtility.dateTimeToUstar(value), fieldLength, '');
 	}
 	
 	function deserializeIntegerOctalTimestamp(input: Uint8Array, fieldLength: number, offset: number): number {
-		return TarUtility.decodeTimestamp(deserializeIntegerOctal(input, fieldLength, offset));
+		return TarUtility.ustarTimeToDate(deserializeIntegerOctal(input, fieldLength, offset));
 	}
 	
-	export const ASCII: TarHeaderFieldTransform<string> = Object.freeze({
-		serialize: TarUtility.encodeString,
+	export const ASCII: UstarHeaderFieldTransform<string> = Object.freeze({
+		serialize: serializeAscii,
 		deserialize: deserializeAscii
 	});
 	
-	export const ASCII_PADDED_END: TarHeaderFieldTransform<string> = Object.freeze({
-		serialize: TarUtility.encodeString,
+	export const ASCII_PADDED_END: UstarHeaderFieldTransform<string> = Object.freeze({
+		serialize: serializeAsciiPadded,
 		deserialize: deserializeAsciiPadded
 	});
 	
-	export const INTEGER_OCTAL: TarHeaderFieldTransform<number> = Object.freeze({
+	export const INTEGER_OCTAL: UstarHeaderFieldTransform<number> = Object.freeze({
 		serialize: serializeIntegerOctal,
 		deserialize: deserializeIntegerOctal
 	});
 	
-	export const INTEGER_OCTAL_TIMESTAMP: TarHeaderFieldTransform<number> = Object.freeze({
+	export const INTEGER_OCTAL_TIMESTAMP: UstarHeaderFieldTransform<number> = Object.freeze({
 		serialize: serializeIntegerOctalTimestamp,
 		deserialize: deserializeIntegerOctalTimestamp
 	});
 
-	export function from(fieldType: TarHeaderFieldType): TarHeaderFieldTransform<any> | undefined {
+	export function from(fieldType: UstarHeaderFieldType): UstarHeaderFieldTransform<any> | undefined {
 		switch (fieldType) {
-			case TarHeaderFieldType.ASCII:
+			case UstarHeaderFieldType.ASCII:
 				return ASCII;
-			case TarHeaderFieldType.ASCII_PADDED_END:
+			case UstarHeaderFieldType.ASCII_PADDED_END:
 				return ASCII_PADDED_END;
-			case TarHeaderFieldType.INTEGER_OCTAL:
+			case UstarHeaderFieldType.INTEGER_OCTAL:
 				return INTEGER_OCTAL;
-			case TarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP:
+			case UstarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP:
 				return INTEGER_OCTAL_TIMESTAMP;
 			default:
 				return undefined;

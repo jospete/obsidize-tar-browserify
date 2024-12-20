@@ -1,5 +1,5 @@
-import { Constants } from '../common/constants';
-import { hexToUint8Array } from '../test/test-util';
+import { Constants } from '../../common/constants';
+import { hexToUint8Array } from '../../test/test-util';
 import { PaxTarHeader, PaxTarHeaderAttributes } from './pax-tar-header';
 import { PaxTarHeaderKey } from './pax-tar-header-key';
 
@@ -22,7 +22,7 @@ describe('PaxTarHeader', () => {
 		expect(() => JSON.stringify(new PaxTarHeader())).not.toThrow();
 	});
 
-	describe('PaxTarHeader.from', () => {
+	describe('from()', () => {
 		it('should correctly parse pax headers', () => {
 			const buffer = hexToUint8Array(paxHeaderHex);
 			expect(buffer.byteLength).toBe(602);
@@ -31,14 +31,16 @@ describe('PaxTarHeader', () => {
 			expect(header.has(PaxTarHeaderKey.PATH)).toBe(true);
 			expect(header.path).toBe('test_tar/repository/assets/0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895081a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt');
 			
+			expect(header.accessTime).not.toBeDefined();
+			expect(header.charset).not.toBeDefined();
 			expect(header.modificationTime).toBe(1729129075.4069762);
 			expect(header.comment).not.toBeDefined();
-			expect(header.groupId).toBe(0);
+			expect(header.groupId).not.toBeDefined();
 			expect(header.groupName).not.toBeDefined();
 			expect(header.hdrCharset).not.toBeDefined();
 			expect(header.linkPath).not.toBeDefined();
-			expect(header.size).toBe(0);
-			expect(header.userId).toBe(0);
+			expect(header.size).not.toBeDefined();
+			expect(header.userId).not.toBeDefined();
 			expect(header.userName).not.toBeDefined();
 		});
 	});
@@ -46,16 +48,16 @@ describe('PaxTarHeader', () => {
 	describe('serialize()', () => {
 		it('should serialize the given attributes into a PAX buffer', () => {
 			const originalBuffer = hexToUint8Array(paxHeaderHex2);
-			const serializedBuffer = PaxTarHeader.serialize(paxHeaderHex2Decoded);
+			const serializedBuffer = PaxTarHeader.serializeAttributes(paxHeaderHex2Decoded);
 			expect(originalBuffer).toEqual(serializedBuffer);
 		});
 
 		it('should return an empty Uint8Array instance when given an invalid value', () => {
-			expect(PaxTarHeader.serialize(null)).toEqual(new Uint8Array(0));
+			expect(PaxTarHeader.serialize(null as any)).toEqual(new Uint8Array(0));
 		});
 
 		it('should return an empty Uint8Array instance when given an empty object', () => {
-			expect(PaxTarHeader.serialize({})).toEqual(new Uint8Array(0));
+			expect(PaxTarHeader.serialize({} as any)).toEqual(new Uint8Array(0));
 		});
 
 		it('should account for length attribute decimal rollovers', () => {
@@ -63,23 +65,30 @@ describe('PaxTarHeader', () => {
 				// 92 characters + 7 metadata characters will give us 99, which should force a rollover into the 100s when length field is added
 				[PaxTarHeaderKey.PATH]: '81a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt'
 			};
-			const serializedBuffer = PaxTarHeader.serialize(attrs);
+			const serializedBuffer = PaxTarHeader.fromAttributes(attrs).toUint8Array();
 			const deserializedHeader = PaxTarHeader.from(serializedBuffer);
 			expect(deserializedHeader.path).toBe(attrs[PaxTarHeaderKey.PATH]);
+		});
+	});
+
+	describe('lastModified', () => {
+		it('should convert the serialized time to standard epoch time', () => {
+			const header = PaxTarHeader.fromAttributes({mtime: 123456.123456});
+			expect(header.lastModified).toBe(123456123);
 		});
 	});
 
 	describe('toUint8Array()', () => {
 		it('should serialize to the same data that was deserialized', () => {
 			const originalBuffer = hexToUint8Array(paxHeaderHex2);
-			const serializedBuffer = new PaxTarHeader(paxHeaderHex2Decoded).toUint8Array();
+			const serializedBuffer = PaxTarHeader.fromAttributes(paxHeaderHex2Decoded).toUint8Array();
 			expect(originalBuffer).toEqual(serializedBuffer);
 		});
 	});
 
 	describe('toUint8ArrayPadded()', () => {
 		it('should create a buffer that is a multiple of SECTOR_SIZE', () => {
-			const serializedBuffer = new PaxTarHeader(paxHeaderHex2Decoded).toUint8ArrayPadded();
+			const serializedBuffer = PaxTarHeader.fromAttributes(paxHeaderHex2Decoded).toUint8ArrayPadded();
 			expect(serializedBuffer.byteLength % Constants.SECTOR_SIZE).toBe(0);
 		});
 
@@ -120,6 +129,68 @@ describe('PaxTarHeader', () => {
 		it('should properly handle file paths that start with a slash', () => {
 			const value = '/file.txt';
 			expect(PaxTarHeader.wrapFileName(value)).toBe(`/${Constants.PAX_HEADER_PREFIX}/file.txt`);
+		});
+
+		it('should properly truncate massive file names', () => {
+			const fileName = 'test_tar/repository/assets/._0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895081a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr';
+			const wrapped = 'PaxHeader/._0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703e\0\0';
+			const result = PaxTarHeader.wrapFileName(fileName);
+			expect(result).toBe(wrapped);
+		});
+	});
+
+	describe('parseSegmentsFromAttributes()', () => {
+		it('returns an empty array on invalid input', () => {
+			expect(PaxTarHeader.parseSegmentsFromAttributes(null as any)).toEqual([]);
+		});
+	});
+
+	describe('keys()', () => {
+		it('returns an array of the keys in the header', () => {
+			const header = PaxTarHeader.fromAttributes(paxHeaderHex2Decoded);
+			const keys = header.keys();
+			expect(keys).toEqual(Object.keys(paxHeaderHex2Decoded));
+		});
+	});
+
+	describe('values()', () => {
+		it('returns an array of the keys in the header', () => {
+			const header = PaxTarHeader.fromAttributes(paxHeaderHex2Decoded);
+			const values = header.values();
+			for (const segment of values) {
+				expect(paxHeaderHex2Decoded[segment.key]).toBeDefined();
+			}
+		});
+	});
+
+	describe('clean()', () => {
+		it('removes non-standard pax segments', () => {
+			const header = PaxTarHeader.fromAttributes({
+				path: 'potato.txt',
+				someOtherGarbage: 'yep'
+			});
+			expect(header.keys().length).toBe(2);
+
+			header.clean();
+			expect(header.keys().length).toBe(1);
+
+			// running it again should have no effect
+			header.clean();
+			expect(header.keys().length).toBe(1);
+		});
+	});
+
+	describe('getInt()', () => {
+		it('should return undefined on parse error', () => {
+			const header = PaxTarHeader.fromAttributes({path: 'potato.txt'});
+			expect(header.getInt('path')).not.toBeDefined();
+		});
+	});
+
+	describe('getFloat()', () => {
+		it('should return undefined on parse error', () => {
+			const header = PaxTarHeader.fromAttributes({path: 'potato.txt'});
+			expect(header.getFloat('path')).not.toBeDefined();
 		});
 	});
 });
