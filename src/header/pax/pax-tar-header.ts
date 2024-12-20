@@ -8,16 +8,16 @@ import { PaxTarHeaderUtility } from './pax-tar-header-utility';
 /**
  * Object of key-value pairs for raw PAX attributes to populate a `PaxTarHeader` instance with.
  */
-export interface PaxTarHeaderAttributes extends Record<PaxTarHeaderKey | string, string> {
+export interface PaxTarHeaderAttributes extends Record<PaxTarHeaderKey | string, string | number> {
 	comment: string;
-	gid: string;
+	gid: number | string;
 	gname: string;
 	hdrcharset: string;
 	linkpath: string;
-	mtime: string;
+	mtime: number | string;
 	path: string;
-	size: string;
-	uid: string;
+	size: number | string;
+	uid: number | string;
 	uname: string;
 }
 
@@ -60,7 +60,8 @@ export class PaxTarHeader implements TarSerializable {
 		const segments: PaxTarHeaderSegment[] = [];
 		
 		for (const [key, value] of Object.entries(attributes)) {
-			segments.push(new PaxTarHeaderSegment(key, value));
+			const strVal = TarUtility.isString(value) ? value : String(value);
+			segments.push(new PaxTarHeaderSegment(key, strVal));
 		}
 
 		return segments;
