@@ -256,7 +256,7 @@ export class PaxTarHeader implements TarSerializable {
 	}
 
 	/**
-	 * @returns an array of the key/value pair entries in this header
+	 * @returns an array of the segments in this header
 	 */
 	public values(): PaxTarHeaderSegment[] {
 		return Object.values(this.valueMap);
