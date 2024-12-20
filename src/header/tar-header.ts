@@ -243,7 +243,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	 * 
 	 * @returns `this` for operation chaining
 	 */
-	public normalize(): this {
+	private normalize(): this {
 		this.ustar.updateChecksum();
 		this.preamble?.updateChecksum();
 		return this;
@@ -253,6 +253,8 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	 * @returns A snapshot of the underlying buffer for this header
 	 */
 	public toUint8Array(): Uint8Array {
+		this.normalize();
+		
 		const isPax = !!(this.isPaxHeader && this.pax && this.preamble);
 
 		if (!isPax) {

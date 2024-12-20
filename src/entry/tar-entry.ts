@@ -259,7 +259,7 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 			return false;
 		}
 
-		const headerBytes = this.header.normalize().toUint8Array();
+		const headerBytes = this.header.toUint8Array();
 
 		output.set(headerBytes, offset);
 		offset += headerBytes.byteLength;
@@ -275,7 +275,7 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 	 * @returns This instance serialized as a single slice for a tar buffer
 	 */
 	public toUint8Array(): Uint8Array {
-		const headerBytes = this.header.normalize().toUint8Array();
+		const headerBytes = this.header.toUint8Array();
 		const result = new Uint8Array(this.sectorByteLength);
 		result.set(headerBytes, 0);
 
