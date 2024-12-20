@@ -267,7 +267,7 @@ export class PaxTarHeader implements TarSerializable {
 	 * @returns `this` for operation chaining
 	 */
 	public clean(): this {
-		for (const key of Object.keys(this.valueMap)) {
+		for (const key of this.keys()) {
 			if (!PaxTarHeaderUtility.isKnownHeaderKey(key)) {
 				delete this.valueMap[key];
 			}
