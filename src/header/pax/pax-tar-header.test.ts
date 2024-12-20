@@ -71,6 +71,13 @@ describe('PaxTarHeader', () => {
 		});
 	});
 
+	describe('lastModified', () => {
+		it('should convert the serialized time to standard epoch time', () => {
+			const header = PaxTarHeader.fromAttributes({mtime: '123456.123456'});
+			expect(header.lastModified).toBe(123456123);
+		});
+	});
+
 	describe('toUint8Array()', () => {
 		it('should serialize to the same data that was deserialized', () => {
 			const originalBuffer = hexToUint8Array(paxHeaderHex2);

@@ -6,41 +6,22 @@ import { TarUtility } from '../common/tar-utility';
 import { PaxTarHeader, PaxTarHeaderAttributes } from '../header/pax/pax-tar-header';
 import { PaxTarHeaderKey } from '../header/pax/pax-tar-header-key';
 import { TarHeader } from '../header/tar-header';
+import { UstarHeader } from '../header/ustar/ustar-header';
 import { UstarHeaderLike } from '../header/ustar/ustar-header-like';
 import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 import { tarballSampleBase64 as PAX_tarballSampleBase64, totalFileCount as PAX_totalFileCount } from '../test/generated/pax-header-test-content';
 import { base64ToUint8Array, range } from '../test/test-util';
 import { ArchiveReader, ArchiveReadError } from './archive-reader';
 
-// TODO: move this logic into `ArchiveWriter` as a formal implementation for adding PAX headers
 const createPaxHeaderBuffer = (
 	headerAttrs: Partial<UstarHeaderLike>,
 	paxAttrs: Partial<PaxTarHeaderAttributes>,
 	global?: boolean
 ): Uint8Array => {
-	const typeFlag = global ? UstarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER : UstarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
-	const actualHeader = TarHeader.serialize(headerAttrs);
-	const paxHeader = PaxTarHeader.serializeAttributes(paxAttrs);
-	const preambleHeader = TarHeader.serialize({
-		fileName: Constants.PAX_HEADER_PREFIX + '/' + headerAttrs.fileName,
-		fileSize: paxHeader.byteLength,
-		typeFlag
-	});
-
-	const paxHeaderSectorLength = TarUtility.roundUpSectorOffset(paxHeader.byteLength);
-	const totalLength = preambleHeader.byteLength + paxHeaderSectorLength + actualHeader.byteLength;
-	const result = new Uint8Array(totalLength);
-	let offset = 0;
-
-	result.set(preambleHeader, offset);
-	offset += preambleHeader.byteLength;
-
-	result.set(paxHeader, offset);
-	offset += paxHeaderSectorLength;
-
-	result.set(actualHeader, offset);
-
-	return result;
+	const actualHeader = UstarHeader.from(headerAttrs);
+	const paxHeader = PaxTarHeader.fromAttributes(paxAttrs);
+	const combinedHeader = new TarHeader({ustar: actualHeader, pax: paxHeader, isPaxGlobal: global});
+	return combinedHeader.toUint8Array();
 };
 
 describe('ArchiveReader', () => {

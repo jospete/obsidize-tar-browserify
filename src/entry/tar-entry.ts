@@ -55,8 +55,8 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 
 		// The fileSize field metadata must always be in sync between the content and the header
 		if (!header.pax && header.fileSize !== contentLength && contentLength > 0) {
-			header.ustarFileSize = contentLength;
-			header.normalize();
+			header.ustar.fileSize = contentLength;
+			header.ustar.updateChecksum();
 		}
 
 		this.mHeader = header;

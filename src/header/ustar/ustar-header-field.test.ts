@@ -1,8 +1,8 @@
 import { Constants } from '../../common/constants';
 import { TarUtility } from '../../common/tar-utility';
 import { range } from '../../test/test-util';
-import { TarHeader } from '../tar-header';
 import { TarHeaderUtility } from '../tar-header-utility';
+import { UstarHeader } from './ustar-header';
 import { UstarHeaderField } from './ustar-header-field';
 import { UstarHeaderFieldType } from './ustar-header-field-type';
 
@@ -34,7 +34,7 @@ describe('TarHeaderField', () => {
 
 	describe('isUstarSector()', () => {
 		it('returns true if the buffer contains a ustar indicator', () => {
-			const testHeaderBuffer = TarHeader.serialize(null as any);
+			const testHeaderBuffer = UstarHeader.serialize(null as any);
 			expect(isUstarSector(testHeaderBuffer)).toBe(true);
 		});
 
@@ -45,7 +45,7 @@ describe('TarHeaderField', () => {
 
 		it('allows for non-standard padding after ustar indicator header data', () => {
 			const targetOffset = ustarIndicator.offset;
-			const testHeaderBuffer = TarHeader.serialize(null as any);
+			const testHeaderBuffer = UstarHeader.serialize(null as any);
 			const baseValue = USTAR_TAG;
 
 			const assertValidHeader = (value: string, isValid: boolean) => {
@@ -100,7 +100,7 @@ describe('TarHeaderField', () => {
 	});
 
 	describe('deserialize()', () => {
-		const defaultHeader = TarHeader.seeded();
+		const defaultHeader = UstarHeader.seeded();
 		const fields = UstarHeaderField.all();
 
 		for (const field of fields) {

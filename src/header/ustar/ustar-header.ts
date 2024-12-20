@@ -29,7 +29,7 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 			groupUserId: 0,
 			ownerUserId: 0,
 			fileSize: 0,
-			lastModified: TarUtility.getTarTimestamp(),
+			lastModified: TarUtility.getUstarTimestamp(),
 			headerChecksum: 0,
 			linkedFileName: '',
 			typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE,
@@ -126,7 +126,7 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public set lastModified(value: number) {
-		UstarHeaderField.lastModified.writeTo(this.bytes, this.offset, TarUtility.dateTimeToUstar(value));
+		UstarHeaderField.lastModified.writeTo(this.bytes, this.offset, value);
 	}
 
 	public get headerChecksum(): number {

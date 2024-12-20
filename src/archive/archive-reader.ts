@@ -7,6 +7,7 @@ import { TarEntry } from '../entry/tar-entry';
 import { PaxTarHeader } from '../header/pax/pax-tar-header';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderUtility } from '../header/tar-header-utility';
+import { UstarHeader } from '../header/ustar/ustar-header';
 
 const MAX_LOADED_BYTES = Constants.SECTOR_SIZE * 100000; // ~50Mb
 
@@ -203,17 +204,18 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		// Construct Header
 		let headerOffset = ustarOffset;
 		let headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
-		let header = new TarHeader(headerBuffer);
+		let ustarHeader = new UstarHeader(headerBuffer);
+		let header = new TarHeader({ustar: ustarHeader});
 
 		// Advance cursor to process potential PAX header or entry content
 		let nextOffset = TarUtility.advanceSectorOffset(headerOffset, this.mBufferCache!.byteLength);
 
-		if (header.isPaxHeader) {
+		if (ustarHeader.isPaxHeader) {
 			// Make sure we've buffered the pax header region and the next sector after that (next sector contains the _actual_ header)
-			const paxHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(header.ustarFileSize);
+			const paxHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(header.fileSize);
 			const requiredBufferSize = paxHeaderSectorEnd + Constants.HEADER_SIZE;
 			const isGlobalPax = header.isGlobalPaxHeader;
-			const preambleHeader = header;
+			const preambleHeader = ustarHeader;
 
 			if (!(await this.tryRequireBufferSize(requiredBufferSize))) {
 				throw ArchiveReadError.ERR_HEADER_PAX_MIN_BUFFER_LENGTH_NOT_MET;
@@ -230,10 +232,14 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 			// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
 			headerOffset = nextOffset;
 			headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
-			header = new TarHeader(headerBuffer);
-			header.pax = paxHeader;
-			header.paxPreamble = preambleHeader;
+			ustarHeader = new UstarHeader(headerBuffer);
 			nextOffset = TarUtility.advanceSectorOffsetUnclamped(nextOffset);
+
+			header = new TarHeader({
+				ustar: ustarHeader,
+				pax: paxHeader,
+				preamble: preambleHeader
+			});
 
 			if (isGlobalPax) {
 				this.mGlobalPaxHeaders.push(header);

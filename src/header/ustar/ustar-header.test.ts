@@ -25,6 +25,11 @@ describe('UstarHeader', () => {
 		expect(header.typeFlag).toBe(UstarHeaderLinkIndicatorType.UNKNOWN);
 	});
 
+	it('can be safely stringified', () => {
+		const header = UstarHeader.seeded();
+		expect(() => JSON.stringify(header)).not.toThrow();
+	});
+
 	describe('from()', () => {
 		it('returns the input value as-is if it is already a UstarHeader instance', () => {
 			const header = new UstarHeader();
@@ -205,6 +210,10 @@ describe('UstarHeader', () => {
 
 			header.fileNamePrefix = 'v3_final_this_time_for_sure';
 			expect(header.fileNamePrefix).toBe('v3_final_this_time_for_sure');
+
+			const now = Date.now();
+			header.lastModified = now;
+			expect(header.lastModified).toBe(TarUtility.sanitizeDateTimeAsUstar(now));
 		});
 	});
 });

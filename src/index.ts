@@ -10,7 +10,7 @@ export { TarEntry, TarEntryOptions } from './entry/tar-entry';
 export { PaxTarHeader, PaxTarHeaderAttributes } from './header/pax/pax-tar-header';
 export { PaxTarHeaderKey } from './header/pax/pax-tar-header-key';
 export { PaxTarHeaderSegment } from './header/pax/pax-tar-header-segment';
-export { TarHeader, TarHeaderBuilderOptions } from './header/tar-header';
+export { TarHeader } from './header/tar-header';
 export { TarHeaderUtility } from './header/tar-header-utility';
 export { UstarHeaderField, UstarHeaderFieldLike } from './header/ustar/ustar-header-field';
 export { UstarHeaderFieldTransform, UstarHeaderFieldTransformType } from './header/ustar/ustar-header-field-transform';
