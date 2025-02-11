@@ -105,27 +105,43 @@ describe('Global Tests', () => {
   describe('README Examples', () => {
     describe('simple use case', () => {
       it('can be executed', async () => {
-        // Example 1 - Create a tarball in-memory.
-        //
-        // The Tarball class implements several shorthand methods for
-        // injecting content like so:
-        const createdTarballBuffer = new Archive()
-          .addTextFile('Test File.txt', 'This is a test file')
-          .addBinaryFile('Some binary data.bin', new Uint8Array(10))
-          .addDirectory('MyFolder')
-          .addTextFile('MyFolder/a nested file.txt', 'this is under MyFolder')
-          .toUint8Array();
+		// Example 1 - Create an archive in-memory.
+		const createdTarballBuffer = new Archive()
+		.addTextFile('Test File.txt', 'This is a test file')
+		.addBinaryFile('Some binary data.bin', new Uint8Array(10))
+		.addDirectory('MyFolder')
+		.addTextFile('MyFolder/a nested file.txt', 'this is under MyFolder')
+		.toUint8Array();
+		
+		// Example 2 - Decode an archive from some Uint8Array source in-memory.
+		const {entries} = await Archive.extract(createdTarballBuffer);
+		const [firstFile] = entries;
+		
+		console.log(firstFile.fileName); // 'Test File.txt'
+		console.log(firstFile.content); // Uint8Array object
+		console.log(firstFile.getContentAsText()); // 'This is a test file'
 
-        // Example 2 - Decode a tarball from some Uint8Array source.
-        //
-        // Here we use the tarball we just created for demonstration purposes,
-        // but this could just as easily be a blob from a server, or a local file;
-        // as long as the content is a Uint8Array that implements the tar format correctly.
-        const {entries} = await Archive.extract(createdTarballBuffer);
-        const [mainFile] = entries;
-
-        expect(mainFile.getContentAsText()).toBe('This is a test file');
+		// Example 3 - Iterate over an archive source as a stream
+		for await (const entry of Archive.read(createdTarballBuffer)) {
+			// do some stuff with the entry...
+		}
       });
     });
+
+	describe('advanced iteration', () => {
+		it('can be executed', async () => {
+			const createdTarballBuffer = new Archive()
+				.addTextFile('Test File.txt', 'This is a test file')
+				.toUint8Array();
+
+			const entries: TarEntry[] = [];
+			for await (const entry of Archive.read(createdTarballBuffer)) {
+				entries.push(entry);
+			}
+
+			expect(entries.length).toBe(1);
+			expect(entries[0].getContentAsText()).toBe('This is a test file');
+		});
+	});
   });
 });

@@ -41,7 +41,7 @@ describe('ArchiveReader', () => {
 
 	it('should correctly parse pax headers', async () => {
 		const buffer = base64ToUint8Array(PAX_tarballSampleBase64);
-		const entries = await ArchiveReader.readAllEntriesFromMemory(buffer);
+		const entries = await ArchiveReader.wrap(buffer).then(r => r.readAllEntries());
 		const files = entries.filter(v => v.isFile());
 		expect(files.length).toBeGreaterThan(0);
 		const paxEntry = entries.find(v => !!v?.header?.pax);
@@ -181,5 +181,14 @@ describe('ArchiveReader', () => {
 		} catch (e) {
 			expect(e).toBe(ArchiveReadError.ERR_HEADER_MISSING_POST_PAX_SEGMENT);
 		}
+	});
+
+	describe('wrap()', () => {
+		it('should use async-like structures as is', async () => {
+			const buffer = Uint8Array.from([1, 2, 3, 4]);
+			const bufferSource = new InMemoryAsyncUint8Array(buffer);
+			const reader = await ArchiveReader.wrap(bufferSource);
+			expect(reader.source).toBe(bufferSource);
+		});
 	});
 });

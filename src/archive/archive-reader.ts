@@ -52,14 +52,14 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 	) {
 	}
 
-	public static readAllEntriesFromMemory(buffer: Uint8Array): Promise<TarEntry[]> {
-		return ArchiveReader.readAllEntriesFromStream(new InMemoryAsyncUint8Array(buffer));
-	}
-
-	public static readAllEntriesFromStream(stream: AsyncUint8ArrayLike): Promise<TarEntry[]> {
+	public static async wrap(archiveContent: Uint8Array | AsyncUint8ArrayLike): Promise<ArchiveReader> {
+		const stream = TarUtility.isUint8Array(archiveContent)
+			? new InMemoryAsyncUint8Array(archiveContent)
+			: archiveContent;
 		const iterator = new AsyncUint8ArrayIterator(stream);
 		const reader = new ArchiveReader(iterator);
-		return reader.readAllEntries();
+		await reader.initialize();
+		return reader;
 	}
 	
 	[Symbol.asyncIterator](): AsyncIterableIterator<TarEntry> {
