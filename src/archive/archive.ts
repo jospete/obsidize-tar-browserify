@@ -17,7 +17,7 @@ export class Archive extends ArchiveWriter {
 	 * The buffer should come from a complete, uncompressed tar file.
 	 */
 	public static async extract(buffer: Uint8Array | AsyncUint8ArrayLike): Promise<Archive> {
-		const reader = await ArchiveReader.wrap(buffer);
+		const reader = ArchiveReader.wrap(buffer);
 		const entries = await reader.readAllEntries();
 		return new Archive(entries);
 	}
@@ -26,10 +26,7 @@ export class Archive extends ArchiveWriter {
 	 * Iterate over entries in-place from a given source buffer.
 	 * The buffer should come from a complete, uncompressed tar file.
 	 */
-	public static async *read(buffer: Uint8Array | AsyncUint8ArrayLike): AsyncIterable<TarEntry> {
-		const reader = await ArchiveReader.wrap(buffer);
-		for await (const entry of reader) {
-			yield entry;
-		}
+	public static read(buffer: Uint8Array | AsyncUint8ArrayLike): AsyncIterable<TarEntry> {
+		return ArchiveReader.wrap(buffer);
 	}
 }
