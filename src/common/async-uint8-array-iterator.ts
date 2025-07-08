@@ -1,4 +1,4 @@
-import { AsyncUint8ArrayLike } from './async-uint8-array';
+import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from './async-uint8-array';
 import { Constants } from './constants';
 import { TarUtility } from './tar-utility';
 
@@ -25,6 +25,11 @@ export interface AsyncUint8ArrayBlock {
  * Generalized symbol / type for AsyncUint8ArrayIterator
  */
 export type AsyncUint8ArrayIteratorLike = AsyncIterableIterator<AsyncUint8ArrayBlock>;
+
+/**
+ * Valid input types for this iterator definition.
+ */
+export type AsyncUint8ArrayIteratorInput = Uint8Array | AsyncUint8ArrayLike;
 
 export interface AsyncUint8ArrayIteratorOptions {
 	/**
@@ -54,17 +59,23 @@ const MAX_BLOCK_SIZE = Constants.SECTOR_SIZE * 10000;
  */
 export class AsyncUint8ArrayIterator implements AsyncUint8ArrayIteratorLike {
 	private readonly blockSize: number;
-	private mByteLength: number | undefined;
 	private mOffset: number = 0;
 
 	constructor(
 		private readonly mInput: AsyncUint8ArrayLike,
-		options: AsyncUint8ArrayIteratorOptions | Partial<AsyncUint8ArrayIteratorOptions> = {}
+		options: Partial<AsyncUint8ArrayIteratorOptions> = {}
 	) {
 		let {blockSize} = sanitizeOptions(options);
 		blockSize = TarUtility.clamp(blockSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
 		blockSize = TarUtility.roundUpSectorOffset(blockSize);
  		this.blockSize = blockSize;
+	}
+
+	public static from(input: AsyncUint8ArrayIteratorInput): AsyncUint8ArrayIterator {
+		const stream = TarUtility.isUint8Array(input)
+			? new InMemoryAsyncUint8Array(input)
+			: input;
+		return new AsyncUint8ArrayIterator(stream);
 	}
 
 	[Symbol.asyncIterator](): AsyncUint8ArrayIteratorLike {
@@ -75,26 +86,17 @@ export class AsyncUint8ArrayIterator implements AsyncUint8ArrayIteratorLike {
 		return this.mInput;
 	}
 
-	public get byteLength(): number | undefined {
-		return this.mByteLength;
+	public get byteLength(): number {
+		return this.mInput.byteLength;
 	}
 
 	public get currentOffset(): number {
 		return this.mOffset;
 	}
 
-	/**
-	 * Must be called before next(), otherwise the iteration
-	 * will terminate immediately.
-	 */
-	public async initialize(): Promise<void> {
-		this.mByteLength = await this.input.byteLength();
-		this.mOffset = 0;
-	}
-
 	public async tryNext(): Promise<Uint8Array | null> {
 		const result = await this.next();
-		return result?.value?.buffer ? result.value.buffer : null;
+		return result?.value?.buffer ?? null;
 	}
 
 	/**
@@ -104,16 +106,16 @@ export class AsyncUint8ArrayIterator implements AsyncUint8ArrayIteratorLike {
 	public async next(): Promise<IteratorResult<AsyncUint8ArrayBlock>> {
 		const source = this.input;
 		const offset = this.mOffset;
-		const length = this.mByteLength;
-		const canAdvanceOffset = TarUtility.isNumber(length) && offset < length;
+		const length = this.byteLength;
 		
-		if (canAdvanceOffset) {
-			const targetLength = Math.min(this.blockSize, length - offset);
-			const buffer = await source.read(offset, targetLength);
-			this.mOffset += targetLength;
-			return {done: false, value: {source, buffer, offset}};
+		if (offset >= length) {
+			return {done: true, value: null};
 		}
 
-		return {done: true, value: null};
+		const targetLength = Math.min(this.blockSize, length - offset);
+		const buffer = await source.read(offset, targetLength);
+		this.mOffset += targetLength;
+
+		return {done: false, value: {source, buffer, offset}};
 	}
 }

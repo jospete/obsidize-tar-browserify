@@ -1,6 +1,6 @@
 import { ArchiveContext } from '../common/archive-context';
 import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array';
-import { AsyncUint8ArrayIterator } from '../common/async-uint8-array-iterator';
+import { AsyncUint8ArrayIterator, AsyncUint8ArrayIteratorInput } from '../common/async-uint8-array-iterator';
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarEntry } from '../entry/tar-entry';
@@ -50,16 +50,12 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 	constructor(
 		private readonly bufferIterator: AsyncUint8ArrayIterator
 	) {
+		this.mHasSyncInput = (this.bufferIterator.input instanceof InMemoryAsyncUint8Array);
 	}
 
-	public static async wrap(archiveContent: Uint8Array | AsyncUint8ArrayLike): Promise<ArchiveReader> {
-		const stream = TarUtility.isUint8Array(archiveContent)
-			? new InMemoryAsyncUint8Array(archiveContent)
-			: archiveContent;
-		const iterator = new AsyncUint8ArrayIterator(stream);
-		const reader = new ArchiveReader(iterator);
-		await reader.initialize();
-		return reader;
+	public static wrap(input: AsyncUint8ArrayIteratorInput): ArchiveReader {
+		const iterator = AsyncUint8ArrayIterator.from(input);
+		return new ArchiveReader(iterator);
 	}
 	
 	[Symbol.asyncIterator](): AsyncIterableIterator<TarEntry> {
@@ -74,16 +70,8 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		return this.mGlobalPaxHeaders;
 	}
 
-	public async initialize(): Promise<void> {
-		this.mBufferCache = null;
-		this.mOffset = 0;
-		this.mHasSyncInput = (this.bufferIterator.input instanceof InMemoryAsyncUint8Array);
-		await this.bufferIterator.initialize();
-	}
-
 	public async readAllEntries(): Promise<TarEntry[]> {
 		const entries: TarEntry[] = [];
-		await this.initialize();
 
 		for await (const entry of this) {
 			entries.push(entry);

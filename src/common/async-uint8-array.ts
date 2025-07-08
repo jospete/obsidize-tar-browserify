@@ -2,7 +2,7 @@
  * Generalized iterface for interacting with buffers that we only have a partial view into.
  */
 export interface AsyncUint8ArrayLike {
-	byteLength(): Promise<number>;
+	readonly byteLength: number;
 	read(offset: number, length: number): Promise<Uint8Array>;
 }
 
@@ -16,8 +16,8 @@ export class InMemoryAsyncUint8Array implements AsyncUint8ArrayLike {
 	) {
 	}
 	
-	public byteLength(): Promise<number> {
-		return Promise.resolve(this.input.byteLength);
+	public get byteLength(): number {
+		return this.input.byteLength;
 	}
 
 	public read(offset: number, length: number): Promise<Uint8Array> {

@@ -20,14 +20,14 @@ describe('AsyncUint8ArrayIterator', () => {
 		expect(iterator.currentOffset).toBe(0);
 	});
 
-	it('should not have a default byteLength before initialization', () => {
-		const iterator = createFromBuffer();
-		expect(iterator.byteLength).not.toBeDefined();
-	});
-
 	it('should have a defined byteLength after initialization', async () => {
 		const iterator = createFromBuffer(new Uint8Array([1, 2, 3, 4]));
-		await iterator.initialize();
 		expect(iterator.byteLength).toBe(4);
+	});
+
+	it('should be considered complete when the buffer is empty', async () => {
+		const iterator = createFromBuffer();
+		expect(iterator.byteLength).toBe(0);
+		expect((await iterator.next()).done).toBe(true);
 	});
 });
