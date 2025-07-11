@@ -98,26 +98,6 @@ export namespace TarUtility {
 		return Math.floor(paxTime); // USTAR is just the seconds part of PAX as an integer
 	}
 
-	/**
-	 * @deprecated - use dateTimeToUstar
-	 */
-	export const encodeTimestamp = dateTimeToUstar;
-
-	/**
-	 * @deprecated - use ustarTimeToDate
-	 */
-	export const decodeTimestamp = ustarTimeToDate;
-
-	/**
-	 * @deprecated - use sanitizeDateTimeAsUstar
-	 */
-	export const sanitizeTimestamp = sanitizeDateTimeAsUstar;
-
-	/**
-	 * @deprecated - use getUstarTimestamp
-	 */
-	export const getTarTimestamp = getUstarTimestamp;
-
 	export function getDebugHexString(v: Uint8Array | null | undefined): string {
 		if (!isUint8Array(v)) return '';
 		return Array.from(v)

@@ -45,7 +45,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 	private mGlobalPaxHeaders: TarHeader[] = [];
 	private mBufferCache: Uint8Array | null = null;
 	private mOffset: number = 0;
-	private mHasSyncInput: boolean = false;
+	private mHasSyncInput: boolean;
 
 	constructor(
 		private readonly bufferIterator: AsyncUint8ArrayIterator
@@ -54,8 +54,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 	}
 
 	public static wrap(input: AsyncUint8ArrayIteratorInput): ArchiveReader {
-		const iterator = AsyncUint8ArrayIterator.from(input);
-		return new ArchiveReader(iterator);
+		return new ArchiveReader(new AsyncUint8ArrayIterator(input));
 	}
 	
 	[Symbol.asyncIterator](): AsyncIterableIterator<TarEntry> {
@@ -192,7 +191,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		// Construct Header
 		let headerOffset = ustarOffset;
 		let headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
-		let ustarHeader = new UstarHeader(headerBuffer);
+		let ustarHeader = UstarHeader.deserialize(headerBuffer);
 		let header = new TarHeader({ustar: ustarHeader});
 
 		// Advance cursor to process potential PAX header or entry content
@@ -220,7 +219,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 			// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
 			headerOffset = nextOffset;
 			headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
-			ustarHeader = new UstarHeader(headerBuffer);
+			ustarHeader = UstarHeader.deserialize(headerBuffer);
 			nextOffset = TarUtility.advanceSectorOffsetUnclamped(nextOffset);
 
 			header = new TarHeader({

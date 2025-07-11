@@ -13,10 +13,10 @@ import { UstarHeaderLinkIndicatorType } from './ustar-header-link-indicator-type
  * lazy loads/sets data via getters and setters.
  */
 export class UstarHeader implements UstarHeaderLike, TarSerializable {
-	constructor(
-		public readonly bytes: Uint8Array = new Uint8Array(Constants.HEADER_SIZE), 
-		public readonly offset: number = 0
-	) {
+	private readonly mValueMap: Record<keyof UstarHeaderLike, any> = UstarHeader.defaultValues();
+
+	constructor(attrs: Partial<UstarHeaderLike> = {}) {
+		this.update(attrs);
 	}
 
 	/**
@@ -51,159 +51,156 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 	 * @returns A new `UstarHeader` instance based on the given attributes (if they are a POJO).
 	 * Note that if the given value is already a UstarHeader instance, this will return it as-is.
 	 */
-	public static from(attrs: UstarHeaderLike | Partial<UstarHeaderLike>): UstarHeader {
-		if (UstarHeader.isUstarHeader(attrs)) {
-			return attrs as UstarHeader;
-		}
-
-		return new UstarHeader().initialize(attrs);
+	public static from(attrs: Partial<UstarHeaderLike>): UstarHeader {
+		return UstarHeader.isUstarHeader(attrs) ? (attrs as UstarHeader) : new UstarHeader(attrs);
 	}
 
 	/**
 	 * Short-hand for constructing a new `UstarHeader` and immediately calling `toUint8Array()` on it
 	 */
-	public static serialize(attrs: UstarHeaderLike | Partial<UstarHeaderLike>): Uint8Array {
-		if (UstarHeader.isUstarHeader(attrs)) {
-			return (attrs as UstarHeader).toUint8Array();
-		}
-
+	public static serialize(attrs: Partial<UstarHeaderLike>): Uint8Array {
 		return UstarHeader.from(attrs).toUint8Array();
 	}
 
 	/**
-	 * @returns A new `UstarHeader` instance populated with the content returned by `defaultValues()`
+	 * Parses out a UstarHeader instance from the given input buffer, at the given offset.
+	 * The given offset must be a multiple of SECTOR_SIZE.
+	 * 
+	 * If the sector at the given offset is not marked with a ustar indicator,
+	 * this will return null.
 	 */
-	public static seeded(): UstarHeader {
-		return UstarHeader.from({});
-	}
+	public static deserialize(input: Uint8Array, offset: number = 0): UstarHeader {
+		const attrs: Record<string, any> = {};
 
-	public get byteLength(): number {
-		return this.bytes.byteLength;
+		for (const field of TarHeaderUtility.ALL_FIELDS) {
+			attrs[field.name] = field.readFrom(input, offset);
+		}
+
+		return new UstarHeader(attrs);
 	}
 
 	public get fileName(): string {
-		return UstarHeaderField.fileName.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.fileName;
 	}
 
 	public set fileName(value: string) {
-		UstarHeaderField.fileName.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.fileName = value;
 	}
 
 	public get fileMode(): number {
-		return UstarHeaderField.fileMode.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.fileMode;
 	}
 
 	public set fileMode(value: number) {
-		UstarHeaderField.fileMode.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.fileMode = value;
 	}
 
 	public get ownerUserId(): number {
-		return UstarHeaderField.ownerUserId.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.ownerUserId;
 	}
 
 	public set ownerUserId(value: number) {
-		UstarHeaderField.ownerUserId.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.ownerUserId = value;
 	}
 
 	public get groupUserId(): number {
-		return UstarHeaderField.groupUserId.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.groupUserId;
 	}
 
 	public set groupUserId(value: number) {
-		UstarHeaderField.groupUserId.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.groupUserId = value;
 	}
 
 	public get fileSize(): number {
-		return UstarHeaderField.fileSize.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.fileSize;
 	}
 
 	public set fileSize(value: number) {
-		UstarHeaderField.fileSize.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.fileSize = value;
 	}
 
 	public get lastModified(): number {
-		return UstarHeaderField.lastModified.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.lastModified;
 	}
 
 	public set lastModified(value: number) {
-		UstarHeaderField.lastModified.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.lastModified = TarUtility.sanitizeDateTimeAsUstar(value);
 	}
 
 	public get headerChecksum(): number {
-		return UstarHeaderField.headerChecksum.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.headerChecksum;
 	}
 
 	public set headerChecksum(value: number) {
-		UstarHeaderField.headerChecksum.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.headerChecksum = value;
 	}
 
 	public get linkedFileName(): string {
-		return UstarHeaderField.linkedFileName.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.linkedFileName;
 	}
 
 	public set linkedFileName(value: string) {
-		UstarHeaderField.linkedFileName.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.linkedFileName = value;
 	}
 
 	public get typeFlag(): UstarHeaderLinkIndicatorType {
-		return (UstarHeaderField.typeFlag.readFrom(this.bytes, this.offset) as UstarHeaderLinkIndicatorType)
-			|| UstarHeaderLinkIndicatorType.UNKNOWN;
+		return this.mValueMap.typeFlag;
 	}
 
 	public set typeFlag(value: UstarHeaderLinkIndicatorType) {
-		UstarHeaderField.typeFlag.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.typeFlag = value;
 	}
 
 	public get ustarIndicator(): string {
-		return UstarHeaderField.ustarIndicator.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.ustarIndicator;
 	}
 
 	public get ustarVersion(): string {
-		return UstarHeaderField.ustarVersion.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.ustarVersion;
 	}
 
 	public set ustarVersion(value: string) {
-		UstarHeaderField.ustarVersion.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.ustarVersion = value;
 	}
 
 	public get ownerUserName(): string {
-		return UstarHeaderField.ownerUserName.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.ownerUserName;
 	}
 
 	public set ownerUserName(value: string) {
-		UstarHeaderField.ownerUserName.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.ownerUserName = value;
 	}
 
 	public get ownerGroupName(): string {
-		return UstarHeaderField.ownerGroupName.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.ownerGroupName;
 	}
 
 	public set ownerGroupName(value: string) {
-		UstarHeaderField.ownerGroupName.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.ownerGroupName = value;
 	}
 
 	public get deviceMajorNumber(): string {
-		return UstarHeaderField.deviceMajorNumber.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.deviceMajorNumber;
 	}
 
 	public set deviceMajorNumber(value: string) {
-		UstarHeaderField.deviceMajorNumber.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.deviceMajorNumber = value;
 	}
 
 	public get deviceMinorNumber(): string {
-		return UstarHeaderField.deviceMinorNumber.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.deviceMinorNumber;
 	}
 
 	public set deviceMinorNumber(value: string) {
-		UstarHeaderField.deviceMinorNumber.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.deviceMinorNumber = value;
 	}
 
 	public get fileNamePrefix(): string {
-		return UstarHeaderField.fileNamePrefix.readFrom(this.bytes, this.offset)!;
+		return this.mValueMap.fileNamePrefix;
 	}
 
 	public set fileNamePrefix(value: string) {
-		UstarHeaderField.fileNamePrefix.writeTo(this.bytes, this.offset, value);
+		this.mValueMap.fileNamePrefix = value;
 	}
 
 	public get isPaxHeader(): boolean {
@@ -226,17 +223,36 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeDirectory(this.typeFlag);
 	}
 
+	public update(attrs: Partial<UstarHeaderLike>): this {
+		Object.assign(this.mValueMap, attrs);
+		return this;
+	}
+
+	public toAttributes(): UstarHeaderLike {
+		return Object.assign({}, this.mValueMap);
+	}
+
 	/**
 	 * @returns A snapshot of the underlying buffer for this header
 	 */
 	public toUint8Array(): Uint8Array {
-		this.updateChecksum();
-		return this.bytes.slice(this.offset, this.offset + Constants.HEADER_SIZE);
+		const result = new Uint8Array(Constants.HEADER_SIZE);
+		let checksum = TarHeaderUtility.CHECKSUM_SEED;
+
+		for (const field of TarHeaderUtility.CHECKSUM_FIELDS) {
+			field.writeTo(result, 0, this.mValueMap[field.name]);
+			checksum += field.calculateChecksum(result);
+		}
+
+		this.headerChecksum = checksum;
+		UstarHeaderField.headerChecksum.writeTo(result, 0, checksum);
+
+		return result;
 	}
 
 	public toJSON(): Record<string, unknown> {
 		const attributes = this.toAttributes();
-		const {bytes, offset} = this;
+		const bytes = this.toUint8Array();
 
 		const buffer = {
 			byteLength: bytes.byteLength,
@@ -244,102 +260,8 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 		};
 
 		return {
-			offset,
 			attributes,
 			buffer
 		};
-	}
-
-	public toAttributes(): UstarHeaderLike {
-		const {
-			fileName,
-			fileMode,
-			groupUserId,
-			ownerUserId,
-			fileSize,
-			lastModified,
-			headerChecksum,
-			linkedFileName,
-			typeFlag,
-			ustarIndicator,
-			ustarVersion,
-			ownerUserName,
-			ownerGroupName,
-			deviceMajorNumber,
-			deviceMinorNumber,
-			fileNamePrefix
-		} = this;
-		return {
-			fileName,
-			fileMode,
-			groupUserId,
-			ownerUserId,
-			fileSize,
-			lastModified,
-			headerChecksum,
-			linkedFileName,
-			typeFlag,
-			ustarIndicator,
-			ustarVersion,
-			ownerUserName,
-			ownerGroupName,
-			deviceMajorNumber,
-			deviceMinorNumber,
-			fileNamePrefix
-		};
-	}
-
-	/**
-	 * Override all values in the header.
-	 * Any values not provided in `attrs` will be filled in with default values.
-	 * @returns `this` for operation chaining
-	 */
-	public initialize(attrs: UstarHeaderLike | Partial<UstarHeaderLike> = {}): this {
-		const completeAttrs: UstarHeaderLike = Object.assign(UstarHeader.defaultValues(), (attrs || {}));
-		this.update(completeAttrs);
-		return this;
-	}
-
-	/**
-	 * Ensures the state of the header is synced after changes have been made.
-	 * @returns `this` for operation chaining
-	 */
-	public updateChecksum(): this {
-		let checksum = TarHeaderUtility.CHECKSUM_SEED;
-
-		for (const field of TarHeaderUtility.CHECKSUM_FIELDS) {
-			checksum += field.calculateChecksum(this.bytes, this.offset);
-		}
-
-		this.headerChecksum = checksum;
-		return this;
-	}
-
-	/**
-	 * Mechanism to batch-update properties.
-	 * Automatically normalizes the header if any changes were made.
-	 * @returns `this` for operation chaining
-	 */
-	public update(attrs: UstarHeaderLike | Partial<UstarHeaderLike>): this {
-		if (!attrs) {
-			return this;
-		}
-		
-		let didModifyAnyField = false;
-
-		for (const field of TarHeaderUtility.ALL_FIELDS) {
-			const value = (attrs as any)[field.name];
-
-			if (TarUtility.isDefined(value)) {
-				const modified = field.writeTo(this.bytes, this.offset, value);
-				didModifyAnyField = didModifyAnyField || modified;
-			}
-		}
-
-		if (didModifyAnyField) {
-			this.updateChecksum();
-		}
-
-		return this;
 	}
 }

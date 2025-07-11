@@ -119,13 +119,6 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 		return this.mPreamble;
 	}
 
-	public get byteLength(): number {
-		const primary = this.ustar.byteLength;
-		const pax = this.pax?.toUint8ArrayPadded().byteLength ?? 0;
-		const preamble = this.preamble?.byteLength ?? 0;
-		return primary + pax + preamble;
-	}
-
 	public get fileName(): string {
 		return this.pax?.path || this.ustar.fileName;
 	}
@@ -246,7 +239,6 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	 * @returns `this` for operation chaining
 	 */
 	private normalize(): this {
-		this.ustar.updateChecksum();
 		this.trySyncPaxHeader();
 		return this;
 	}
@@ -260,17 +252,17 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 		const isPax = !!(this.isPaxHeader && this.pax && this.preamble);
 
 		if (!isPax) {
-			return this.ustar.bytes;
+			return this.ustar.toUint8Array();
 		}
 
-		const preambleBytes = this.preamble!.bytes;
+		const preambleBytes = this.preamble!.toUint8Array();
 		const paxBytes = this.pax!.toUint8ArrayPadded();
-		const ownBytes = this.ustar.bytes;
+		const ownBytes = this.ustar.toUint8Array();
 		const totalSize = preambleBytes.byteLength + paxBytes.byteLength + ownBytes.byteLength;
 		const result = new Uint8Array(totalSize);
 		let offset = 0;
 
-		result.set(this.preamble!.bytes, offset);
+		result.set(preambleBytes, offset);
 		offset += preambleBytes.byteLength;
 
 		result.set(paxBytes, offset);
@@ -282,22 +274,8 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public toJSON(): Record<string, unknown> {
-		const attributes = this.ustar.toAttributes();
 		const {pax, preamble, ustar} = this;
-		const {bytes, offset} = ustar;
-
-		const buffer = {
-			byteLength: bytes.byteLength,
-			content: TarUtility.getDebugHexString(bytes)
-		};
-
-		return {
-			offset,
-			attributes,
-			buffer,
-			preamble,
-			pax
-		};
+		return {preamble, pax, ustar};
 	}
 
 	private trySyncPaxHeader(): void {
@@ -323,7 +301,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 			this.mPreamble.update(preambleAttrs);
 
 		} else {
-			this.mPreamble = UstarHeader.from(preambleAttrs);
+			this.mPreamble = new UstarHeader(preambleAttrs);
 		}
 	}
 }
