@@ -100,7 +100,7 @@ export class AsyncUint8ArrayIterator implements AsyncUint8ArrayIteratorLike {
 	 */
 	public async next(): Promise<IteratorResult<AsyncUint8ArrayBlock>> {
 		const source = this.input;
-		const offset = this.mOffset;
+		const offset = this.currentOffset;
 		const length = this.byteLength;
 		
 		if (offset >= length) {
