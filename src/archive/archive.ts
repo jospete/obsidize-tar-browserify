@@ -1,5 +1,5 @@
 import { AsyncUint8ArrayLike } from '../common/async-uint8-array';
-import { ArchiveEntry } from '../entry/archive-entry';
+import { ArchiveEntry } from './archive-entry';
 import { ArchiveReader } from './archive-reader';
 import { ArchiveWriter } from './archive-writer';
 

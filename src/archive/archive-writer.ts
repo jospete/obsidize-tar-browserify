@@ -1,8 +1,8 @@
 import { Constants } from '../common/constants';
 import { TarSerializable, TarUtility } from '../common/tar-utility';
-import { ArchiveEntry } from '../entry/archive-entry';
 import { UstarHeaderLike } from '../header/ustar/ustar-header-like';
 import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
+import { ArchiveEntry } from './archive-entry';
 
 export type ArchiveEntryPredicate = (entry: ArchiveEntry) => boolean;
 

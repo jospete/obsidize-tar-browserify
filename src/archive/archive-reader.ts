@@ -3,11 +3,11 @@ import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-ui
 import { AsyncUint8ArrayIterator, AsyncUint8ArrayIteratorInput } from '../common/async-uint8-array-iterator';
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
-import { ArchiveEntry } from '../entry/archive-entry';
 import { PaxHeader } from '../header/pax/pax-header';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderUtility } from '../header/tar-header-utility';
 import { UstarHeader } from '../header/ustar/ustar-header';
+import { ArchiveEntry } from './archive-entry';
 
 const MAX_LOADED_BYTES = Constants.SECTOR_SIZE * 100000; // ~50Mb
 
