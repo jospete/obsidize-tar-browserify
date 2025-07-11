@@ -1,5 +1,5 @@
 import { TarSerializable, TarUtility } from '../common/tar-utility';
-import { PaxTarHeader, PaxTarHeaderAttributes } from './pax/pax-tar-header';
+import { PaxHeader, PaxHeaderAttributes } from './pax/pax-header';
 import { UstarHeader } from './ustar/ustar-header';
 import { UstarHeaderField } from './ustar/ustar-header-field';
 import { UstarHeaderLike } from './ustar/ustar-header-like';
@@ -7,7 +7,7 @@ import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicato
 
 export interface TarHeaderOptions {
 	ustar: UstarHeader;
-	pax?: PaxTarHeader;
+	pax?: PaxHeader;
 	preamble?: UstarHeader;
 	isPaxGlobal?: boolean;
 }
@@ -21,7 +21,7 @@ export interface TarHeaderOptions {
  */
 export class TarHeader implements UstarHeaderLike, TarSerializable {
 	public readonly ustar: UstarHeader;
-	public readonly pax: PaxTarHeader | undefined;
+	public readonly pax: PaxHeader | undefined;
 	private mPreamble: UstarHeader | undefined;
 	private mIsGlobal: boolean;
 
@@ -49,7 +49,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 
 		const ustar = new UstarHeader(attributes);
 		const paxRequiredAttributes = TarHeader.collectPaxRequiredAttributes(attributes);
-		let pax: PaxTarHeader | undefined;
+		let pax: PaxHeader | undefined;
 
 		if (paxRequiredAttributes) {
 			// The path property is the only reason we fall back to PAX as of now.
@@ -57,7 +57,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 			const [directoryName, fileName] = TarHeader.splitBaseFileName(paxRequiredAttributes.path!);
 			ustar.fileName = fileName;
 			ustar.fileNamePrefix = directoryName;
-			pax = PaxTarHeader.fromAttributes(paxRequiredAttributes);
+			pax = PaxHeader.fromAttributes(paxRequiredAttributes);
 		}
 
 		return new TarHeader({ustar, pax});
@@ -76,9 +76,9 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	
 	private static collectPaxRequiredAttributes(
 		attrs: UstarHeaderLike | Partial<UstarHeaderLike>
-	): Partial<PaxTarHeaderAttributes> | null {
+	): Partial<PaxHeaderAttributes> | null {
 		if (TarUtility.isObject(attrs)) {
-			let collected: Partial<PaxTarHeaderAttributes> = {};
+			let collected: Partial<PaxHeaderAttributes> = {};
 
 			if (attrs.fileName && attrs.fileName.length > UstarHeaderField.fileName.size) {
 				collected.path = attrs.fileName;
@@ -216,7 +216,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	 * Removes any unknown or un-standardized keys from
 	 * the PAX portion of this header (if one exists).
 	 * 
-	 * See also `PaxTarHeader.clean()`.
+	 * See also `PaxHeader.clean()`.
 	 * 
 	 * @returns `this` for operation chaining
 	 */

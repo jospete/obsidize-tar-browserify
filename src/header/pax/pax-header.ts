@@ -1,14 +1,14 @@
 import { Constants } from '../../common/constants';
 import { TarSerializable, TarUtility } from '../../common/tar-utility';
 import { UstarHeaderField } from '../ustar/ustar-header-field';
-import { PaxTarHeaderKey } from './pax-tar-header-key';
-import { PaxTarHeaderSegment } from './pax-tar-header-segment';
-import { PaxTarHeaderUtility } from './pax-tar-header-utility';
+import { PaxHeaderKey } from './pax-header-key';
+import { PaxHeaderSegment } from './pax-header-segment';
+import { PaxHeaderUtility } from './pax-header-utility';
 
 /**
- * Object of key-value pairs for raw PAX attributes to populate a `PaxTarHeader` instance with.
+ * Object of key-value pairs for raw PAX attributes to populate a `PaxHeader` instance with.
  */
-export interface PaxTarHeaderAttributes extends Record<PaxTarHeaderKey | string, string | number> {
+export interface PaxHeaderAttributes extends Record<PaxHeaderKey | string, string | number> {
 	comment: string;
 	gid: number | string;
 	gname: string;
@@ -25,11 +25,11 @@ export interface PaxTarHeaderAttributes extends Record<PaxTarHeaderKey | string,
  * Adds support for extended headers.
  * https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html#tag_20_92_13_03
  */
-export class PaxTarHeader implements TarSerializable {
-	private readonly valueMap: Record<string, PaxTarHeaderSegment>;
+export class PaxHeader implements TarSerializable {
+	private readonly valueMap: Record<string, PaxHeaderSegment>;
 
 	constructor(
-		segments: PaxTarHeaderSegment[] = []
+		segments: PaxHeaderSegment[] = []
 	) {
 		this.valueMap = {};
 		for (const segment of segments) {
@@ -37,37 +37,37 @@ export class PaxTarHeader implements TarSerializable {
 		}
 	}
 
-	public static deserialize(buffer: Uint8Array, offset: number = 0): PaxTarHeader {
-		const segments = PaxTarHeader.deserializeSegments(buffer, offset);
-		return new PaxTarHeader(segments);
+	public static deserialize(buffer: Uint8Array, offset: number = 0): PaxHeader {
+		const segments = PaxHeader.deserializeSegments(buffer, offset);
+		return new PaxHeader(segments);
 	}
 
-	public static fromAttributes(attributes: Partial<PaxTarHeaderAttributes>): PaxTarHeader {
-		const segments = PaxTarHeader.parseSegmentsFromAttributes(attributes);
-		return new PaxTarHeader(segments);
+	public static fromAttributes(attributes: Partial<PaxHeaderAttributes>): PaxHeader {
+		const segments = PaxHeader.parseSegmentsFromAttributes(attributes);
+		return new PaxHeader(segments);
 	}
 
-	public static serializeAttributes(attributes: Partial<PaxTarHeaderAttributes>): Uint8Array {
-		const segments = PaxTarHeader.parseSegmentsFromAttributes(attributes);
-		return PaxTarHeader.serializeSegments(segments);
+	public static serializeAttributes(attributes: Partial<PaxHeaderAttributes>): Uint8Array {
+		const segments = PaxHeader.parseSegmentsFromAttributes(attributes);
+		return PaxHeader.serializeSegments(segments);
 	}
 
-	public static parseSegmentsFromAttributes(attributes: Partial<PaxTarHeaderAttributes>): PaxTarHeaderSegment[] {
+	public static parseSegmentsFromAttributes(attributes: Partial<PaxHeaderAttributes>): PaxHeaderSegment[] {
 		if (!TarUtility.isObject(attributes)) {
 			return [];
 		}
 		
-		const segments: PaxTarHeaderSegment[] = [];
+		const segments: PaxHeaderSegment[] = [];
 		
 		for (const [key, value] of Object.entries(attributes)) {
 			const strVal = TarUtility.isString(value) ? value : String(value);
-			segments.push(new PaxTarHeaderSegment(key, strVal));
+			segments.push(new PaxHeaderSegment(key, strVal));
 		}
 
 		return segments;
 	}
 
-	public static serializeSegments(segments: PaxTarHeaderSegment[]): Uint8Array {
+	public static serializeSegments(segments: PaxHeaderSegment[]): Uint8Array {
 		if (!Array.isArray(segments) || segments.length <= 0) {
 			return new Uint8Array(0);
 		}
@@ -104,16 +104,16 @@ export class PaxTarHeader implements TarSerializable {
 		let sepIndex = fileName.lastIndexOf('/');
 
 		if (sepIndex >= 0) {
-			return PaxTarHeader.insertPaxAt(fileName, '/', sepIndex);
+			return PaxHeader.insertPaxAt(fileName, '/', sepIndex);
 		}
 
 		sepIndex = fileName.lastIndexOf('\\');
 
 		if (sepIndex >= 0) {
-			return PaxTarHeader.insertPaxAt(fileName, '\\', sepIndex);
+			return PaxHeader.insertPaxAt(fileName, '\\', sepIndex);
 		}
 
-		return PaxTarHeader.makeTopLevelPrefix(fileName, '/', 0);
+		return PaxHeader.makeTopLevelPrefix(fileName, '/', 0);
 	}
 
 	private static insertPaxAt(fileName: string, separator: string, offset: number): string {
@@ -125,7 +125,7 @@ export class PaxTarHeader implements TarSerializable {
 				+ fileName.substring(offset);
 		}
 
-		return PaxTarHeader.makeTopLevelPrefix(fileName, '/', offset + 1);
+		return PaxHeader.makeTopLevelPrefix(fileName, '/', offset + 1);
 	}
 
 	private static makeTopLevelPrefix(fileName: string, separator: string, offset: number): string {
@@ -142,102 +142,102 @@ export class PaxTarHeader implements TarSerializable {
 		return result;
 	}
 
-	private static deserializeSegments(buffer: Uint8Array, offset: number): PaxTarHeaderSegment[] {
-		const result: PaxTarHeaderSegment[] = [];
+	private static deserializeSegments(buffer: Uint8Array, offset: number): PaxHeaderSegment[] {
+		const result: PaxHeaderSegment[] = [];
 		let cursor = offset;
-		let next = PaxTarHeaderSegment.deserialize(buffer, cursor);
+		let next = PaxHeaderSegment.deserialize(buffer, cursor);
 
 		while (next !== null) {
 			result.push(next);
 			cursor += next.bytes.byteLength;
-			next = PaxTarHeaderSegment.deserialize(buffer, cursor);
+			next = PaxHeaderSegment.deserialize(buffer, cursor);
 		}
 
 		return result;
 	}
 
 	/**
-	 * See `PaxTarHeaderKey.ACCESS_TIME` for more info
+	 * See `PaxHeaderKey.ACCESS_TIME` for more info
 	 */
 	public get accessTime(): number | undefined {
-		return this.getFloat(PaxTarHeaderKey.ACCESS_TIME);
+		return this.getFloat(PaxHeaderKey.ACCESS_TIME);
 	}
 
 	/**
-	 * See `PaxTarHeaderKey.CHARSET` for more info
+	 * See `PaxHeaderKey.CHARSET` for more info
 	 */
 	public get charset(): string | undefined {
-		return this.get(PaxTarHeaderKey.CHARSET);
+		return this.get(PaxHeaderKey.CHARSET);
 	}
 
 	/**
-	 * See `PaxTarHeaderKey.COMMENT` for more info
+	 * See `PaxHeaderKey.COMMENT` for more info
 	 */
 	public get comment(): string | undefined {
-		return this.get(PaxTarHeaderKey.COMMENT);
+		return this.get(PaxHeaderKey.COMMENT);
 	}
 
 	/**
-	 * See `PaxTarHeaderKey.GROUP_ID` for more info
+	 * See `PaxHeaderKey.GROUP_ID` for more info
 	 */
 	public get groupId(): number | undefined {
-		return this.getInt(PaxTarHeaderKey.GROUP_ID);
+		return this.getInt(PaxHeaderKey.GROUP_ID);
 	}
 
 	/**
-	 * See `PaxTarHeaderKey.GROUP_NAME` for more info
+	 * See `PaxHeaderKey.GROUP_NAME` for more info
 	 */
 	public get groupName(): string | undefined {
-		return this.get(PaxTarHeaderKey.GROUP_NAME);
+		return this.get(PaxHeaderKey.GROUP_NAME);
 	}
 
 	/**
-	 * See `PaxTarHeaderKey.HDR_CHARSET` for more info
+	 * See `PaxHeaderKey.HDR_CHARSET` for more info
 	 */
 	public get hdrCharset(): string | undefined {
-		return this.get(PaxTarHeaderKey.HDR_CHARSET);
+		return this.get(PaxHeaderKey.HDR_CHARSET);
 	}
 
 	/**
-	 * See `PaxTarHeaderKey.LINK_PATH` for more info
+	 * See `PaxHeaderKey.LINK_PATH` for more info
 	 */
 	public get linkPath(): string | undefined {
-		return this.get(PaxTarHeaderKey.LINK_PATH);
+		return this.get(PaxHeaderKey.LINK_PATH);
 	}
 
 	/**
-	 * See `PaxTarHeaderKey.MODIFICATION_TIME` for more info
+	 * See `PaxHeaderKey.MODIFICATION_TIME` for more info
 	 */
 	public get modificationTime(): number | undefined {
-		return this.getFloat(PaxTarHeaderKey.MODIFICATION_TIME);
+		return this.getFloat(PaxHeaderKey.MODIFICATION_TIME);
 	}
 
 	/**
-	 * See `PaxTarHeaderKey.PATH` for more info
+	 * See `PaxHeaderKey.PATH` for more info
 	 */
 	public get path(): string | undefined {
-		return this.get(PaxTarHeaderKey.PATH);
+		return this.get(PaxHeaderKey.PATH);
 	}
 
 	/**
-	 * See `PaxTarHeaderKey.SIZE` for more info
+	 * See `PaxHeaderKey.SIZE` for more info
 	 */
 	public get size(): number | undefined {
-		return this.getInt(PaxTarHeaderKey.SIZE);
+		return this.getInt(PaxHeaderKey.SIZE);
 	}
 
 	/**
-	 * See `PaxTarHeaderKey.USER_ID` for more info
+	 * See `PaxHeaderKey.USER_ID` for more info
 	 */
 	public get userId(): number | undefined {
-		return this.getInt(PaxTarHeaderKey.USER_ID);
+		return this.getInt(PaxHeaderKey.USER_ID);
 	}
 
 	/**
-	 * See `PaxTarHeaderKey.USER_NAME` for more info
+	 * See `PaxHeaderKey.USER_NAME` for more info
 	 */
 	public get userName(): string | undefined {
-		return this.get(PaxTarHeaderKey.USER_NAME);
+		return this.get(PaxHeaderKey.USER_NAME);
 	}
 
 	/**
@@ -258,7 +258,7 @@ export class PaxTarHeader implements TarSerializable {
 	/**
 	 * @returns an array of the segments in this header
 	 */
-	public values(): PaxTarHeaderSegment[] {
+	public values(): PaxHeaderSegment[] {
 		return Object.values(this.valueMap);
 	}
 
@@ -268,7 +268,7 @@ export class PaxTarHeader implements TarSerializable {
 	 */
 	public clean(): this {
 		for (const key of this.keys()) {
-			if (!PaxTarHeaderUtility.isKnownHeaderKey(key)) {
+			if (!PaxHeaderUtility.isKnownHeaderKey(key)) {
 				delete this.valueMap[key];
 			}
 		}
@@ -279,7 +279,7 @@ export class PaxTarHeader implements TarSerializable {
 	/**
 	 * @returns true if the value map of this parsed header contains the given key
 	 */
-	public has(key: PaxTarHeaderKey | string): boolean {
+	public has(key: PaxHeaderKey | string): boolean {
 		return TarUtility.isDefined(this.valueMap[key]);
 	}
 
@@ -287,7 +287,7 @@ export class PaxTarHeader implements TarSerializable {
 	 * @returns the value parsed from the bytes of this header for the given key,
 	 * or `undefined` if the key did not exist in the header.
 	 */
-	public get(key: PaxTarHeaderKey | string): string | undefined {
+	public get(key: PaxHeaderKey | string): string | undefined {
 		return this.valueMap[key]?.value;
 	}
 
@@ -295,7 +295,7 @@ export class PaxTarHeader implements TarSerializable {
 	 * Parse the value for the given key as an int.
 	 * @returns undefined if the key does not exist or the parse operation fails.
 	 */
-	public getInt(key: PaxTarHeaderKey | string): number | undefined {
+	public getInt(key: PaxHeaderKey | string): number | undefined {
 		return this.valueMap[key]?.intValue;
 	}
 
@@ -303,7 +303,7 @@ export class PaxTarHeader implements TarSerializable {
 	 * Parse the value for the given key as a float.
 	 * @returns undefined if the key does not exist or the parse operation fails.
 	 */
-	public getFloat(key: PaxTarHeaderKey | string): number | undefined {
+	public getFloat(key: PaxHeaderKey | string): number | undefined {
 		return this.valueMap[key]?.floatValue;
 	}
 
@@ -311,7 +311,7 @@ export class PaxTarHeader implements TarSerializable {
 	 * Serializes the underlying value map of this instance into a set of PAX sectors.
 	 */
 	public toUint8Array(): Uint8Array {
-		return PaxTarHeader.serializeSegments(this.values());
+		return PaxHeader.serializeSegments(this.values());
 	}
 
 	/**

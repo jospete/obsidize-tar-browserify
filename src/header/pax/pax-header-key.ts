@@ -2,7 +2,7 @@
  * Special keys used in the PAX format standard.
  * https://pubs.opengroup.org/onlinepubs/9699919799/utilities/pax.html#tag_20_92_13_03
  */
-export enum PaxTarHeaderKey {
+export enum PaxHeaderKey {
 	/**
 	 * The file access time for the following file(s), equivalent to the value of the st_atime member of the stat structure for a file, as
 	 * described by the stat() function. The access time shall be restored if the process has appropriate privileges required to do so. The

@@ -1,7 +1,7 @@
 import { TarUtility } from '../../common/tar-utility';
 import { hexToUint8Array, range } from '../../test/test-util';
-import { PaxTarHeaderKey } from './pax-tar-header-key';
-import { PaxTarHeaderSegment } from './pax-tar-header-segment';
+import { PaxHeaderKey } from './pax-header-key';
+import { PaxHeaderSegment } from './pax-header-segment';
 
 interface PaxHeaderTestMetadata {
 	hex: string;
@@ -53,15 +53,15 @@ const pathTestValue = 'test_tar/repository/assets/0ea3b7ce6f5bcee9ec14b8ad63692c
 const pathTestHex = '32 32 37 20 70 61 74 68 3D 74 65 73 74 5F 74 61 72 2F 72 65 70 6F 73 69 74 6F 72 79 2F 61 73 73 65 74 73 2F 30 65 61 33 62 37 63 65 36 66 35 62 63 65 65 39 65 63 31 34 62 38 61 64 36 33 36 39 32 63 30 39 65 32 35 62 33 61 31 36 66 64 64 63 32 39 31 35 37 30 31 34 65 66 63 33 63 31 62 65 39 32 37 65 5F 5F 5F 37 32 64 32 66 32 66 35 65 65 32 39 65 33 65 37 30 33 65 62 63 63 35 66 36 64 31 38 39 35 30 38 31 61 38 64 33 66 66 31 37 36 32 33 66 64 37 64 64 61 33 61 33 37 32 39 63 63 36 62 62 30 32 65 5F 5F 5F 63 6F 6D 70 73 63 69 5F 30 31 5F 76 31 5F 41 64 76 69 63 65 5F 66 6F 72 5F 55 6E 68 61 70 70 79 5F 50 72 6F 67 72 61 6D 6D 65 72 73 5F 76 33 5F 6D 73 74 72 2E 74 78 74 0A';
 const pathTestByteBuffer = hexToUint8Array(pathTestHex);
 
-describe('PaxTarHeaderSegment', () => {
+describe('PaxHeaderSegment', () => {
 	it('should have a default constructor', () => {
-		const segment = new PaxTarHeaderSegment();
+		const segment = new PaxHeaderSegment();
 		expect(segment).toBeTruthy();
 	});
 
 	describe('serialize()', () => {
 		it('should serialize the given key/value pair into a PAX buffer segment', () => {
-			const result = PaxTarHeaderSegment.serialize(pathTestKey, pathTestValue);
+			const result = PaxHeaderSegment.serialize(pathTestKey, pathTestValue);
 			expect(result).toEqual(pathTestByteBuffer);
 		});
 
@@ -71,7 +71,7 @@ describe('PaxTarHeaderSegment', () => {
 			for (const [segmentName, metadata] of Object.entries(paxHeaderMetadataMap)) {
 				it(`should be able to serialize "${segmentName}" from paxHeaderMetadataMap`, () => {
 					const {key, value, hex} = metadata;
-					const serialized = PaxTarHeaderSegment.serialize(key, value);
+					const serialized = PaxHeaderSegment.serialize(key, value);
 					const serializedHex = TarUtility.getDebugHexString(serialized);
 					expect(serializedHex).toBe(hex);
 					segmentHexAccumulator += ' ' + serializedHex;
@@ -85,17 +85,17 @@ describe('PaxTarHeaderSegment', () => {
 
 		it('will NOT work for some custom headers', () => {
 			const {key, value, hex} = brokenHeaderSegment;
-			const serialized = PaxTarHeaderSegment.serialize(key, value);
+			const serialized = PaxHeaderSegment.serialize(key, value);
 			const serializedHex = TarUtility.getDebugHexString(serialized);
 			expect(serializedHex).not.toBe(hex);
 		});
 
 		it('can handle edge case where the length field string size increases after the precalculation of it', () => {
-			const key = PaxTarHeaderKey.PATH;
+			const key = PaxHeaderKey.PATH;
 			// 92 characters + 7 metadata characters will give us 99, which should force a rollover into the 100s when length field is added
 			const value = '81a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt';
-			const serializedBuffer = PaxTarHeaderSegment.serialize(key, value);
-			const deserializedHeader = PaxTarHeaderSegment.deserialize(serializedBuffer);
+			const serializedBuffer = PaxHeaderSegment.serialize(key, value);
+			const deserializedHeader = PaxHeaderSegment.deserialize(serializedBuffer);
 
 			expect(deserializedHeader).toBeTruthy();
 			expect(deserializedHeader!.key).toBe(key);
@@ -106,27 +106,27 @@ describe('PaxTarHeaderSegment', () => {
 	describe('deserialize()', () => {
 		it('should return null if it is not given a valid Uint8Array', () => {
 			const invalidParameter: any = {potato: true};
-			expect(PaxTarHeaderSegment.deserialize(invalidParameter)).toBe(null);
+			expect(PaxHeaderSegment.deserialize(invalidParameter)).toBe(null);
 		});
 
 		it('should return null if the buffer it is given is malformed', () => {
 			const garbageBuffer1 = Uint8Array.from(range(5));
-			expect(PaxTarHeaderSegment.deserialize(garbageBuffer1)).toBe(null);
+			expect(PaxHeaderSegment.deserialize(garbageBuffer1)).toBe(null);
 
 			const garbageBuffer2 = new TextEncoder().encode('abc 123');
-			expect(PaxTarHeaderSegment.deserialize(garbageBuffer2)).toBe(null);
+			expect(PaxHeaderSegment.deserialize(garbageBuffer2)).toBe(null);
 		});
 	});
 
 	describe('toUint8Array()', () => {
 		it('should return the serialized bytes from the given key and value', () => {
-			const segment = new PaxTarHeaderSegment(pathTestKey, pathTestValue);
+			const segment = new PaxHeaderSegment(pathTestKey, pathTestValue);
 			const result = segment.toUint8Array();
 			expect(result).toEqual(pathTestByteBuffer);
 		});
 
 		it('should only generate the bytes for a segment once', () => {
-			const segment = new PaxTarHeaderSegment(pathTestKey, pathTestValue);
+			const segment = new PaxHeaderSegment(pathTestKey, pathTestValue);
 			const result1 = segment.toUint8Array();
 			const result2 = segment.toUint8Array();
 			expect(result1).not.toBe(null);
@@ -136,7 +136,7 @@ describe('PaxTarHeaderSegment', () => {
 
 	describe('toJSON()', () => {
 		it('should return a valid serializable object', () => {
-			const jsonObj = new PaxTarHeaderSegment().toJSON();
+			const jsonObj = new PaxHeaderSegment().toJSON();
 			expect(() => JSON.stringify(jsonObj)).not.toThrow();
 		});
 	});
