@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import { execSync } from 'child_process';
-import { readJsonSync } from 'fs-extra';
+import { readFileSync } from 'node:fs';
 import yargs from 'yargs';
 
-const { version } = readJsonSync('./package.json');
+const { version } = JSON.parse(readFileSync('./package.json').toString());
 const { smokeTest } = <any>yargs().parse();
 
 function git(cmd: string): Buffer | number {

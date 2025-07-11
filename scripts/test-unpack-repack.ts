@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
 import { execSync } from 'child_process';
-import { existsSync, mkdirpSync, readFileSync, rmSync, writeFileSync } from 'fs-extra';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { gzip, ungzip } from 'pako';
 import { Archive } from '../dist';
 
@@ -17,7 +17,7 @@ async function main() {
 		rmSync(destDirectory, {recursive: true});
 	}
 	
-	mkdirpSync(destDirectory);
+	if (!existsSync(destDirectory)) mkdirSync(destDirectory);
 
 	let tarBuffer: Uint8Array;
 

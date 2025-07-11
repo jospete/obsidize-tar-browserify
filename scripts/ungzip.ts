@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-import { readFileSync, writeFileSync } from 'fs-extra';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { inflate } from 'pako';
 
 async function main() {

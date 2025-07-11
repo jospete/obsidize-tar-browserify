@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
-import { mkdirpSync, readFileSync, writeFileSync } from 'fs-extra';
 import { globby } from 'globby';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, resolve } from 'path';
 import { extract } from 'tar';
 
@@ -73,7 +73,7 @@ async function generateTarSampleTwo() {
 	const tarFilePath = './dev-assets/pax-tgz-sample/packed/test.tar';
 	const unpackedPath = './dev-assets/pax-tgz-sample/unpacked';
 	const tarballContent = readFileSync(tarFilePath);
-	mkdirpSync(unpackedPath);
+	if (!existsSync('./tmp')) mkdirSync('./tmp');
 	await extract({file: tarFilePath, cwd: unpackedPath});
 	await exportTestAssets(tarballContent, ['**/*'], 'pax-header-test-content.ts', unpackedPath);
 }
