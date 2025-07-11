@@ -19,30 +19,6 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 		this.update(attrs);
 	}
 
-	/**
-	 * @returns A copy of the defaults used by all headers
-	 */
-	public static defaultValues(): UstarHeaderLike {
-		return {
-			fileName: '',
-			fileMode: Constants.FILE_MODE_DEFAULT,
-			groupUserId: 0,
-			ownerUserId: 0,
-			fileSize: 0,
-			lastModified: TarUtility.getUstarTimestamp(),
-			headerChecksum: 0,
-			linkedFileName: '',
-			typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE,
-			ustarIndicator: Constants.USTAR_INDICATOR_VALUE,
-			ustarVersion: Constants.USTAR_VERSION_VALUE,
-			ownerUserName: '',
-			ownerGroupName: '',
-			deviceMajorNumber: '00',
-			deviceMinorNumber: '00',
-			fileNamePrefix: ''
-		};
-	}
-
 	public static isUstarHeader(value: any): boolean {
 		return !!(value && (value instanceof UstarHeader));
 	}
@@ -77,6 +53,27 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 		}
 
 		return new UstarHeader(attrs);
+	}
+
+	public static defaultValues(): UstarHeaderLike {
+		return {
+			fileName: '',
+			fileMode: Constants.FILE_MODE_DEFAULT,
+			groupUserId: 0,
+			ownerUserId: 0,
+			fileSize: 0,
+			lastModified: TarUtility.getUstarTimestamp(),
+			headerChecksum: 0,
+			linkedFileName: '',
+			typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE,
+			ustarIndicator: Constants.USTAR_INDICATOR_VALUE,
+			ustarVersion: Constants.USTAR_VERSION_VALUE,
+			ownerUserName: '',
+			ownerGroupName: '',
+			deviceMajorNumber: '00',
+			deviceMinorNumber: '00',
+			fileNamePrefix: ''
+		};
 	}
 
 	public get fileName(): string {
@@ -232,9 +229,6 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 		return Object.assign({}, this.mValueMap);
 	}
 
-	/**
-	 * @returns A snapshot of the underlying buffer for this header
-	 */
 	public toUint8Array(): Uint8Array {
 		const result = new Uint8Array(Constants.HEADER_SIZE);
 		let checksum = TarHeaderUtility.CHECKSUM_SEED;

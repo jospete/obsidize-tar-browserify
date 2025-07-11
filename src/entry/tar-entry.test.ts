@@ -92,7 +92,8 @@ describe('TarEntry', () => {
 
 			const offset = 12;
 			const length = 42;
-			const entry = TarEntry.from({ fileName: 'Test File', fileSize: 80 });
+			const header = TarHeader.from({ fileName: 'Test File', fileSize: 80 });
+			const entry = new TarEntry({header, headerByteLength: HEADER_SIZE});
 			const result = await entry.readContentFrom(asyncBuffer, offset, length);
 
 			expect(isUint8Array(result)).toBe(true);
@@ -113,7 +114,8 @@ describe('TarEntry', () => {
 				read: async (offset, length) => testBuffer.slice(offset, offset + length)
 			};
 
-			const entry = TarEntry.from({ fileName: 'Test File', fileSize: 80 });
+			const header = TarHeader.from({ fileName: 'Test File', fileSize: 80 });
+			const entry = new TarEntry({header, headerByteLength: HEADER_SIZE});
 			const result = await entry.readContentFrom(asyncBuffer);
 
 			expect(isUint8Array(result)).toBe(true);
@@ -148,13 +150,6 @@ describe('TarEntry', () => {
 			};
 			const entry = new TarEntry({ context });
 			expect(entry.sourceContext).toBe(context);
-		});
-	});
-
-	describe('sourceOffset', () => {
-		it('should be the offset provided to the constructor', () => {
-			const entry = new TarEntry({ offset: 42 });
-			expect(entry.sourceOffset).toBe(42);
 		});
 	});
 });

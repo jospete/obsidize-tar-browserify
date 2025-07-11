@@ -54,7 +54,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 			return attrs as TarHeader;
 		}
 
-		const ustar = UstarHeader.from(attrs);
+		const ustar = new UstarHeader(attrs);
 		const paxRequiredAttributes = TarHeader.collectPaxRequiredAttributes(attrs);
 		let pax: PaxTarHeader | undefined;
 
