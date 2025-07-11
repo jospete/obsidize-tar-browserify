@@ -1,5 +1,10 @@
 # Changelog
 
+## 6.0.1
+
+- Upgrade minimum target version to es2020
+- Remove `tslib` dependency since it is no longer relevant with this upgrade
+
 ## 6.0.0
 
 - Overhaul many redundant and/or over-engineered internal structures
