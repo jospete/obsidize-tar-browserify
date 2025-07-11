@@ -1,9 +1,9 @@
 const path = require('path');
 
-module.exports = {
+const baseConfig = {
 	entry: './src/index.ts',
 	mode: 'production',
-	target: 'node',
+	target: ['web', 'es5'],
 	externals: ['tslib'],
 	module: {
 		rules: [
@@ -22,11 +22,28 @@ module.exports = {
 	resolve: {
 		extensions: ['.ts'],
 	},
-	output: {
-		filename: 'es5.js',
-		path: path.resolve(__dirname, 'dist'),
-		library: {
-			type: 'commonjs-module'
-		}
-	}
 };
+
+module.exports = [
+	{
+		...baseConfig,
+		output: {
+			filename: 'obsidize-tar-browserify.js',
+			path: path.resolve(__dirname, 'packed'),
+			library: {
+				name: 'ObsidizeTarBrowserify',
+				type: 'global',
+			},
+		},
+	},
+	{
+		...baseConfig,
+		output: {
+			filename: 'obsidize-tar-browserify.cjs',
+			path: path.resolve(__dirname, 'packed'),
+			library: {
+				type: 'commonjs2',
+			},
+		},
+	},
+];

@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-import { mkdirpSync } from 'fs-extra';
+import { existsSync, mkdirSync } from 'node:fs';
 import { extract } from 'tar';
 
 // Example Usage:
@@ -9,7 +9,7 @@ import { extract } from 'tar';
 
 async function main() {
 	const [src, dest] = process.argv.slice(2);
-	mkdirpSync(dest);
+	if (!existsSync(dest)) mkdirSync(dest);
 	await extract({ file: src, cwd: dest });
 }
 

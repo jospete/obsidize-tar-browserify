@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
 import { execSync } from 'child_process';
-import { mkdirpSync, writeFileSync } from 'fs-extra';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { Archive } from '../dist';
 
 async function main() {
@@ -14,7 +14,7 @@ async function main() {
 		'Test file content'
 	);
 	
-	mkdirpSync(outputDir);
+	if (!execSync(outputDir)) mkdirSync(outputDir);
 
 	const bytes = archive.toUint8Array();
 	writeFileSync(outputFilePath, bytes);
