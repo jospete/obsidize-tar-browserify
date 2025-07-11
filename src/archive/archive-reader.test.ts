@@ -3,8 +3,8 @@ import { InMemoryAsyncUint8Array } from '../common/async-uint8-array';
 import { AsyncUint8ArrayIterator } from '../common/async-uint8-array-iterator';
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
-import { PaxTarHeader, PaxTarHeaderAttributes } from '../header/pax/pax-tar-header';
-import { PaxTarHeaderKey } from '../header/pax/pax-tar-header-key';
+import { PaxHeader, PaxHeaderAttributes } from '../header/pax/pax-header';
+import { PaxHeaderKey } from '../header/pax/pax-header-key';
 import { TarHeader } from '../header/tar-header';
 import { UstarHeader } from '../header/ustar/ustar-header';
 import { UstarHeaderLike } from '../header/ustar/ustar-header-like';
@@ -15,11 +15,11 @@ import { ArchiveReader, ArchiveReadError } from './archive-reader';
 
 const createPaxHeaderBuffer = (
 	headerAttrs: Partial<UstarHeaderLike>,
-	paxAttrs: Partial<PaxTarHeaderAttributes>,
+	paxAttrs: Partial<PaxHeaderAttributes>,
 	global?: boolean
 ): Uint8Array => {
 	const actualHeader = UstarHeader.fromAttributes(headerAttrs);
-	const paxHeader = PaxTarHeader.fromAttributes(paxAttrs);
+	const paxHeader = PaxHeader.fromAttributes(paxAttrs);
 	const combinedHeader = new TarHeader({ustar: actualHeader, pax: paxHeader, isPaxGlobal: global});
 	return combinedHeader.toUint8Array();
 };
@@ -121,9 +121,9 @@ describe('ArchiveReader', () => {
 			fileName: 'Some Global Garbage',
 			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
 		};
-		const paxAttrs: Partial<PaxTarHeaderAttributes> = {
-			[PaxTarHeaderKey.PATH]: 'A an extra name override or something',
-			[PaxTarHeaderKey.SIZE]: '0'
+		const paxAttrs: Partial<PaxHeaderAttributes> = {
+			[PaxHeaderKey.PATH]: 'A an extra name override or something',
+			[PaxHeaderKey.SIZE]: '0'
 		};
 
 		const paxBuffer = createPaxHeaderBuffer(headerAttrs, paxAttrs, true);
@@ -141,7 +141,7 @@ describe('ArchiveReader', () => {
 			fileName: 'Some Global Garbage',
 			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
 		};
-		const paxAttrs: Partial<PaxTarHeaderAttributes> = {
+		const paxAttrs: Partial<PaxHeaderAttributes> = {
 			fileName: 'A an extra name override or something'
 		};
 
@@ -164,7 +164,7 @@ describe('ArchiveReader', () => {
 			fileName: 'Some Local Garbage',
 			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
 		};
-		const paxAttrs: Partial<PaxTarHeaderAttributes> = {
+		const paxAttrs: Partial<PaxHeaderAttributes> = {
 			fileName: 'A an extra name override or something'
 		};
 		
