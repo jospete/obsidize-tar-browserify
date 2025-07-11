@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
-import { existsSync, mkdirSync } from 'node:fs';
 import { extract } from 'tar';
+import { mkdirpSync } from './utility';
 
 // Example Usage:
 // > cd ./dev-assets/pax-tgz-sample/packed
@@ -9,7 +9,7 @@ import { extract } from 'tar';
 
 async function main() {
 	const [src, dest] = process.argv.slice(2);
-	if (!existsSync(dest)) mkdirSync(dest);
+	mkdirpSync(dest);
 	await extract({ file: src, cwd: dest });
 }
 

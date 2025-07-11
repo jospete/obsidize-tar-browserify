@@ -1,8 +1,9 @@
 #! /usr/bin/env node
 
 import { execSync } from 'child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { writeFileSync } from 'node:fs';
 import { Archive } from '../dist';
+import { mkdirpSync } from './utility';
 
 async function main() {
 	const outputDir = './tmp/test/pax-single-file';
@@ -14,7 +15,7 @@ async function main() {
 		'Test file content'
 	);
 	
-	if (!execSync(outputDir)) mkdirSync(outputDir);
+	mkdirpSync(outputDir);
 
 	const bytes = archive.toUint8Array();
 	writeFileSync(outputFilePath, bytes);
