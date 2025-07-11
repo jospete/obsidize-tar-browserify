@@ -7,7 +7,7 @@ const KEY_VALUE_SEPARATOR = '=';
  * Single segment in a PAX header block, represented by a text line with the format:
  * ```LENGTH KEY=VALUE\n```
  */
-export class PaxTarHeaderSegment implements TarSerializable {
+export class PaxHeaderSegment implements TarSerializable {
 	constructor(
 		private mKey: string = '',
 		private mValue: string = '',
@@ -34,12 +34,12 @@ export class PaxTarHeaderSegment implements TarSerializable {
 		return TarUtility.encodeString(segment);
 	}
 
-	public static deserialize(bytes: Uint8Array, offset: number = 0): PaxTarHeaderSegment | null {
+	public static deserialize(bytes: Uint8Array, offset: number = 0): PaxHeaderSegment | null {
 		if (!TarUtility.isUint8Array(bytes)) {
 			return null;
 		}
 
-		const lengthEndIndex = PaxTarHeaderSegment.findNextLengthEndIndex(bytes, offset);
+		const lengthEndIndex = PaxHeaderSegment.findNextLengthEndIndex(bytes, offset);
 
 		if (lengthEndIndex < 0) {
 			return null;
@@ -60,7 +60,7 @@ export class PaxTarHeaderSegment implements TarSerializable {
 		const value: string = kvpData.substring(equalsDelimiterIndex + 1).replace(/\n$/, '');
 		const segmentBytes = TarUtility.cloneUint8Array(bytes, offset, offset + segmentLength);
 
-		return new PaxTarHeaderSegment(key, value, segmentBytes);
+		return new PaxHeaderSegment(key, value, segmentBytes);
 	}
 
 	private static findNextLengthEndIndex(bytes: Uint8Array, offset: number): number {
@@ -107,7 +107,7 @@ export class PaxTarHeaderSegment implements TarSerializable {
 
 	public toUint8Array(): Uint8Array {
 		if (!TarUtility.isUint8Array(this.mBytes)) {
-			this.mBytes = PaxTarHeaderSegment.serialize(this.key, this.value);
+			this.mBytes = PaxHeaderSegment.serialize(this.key, this.value);
 		}
 		
 		return this.mBytes;

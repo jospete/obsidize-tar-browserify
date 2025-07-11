@@ -4,7 +4,7 @@ import { AsyncUint8ArrayIterator, AsyncUint8ArrayIteratorInput } from '../common
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
 import { TarEntry } from '../entry/tar-entry';
-import { PaxTarHeader } from '../header/pax/pax-tar-header';
+import { PaxHeader } from '../header/pax/pax-header';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderUtility } from '../header/tar-header-utility';
 import { UstarHeader } from '../header/ustar/ustar-header';
@@ -210,7 +210,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 			}
 
 			// Parse the pax header out from the next sector
-			const paxHeader = PaxTarHeader.deserialize(this.mBufferCache!, nextOffset);
+			const paxHeader = PaxHeader.deserialize(this.mBufferCache!, nextOffset);
 			nextOffset = paxHeaderSectorEnd;
 
 			if (!TarHeaderUtility.isUstarSector(this.mBufferCache!, nextOffset)) {
