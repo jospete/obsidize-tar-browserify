@@ -26,8 +26,8 @@ npm install -P -E @obsidize/tar-browserify
 ### Read a tar file
 
 ```typescript
-import { Archive } from '@obsidize/tar-browserify';
 import { ungzip } from 'pako';
+import { Archive } from '@obsidize/tar-browserify';
 
 async function readTarFile() {
   const response = await fetch('url/to/some/file.tar.gz');
@@ -49,17 +49,17 @@ readTarFile().catch(console.error);
 ### Write a tar file
 
 ```typescript
-import { Archive } from '@obsidize/tar-browserify';
 import { gzip } from 'pako';
+import { Archive } from '@obsidize/tar-browserify';
 
 async function writeTarFile() {
   const tarBuffer = new Archive()
     .addDirectory('MyStuff')
     .addTextFile('MyStuff/todo.txt', 'This is my TODO list')
-    .addBinaryFile('MyStuff/todo.txt', 'This is my TODO list')
+    .addBinaryFile('MyStuff/some-raw-file.obj', Uint8Array.from([1, 2, 3, 4, 5]))
     .addDirectory('Nested1')
     .addDirectory('Nested1/Nested2')
-    .addBinaryFile('Nested1/Nested2/supersecret.bin', Uint8Array.from([1, 2, 3, 4, 5]))
+    .addBinaryFile('Nested1/Nested2/supersecret.bin', Uint8Array.from([6, 7, 8, 9]))
     .toUint8Array();
 
   const gzBuffer = gzip(tarBuffer);
@@ -73,8 +73,8 @@ writeTarFile().catch(console.error);
 ### Modify an existing tar file
 
 ```typescript
-import { Archive } from '@obsidize/tar-browserify';
 import { gzip, ungzip } from 'pako';
+import { Archive } from '@obsidize/tar-browserify';
 
 async function modifyTarFile() {
   const response = await fetch('url/to/some/file.tar.gz');
@@ -83,7 +83,7 @@ async function modifyTarFile() {
   const archive = await Archive.extract(tarBuffer);
 
   const updatedTarBuffer = archive
-    .removeEntriesWhere(entry => entry.fileName.test(/unwanted\-file\-name\.txt/))
+    .removeEntriesWhere(entry => /unwanted\-file\-name\.txt/.test(entry.fileName))
     .cleanAllHeaders() // remove unwanted metadata
     .addTextFile('new text file.txt', 'this was added to the original tar file!')
     .toUint8Array();
