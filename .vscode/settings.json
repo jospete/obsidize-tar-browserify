@@ -1,5 +1,5 @@
 {
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "javascript.preferences.quoteStyle": "single",
   "typescript.preferences.quoteStyle": "single",
   "editor.insertSpaces": false,
@@ -14,5 +14,8 @@
     "editor.codeActionsOnSave": {
       "source.organizeImports": "always"
     }
-  }
+  },
+  "prettier.singleQuote": true,
+  "prettier.useTabs": true,
+  "prettier.printWidth": 120
 }

@@ -10,7 +10,6 @@ export interface DebugBufferJsonObject {
 }
 
 export namespace TarUtility {
-
 	export function isNumber(value: any): value is number {
 		return typeof value === 'number' && !Number.isNaN(value);
 	}
@@ -143,7 +142,6 @@ export namespace TarUtility {
 	}
 	
 	export function concatUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {
-	
 		if (!isUint8Array(b)) return a;
 		if (!isUint8Array(a)) return b;
 	
