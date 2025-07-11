@@ -27,7 +27,7 @@ export interface AsyncUint8ArrayBlock {
 export type AsyncUint8ArrayIteratorLike = AsyncIterableIterator<AsyncUint8ArrayBlock>;
 
 /**
- * Valid input types for this iterator definition.
+ * Valid input types for an AsyncUint8ArrayIterator instance
  */
 export type AsyncUint8ArrayIteratorInput = Uint8Array | AsyncUint8ArrayLike;
 
