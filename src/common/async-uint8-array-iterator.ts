@@ -58,24 +58,19 @@ const MAX_BLOCK_SIZE = Constants.SECTOR_SIZE * 10000;
  * the same streaming interface.
  */
 export class AsyncUint8ArrayIterator implements AsyncUint8ArrayIteratorLike {
+	private readonly mInput: AsyncUint8ArrayLike;
 	private readonly blockSize: number;
 	private mOffset: number = 0;
 
 	constructor(
-		private readonly mInput: AsyncUint8ArrayLike,
+		input: AsyncUint8ArrayIteratorInput,
 		options: Partial<AsyncUint8ArrayIteratorOptions> = {}
 	) {
+		this.mInput = TarUtility.isUint8Array(input) ? new InMemoryAsyncUint8Array(input) : input;
 		let {blockSize} = sanitizeOptions(options);
 		blockSize = TarUtility.clamp(blockSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
 		blockSize = TarUtility.roundUpSectorOffset(blockSize);
  		this.blockSize = blockSize;
-	}
-
-	public static from(input: AsyncUint8ArrayIteratorInput): AsyncUint8ArrayIterator {
-		const stream = TarUtility.isUint8Array(input)
-			? new InMemoryAsyncUint8Array(input)
-			: input;
-		return new AsyncUint8ArrayIterator(stream);
 	}
 
 	[Symbol.asyncIterator](): AsyncUint8ArrayIteratorLike {

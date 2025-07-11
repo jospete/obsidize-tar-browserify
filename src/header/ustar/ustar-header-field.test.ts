@@ -100,8 +100,9 @@ describe('TarHeaderField', () => {
 	});
 
 	describe('deserialize()', () => {
-		const defaultHeader = UstarHeader.seeded();
+		const defaultHeader = new UstarHeader();
 		const fields = UstarHeaderField.all();
+		const headerBytes = defaultHeader.toUint8Array();
 
 		for (const field of fields) {
 
@@ -111,7 +112,7 @@ describe('TarHeaderField', () => {
 
 			it(`mirrors the serialized value for "${field.name}"`, () => {
 				expect(headerValue).toBeDefined();
-				expect(serialized).toEqual(field.slice(defaultHeader.bytes));
+				expect(serialized).toEqual(field.slice(headerBytes));
 			});
 
 			it(`mirrors the deserialized value for "${field.name}"`, () => {

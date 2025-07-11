@@ -21,17 +21,20 @@ export class ArchiveWriter implements TarSerializable {
 	 */
 	public static serialize(entries: TarEntry[]): Uint8Array {
 		let outputLength = Constants.TERMINAL_PADDING_SIZE;
+		const outputBuffers: Uint8Array[] = [];
 
 		for (const entry of entries) {
-			outputLength += entry.sectorByteLength;
+			const entryBytes = entry.toUint8Array();
+			outputBuffers.push(entryBytes);
+			outputLength += entryBytes.byteLength;
 		}
 
 		const output = new Uint8Array(outputLength);
 		let offset = 0;
 
-		for (const entry of entries) {
-			entry.writeTo(output, offset);
-			offset += entry.sectorByteLength;
+		for (const entryBuf of outputBuffers) {
+			output.set(entryBuf, offset);
+			offset += entryBuf.byteLength;
 		}
 
 		return output;
