@@ -23,69 +23,115 @@ npm install -P -E @obsidize/tar-browserify
 
 ## Usage
 
-The below example can be tested with runkit on npm:
+### Read a tar file
 
 ```typescript
-import { Archive } from '@obsidize/tar-browserify'; // TypeScript
-// const { Archive } = require('@obsidize/tar-browserify'); // NodeJS (Required for RunKit)
+import { Archive } from '@obsidize/tar-browserify';
+import { ungzip } from 'pako';
 
-async function tarExample() {
-  // Example 1 - Create an archive in-memory.
-  const createdTarballBuffer = new Archive()
-  .addTextFile('Test File.txt', 'This is a test file')
-  .addBinaryFile('Some binary data.bin', new Uint8Array(10))
-  .addDirectory('MyFolder')
-  .addTextFile('MyFolder/a nested file.txt', 'this is under MyFolder')
-  .toUint8Array();
-  
-  // Example 2 - Decode an archive from some Uint8Array source in-memory.
-  const {entries} = await Archive.extract(createdTarballBuffer);
-  const [firstFile] = entries;
-  
-  console.log(firstFile.fileName); // 'Test File.txt'
-  console.log(firstFile.content); // Uint8Array object
-  console.log(firstFile.text()); // 'This is a test file'
+async function readTarFile() {
+  const response = await fetch('url/to/some/file.tar.gz');
+  const gzBuffer = await response.arrayBuffer();
+  const tarBuffer = ungzip(gzBuffer);
 
-  // Example 3 - Iterate over an archive source as a stream
-  for await (const entry of Archive.read(createdTarballBuffer)) {
-    // do some stuff with the entry...
-  }
-}
-
-tarExample();
-```
-
-**NOTE:** for large files, it is better to use the provided async options:
-
-```typescript
-import {Archive, AsyncUint8ArrayLike} from '@obsidize/tar-browserify';
-
-// Generalized wrapper for loading data in chunks.
-// The caller must wrap whatever external storage they are using with this.
-const asyncBuffer: AsyncUint8ArrayLike = {
-  // fetch tarball file length from storage
-  byteLength: 69420, /* TODO: preload the total source length in bytes and set it here */ }
-  // read tarball data from storage
-  // allows us to read the file in chunks rather than all at once
-  read: async (offset: number, length: number): Promise<Uint8Array> => { /* TODO: return buffer from some source */ }
-};
-
-async function iterateOverBigTarFile() {  
-  for await (const entry of Archive.read(asyncBuffer)) {
+  for await (const entry of Archive.read(tarBuffer)) {
     if (entry.isFile()) {
-      const content = await entry.readContentFrom(asyncBuffer);
-      console.log(`got file data from ${entry.fileName} (${content.byteLength} bytes)`);
-      // TODO: do some stuff with the content
+      console.log(`read tar file: ${entry.fileName} with content length ${entry.content!.byteLength}`);
+      console.log(`file text contents: ${entry.text()}`);
+      // TODO: do something interesting with the file
     }
   }
 }
 
-iterateOverBigTarFile();
+readTarFile().catch(console.error);
+```
+
+### Write a tar file
+
+```typescript
+import { Archive } from '@obsidize/tar-browserify';
+import { gzip } from 'pako';
+
+async function writeTarFile() {
+  const tarBuffer = new Archive()
+    .addDirectory('MyStuff')
+    .addTextFile('MyStuff/todo.txt', 'This is my TODO list')
+    .addBinaryFile('MyStuff/todo.txt', 'This is my TODO list')
+    .addDirectory('Nested1')
+    .addDirectory('Nested1/Nested2')
+    .addBinaryFile('Nested1/Nested2/supersecret.bin', Uint8Array.from([1, 2, 3, 4, 5]))
+    .toUint8Array();
+
+  const gzBuffer = gzip(tarBuffer);
+  const fileToSend = new File([gzBuffer], 'my-awesome-new-file.tar.gz');
+  // TODO: send the new file somewhere
+}
+
+writeTarFile().catch(console.error);
+```
+
+### Modify an existing tar file
+
+```typescript
+import { Archive } from '@obsidize/tar-browserify';
+import { gzip, ungzip } from 'pako';
+
+async function modifyTarFile() {
+  const response = await fetch('url/to/some/file.tar.gz');
+  const gzBuffer = await response.arrayBuffer();
+  const tarBuffer = ungzip(gzBuffer);
+  const archive = await Archive.extract(tarBuffer);
+
+  const updatedTarBuffer = archive
+    .removeEntriesWhere(entry => entry.fileName.test(/unwanted\-file\-name\.txt/))
+    .cleanAllHeaders() // remove unwanted metadata
+    .addTextFile('new text file.txt', 'this was added to the original tar file!')
+    .toUint8Array();
+
+  const updatedGzBuffer = gzip(updatedTarBuffer);
+  const fileToSend = new File([updatedGzBuffer], 'my-awesome-edited-file.tar.gz');
+  // TODO: send the modified file somewhere
+}
+
+modifyTarFile().catch(console.error);
+```
+
+### Read a BIG tar file (Advanced)
+
+For very large files (>= 50MB) it is better to use the `AsyncUint8ArrayLike`
+interface for loading the file in chunks (either from disk or over a network)
+
+```typescript
+import { Archive, AsyncUint8ArrayLike } from '@obsidize/tar-browserify';
+
+async function readBigTarFile() {
+  const customAsyncBuffer: AsyncUint8ArrayLike = {
+    byteLength: 12345, // the file length in bytes must be known ahead of time
+    read: (offset: number, length: number): Promise<Uint8Array> => /* TODO: return chunk from disk or network request */
+  };
+
+  for await (const entry of Archive.read(customAsyncBuffer)) {
+    if (!entry.isFile()) {
+      continue;
+    }
+
+    let offset = 0; // offset into this entry's file content
+    let chunkSize = 1024; // read 1Kb at a time
+
+    while (offset < entry.fileSize) {
+      const fileChunk = await entry.readContentFrom(customAsyncBuffer, offset, chunkSize);
+      offset += fileChunk.byteLength;
+      // TODO: do something interesting with the file data
+    }
+  }
+}
+
+readBigTarFile().catch(console.error);
 ```
 
 ## API
 
-Full API docs can be found [here](https://jospete.github.io/obsidize-tar-browserify/)
+Full API docs can be found in the repo [GitHub Docs Page](https://jospete.github.io/obsidize-tar-browserify/)
 
 ## Testing
 
@@ -95,11 +141,3 @@ of the [node-tar](https://www.npmjs.com/package/tar) package to ensure stability
 
 - `npm test` - run unit tests with live-reload.
 - `npm run coverage` - perform a single-pass of unit tests with code-coverage display.
-
-## Building From Source
-
-- clone this repo
-- run `npm install`
-- run `npm run build`
-
-The output will be in `./dist`
