@@ -119,7 +119,7 @@ describe('Global Tests', () => {
 		
 		expect(firstFile.fileName).toBe('Test File.txt');
 		expect(TarUtility.isUint8Array(firstFile.content)).toBe(true);
-		expect(firstFile.getContentAsText()).toBe('This is a test file');
+		expect(firstFile.text()).toBe('This is a test file');
 
 		// Example 3 - Iterate over an archive source as a stream
 		for await (const entry of Archive.read(createdTarballBuffer)) {
@@ -140,7 +140,7 @@ describe('Global Tests', () => {
 			}
 
 			expect(entries.length).toBe(1);
-			expect(entries[0].getContentAsText()).toBe('This is a test file');
+			expect(entries[0].text()).toBe('This is a test file');
 		});
 	});
   });
