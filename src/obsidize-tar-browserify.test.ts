@@ -1,6 +1,5 @@
-import { Archive } from './archive/archive';
-import { ArchiveEntry } from './archive/archive-entry';
-import { TarUtility } from './common/tar-utility';
+import { gzip } from 'pako';
+import { Archive, ArchiveEntry, AsyncUint8ArrayLike, TarUtility } from './index';
 import { fileStructures, tarballSampleBase64, totalFileCount } from './test/generated/tarball-test-content';
 
 import {
@@ -86,7 +85,7 @@ describe('Global Tests', () => {
 
 	describe('README Examples', () => {
 		describe('simple use case', () => {
-			it('can be executed', async () => {
+			it('should be runnable', async () => {
 				// Example 1 - Create an archive in-memory.
 				const createdTarballBuffer = new Archive()
 					.addTextFile('Test File.txt', 'This is a test file')
@@ -111,7 +110,7 @@ describe('Global Tests', () => {
 		});
 
 		describe('advanced iteration', () => {
-			it('can be executed', async () => {
+			it('should be runnable', async () => {
 				const createdTarballBuffer = new Archive()
 					.addTextFile('Test File.txt', 'This is a test file')
 					.toUint8Array();
@@ -123,6 +122,80 @@ describe('Global Tests', () => {
 
 				expect(entries.length).toBe(1);
 				expect(entries[0].text()).toBe('This is a test file');
+			});
+		});
+
+		describe('v6 read example', () => {
+			it('should be runnable', async () => {
+				const tarBuffer = base64ToUint8Array(tarballSampleBase64);
+
+				for await (const entry of Archive.read(tarBuffer)) {
+					if (entry.isFile()) {
+						expect(entry.fileName).toBeTruthy();
+						expect(entry.content).toBeTruthy();
+						expect(entry.text()).toBeTruthy();
+					}
+				}
+			});
+		});
+
+		describe('v6 write example', () => {
+			it('should be runnable', async () => {
+				const tarBuffer = new Archive()
+					.addDirectory('MyStuff')
+					.addTextFile('MyStuff/todo.txt', 'This is my TODO list')
+					.addBinaryFile('MyStuff/some-raw-file.obj', Uint8Array.from([1, 2, 3, 4, 5]))
+					.addDirectory('Nested1')
+					.addDirectory('Nested1/Nested2')
+					.addBinaryFile('Nested1/Nested2/supersecret.bin', Uint8Array.from([6, 7, 8, 9]))
+					.toUint8Array();
+
+				const gzBuffer = gzip(tarBuffer);
+				const fileToSend = new File([gzBuffer], 'my-awesome-new-file.tar.gz');
+				expect(fileToSend).toBeTruthy();
+			});
+		});
+
+		describe('v6 modify example', () => {
+			it('should be runnable', async () => {
+				const tarBuffer = base64ToUint8Array(tarballSampleBase64);
+				const archive = await Archive.extract(tarBuffer);
+
+				const updatedTarBuffer = archive
+					.removeEntriesWhere((entry) => /unwanted\-file\-name\.txt/.test(entry.fileName))
+					.cleanAllHeaders() // remove unwanted metadata
+					.addTextFile('new text file.txt', 'this was added to the original tar file!')
+					.toUint8Array();
+
+				const updatedGzBuffer = gzip(updatedTarBuffer);
+				const fileToSend = new File([updatedGzBuffer], 'my-awesome-edited-file.tar.gz');
+				expect(fileToSend).toBeTruthy();
+			});
+		});
+
+		describe('v6 big read example', () => {
+			it('should be runnable', async () => {
+				const tarBuffer = base64ToUint8Array(tarballSampleBase64);
+				const customAsyncBuffer: AsyncUint8ArrayLike = {
+					byteLength: tarBuffer.length,
+					read: async (offset: number, length: number): Promise<Uint8Array> =>
+						tarBuffer.slice(offset, offset + length),
+				};
+
+				for await (const entry of Archive.read(customAsyncBuffer)) {
+					if (!entry.isFile()) {
+						continue;
+					}
+
+					let offset = 0; // offset into this entry's file content
+					let chunkSize = 1024; // read 1Kb at a time
+
+					while (offset < entry.fileSize) {
+						const fileChunk = await entry.readContentFrom(customAsyncBuffer, offset, chunkSize);
+						offset += fileChunk.byteLength;
+						expect(fileChunk).toBeTruthy();
+					}
+				}
 			});
 		});
 	});
