@@ -32,7 +32,6 @@ export class ArchiveEntry implements UstarHeaderLike, TarSerializable {
 		let {header, headerAttributes, headerByteLength, content, offset, context} = options;
 
 		if (!header) header = TarHeader.fromAttributes(headerAttributes || {});
-		if (!headerByteLength) headerByteLength = 0;
 		if (!content) content = null;
 		if (!offset) offset = 0;
 		if (!context) context = null;
@@ -43,6 +42,9 @@ export class ArchiveEntry implements UstarHeaderLike, TarSerializable {
 		if (!header.pax && header.fileSize !== contentLength && contentLength > 0) {
 			header.ustar.fileSize = contentLength;
 		}
+
+		// run this last since toUint8Array() also syncs checksums
+		if (!headerByteLength) headerByteLength = header.toUint8Array().byteLength;
 
 		this.mHeader = header;
 		this.mHeaderByteLength = headerByteLength;
