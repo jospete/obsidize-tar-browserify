@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.2.0
+
+- Rename `Archive.extractFromStream()` -> `Archive.read()`
+
+## 5.1.2
+
+- Documentation updates
+- Add small optimization in key iteration for PAX headers
+
+## 5.1.1
+
+- Add more test cases for PAX parsing
+- Fix test regressions from initial PAX implementation
+
 ## 5.1.0
 
 - Add PAX write capability for `ArchiveWriter`
