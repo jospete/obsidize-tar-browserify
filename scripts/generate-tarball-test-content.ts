@@ -1,9 +1,10 @@
 #! /usr/bin/env node
 
 import { globby } from 'globby';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, resolve } from 'path';
 import { extract } from 'tar';
+import { mkdirpSync } from './utility';
 
 async function crawlTarAssets(cwd: string, files: string[]): Promise<string[][]> {
 	return Promise.all(files.map(f => globby(f, {cwd, dot: true})));
@@ -73,7 +74,7 @@ async function generateTarSampleTwo() {
 	const tarFilePath = './dev-assets/pax-tgz-sample/packed/test.tar';
 	const unpackedPath = './dev-assets/pax-tgz-sample/unpacked';
 	const tarballContent = readFileSync(tarFilePath);
-	if (!existsSync('./tmp')) mkdirSync('./tmp');
+	mkdirpSync('./tmp');
 	await extract({file: tarFilePath, cwd: unpackedPath});
 	await exportTestAssets(tarballContent, ['**/*'], 'pax-header-test-content.ts', unpackedPath);
 }

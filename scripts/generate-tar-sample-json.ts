@@ -1,7 +1,8 @@
 #! /usr/bin/env node
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { Archive } from '../dist';
+import { mkdirpSync } from './utility';
 
 async function main() {
 	const tarFilePath = process.argv[2] || './dev-assets/tarball-sample/packed/node-tar-sample.tar';
@@ -14,7 +15,7 @@ async function main() {
 		entries
 	};
 
-	if (!existsSync('./tmp')) mkdirSync('./tmp');
+	mkdirpSync('./tmp');
 	writeFileSync('./tmp/tarball-metadata.json', JSON.stringify(outputObj, null, '\t'), 'utf-8');
 }
 
