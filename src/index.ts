@@ -1,12 +1,12 @@
 export { Archive } from './archive/archive';
 export { ArchiveReader, ArchiveReadError } from './archive/archive-reader';
-export { ArchiveWriter, TarEntryPredicate } from './archive/archive-writer';
+export { ArchiveEntryPredicate, ArchiveWriter } from './archive/archive-writer';
 export { ArchiveContext } from './common/archive-context';
 export { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from './common/async-uint8-array';
 export { AsyncUint8ArrayBlock, AsyncUint8ArrayIterator, AsyncUint8ArrayIteratorLike, AsyncUint8ArrayIteratorOptions } from './common/async-uint8-array-iterator';
 export { Constants } from './common/constants';
 export { TarSerializable, TarUtility } from './common/tar-utility';
-export { TarEntry, TarEntryOptions } from './entry/tar-entry';
+export { ArchiveEntry, ArchiveEntryOptions } from './entry/archive-entry';
 export { PaxHeader, PaxHeaderAttributes } from './header/pax/pax-header';
 export { PaxHeaderKey } from './header/pax/pax-header-key';
 export { PaxHeaderSegment } from './header/pax/pax-header-segment';

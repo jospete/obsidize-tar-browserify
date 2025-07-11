@@ -3,7 +3,7 @@ import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-ui
 import { AsyncUint8ArrayIterator, AsyncUint8ArrayIteratorInput } from '../common/async-uint8-array-iterator';
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
-import { TarEntry } from '../entry/tar-entry';
+import { ArchiveEntry } from '../entry/archive-entry';
 import { PaxHeader } from '../header/pax/pax-header';
 import { TarHeader } from '../header/tar-header';
 import { TarHeaderUtility } from '../header/tar-header-utility';
@@ -41,7 +41,7 @@ export enum ArchiveReadError {
 /**
  * Generic utility for parsing tar entries from a stream of octets via `AsyncUint8ArrayIterator`
  */
-export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarEntry> {
+export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<ArchiveEntry> {
 	private mGlobalPaxHeaders: TarHeader[] = [];
 	private mBufferCache: Uint8Array | null = null;
 	private mOffset: number = 0;
@@ -57,7 +57,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		return new ArchiveReader(new AsyncUint8ArrayIterator(input));
 	}
 	
-	[Symbol.asyncIterator](): AsyncIterableIterator<TarEntry> {
+	[Symbol.asyncIterator](): AsyncIterableIterator<ArchiveEntry> {
 		return this;
 	}
 
@@ -69,8 +69,8 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		return this.mGlobalPaxHeaders;
 	}
 
-	public async readAllEntries(): Promise<TarEntry[]> {
-		const entries: TarEntry[] = [];
+	public async readAllEntries(): Promise<ArchiveEntry[]> {
+		const entries: ArchiveEntry[] = [];
 
 		for await (const entry of this) {
 			entries.push(entry);
@@ -79,7 +79,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		return entries;
 	}
 
-	public async next(): Promise<IteratorResult<TarEntry>> {
+	public async next(): Promise<IteratorResult<ArchiveEntry>> {
 		const entry = await this.tryParseNextEntry();
 
 		if (entry !== null) {
@@ -131,7 +131,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 		return true;
 	}
 
-	private async tryParseNextEntry(): Promise<TarEntry | null> {
+	private async tryParseNextEntry(): Promise<ArchiveEntry | null> {
 		const headerParseResult = await this.tryParseNextHeader();
 
 		if (headerParseResult === null) {
@@ -168,7 +168,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 			this.mOffset = nextSectorStart;
 		}
 
-		return new TarEntry({header, offset, headerByteLength, content, context});
+		return new ArchiveEntry({header, offset, headerByteLength, content, context});
 	}
 
 	private async tryParseNextHeader(): Promise<TarHeaderParseResult | null> {
