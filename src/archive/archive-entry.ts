@@ -185,7 +185,7 @@ export class ArchiveEntry implements UstarHeaderLike, TarSerializable {
 	 * @returns The decoded string data from the currently assigned content,
 	 * or an empty string if there is no content assigned.
 	 */
-	public getContentAsText(): string {
+	public text(): string {
 		return TarUtility.decodeString(this.content!);
 	}
 
@@ -197,16 +197,20 @@ export class ArchiveEntry implements UstarHeaderLike, TarSerializable {
 	 * 
 	 * Do not use this on entries that have not been parsed from a source buffer,
 	 * otherwise it will very likely return garbage data.
+	 * 
+	 * @param buffer - the source to read content from
+	 * @param offset - the _relative_ offset of the content to read;
+	 * 					setting this to 42 will start reading at the 42nd byte index within the content block
+	 * @param length - the number of bytes to read after the offset
 	 */
 	public async readContentFrom(buffer: AsyncUint8ArrayLike, offset: number = 0, length: number = 0): Promise<Uint8Array> {
 		const fileSize = this.fileSize;
-		const headerByteLength = this.sourceHeaderByteLength;
-		const contentStartIndex = headerByteLength + this.sourceOffset;
+		const contentStartIndex = this.sourceOffset + this.sourceHeaderByteLength;
 		const contentEndIndex = contentStartIndex + fileSize;
-		const normalizedOffset = TarUtility.clamp(offset, 0, fileSize) + contentStartIndex;
-		const bytesRemaining = Math.max(0, contentEndIndex - normalizedOffset);
+		const absoluteOffset = contentStartIndex + TarUtility.clamp(offset, 0, fileSize);
+		const bytesRemaining = Math.max(0, contentEndIndex - absoluteOffset);
 		const normalizedLength = length > 0 ? Math.min(length, bytesRemaining) : bytesRemaining;
-		return buffer.read(normalizedOffset, normalizedLength);
+		return buffer.read(absoluteOffset, normalizedLength);
 	}
 
 	/**

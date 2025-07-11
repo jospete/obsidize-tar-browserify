@@ -65,7 +65,7 @@ describe('ArchiveWriter', () => {
 			expect(tarball.entries.length).toBe(1);
 			expect(entry.isFile()).toBe(true);
 			expect(entry.fileName).toBe(fileName);
-			expect(entry.getContentAsText()).toBe(fileContent);
+			expect(entry.text()).toBe(fileContent);
 			expect(entry.typeFlag).toBe(UstarHeaderLinkIndicatorType.NORMAL_FILE);
 		});
 
