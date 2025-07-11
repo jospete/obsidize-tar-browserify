@@ -27,15 +27,15 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 	 * @returns A new `UstarHeader` instance based on the given attributes (if they are a POJO).
 	 * Note that if the given value is already a UstarHeader instance, this will return it as-is.
 	 */
-	public static from(attrs: Partial<UstarHeaderLike>): UstarHeader {
-		return UstarHeader.isUstarHeader(attrs) ? (attrs as UstarHeader) : new UstarHeader(attrs);
+	public static fromAttributes(attributes: Partial<UstarHeaderLike>): UstarHeader {
+		return UstarHeader.isUstarHeader(attributes) ? (attributes as UstarHeader) : new UstarHeader(attributes);
 	}
 
 	/**
 	 * Short-hand for constructing a new `UstarHeader` and immediately calling `toUint8Array()` on it
 	 */
-	public static serialize(attrs: Partial<UstarHeaderLike>): Uint8Array {
-		return UstarHeader.from(attrs).toUint8Array();
+	public static serializeAttributes(attributes: Partial<UstarHeaderLike>): Uint8Array {
+		return UstarHeader.fromAttributes(attributes).toUint8Array();
 	}
 
 	/**
@@ -45,7 +45,11 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 	 * If the sector at the given offset is not marked with a ustar indicator,
 	 * this will return null.
 	 */
-	public static deserialize(input: Uint8Array, offset: number = 0): UstarHeader {
+	public static deserialize(input: Uint8Array, offset: number = 0): UstarHeader | null {
+		if (!TarHeaderUtility.isUstarSector(input, offset)) {
+			return null;
+		}
+
 		const attrs: Record<string, any> = {};
 
 		for (const field of TarHeaderUtility.ALL_FIELDS) {
@@ -247,11 +251,7 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 	public toJSON(): Record<string, unknown> {
 		const attributes = this.toAttributes();
 		const bytes = this.toUint8Array();
-
-		const buffer = {
-			byteLength: bytes.byteLength,
-			content: TarUtility.getDebugHexString(bytes)
-		};
+		const buffer = TarUtility.getDebugBufferJson(bytes);
 
 		return {
 			attributes,

@@ -22,11 +22,11 @@ describe('PaxTarHeader', () => {
 		expect(() => JSON.stringify(new PaxTarHeader())).not.toThrow();
 	});
 
-	describe('from()', () => {
+	describe('deserialize()', () => {
 		it('should correctly parse pax headers', () => {
 			const buffer = hexToUint8Array(paxHeaderHex);
 			expect(buffer.byteLength).toBe(602);
-			const header = PaxTarHeader.from(buffer, 0);
+			const header = PaxTarHeader.deserialize(buffer);
 
 			expect(header.has(PaxTarHeaderKey.PATH)).toBe(true);
 			expect(header.path).toBe('test_tar/repository/assets/0ea3b7ce6f5bcee9ec14b8ad63692c09e25b3a16fddc29157014efc3c1be927e___72d2f2f5ee29e3e703ebcc5f6d1895081a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt');
@@ -45,7 +45,7 @@ describe('PaxTarHeader', () => {
 		});
 	});
 
-	describe('serialize()', () => {
+	describe('serializeSegments()', () => {
 		it('should serialize the given attributes into a PAX buffer', () => {
 			const originalBuffer = hexToUint8Array(paxHeaderHex2);
 			const serializedBuffer = PaxTarHeader.serializeAttributes(paxHeaderHex2Decoded);
@@ -53,11 +53,11 @@ describe('PaxTarHeader', () => {
 		});
 
 		it('should return an empty Uint8Array instance when given an invalid value', () => {
-			expect(PaxTarHeader.serialize(null as any)).toEqual(new Uint8Array(0));
+			expect(PaxTarHeader.serializeSegments(null as any)).toEqual(new Uint8Array(0));
 		});
 
 		it('should return an empty Uint8Array instance when given an empty object', () => {
-			expect(PaxTarHeader.serialize({} as any)).toEqual(new Uint8Array(0));
+			expect(PaxTarHeader.serializeSegments({} as any)).toEqual(new Uint8Array(0));
 		});
 
 		it('should account for length attribute decimal rollovers', () => {
@@ -66,7 +66,7 @@ describe('PaxTarHeader', () => {
 				[PaxTarHeaderKey.PATH]: '81a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt'
 			};
 			const serializedBuffer = PaxTarHeader.fromAttributes(attrs).toUint8Array();
-			const deserializedHeader = PaxTarHeader.from(serializedBuffer);
+			const deserializedHeader = PaxTarHeader.deserialize(serializedBuffer);
 			expect(deserializedHeader.path).toBe(attrs[PaxTarHeaderKey.PATH]);
 		});
 	});

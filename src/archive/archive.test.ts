@@ -11,7 +11,7 @@ describe('Archive', () => {
 
 	describe('extract()', () => {
 		it('is a shortcut for ArchiveReader.wrap()', async () => {
-			const spy = jest.spyOn(ArchiveReader, 'wrap');
+			const spy = jest.spyOn(ArchiveReader, 'withInput');
 			const sampleUint8 = base64ToUint8Array(tarballSampleBase64);
 			const {entries} = await Archive.extract(sampleUint8);
 			const firstFile = entries.find(v => v.isFile())!;
