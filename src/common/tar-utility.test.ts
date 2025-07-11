@@ -16,7 +16,8 @@ const {
 	roundUpSectorOffset,
 	getSectorOffsetDelta,
 	parseFloatSafe,
-	cloneUint8Array
+	cloneUint8Array,
+	getDebugBufferJson,
 } = TarUtility;
 
 const {
@@ -207,6 +208,12 @@ describe('TarUtility', () => {
 
 		it('return an empty instance if the input is not a valid Uint8Array', () => {
 			expect(cloneUint8Array(null)).toEqual(new Uint8Array(0));
+		});
+	});
+
+	describe('getDebugBufferJson()', () => {
+		it('should return a byte length of zero for invalid input', () => {
+			expect(getDebugBufferJson(null).byteLength).toBe(0);
 		});
 	});
 });

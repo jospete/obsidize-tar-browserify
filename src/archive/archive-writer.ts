@@ -60,8 +60,8 @@ export class ArchiveWriter implements TarSerializable {
 	 * Convenience for appending a new entry to the existing `entries` array.
 	 * @returns `this` for operation chaining
 	 */
-	public addEntryWith(header: UstarHeaderLike | Partial<UstarHeaderLike>, content?: Uint8Array): this {
-		return this.addEntry(TarEntry.from(header, content));
+	public addEntryWith(header: Partial<UstarHeaderLike>, content?: Uint8Array): this {
+		return this.addEntry(new TarEntry({headerAttributes: header, content}));
 	}
 
 	/**

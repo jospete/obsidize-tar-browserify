@@ -4,6 +4,11 @@ export interface TarSerializable {
 	toUint8Array(): Uint8Array;
 }
 
+export interface DebugBufferJsonObject {
+	byteLength: number;
+	content: string;
+}
+
 export namespace TarUtility {
 
 	export function isNumber(value: any): value is number {
@@ -103,6 +108,13 @@ export namespace TarUtility {
 		return Array.from(v)
 			.map(b => b.toString(16).padStart(2, '0').toUpperCase())
 			.join(' ');
+	}
+
+	export function getDebugBufferJson(v: Uint8Array | null | undefined): DebugBufferJsonObject {
+		return {
+			byteLength: v?.byteLength ?? 0,
+			content: TarUtility.getDebugHexString(v)
+		};
 	}
 
 	export function removeTrailingZeros(str: string): string {

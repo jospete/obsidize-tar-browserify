@@ -37,8 +37,8 @@ export class PaxTarHeader implements TarSerializable {
 		}
 	}
 
-	public static from(buffer: Uint8Array, offset: number = 0): PaxTarHeader {
-		const segments = PaxTarHeader.parseSegments(buffer, offset);
+	public static deserialize(buffer: Uint8Array, offset: number = 0): PaxTarHeader {
+		const segments = PaxTarHeader.deserializeSegments(buffer, offset);
 		return new PaxTarHeader(segments);
 	}
 
@@ -49,7 +49,7 @@ export class PaxTarHeader implements TarSerializable {
 
 	public static serializeAttributes(attributes: Partial<PaxTarHeaderAttributes>): Uint8Array {
 		const segments = PaxTarHeader.parseSegmentsFromAttributes(attributes);
-		return PaxTarHeader.serialize(segments);
+		return PaxTarHeader.serializeSegments(segments);
 	}
 
 	public static parseSegmentsFromAttributes(attributes: Partial<PaxTarHeaderAttributes>): PaxTarHeaderSegment[] {
@@ -67,7 +67,7 @@ export class PaxTarHeader implements TarSerializable {
 		return segments;
 	}
 
-	public static serialize(segments: PaxTarHeaderSegment[]): Uint8Array {
+	public static serializeSegments(segments: PaxTarHeaderSegment[]): Uint8Array {
 		if (!Array.isArray(segments) || segments.length <= 0) {
 			return new Uint8Array(0);
 		}
@@ -142,15 +142,15 @@ export class PaxTarHeader implements TarSerializable {
 		return result;
 	}
 
-	private static parseSegments(buffer: Uint8Array, offset: number): PaxTarHeaderSegment[] {
+	private static deserializeSegments(buffer: Uint8Array, offset: number): PaxTarHeaderSegment[] {
 		const result: PaxTarHeaderSegment[] = [];
 		let cursor = offset;
-		let next = PaxTarHeaderSegment.tryParse(buffer, cursor);
+		let next = PaxTarHeaderSegment.deserialize(buffer, cursor);
 
 		while (next !== null) {
 			result.push(next);
 			cursor += next.bytes.byteLength;
-			next = PaxTarHeaderSegment.tryParse(buffer, cursor);
+			next = PaxTarHeaderSegment.deserialize(buffer, cursor);
 		}
 
 		return result;
@@ -311,7 +311,7 @@ export class PaxTarHeader implements TarSerializable {
 	 * Serializes the underlying value map of this instance into a set of PAX sectors.
 	 */
 	public toUint8Array(): Uint8Array {
-		return PaxTarHeader.serialize(this.values());
+		return PaxTarHeader.serializeSegments(this.values());
 	}
 
 	/**
@@ -332,15 +332,13 @@ export class PaxTarHeader implements TarSerializable {
 	}
 
 	public toJSON(): Record<string, unknown> {
-		const {valueMap} = this;
+		const {valueMap: attributes} = this;
 		const bytes = this.toUint8Array();
-		const byteLength = bytes.byteLength;
-		const content = TarUtility.getDebugHexString(bytes);
+		const buffer = TarUtility.getDebugBufferJson(bytes);
 
 		return {
-			valueMap,
-			byteLength,
-			content
+			attributes,
+			buffer,
 		};
 	}
 }

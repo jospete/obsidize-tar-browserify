@@ -14,7 +14,7 @@ describe('ArchiveWriter', () => {
 			const tarball = new ArchiveWriter();
 
 			tarball.addEntryWith({ fileName: 'test.txt' }, new Uint8Array(10));
-			const entries = await ArchiveReader.wrap(tarball.toUint8Array()).readAllEntries();
+			const entries = await ArchiveReader.withInput(tarball.toUint8Array()).readAllEntries();
 
 			expect(entries.length).toBe(1);
 			expect(entries[0].fileName).toBe('test.txt');
@@ -118,7 +118,7 @@ describe('ArchiveWriter', () => {
 			const fileName = ''.padEnd(UstarHeaderField.fileName.size, 'a');
 			const writer = new ArchiveWriter();
 			writer.addTextFile(fileName, 'test content for long file name');
-			const entries = await ArchiveReader.wrap(writer.toUint8Array()).readAllEntries();
+			const entries = await ArchiveReader.withInput(writer.toUint8Array()).readAllEntries();
 			expect(entries.length).toBe(1);
 			const [entry] = entries;
 			expect(entry.fileName).toBe(fileName);
@@ -129,7 +129,7 @@ describe('ArchiveWriter', () => {
 			const fileName = ''.padEnd(UstarHeaderField.fileName.size + 1, 'a');
 			const writer = new ArchiveWriter();
 			writer.addTextFile(fileName, 'test content for long file name');
-			const entries = await ArchiveReader.wrap(writer.toUint8Array()).readAllEntries();
+			const entries = await ArchiveReader.withInput(writer.toUint8Array()).readAllEntries();
 			expect(entries.length).toBe(1);
 			const [entry] = entries;
 			expect(entry.fileName).toBe(fileName);
