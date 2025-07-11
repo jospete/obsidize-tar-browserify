@@ -15,8 +15,8 @@ import { UstarHeaderLinkIndicatorType } from './ustar-header-link-indicator-type
 export class UstarHeader implements UstarHeaderLike, TarSerializable {
 	private readonly mValueMap: Record<keyof UstarHeaderLike, any> = UstarHeader.defaultValues();
 
-	constructor(attrs: Partial<UstarHeaderLike> = {}) {
-		this.update(attrs);
+	constructor(attributes: Partial<UstarHeaderLike> = {}) {
+		this.update(attributes);
 	}
 
 	public static isUstarHeader(value: any): boolean {
@@ -50,13 +50,13 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 			return null;
 		}
 
-		const attrs: Record<string, any> = {};
+		const attributes: Record<string, any> = {};
 
 		for (const field of TarHeaderUtility.ALL_FIELDS) {
-			attrs[field.name] = field.readFrom(input, offset);
+			attributes[field.name] = field.readFrom(input, offset);
 		}
 
-		return new UstarHeader(attrs);
+		return new UstarHeader(attributes);
 	}
 
 	public static defaultValues(): UstarHeaderLike {
@@ -224,8 +224,8 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeDirectory(this.typeFlag);
 	}
 
-	public update(attrs: Partial<UstarHeaderLike>): this {
-		Object.assign(this.mValueMap, attrs);
+	public update(attributes: Partial<UstarHeaderLike>): this {
+		Object.assign(this.mValueMap, attributes);
 		return this;
 	}
 
