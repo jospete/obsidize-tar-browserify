@@ -1,5 +1,20 @@
 # Changelog
 
+## 6.0.0
+
+- Overhaul many redundant and/or over-engineered internal structures
+- Remove deprecated symbols
+- Bring core build configurations / logic forward to latest stable implementations, remove unnecesary dependencies
+- Normalize static method names across the board to be consistent
+- Rename PAX constructs:
+  - `PaxTarHeaderKey` -> `PaxHeaderKey`
+  - `PaxTarHeaderSegment` -> `PaxHeaderSegment`
+  - `PaxTarHeaderUtility` -> `PaxHeaderUtility`
+  - `PaxTarHeaderAttributes` -> `PaxHeaderAttributes`
+  - `PaxTarHeader` -> `PaxHeader`
+- Rename `TarEntry` -> `ArchiveEntry`
+- Rename `TarEntry.getContentAsText()` -> `ArchiveEntry.text()`
+
 ## 5.2.0
 
 - Rename `Archive.extractFromStream()` -> `Archive.read()`
