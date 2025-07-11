@@ -2,20 +2,20 @@ import { ArchiveContext } from '../common/archive-context';
 import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array';
 import { Constants } from '../common/constants';
 import { TarUtility } from '../common/tar-utility';
-import { TarEntry } from '../entry/tar-entry';
 import { TarHeader } from '../header/tar-header';
 import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 import { range } from '../test/test-util';
+import { ArchiveEntry } from './archive-entry';
 
 const { HEADER_SIZE } = Constants;
 const { isUint8Array } = TarUtility;
 
-describe('TarEntry', () => {
+describe('ArchiveEntry', () => {
 	it('has an option to check if an entry is a directory', () => {
-		const directory = new TarEntry({
+		const directory = new ArchiveEntry({
 			headerAttributes: { typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY }
 		});
-		expect(TarEntry.isTarEntry(directory)).toBe(true);
+		expect(ArchiveEntry.isArchiveEntry(directory)).toBe(true);
 		expect(directory.isDirectory()).toBe(true);
 	});
 
@@ -37,7 +37,7 @@ describe('TarEntry', () => {
 			typeFlag: UstarHeaderLinkIndicatorType.HARD_LINK
 		});
 
-		const entry = new TarEntry({ header });
+		const entry = new ArchiveEntry({ header });
 
 		expect(entry.ustarIndicator).toBeDefined();
 		expect(entry.headerChecksum).toBeDefined();
@@ -62,17 +62,17 @@ describe('TarEntry', () => {
 
 	describe('toJSON()', () => {
 		it('can safely be stringified', () => {
-			const rawEntry = new TarEntry();
+			const rawEntry = new ArchiveEntry();
 			expect(() => JSON.stringify(rawEntry)).not.toThrow();
 	
-			const fileWithContent = new TarEntry({
+			const fileWithContent = new ArchiveEntry({
 				content: Uint8Array.from(range(100))
 			});
 			expect(() => JSON.stringify(fileWithContent)).not.toThrow();
 		});
 
 		it('should indicate when an entry is a directory', () => {
-			const entry = new TarEntry({
+			const entry = new ArchiveEntry({
 				headerAttributes: {typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY},
 				content: Uint8Array.from(range(100))
 			});
@@ -80,7 +80,7 @@ describe('TarEntry', () => {
 		});
 
 		it('should indicate when an entry is not a directory or file', () => {
-			const entry = new TarEntry({
+			const entry = new ArchiveEntry({
 				headerAttributes: {typeFlag: UstarHeaderLinkIndicatorType.FIFO},
 				content: Uint8Array.from(range(100))
 			});
@@ -102,7 +102,7 @@ describe('TarEntry', () => {
 
 			const offset = 12;
 			const length = 42;
-			const entry = new TarEntry({
+			const entry = new ArchiveEntry({
 				headerAttributes: { fileName: 'Test File', fileSize: 80 },
 				headerByteLength: HEADER_SIZE
 			});
@@ -126,7 +126,7 @@ describe('TarEntry', () => {
 				read: async (offset, length) => testBuffer.slice(offset, offset + length)
 			};
 
-			const entry = new TarEntry({
+			const entry = new ArchiveEntry({
 				headerAttributes: { fileName: 'Test File', fileSize: 80 },
 				headerByteLength: HEADER_SIZE
 			});
@@ -141,7 +141,7 @@ describe('TarEntry', () => {
 
 	describe('toUint8Array()', () => {
 		it('works for directories', () => {
-			const entry = new TarEntry({
+			const entry = new ArchiveEntry({
 				headerAttributes: {
 					fileName: 'some-directory',
 					typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
@@ -152,7 +152,7 @@ describe('TarEntry', () => {
 		});
 
 		it('should include the content value if the entry is a file and the content exists on the entry instance', () => {
-			const entry = new TarEntry({
+			const entry = new ArchiveEntry({
 				headerAttributes: {
 					fileName: 'some-directory',
 					typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
@@ -170,7 +170,7 @@ describe('TarEntry', () => {
 				source: new InMemoryAsyncUint8Array(new Uint8Array(0)),
 				globalPaxHeaders: []
 			};
-			const entry = new TarEntry({ context });
+			const entry = new ArchiveEntry({ context });
 			expect(entry.sourceContext).toBe(context);
 		});
 	});

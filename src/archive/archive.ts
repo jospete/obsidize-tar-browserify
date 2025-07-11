@@ -1,14 +1,14 @@
 import { AsyncUint8ArrayLike } from '../common/async-uint8-array';
-import { TarEntry } from '../entry/tar-entry';
+import { ArchiveEntry } from '../entry/archive-entry';
 import { ArchiveReader } from './archive-reader';
 import { ArchiveWriter } from './archive-writer';
 
 /**
  * Main entry point for extracting and creating tarballs.
- * See TarIterator and TarEntry for more granular options.
+ * See TarIterator and ArchiveEntry for more granular options.
  */
 export class Archive extends ArchiveWriter {
-	constructor(entries?: TarEntry[]) {
+	constructor(entries?: ArchiveEntry[]) {
 		super(entries);
 	}
 
@@ -26,7 +26,7 @@ export class Archive extends ArchiveWriter {
 	 * Iterate over entries in-place from a given source buffer.
 	 * The buffer should come from a complete, uncompressed tar file.
 	 */
-	public static read(buffer: Uint8Array | AsyncUint8ArrayLike): AsyncIterable<TarEntry> {
+	public static read(buffer: Uint8Array | AsyncUint8ArrayLike): AsyncIterable<ArchiveEntry> {
 		return ArchiveReader.withInput(buffer);
 	}
 }
