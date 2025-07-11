@@ -7,6 +7,7 @@ export { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from './common/async-uin
 export {
 	AsyncUint8ArrayBlock,
 	AsyncUint8ArrayIterator,
+	AsyncUint8ArrayIteratorInput,
 	AsyncUint8ArrayIteratorLike,
 	AsyncUint8ArrayIteratorOptions,
 } from './common/async-uint8-array-iterator';
