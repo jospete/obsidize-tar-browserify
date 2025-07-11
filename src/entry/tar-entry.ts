@@ -56,7 +56,6 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 		// The fileSize field metadata must always be in sync between the content and the header
 		if (!header.pax && header.fileSize !== contentLength && contentLength > 0) {
 			header.ustar.fileSize = contentLength;
-			header.ustar.updateChecksum();
 		}
 
 		this.mHeader = header;
@@ -161,7 +160,7 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 	 * The context will include global data about things such as
 	 * the origin of the archive and global pax headers.
 	 */
-	public get context(): ArchiveContext | null | undefined {
+	public get sourceContext(): ArchiveContext | null | undefined {
 		return this.mContext;
 	}
 
@@ -169,49 +168,16 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 	 * The starting absolute index (inclusive) in the source buffer that this entry was parsed from.
 	 * Returns zero by default if this was not parsed by a source buffer.
 	 */
-	public get bufferStartIndex(): number {
+	public get sourceOffset(): number {
 		return this.mOffset;
 	}
 
-	/**
-	 * The ending absolute index (exclusive) in the source buffer that this entry was parsed from.
-	 * Returns sectorByteLength by default if this was not parsed by a source buffer.
-	 */
-	public get bufferEndIndex(): number {
-		return this.bufferStartIndex + this.sectorByteLength;
+	public isDirectory(): boolean {
+		return this.header.isDirectoryHeader;
 	}
 
-	/**
-	 * The total exact byte length of this entry, including the header.
-	 */
-	public get byteLength(): number {
-		return this.header.byteLength + this.fileSize;
-	}
-
-	/**
-	 * The total byte length of this entry, including the header, 
-	 * which is a multiple of the standard tar sector size.
-	 */
-	public get sectorByteLength(): number {
-		return TarUtility.roundUpSectorOffset(this.byteLength);
-	}
-
-	/**
-	 * The starting index (inclusive) of the content of this entry.
-	 * Note that this will always be the first index of the header, regardless of
-	 * whether or not this is a file.
-	 */
-	public get contentStartIndex(): number {
-		return this.header.byteLength + this.bufferStartIndex;
-	}
-
-	/**
-	 * The ending index (exclusive) of the content of this entry.
-	 * If this entry is not a file, or the file is empty, this will be
-	 * the same as the content starting index.
-	 */
-	public get contentEndIndex(): number {
-		return this.contentStartIndex + this.fileSize;
+	public isFile(): boolean {
+		return this.header.isFileHeader;
 	}
 
 	/**
@@ -225,14 +191,6 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 		return TarUtility.decodeString(this.content!);
 	}
 
-	public isDirectory(): boolean {
-		return this.header.isDirectoryHeader;
-	}
-
-	public isFile(): boolean {
-		return this.header.isFileHeader;
-	}
-
 	/**
 	 * Only necessary if this entry was extracted from an async buffer, since the entry
 	 * does not hold the content of async buffers by default.
@@ -240,7 +198,10 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 	 * If the entry was extracted synchronously, its content will be available via the "content" property.
 	 */
 	public async readContentFrom(buffer: AsyncUint8ArrayLike, offset: number = 0, length: number = 0): Promise<Uint8Array> {
-		const { contentStartIndex, contentEndIndex, fileSize } = this;
+		const fileSize = this.fileSize;
+		const headerByteLength = this.header.toUint8Array().byteLength;
+		const contentStartIndex = headerByteLength + this.mOffset;
+		const contentEndIndex = contentStartIndex + fileSize;
 		const normalizedOffset = TarUtility.clamp(offset, 0, fileSize) + contentStartIndex;
 		const bytesRemaining = Math.max(0, contentEndIndex - normalizedOffset);
 		const normalizedLength = length > 0 ? Math.min(length, bytesRemaining) : bytesRemaining;
@@ -248,39 +209,18 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 	}
 
 	/**
-	 * Writes the header and content of this entry to the given output
-	 * @param output - the buffer to be written to
-	 * @param offset - the offset in the buffer to start writing entry data
-	 * @returns true if this entry was successfully written to the output
-	 */
-	public writeTo(output: Uint8Array, offset: number): boolean {
-		if (!TarUtility.isUint8Array(output)
-			|| output.byteLength < (offset + this.sectorByteLength)) {
-			return false;
-		}
-
-		const headerBytes = this.header.toUint8Array();
-
-		output.set(headerBytes, offset);
-		offset += headerBytes.byteLength;
-
-		if (this.content) {
-			output.set(this.content, offset);
-		}
-
-		return true;
-	}
-
-	/**
 	 * @returns This instance serialized as a single slice for a tar buffer
 	 */
 	public toUint8Array(): Uint8Array {
 		const headerBytes = this.header.toUint8Array();
-		const result = new Uint8Array(this.sectorByteLength);
+		const contentLength = this.content?.byteLength ?? 0;
+		const outputLength = TarUtility.roundUpSectorOffset(headerBytes.byteLength + contentLength);
+		const result = new Uint8Array(outputLength);
+
 		result.set(headerBytes, 0);
 
-		if (this.content) {
-			result.set(this.content, headerBytes.byteLength);
+		if (contentLength > 0) {
+			result.set(this.content!, headerBytes.byteLength);
 		}
 
 		return result;

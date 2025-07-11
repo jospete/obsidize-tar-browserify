@@ -6,27 +6,8 @@ import { UstarHeaderField } from './ustar-header-field';
 import { UstarHeaderLinkIndicatorType } from './ustar-header-link-indicator-type';
 
 describe('UstarHeader', () => {
-	it('can be created with an explicit buffer and offset', () => {
-		const blockSize = Constants.HEADER_SIZE;
-		const offset = blockSize;
-		const bufferLength = blockSize * 2;
-		const buffer = new Uint8Array(bufferLength);
-		const header = new UstarHeader(buffer, offset);
-		const updatedFileMode = 123;
-
-		expect(header.fileMode).toBe(0);
-
-		header.fileMode = updatedFileMode;
-		expect(UstarHeaderField.fileMode.readFrom(buffer, offset)).toBe(updatedFileMode);
-	});
-
-	it('returns a type flag of UNKNOWN when it fails to retrieve the type flag info', () => {
-		const header = new UstarHeader(new Uint8Array(10));
-		expect(header.typeFlag).toBe(UstarHeaderLinkIndicatorType.UNKNOWN);
-	});
-
 	it('can be safely stringified', () => {
-		const header = UstarHeader.seeded();
+		const header = new UstarHeader();
 		expect(() => JSON.stringify(header)).not.toThrow();
 	});
 
@@ -38,64 +19,25 @@ describe('UstarHeader', () => {
 		});
 	});
 
-	describe('initialize()', () => {
-		it('applies default values if no custom object is given', () => {
-			const header = new UstarHeader();
-
-			expect(header.deviceMajorNumber).toBe('');
-			expect(header.fileMode).toBe(0);
-
-			header.initialize();
-
-			expect(header.deviceMajorNumber).toBe('00');
-			expect(header.fileMode).toBe(Constants.FILE_MODE_DEFAULT);
-		});
-
-		it('applies default options if the options parameter is falsy', () => {
-			const header = new UstarHeader();
-
-			expect(header.deviceMajorNumber).toBe('');
-			expect(header.fileMode).toBe(0);
-
-			header.initialize({});
-
-			expect(header.deviceMajorNumber).toBe('00');
-			expect(header.fileMode).toBe(Constants.FILE_MODE_DEFAULT);
-		});
-	});
-
 	describe('update()', () => {
 		it('applies given values to the backing buffer', () => {
 			const fileMode = 511;
 			const header = new UstarHeader();
 
 			header.update({fileMode});
-			const bufferText = TarUtility.decodeString(UstarHeaderField.fileMode.slice(header.bytes));
+
+			const headerBytes = header.toUint8Array();
+			const bufferText = TarUtility.decodeString(UstarHeaderField.fileMode.slice(headerBytes));
 
 			expect(header.fileMode).toBe(fileMode);
 			expect(bufferText).toBe('000777 \0');
-		});
-
-		it('does nothing if the given attributes are malformed', () => {
-			const header = new UstarHeader();
-			jest.spyOn(header, 'updateChecksum');
-
-			header.update(null as any);
-			expect(header.updateChecksum).not.toHaveBeenCalled();
-
-			header.update({});
-			expect(header.updateChecksum).not.toHaveBeenCalled();
-
-			header.update({fileMode: 123});
-			expect(header.updateChecksum).toHaveBeenCalledTimes(1);
 		});
 	});
 
 	describe('normalize()', () => {
 		it('populates missing fields with sensible defaults', () => {
-			const header = UstarHeader.seeded();
+			const header = new UstarHeader();
 			expect(header).not.toBeFalsy();
-			expect(header.bytes.length).toBe(Constants.HEADER_SIZE);
 			expect(header.fileMode).toBe(Constants.FILE_MODE_DEFAULT);
 			expect(header.typeFlag).toBe(UstarHeaderLinkIndicatorType.NORMAL_FILE);
 		});
@@ -111,12 +53,12 @@ describe('UstarHeader', () => {
 			expect(TarUtility.isUint8Array(headerBuffer1)).toBe(true);
 			expect(headerBuffer1.byteLength).toBe(Constants.HEADER_SIZE);
 	
-			const header2 = new UstarHeader(headerBuffer1);
+			const header2 = UstarHeader.deserialize(headerBuffer1);
 			const headerBuffer2 = header2.toUint8Array();
 			expect(headerBuffer2).toEqual(headerBuffer1);
 	
 			// We should be able to serialize and deserialize the same header multiple times without any data loss.
-			const header3 = new UstarHeader(headerBuffer2);
+			const header3 = UstarHeader.deserialize(headerBuffer2);
 			expect(header3.fileName).toBe(header1.fileName);
 			expect(header3.fileSize).toBe(header1.fileSize);
 			expect(header3.fileMode).toBe(header1.fileMode);
@@ -176,10 +118,13 @@ describe('UstarHeader', () => {
 
 	describe('field setters', () => {
 		it('should overwrite the field value for the header', () => {
-			const header = UstarHeader.seeded();
+			const header = new UstarHeader();
 
 			header.fileName = 'potato.txt';
 			expect(header.fileName).toBe('potato.txt');
+
+			header.fileMode = 777;
+			expect(header.fileMode).toBe(777);
 
 			header.ownerUserId = 1;
 			expect(header.ownerUserId).toBe(1);

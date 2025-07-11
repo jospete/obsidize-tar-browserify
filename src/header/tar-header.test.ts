@@ -8,7 +8,7 @@ import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicato
 describe('TarHeader', () => {
 	describe('from()', () => {
 		it('should return the value as-is if it is already a TarHeader instance', () => {
-			const header = new TarHeader({ustar: UstarHeader.seeded()});
+			const header = new TarHeader({ustar: new UstarHeader()});
 			expect(TarHeader.from(header)).toBe(header);
 		});
 
@@ -21,7 +21,7 @@ describe('TarHeader', () => {
 
 	describe('serialize()', () => {
 		it('should use value as-is if it is already a TarHeader instance', () => {
-			const header = new TarHeader({ustar: UstarHeader.seeded()});
+			const header = new TarHeader({ustar: new UstarHeader()});
 			const buffer1 = header.toUint8Array();
 			const buffer2 = TarHeader.serialize(header);
 			expect(buffer1).toEqual(buffer2);

@@ -23,7 +23,7 @@ describe('TarEntry', () => {
 			fileSize: 2,
 			ownerUserId: 3,
 			groupUserId: 4,
-			lastModified: TarUtility.getTarTimestamp(),
+			lastModified: TarUtility.getUstarTimestamp(),
 			fileName: 'file name test',
 			linkedFileName: 'link name test',
 			ustarVersion: '42',
@@ -86,7 +86,7 @@ describe('TarEntry', () => {
 				testBuffer[i] = j;
 
 			const asyncBuffer: AsyncUint8ArrayLike = {
-				byteLength: async () => testBuffer.byteLength,
+				byteLength: testBuffer.byteLength,
 				read: async (offset, length) => testBuffer.slice(offset, offset + length)
 			};
 
@@ -109,7 +109,7 @@ describe('TarEntry', () => {
 				testBuffer[i] = j;
 
 			const asyncBuffer: AsyncUint8ArrayLike = {
-				byteLength: async () => testBuffer.byteLength,
+				byteLength: testBuffer.byteLength,
 				read: async (offset, length) => testBuffer.slice(offset, offset + length)
 			};
 
@@ -120,13 +120,6 @@ describe('TarEntry', () => {
 			expect(result.byteLength).toBe(entry.fileSize);
 			expect(result[0]).toBe(0);
 			expect(result[result.byteLength - 1]).toBe(entry.fileSize - 1);
-		});
-	});
-
-	describe('writeTo()', () => {
-		it('returns false if the entry cannot be written to the given output', () => {
-			const entry = TarEntry.from({ fileName: 'Test File', fileSize: 80 });
-			expect(entry.writeTo(null as any, 0)).toBe(false);
 		});
 	});
 
@@ -143,36 +136,25 @@ describe('TarEntry', () => {
 				typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
 			}, Uint8Array.from([1, 2, 3, 4]));
 			const bytes = entry.toUint8Array();
-			expect(entry.sectorByteLength).toBe(Constants.SECTOR_SIZE * 2);
-			expect(bytes.byteLength).toBe(entry.sectorByteLength);
+			expect(bytes.byteLength).toBe(Constants.SECTOR_SIZE * 2);
 		});
 	});
 
-	describe('bufferEndIndex', () => {
-		it('should be the absolute position in the underlying octet stream that this entry was parsed from', () => {
-			const entryContent = Uint8Array.from([1, 2, 3, 4]);
-			const entryHeader = TarHeader.from({
-				fileName: 'some-directory',
-				typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
-			});
-			const entry = new TarEntry({
-				header: entryHeader,
-				content: entryContent,
-				offset: 42
-			});
-			expect(entry.bufferStartIndex).toBe(42);
-			expect(entry.bufferEndIndex).toBe(entry.bufferStartIndex + (Constants.SECTOR_SIZE * 2));
-		});
-	});
-
-	describe('context', () => {
+	describe('sourceContext', () => {
 		it('should be the context interface provided to the constructor', () => {
 			const context: ArchiveContext = {
 				source: new InMemoryAsyncUint8Array(new Uint8Array(0)),
 				globalPaxHeaders: []
 			};
 			const entry = new TarEntry({ context });
-			expect(entry.context).toBe(context);
+			expect(entry.sourceContext).toBe(context);
+		});
+	});
+
+	describe('sourceOffset', () => {
+		it('should be the offset provided to the constructor', () => {
+			const entry = new TarEntry({ offset: 42 });
+			expect(entry.sourceOffset).toBe(42);
 		});
 	});
 });

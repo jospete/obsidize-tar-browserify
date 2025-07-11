@@ -64,7 +64,7 @@ import {Archive, AsyncUint8ArrayLike} from '@obsidize/tar-browserify';
 // The caller must wrap whatever external storage they are using with this.
 const asyncBuffer: AsyncUint8ArrayLike = {
   // fetch tarball file length from storage
-  byteLength: async (): Promise<number> => { /* TODO: return total source length in bytes */ }
+  byteLength: 69420, /* TODO: preload the total source length in bytes and set it here */ }
   // read tarball data from storage
   // allows us to read the file in chunks rather than all at once
   read: async (offset: number, length: number): Promise<Uint8Array> => { /* TODO: return buffer from some source */ }

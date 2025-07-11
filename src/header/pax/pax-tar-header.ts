@@ -275,29 +275,6 @@ export class PaxTarHeader implements TarSerializable {
 
 		return this;
 	}
-	
-	// /**
-	//  * @returns The total byte-length of this header in serialized form.
-	//  */
-	// public calculateByteLength(): number {
-	// 	this.calculateByteLengthAttributes();
-	// 	return this.mByteLength!;
-	// }
-
-	// /**
-	//  * @returns The total byte-length of this header in serialized form,
-	//  * padded to be a multiple of SECTOR_SIZE.
-	//  */
-	// public calculateSectorByteLength(): number {
-	// 	this.calculateByteLengthAttributes();
-	// 	return this.mSectorByteLength!;
-	// }
-
-	// private calculateByteLengthAttributes(): void {
-	// 	const bytes = this.toUint8Array();
-	// 	this.mByteLength = bytes.byteLength;
-	// 	this.mSectorByteLength = TarUtility.roundUpSectorOffset(this.mByteLength);
-	// }
 
 	/**
 	 * @returns true if the value map of this parsed header contains the given key
