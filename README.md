@@ -44,7 +44,7 @@ async function tarExample() {
   
   console.log(firstFile.fileName); // 'Test File.txt'
   console.log(firstFile.content); // Uint8Array object
-  console.log(firstFile.getContentAsText()); // 'This is a test file'
+  console.log(firstFile.text()); // 'This is a test file'
 
   // Example 3 - Iterate over an archive source as a stream
   for await (const entry of Archive.read(createdTarballBuffer)) {
