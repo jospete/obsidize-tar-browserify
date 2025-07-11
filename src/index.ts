@@ -1,5 +1,5 @@
 export { Archive } from './archive/archive';
-export { ArchiveReadError, ArchiveReader } from './archive/archive-reader';
+export { ArchiveReader, ArchiveReadError } from './archive/archive-reader';
 export { ArchiveWriter, TarEntryPredicate } from './archive/archive-writer';
 export { ArchiveContext } from './common/archive-context';
 export { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from './common/async-uint8-array';

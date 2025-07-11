@@ -141,6 +141,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 
 		const context = this;
 		const {header, headerOffset, contentOffset} = headerParseResult;
+		const headerByteLength = contentOffset - headerOffset;
 		const contentEnd = contentOffset + header.fileSize;
 		const offset = headerOffset;
 
@@ -167,7 +168,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<TarE
 			this.mOffset = nextSectorStart;
 		}
 
-		return new TarEntry({header, offset, content, context});
+		return new TarEntry({header, offset, headerByteLength, content, context});
 	}
 
 	private async tryParseNextHeader(): Promise<TarHeaderParseResult | null> {
