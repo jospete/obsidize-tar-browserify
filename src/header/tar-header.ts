@@ -75,13 +75,13 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	private static collectPaxRequiredAttributes(
-		attrs: UstarHeaderLike | Partial<UstarHeaderLike>,
+		attributes: UstarHeaderLike | Partial<UstarHeaderLike>,
 	): Partial<PaxHeaderAttributes> | null {
-		if (TarUtility.isObject(attrs)) {
+		if (TarUtility.isObject(attributes)) {
 			let collected: Partial<PaxHeaderAttributes> = {};
 
-			if (attrs.fileName && attrs.fileName.length > UstarHeaderField.fileName.size) {
-				collected.path = attrs.fileName;
+			if (attributes.fileName && attributes.fileName.length > UstarHeaderField.fileName.size) {
+				collected.path = attributes.fileName;
 			}
 
 			if (Object.keys(collected).length > 0) {
