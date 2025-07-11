@@ -1,10 +1,10 @@
 import { Constants } from '../common/constants';
 import { TarSerializable, TarUtility } from '../common/tar-utility';
-import { TarEntry } from '../entry/tar-entry';
+import { ArchiveEntry } from '../entry/archive-entry';
 import { UstarHeaderLike } from '../header/ustar/ustar-header-like';
 import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 
-export type TarEntryPredicate = (entry: TarEntry) => boolean;
+export type ArchiveEntryPredicate = (entry: ArchiveEntry) => boolean;
 
 /**
  * Generic utility for building a tar octet stream by adding JSON-style entries.
@@ -12,14 +12,14 @@ export type TarEntryPredicate = (entry: TarEntry) => boolean;
  */
 export class ArchiveWriter implements TarSerializable {
 	constructor(
-		public entries: TarEntry[] = []
+		public entries: ArchiveEntry[] = []
 	) {	
 	}
 
 	/**
 	 * Combines the given array of entries into a single, complete tarball buffer
 	 */
-	public static serialize(entries: TarEntry[]): Uint8Array {
+	public static serialize(entries: ArchiveEntry[]): Uint8Array {
 		let outputLength = Constants.TERMINAL_PADDING_SIZE;
 		const outputBuffers: Uint8Array[] = [];
 
@@ -51,7 +51,7 @@ export class ArchiveWriter implements TarSerializable {
 	 * Convenience for appending a new entry to the existing `entries` array
 	 * @returns `this` for operation chaining
 	 */
-	public addEntry(entry: TarEntry): this {
+	public addEntry(entry: ArchiveEntry): this {
 		this.entries.push(entry);
 		return this;
 	}
@@ -61,7 +61,7 @@ export class ArchiveWriter implements TarSerializable {
 	 * @returns `this` for operation chaining
 	 */
 	public addEntryWith(header: Partial<UstarHeaderLike>, content?: Uint8Array): this {
-		return this.addEntry(new TarEntry({headerAttributes: header, content}));
+		return this.addEntry(new ArchiveEntry({headerAttributes: header, content}));
 	}
 
 	/**
@@ -114,7 +114,7 @@ export class ArchiveWriter implements TarSerializable {
 	 * @param predicate - delegate that will return true for any entry that should be removed.
 	 * @returns `this` for operation chaining
 	 */
-	public removeEntriesWhere(predicate: TarEntryPredicate): this {
+	public removeEntriesWhere(predicate: ArchiveEntryPredicate): this {
 		this.entries = this.entries.filter((v) => !predicate(v));
 		return this;
 	}

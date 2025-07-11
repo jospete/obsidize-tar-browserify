@@ -5,7 +5,7 @@ import { TarHeader } from '../header/tar-header';
 import { UstarHeaderLike } from '../header/ustar/ustar-header-like';
 import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
 
-export interface TarEntryOptions {
+export interface ArchiveEntryOptions {
 	header?: TarHeader;
 	headerAttributes?: Partial<UstarHeaderLike>;
 	headerByteLength?: number;
@@ -21,14 +21,14 @@ export interface TarEntryOptions {
  * 1. The parsed USTAR header sector content (AKA TarHeader)
  * 2. The aggregate of the proceeding file content sectors, based on the header's file size attribute
  */
-export class TarEntry implements UstarHeaderLike, TarSerializable {
+export class ArchiveEntry implements UstarHeaderLike, TarSerializable {
 	private mHeader: TarHeader;
 	private mHeaderByteLength: number;
 	private mContent: Uint8Array | null;
 	private mOffset: number;
 	private mContext: ArchiveContext | null;
 
-	constructor(options: TarEntryOptions = {}) {
+	constructor(options: ArchiveEntryOptions = {}) {
 		let {header, headerAttributes, headerByteLength, content, offset, context} = options;
 
 		if (!header) header = TarHeader.fromAttributes(headerAttributes || {});
@@ -51,8 +51,8 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 		this.mContext = context;
 	}
 
-	public static isTarEntry(v: any): boolean {
-		return !!(v && v instanceof TarEntry);
+	public static isArchiveEntry(v: any): boolean {
+		return !!(v && v instanceof ArchiveEntry);
 	}
 
 	// =================================================================
