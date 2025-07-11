@@ -160,10 +160,13 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 			content = this.getBufferCacheSlice(contentOffset, contentEnd);
 		}
 
+		// if some of the in-memory buffer is left over after this iteration,
+		// trim this entry's bytes off of the buffer and reset the offset pointer.
 		if ((nextSectorStart + Constants.SECTOR_SIZE) <= this.mBufferCache!.byteLength) {
 			this.mBufferCache = this.getBufferCacheSlice(nextSectorStart);
 			this.mOffset = 0;
 
+		// otherwise, move the offset pointer so more data will be loaded in the next iterator call
 		} else {
 			this.mOffset = nextSectorStart;
 		}
