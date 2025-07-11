@@ -46,6 +46,10 @@
 	},
 	"keywords": [
 		"tar",
+		"archive",
+		"read",
+		"write",
+		"pax",
 		"browser",
 		"tarball",
 		"browserify",
