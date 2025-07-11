@@ -20,28 +20,28 @@ export enum PaxHeaderKey {
 	COMMENT = 'comment',
 	/**
 	 * The group ID of the group that owns the file, expressed as a decimal number using
-	 * digits from the ISO/IEC 646:1991 standard. This record shall override the gid 
+	 * digits from the ISO/IEC 646:1991 standard. This record shall override the gid
 	 * field in the following header block(s). When used in write or copy mode,
-	 * pax shall include a gid extended header record for each file whose group ID is greater 
+	 * pax shall include a gid extended header record for each file whose group ID is greater
 	 * than 2097151 (octal 7777777).
 	 */
 	GROUP_ID = 'gid',
 	/**
 	 * The group of the file(s), formatted as a group name in the group database.
-	 * This record shall override the gid and gname fields in the following header block(s), 
+	 * This record shall override the gid and gname fields in the following header block(s),
 	 * and any gid extended header record. When used in read, copy, or list mode,
-	 * pax shall translate the name from the encoding in the header record to the character 
+	 * pax shall translate the name from the encoding in the header record to the character
 	 * set appropriate for the group database on the receiving system.
-	 * If any of the characters cannot be translated, and if neither the -o invalid=UTF-8 option nor 
+	 * If any of the characters cannot be translated, and if neither the -o invalid=UTF-8 option nor
 	 * the -o invalid=binary option is specified, the results are implementation-defined.
-	 * When used in write or copy mode, pax shall include a gname extended header 
+	 * When used in write or copy mode, pax shall include a gname extended header
 	 * record for each file whose group name cannot be represented entirely
 	 * with the letters and digits of the portable character set.
 	 */
 	GROUP_NAME = 'gname',
 	/**
 	 * The name of the character set used to encode the value field of the
-	 * gname, linkpath, path, and uname pax extended header records. The entries in the following 
+	 * gname, linkpath, path, and uname pax extended header records. The entries in the following
 	 * table are defined to refer to known standards;
 	 * additional names may be agreed between the originator and the recipient.
 	 */
@@ -71,7 +71,7 @@ export enum PaxHeaderKey {
 	 * The pathname of the following file(s). This record shall override the name and prefix fields in the following header block(s).
 	 * The pax utility shall translate the pathname of the file from
 	 * the encoding in the header to the character set appropriate for the local file system.
-	 * 
+	 *
 	 * When used in write or copy mode, pax shall include a path extended header record for each file whose
 	 * pathname cannot be represented entirely with the members of the portable character set other than NUL.
 	 */
@@ -99,5 +99,5 @@ export enum PaxHeaderKey {
 	 * pax shall include a uname extended header record for each file whose user name cannot
 	 * be represented entirely with the letters and digits of the portable character set.
 	 */
-	USER_NAME = 'uname'
+	USER_NAME = 'uname',
 }

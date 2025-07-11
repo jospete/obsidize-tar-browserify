@@ -13,7 +13,7 @@ const { isUint8Array } = TarUtility;
 describe('ArchiveEntry', () => {
 	it('has an option to check if an entry is a directory', () => {
 		const directory = new ArchiveEntry({
-			headerAttributes: { typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY }
+			headerAttributes: { typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY },
 		});
 		expect(ArchiveEntry.isArchiveEntry(directory)).toBe(true);
 		expect(directory.isDirectory()).toBe(true);
@@ -34,7 +34,7 @@ describe('ArchiveEntry', () => {
 			deviceMajorNumber: '11',
 			deviceMinorNumber: '22',
 			fileNamePrefix: 'sample file prefix',
-			typeFlag: UstarHeaderLinkIndicatorType.HARD_LINK
+			typeFlag: UstarHeaderLinkIndicatorType.HARD_LINK,
 		});
 
 		const entry = new ArchiveEntry({ header });
@@ -64,25 +64,25 @@ describe('ArchiveEntry', () => {
 		it('can safely be stringified', () => {
 			const rawEntry = new ArchiveEntry();
 			expect(() => JSON.stringify(rawEntry)).not.toThrow();
-	
+
 			const fileWithContent = new ArchiveEntry({
-				content: Uint8Array.from(range(100))
+				content: Uint8Array.from(range(100)),
 			});
 			expect(() => JSON.stringify(fileWithContent)).not.toThrow();
 		});
 
 		it('should indicate when an entry is a directory', () => {
 			const entry = new ArchiveEntry({
-				headerAttributes: {typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY},
-				content: Uint8Array.from(range(100))
+				headerAttributes: { typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY },
+				content: Uint8Array.from(range(100)),
 			});
 			expect(entry.toJSON().type).toBe('directory');
 		});
 
 		it('should indicate when an entry is not a directory or file', () => {
 			const entry = new ArchiveEntry({
-				headerAttributes: {typeFlag: UstarHeaderLinkIndicatorType.FIFO},
-				content: Uint8Array.from(range(100))
+				headerAttributes: { typeFlag: UstarHeaderLinkIndicatorType.FIFO },
+				content: Uint8Array.from(range(100)),
 			});
 			expect(entry.toJSON().type).toBe('complex');
 		});
@@ -92,19 +92,18 @@ describe('ArchiveEntry', () => {
 		it('reads the contextualized slice from the given buffer', async () => {
 			const testBuffer = new Uint8Array(HEADER_SIZE + 100);
 
-			for (let i = HEADER_SIZE, j = 0; i < testBuffer.byteLength; i++, j++)
-				testBuffer[i] = j;
+			for (let i = HEADER_SIZE, j = 0; i < testBuffer.byteLength; i++, j++) testBuffer[i] = j;
 
 			const asyncBuffer: AsyncUint8ArrayLike = {
 				byteLength: testBuffer.byteLength,
-				read: async (offset, length) => testBuffer.slice(offset, offset + length)
+				read: async (offset, length) => testBuffer.slice(offset, offset + length),
 			};
 
 			const offset = 12;
 			const length = 42;
 			const entry = new ArchiveEntry({
 				headerAttributes: { fileName: 'Test File', fileSize: 80 },
-				headerByteLength: HEADER_SIZE
+				headerByteLength: HEADER_SIZE,
 			});
 			const result = await entry.readContentFrom(asyncBuffer, offset, length);
 
@@ -115,20 +114,18 @@ describe('ArchiveEntry', () => {
 		});
 
 		it('reads the entire file if no offset or length options are given', async () => {
-
 			const testBuffer = new Uint8Array(HEADER_SIZE + 100);
 
-			for (let i = HEADER_SIZE, j = 0; i < testBuffer.byteLength; i++, j++)
-				testBuffer[i] = j;
+			for (let i = HEADER_SIZE, j = 0; i < testBuffer.byteLength; i++, j++) testBuffer[i] = j;
 
 			const asyncBuffer: AsyncUint8ArrayLike = {
 				byteLength: testBuffer.byteLength,
-				read: async (offset, length) => testBuffer.slice(offset, offset + length)
+				read: async (offset, length) => testBuffer.slice(offset, offset + length),
 			};
 
 			const entry = new ArchiveEntry({
 				headerAttributes: { fileName: 'Test File', fileSize: 80 },
-				headerByteLength: HEADER_SIZE
+				headerByteLength: HEADER_SIZE,
 			});
 			const result = await entry.readContentFrom(asyncBuffer);
 
@@ -144,8 +141,8 @@ describe('ArchiveEntry', () => {
 			const entry = new ArchiveEntry({
 				headerAttributes: {
 					fileName: 'some-directory',
-					typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
-				}
+					typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY,
+				},
 			});
 			const bytes = entry.toUint8Array();
 			expect(bytes.byteLength).toBe(Constants.HEADER_SIZE);
@@ -155,9 +152,9 @@ describe('ArchiveEntry', () => {
 			const entry = new ArchiveEntry({
 				headerAttributes: {
 					fileName: 'some-directory',
-					typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
+					typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY,
 				},
-				content: Uint8Array.from([1, 2, 3, 4])
+				content: Uint8Array.from([1, 2, 3, 4]),
 			});
 			const bytes = entry.toUint8Array();
 			expect(bytes.byteLength).toBe(Constants.SECTOR_SIZE * 2);
@@ -168,7 +165,7 @@ describe('ArchiveEntry', () => {
 		it('should be the context interface provided to the constructor', () => {
 			const context: ArchiveContext = {
 				source: new InMemoryAsyncUint8Array(new Uint8Array(0)),
-				globalPaxHeaders: []
+				globalPaxHeaders: [],
 			};
 			const entry = new ArchiveEntry({ context });
 			expect(entry.sourceContext).toBe(context);

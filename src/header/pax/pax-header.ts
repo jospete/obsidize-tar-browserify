@@ -28,9 +28,7 @@ export interface PaxHeaderAttributes extends Record<PaxHeaderKey | string, strin
 export class PaxHeader implements TarSerializable {
 	private readonly valueMap: Record<string, PaxHeaderSegment>;
 
-	constructor(
-		segments: PaxHeaderSegment[] = []
-	) {
+	constructor(segments: PaxHeaderSegment[] = []) {
 		this.valueMap = {};
 		for (const segment of segments) {
 			this.valueMap[segment.key] = segment;
@@ -56,9 +54,9 @@ export class PaxHeader implements TarSerializable {
 		if (!TarUtility.isObject(attributes)) {
 			return [];
 		}
-		
+
 		const segments: PaxHeaderSegment[] = [];
-		
+
 		for (const [key, value] of Object.entries(attributes)) {
 			const strVal = TarUtility.isString(value) ? value : String(value);
 			segments.push(new PaxHeaderSegment(key, strVal));
@@ -120,9 +118,7 @@ export class PaxHeader implements TarSerializable {
 		const maxLength = UstarHeaderField.fileName.size;
 
 		if (fileName.length < maxLength) {
-			return fileName.substring(0, offset)
-				+ separator + Constants.PAX_HEADER_PREFIX
-				+ fileName.substring(offset);
+			return fileName.substring(0, offset) + separator + Constants.PAX_HEADER_PREFIX + fileName.substring(offset);
 		}
 
 		return PaxHeader.makeTopLevelPrefix(fileName, '/', offset + 1);
@@ -317,7 +313,7 @@ export class PaxHeader implements TarSerializable {
 	/**
 	 * Adds any necessary padding to the serialized output to ensure the length
 	 * of the output is a multiple of `SECTOR_SIZE`.
-	 * 
+	 *
 	 * See `toUint8Array()` for more info.
 	 */
 	public toUint8ArrayPadded(): Uint8Array {
@@ -332,7 +328,7 @@ export class PaxHeader implements TarSerializable {
 	}
 
 	public toJSON(): Record<string, unknown> {
-		const {valueMap: attributes} = this;
+		const { valueMap: attributes } = this;
 		const bytes = this.toUint8Array();
 		const buffer = TarUtility.getDebugBufferJson(bytes);
 

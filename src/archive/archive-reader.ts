@@ -35,7 +35,7 @@ export enum ArchiveReadError {
 	 * Occurs when the reader fails to fully load a PAX header
 	 * due to the third and final segment not appearing in the input data stream.
 	 */
-	ERR_HEADER_MISSING_POST_PAX_SEGMENT = 'ERR_HEADER_MISSING_POST_PAX_SEGMENT'
+	ERR_HEADER_MISSING_POST_PAX_SEGMENT = 'ERR_HEADER_MISSING_POST_PAX_SEGMENT',
 }
 
 /**
@@ -47,16 +47,14 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 	private mOffset: number = 0;
 	private mHasSyncInput: boolean;
 
-	constructor(
-		private readonly bufferIterator: AsyncUint8ArrayIterator
-	) {
-		this.mHasSyncInput = (this.bufferIterator.input instanceof InMemoryAsyncUint8Array);
+	constructor(private readonly bufferIterator: AsyncUint8ArrayIterator) {
+		this.mHasSyncInput = this.bufferIterator.input instanceof InMemoryAsyncUint8Array;
 	}
 
 	public static withInput(input: AsyncUint8ArrayIteratorInput): ArchiveReader {
 		return new ArchiveReader(new AsyncUint8ArrayIterator(input));
 	}
-	
+
 	[Symbol.asyncIterator](): AsyncIterableIterator<ArchiveEntry> {
 		return this;
 	}
@@ -75,7 +73,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		for await (const entry of this) {
 			entries.push(entry);
 		}
-		
+
 		return entries;
 	}
 
@@ -83,10 +81,10 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		const entry = await this.tryParseNextEntry();
 
 		if (entry !== null) {
-			return {done: false, value: entry};
+			return { done: false, value: entry };
 		}
-		
-		return {done: true, value: null};
+
+		return { done: true, value: null };
 	}
 
 	private clearBufferCache(): void {
@@ -116,7 +114,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 
 	private async loadNextChunk(): Promise<boolean> {
 		const nextChunk = await this.bufferIterator.tryNext();
-		
+
 		if (!nextChunk) {
 			return false;
 		}
@@ -140,7 +138,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		}
 
 		const context = this;
-		const {header, headerOffset, contentOffset} = headerParseResult;
+		const { header, headerOffset, contentOffset } = headerParseResult;
 		const headerByteLength = contentOffset - headerOffset;
 		const contentEnd = contentOffset + header.fileSize;
 		const offset = headerOffset;
@@ -162,16 +160,16 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 
 		// if some of the in-memory buffer is left over after this iteration,
 		// trim this entry's bytes off of the buffer and reset the offset pointer.
-		if ((nextSectorStart + Constants.SECTOR_SIZE) <= this.mBufferCache!.byteLength) {
+		if (nextSectorStart + Constants.SECTOR_SIZE <= this.mBufferCache!.byteLength) {
 			this.mBufferCache = this.getBufferCacheSlice(nextSectorStart);
 			this.mOffset = 0;
 
-		// otherwise, move the offset pointer so more data will be loaded in the next iterator call
+			// otherwise, move the offset pointer so more data will be loaded in the next iterator call
 		} else {
 			this.mOffset = nextSectorStart;
 		}
 
-		return new ArchiveEntry({header, offset, headerByteLength, content, context});
+		return new ArchiveEntry({ header, offset, headerByteLength, content, context });
 	}
 
 	private async tryParseNextHeader(): Promise<TarHeaderParseResult | null> {
@@ -196,7 +194,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		let headerOffset = ustarOffset;
 		let headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
 		let ustarHeader = UstarHeader.deserialize(headerBuffer)!;
-		let header = new TarHeader({ustar: ustarHeader});
+		let header = new TarHeader({ ustar: ustarHeader });
 
 		// Advance cursor to process potential PAX header or entry content
 		let nextOffset = TarUtility.advanceSectorOffset(headerOffset, this.mBufferCache!.byteLength);
@@ -229,7 +227,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 			header = new TarHeader({
 				ustar: ustarHeader,
 				pax: paxHeader,
-				preamble: preambleHeader
+				preamble: preambleHeader,
 			});
 
 			if (isGlobalPax) {
@@ -237,6 +235,6 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 			}
 		}
 
-		return {header, headerOffset, contentOffset: nextOffset};
+		return { header, headerOffset, contentOffset: nextOffset };
 	}
 }

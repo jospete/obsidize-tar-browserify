@@ -11,10 +11,7 @@ export type ArchiveEntryPredicate = (entry: ArchiveEntry) => boolean;
  * See the `add***()` options in this class definition for details.
  */
 export class ArchiveWriter implements TarSerializable {
-	constructor(
-		public entries: ArchiveEntry[] = []
-	) {	
-	}
+	constructor(public entries: ArchiveEntry[] = []) {}
 
 	/**
 	 * Combines the given array of entries into a single, complete tarball buffer
@@ -39,7 +36,7 @@ export class ArchiveWriter implements TarSerializable {
 
 		return output;
 	}
-	
+
 	/**
 	 * @returns a complete tar buffer from all the currently set tar entries in this instance.
 	 */
@@ -61,7 +58,7 @@ export class ArchiveWriter implements TarSerializable {
 	 * @returns `this` for operation chaining
 	 */
 	public addEntryWith(header: Partial<UstarHeaderLike>, content?: Uint8Array): this {
-		return this.addEntry(new ArchiveEntry({headerAttributes: header, content}));
+		return this.addEntry(new ArchiveEntry({ headerAttributes: header, content }));
 	}
 
 	/**
@@ -72,11 +69,7 @@ export class ArchiveWriter implements TarSerializable {
 	 * @returns `this` for operation chaining
 	 */
 	public addTextFile(path: string, content: string, headerOptions?: Partial<UstarHeaderLike>): this {
-		return this.addBinaryFile(
-			path, 
-			TarUtility.encodeString(content), 
-			headerOptions
-		);
+		return this.addBinaryFile(path, TarUtility.encodeString(content), headerOptions);
 	}
 
 	/**
@@ -87,11 +80,14 @@ export class ArchiveWriter implements TarSerializable {
 	 * @returns `this` for operation chaining
 	 */
 	public addBinaryFile(path: string, content: Uint8Array, headerOptions: Partial<UstarHeaderLike> = {}): this {
-		const combinedHeaderOptions = Object.assign({
-			fileName: path,
-			fileSize: content.byteLength,
-			typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE
-		}, headerOptions);
+		const combinedHeaderOptions = Object.assign(
+			{
+				fileName: path,
+				fileSize: content.byteLength,
+				typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE,
+			},
+			headerOptions,
+		);
 		return this.addEntryWith(combinedHeaderOptions, content);
 	}
 
@@ -102,10 +98,13 @@ export class ArchiveWriter implements TarSerializable {
 	 * @returns `this` for operation chaining
 	 */
 	public addDirectory(path: string, headerOptions: Partial<UstarHeaderLike> = {}): this {
-		const combinedHeaderOptions = Object.assign({
-			fileName: path,
-			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
-		}, headerOptions);
+		const combinedHeaderOptions = Object.assign(
+			{
+				fileName: path,
+				typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY,
+			},
+			headerOptions,
+		);
 		return this.addEntryWith(combinedHeaderOptions);
 	}
 
