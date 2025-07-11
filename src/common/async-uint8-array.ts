@@ -11,11 +11,8 @@ export interface AsyncUint8ArrayLike {
  * can be transposed to fit the shared `AsyncUint8ArrayLike` format.
  */
 export class InMemoryAsyncUint8Array implements AsyncUint8ArrayLike {
-	constructor(
-		private readonly input: Uint8Array
-	) {
-	}
-	
+	constructor(private readonly input: Uint8Array) {}
+
 	public get byteLength(): number {
 		return this.input.byteLength;
 	}

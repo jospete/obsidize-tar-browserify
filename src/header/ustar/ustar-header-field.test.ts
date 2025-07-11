@@ -6,26 +6,13 @@ import { UstarHeader } from './ustar-header';
 import { UstarHeaderField } from './ustar-header-field';
 import { UstarHeaderFieldType } from './ustar-header-field-type';
 
-const {
-	encodeString,
-	sanitizeDateTimeAsUstar,
-} = TarUtility;
+const { encodeString, sanitizeDateTimeAsUstar } = TarUtility;
 
-const {
-	USTAR_TAG
-} = Constants;
+const { USTAR_TAG } = Constants;
 
-const {
-	fileMode,
-	fileName,
-	fileSize,
-	lastModified,
-	ustarIndicator
-} = UstarHeaderField;
+const { fileMode, fileName, fileSize, lastModified, ustarIndicator } = UstarHeaderField;
 
-const {
-	isUstarSector
-} = TarHeaderUtility;
+const { isUstarSector } = TarHeaderUtility;
 
 describe('TarHeaderField', () => {
 	it('is a collection of header metadata options to streamline tar header parsing', () => {
@@ -69,7 +56,7 @@ describe('TarHeaderField', () => {
 
 	describe('slice()', () => {
 		it('defaults to offset zero when no offset is provided', () => {
-			const buffer = Uint8Array.from(range(0x1FF));
+			const buffer = Uint8Array.from(range(0x1ff));
 			const headerField = fileSize;
 			const slicedBuffer = headerField.slice(buffer);
 			const sliceStart = headerField.offset;
@@ -105,7 +92,6 @@ describe('TarHeaderField', () => {
 		const headerBytes = defaultHeader.toUint8Array();
 
 		for (const field of fields) {
-
 			const headerValue = defaultHeader[field.name];
 			const serialized = field.serialize(headerValue);
 			const deserialized = field.deserialize(serialized);
@@ -122,7 +108,7 @@ describe('TarHeaderField', () => {
 
 		it('returns undefined when given malformed input', () => {
 			let value: any = null;
-			expect(() => value = lastModified.deserialize(null as any)).not.toThrowError();
+			expect(() => (value = lastModified.deserialize(null as any))).not.toThrowError();
 			expect(value).not.toBeDefined();
 		});
 	});

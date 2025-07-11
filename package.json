@@ -8,6 +8,7 @@
 	"typings": "./index.d.ts",
 	"scripts": {
 		"test": "jest",
+		"format": "prettier ./src --write",
 		"build:clean": "rimraf ./dist",
 		"build:tsc": "tsc",
 		"build:webpack": "webpack --config webpack.config.js",
@@ -21,7 +22,7 @@
 		"git:publish": "tsx ./scripts/release-publish.ts",
 		"dist:publish": "npm publish ./dist",
 		"dist:pack": "tsx ./scripts/release-pack.ts",
-		"dist:bundle": "run-s build coverage docs dist:pack",
+		"dist:bundle": "run-s format build coverage docs dist:pack",
 		"version": "npm run dist:bundle",
 		"version:patch": "npm version patch",
 		"version:publish": "run-s git:publish dist:publish",

@@ -1,9 +1,9 @@
 /**
  * Sector type flag values taken from here:
  * (see "Type flag field" in wiki)
- * 
+ *
  * https://en.wikipedia.org/wiki/Tar_(computing)
- * 
+ *
  * Special notes from the wiki:
  * 'A'–'Z' - Vendor specific extensions (POSIX.1-1988)
  * All other values	- Reserved for future standardization

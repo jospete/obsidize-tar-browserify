@@ -41,9 +41,12 @@ export interface AsyncUint8ArrayIteratorOptions {
 }
 
 function sanitizeOptions(options: Partial<AsyncUint8ArrayIteratorOptions>): AsyncUint8ArrayIteratorOptions {
-	return Object.assign({
-		blockSize: Constants.SECTOR_SIZE * 16 // 8Kb
-	}, options);
+	return Object.assign(
+		{
+			blockSize: Constants.SECTOR_SIZE * 16, // 8Kb
+		},
+		options,
+	);
 }
 
 const MIN_BLOCK_SIZE = Constants.SECTOR_SIZE;
@@ -52,7 +55,7 @@ const MAX_BLOCK_SIZE = Constants.SECTOR_SIZE * 10000;
 /**
  * Generalized abstraction for pulling in raw octet data, whether its
  * over the network or from disk or in memory.
- * 
+ *
  * This is designed to reduce general complexity / fragmentation
  * when parsing out tar sectors by forcing every input type to adhere to
  * the same streaming interface.
@@ -62,15 +65,12 @@ export class AsyncUint8ArrayIterator implements AsyncUint8ArrayIteratorLike {
 	private readonly blockSize: number;
 	private mOffset: number = 0;
 
-	constructor(
-		input: AsyncUint8ArrayIteratorInput,
-		options: Partial<AsyncUint8ArrayIteratorOptions> = {}
-	) {
+	constructor(input: AsyncUint8ArrayIteratorInput, options: Partial<AsyncUint8ArrayIteratorOptions> = {}) {
 		this.mInput = TarUtility.isUint8Array(input) ? new InMemoryAsyncUint8Array(input) : input;
-		let {blockSize} = sanitizeOptions(options);
+		let { blockSize } = sanitizeOptions(options);
 		blockSize = TarUtility.clamp(blockSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
 		blockSize = TarUtility.roundUpSectorOffset(blockSize);
- 		this.blockSize = blockSize;
+		this.blockSize = blockSize;
 	}
 
 	[Symbol.asyncIterator](): AsyncUint8ArrayIteratorLike {
@@ -102,15 +102,15 @@ export class AsyncUint8ArrayIterator implements AsyncUint8ArrayIteratorLike {
 		const source = this.input;
 		const offset = this.currentOffset;
 		const length = this.byteLength;
-		
+
 		if (offset >= length) {
-			return {done: true, value: null};
+			return { done: true, value: null };
 		}
 
 		const targetLength = Math.min(this.blockSize, length - offset);
 		const buffer = await source.read(offset, targetLength);
 		this.mOffset += targetLength;
 
-		return {done: false, value: {source, buffer, offset}};
+		return { done: false, value: { source, buffer, offset } };
 	}
 }

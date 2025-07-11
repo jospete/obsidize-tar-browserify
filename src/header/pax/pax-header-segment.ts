@@ -11,9 +11,8 @@ export class PaxHeaderSegment implements TarSerializable {
 	constructor(
 		private mKey: string = '',
 		private mValue: string = '',
-		private mBytes: Uint8Array | null = null
-	) {
-	}
+		private mBytes: Uint8Array | null = null,
+	) {}
 
 	public static serialize(key: string, value: string): Uint8Array {
 		if (!key || !value) {
@@ -26,7 +25,7 @@ export class PaxHeaderSegment implements TarSerializable {
 
 		// Calculation caused decimal rollover, increase combined length by 1
 		// (e.g. including the length part caused combined length to go from something like '99' to '101')
-		if (segmentLength < (segmentLength.toString().length + segmentSuffix.length)) {
+		if (segmentLength < segmentLength.toString().length + segmentSuffix.length) {
 			segmentLength += 1;
 		}
 
@@ -109,18 +108,18 @@ export class PaxHeaderSegment implements TarSerializable {
 		if (!TarUtility.isUint8Array(this.mBytes)) {
 			this.mBytes = PaxHeaderSegment.serialize(this.key, this.value);
 		}
-		
+
 		return this.mBytes;
 	}
 
 	public toJSON(): any {
-		const {key, value, bytes} = this;
+		const { key, value, bytes } = this;
 		const content = TarUtility.getDebugHexString(bytes);
 
 		return {
 			key,
 			value,
-			content
+			content,
 		};
 	}
 }

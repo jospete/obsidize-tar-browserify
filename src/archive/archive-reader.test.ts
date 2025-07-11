@@ -9,18 +9,21 @@ import { TarHeader } from '../header/tar-header';
 import { UstarHeader } from '../header/ustar/ustar-header';
 import { UstarHeaderLike } from '../header/ustar/ustar-header-like';
 import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
-import { tarballSampleBase64 as PAX_tarballSampleBase64, totalFileCount as PAX_totalFileCount } from '../test/generated/pax-header-test-content';
+import {
+	tarballSampleBase64 as PAX_tarballSampleBase64,
+	totalFileCount as PAX_totalFileCount,
+} from '../test/generated/pax-header-test-content';
 import { base64ToUint8Array, range } from '../test/test-util';
 import { ArchiveReader, ArchiveReadError } from './archive-reader';
 
 const createPaxHeaderBuffer = (
 	headerAttrs: Partial<UstarHeaderLike>,
 	paxAttrs: Partial<PaxHeaderAttributes>,
-	global?: boolean
+	global?: boolean,
 ): Uint8Array => {
 	const actualHeader = UstarHeader.fromAttributes(headerAttrs);
 	const paxHeader = PaxHeader.fromAttributes(paxAttrs);
-	const combinedHeader = new TarHeader({ustar: actualHeader, pax: paxHeader, isPaxGlobal: global});
+	const combinedHeader = new TarHeader({ ustar: actualHeader, pax: paxHeader, isPaxGlobal: global });
 	return combinedHeader.toUint8Array();
 };
 
@@ -42,19 +45,19 @@ describe('ArchiveReader', () => {
 	it('should correctly parse pax headers', async () => {
 		const buffer = base64ToUint8Array(PAX_tarballSampleBase64);
 		const entries = await ArchiveReader.withInput(buffer).readAllEntries();
-		const files = entries.filter(v => v.isFile());
+		const files = entries.filter((v) => v.isFile());
 		expect(files.length).toBeGreaterThan(0);
-		const paxEntry = entries.find(v => !!v?.header?.pax);
+		const paxEntry = entries.find((v) => !!v?.header?.pax);
 		expect(paxEntry).toBeTruthy();
 	});
 
 	it('should be able to parse from buffer sources with a small chunk size', async () => {
 		const buffer = base64ToUint8Array(PAX_tarballSampleBase64);
 		const bufferSource = new InMemoryAsyncUint8Array(buffer);
-		const iterator = new AsyncUint8ArrayIterator(bufferSource, {blockSize: Constants.SECTOR_SIZE});
+		const iterator = new AsyncUint8ArrayIterator(bufferSource, { blockSize: Constants.SECTOR_SIZE });
 		const reader = new ArchiveReader(iterator);
 		const entries = await reader.readAllEntries();
-		const files = entries.filter(v => v.isFile());
+		const files = entries.filter((v) => v.isFile());
 		expect(files.length).toBe(PAX_totalFileCount);
 	});
 
@@ -74,7 +77,7 @@ describe('ArchiveReader', () => {
 		const header = TarHeader.serializeAttributes({
 			fileName: 'truncated.bin',
 			typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE,
-			fileSize: contentLength
+			fileSize: contentLength,
 		});
 
 		const buffer = TarUtility.concatUint8Arrays(header, content);
@@ -98,7 +101,7 @@ describe('ArchiveReader', () => {
 		const header = TarHeader.serializeAttributes({
 			fileName: 'truncated.bin',
 			typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE,
-			fileSize: contentLength
+			fileSize: contentLength,
 		});
 
 		const buffer = TarUtility.concatUint8Arrays(header, content);
@@ -106,7 +109,7 @@ describe('ArchiveReader', () => {
 
 		const iterator = new AsyncUint8ArrayIterator({
 			byteLength: bufferSource.byteLength,
-			read: (offset, length) => bufferSource.read(offset, length)
+			read: (offset, length) => bufferSource.read(offset, length),
 		});
 
 		const reader = new ArchiveReader(iterator);
@@ -119,11 +122,11 @@ describe('ArchiveReader', () => {
 	it('should append global pax headers to reader context interface array', async () => {
 		const headerAttrs: Partial<UstarHeaderLike> = {
 			fileName: 'Some Global Garbage',
-			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
+			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY,
 		};
 		const paxAttrs: Partial<PaxHeaderAttributes> = {
 			[PaxHeaderKey.PATH]: 'A an extra name override or something',
-			[PaxHeaderKey.SIZE]: '0'
+			[PaxHeaderKey.SIZE]: '0',
 		};
 
 		const paxBuffer = createPaxHeaderBuffer(headerAttrs, paxAttrs, true);
@@ -139,10 +142,10 @@ describe('ArchiveReader', () => {
 	it('should blow up on malformed global pax header entries', async () => {
 		const headerAttrs: Partial<UstarHeaderLike> = {
 			fileName: 'Some Global Garbage',
-			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
+			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY,
 		};
 		const paxAttrs: Partial<PaxHeaderAttributes> = {
-			fileName: 'A an extra name override or something'
+			fileName: 'A an extra name override or something',
 		};
 
 		const paxBuffer = createPaxHeaderBuffer(headerAttrs, paxAttrs, true);
@@ -162,12 +165,12 @@ describe('ArchiveReader', () => {
 	it('should blow up on malformed local pax header entries', async () => {
 		const headerAttrs: Partial<UstarHeaderLike> = {
 			fileName: 'Some Local Garbage',
-			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
+			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY,
 		};
 		const paxAttrs: Partial<PaxHeaderAttributes> = {
-			fileName: 'A an extra name override or something'
+			fileName: 'A an extra name override or something',
 		};
-		
+
 		const paxBuffer = createPaxHeaderBuffer(headerAttrs, paxAttrs);
 		paxBuffer.set(range(Constants.HEADER_SIZE), paxBuffer.byteLength - Constants.HEADER_SIZE);
 
