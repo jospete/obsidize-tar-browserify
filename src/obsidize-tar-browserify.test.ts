@@ -1,23 +1,23 @@
-import { Archive } from '../archive/archive';
-import { TarUtility } from '../common/tar-utility';
-import { TarEntry } from '../entry/tar-entry';
+import { Archive } from './archive/archive';
+import { ArchiveEntry } from './archive/archive-entry';
+import { TarUtility } from './common/tar-utility';
 import {
 	fileStructures,
 	tarballSampleBase64,
 	totalFileCount,
-} from './generated/tarball-test-content';
+} from './test/generated/tarball-test-content';
 
 import {
 	fileStructures as PAX_fileStructures,
 	tarballSampleBase64 as PAX_tarballSampleBase64
-} from './generated/pax-header-test-content';
-import { base64ToUint8Array } from './test-util';
+} from './test/generated/pax-header-test-content';
+import { base64ToUint8Array } from './test/test-util';
 
 const { isUint8Array } = TarUtility;
 
 const testGeneratedContent = async (base64Str: string, expectedStructures: string[][]) => {
 	const tarballUint8 = base64ToUint8Array(base64Str);
-	const foundFiles = new Set<TarEntry>();
+	const foundFiles = new Set<ArchiveEntry>();
 	let {entries: files} = await Archive.extract(tarballUint8);
 	files = files.filter((e) => e.isFile());
 
@@ -117,9 +117,9 @@ describe('Global Tests', () => {
 		const {entries} = await Archive.extract(createdTarballBuffer);
 		const [firstFile] = entries;
 		
-		console.log(firstFile.fileName); // 'Test File.txt'
-		console.log(firstFile.content); // Uint8Array object
-		console.log(firstFile.getContentAsText()); // 'This is a test file'
+		expect(firstFile.fileName).toBe('Test File.txt');
+		expect(TarUtility.isUint8Array(firstFile.content)).toBe(true);
+		expect(firstFile.getContentAsText()).toBe('This is a test file');
 
 		// Example 3 - Iterate over an archive source as a stream
 		for await (const entry of Archive.read(createdTarballBuffer)) {
@@ -134,7 +134,7 @@ describe('Global Tests', () => {
 				.addTextFile('Test File.txt', 'This is a test file')
 				.toUint8Array();
 
-			const entries: TarEntry[] = [];
+			const entries: ArchiveEntry[] = [];
 			for await (const entry of Archive.read(createdTarballBuffer)) {
 				entries.push(entry);
 			}
