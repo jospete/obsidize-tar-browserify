@@ -7,7 +7,7 @@ import { UstarHeaderLike } from './ustar-header-like';
 /**
  * Metadata about a single field for a tar header.
  * These are used to dynamically parse fields as a header sector is stepped through.
- * 
+ *
  * See extractTarEntry() and TarUtility for more info.
  */
 export interface UstarHeaderFieldLike {
@@ -51,63 +51,63 @@ export class UstarHeaderField<T> implements UstarHeaderFieldLike {
 		name: 'fileName',
 		offset: 0,
 		size: 100,
-		type: UstarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END,
 	});
 
 	public static readonly fileMode: UstarHeaderField<number> = UstarHeaderField.frozen({
 		name: 'fileMode',
 		offset: 100,
 		size: 8,
-		type: UstarHeaderFieldType.INTEGER_OCTAL
+		type: UstarHeaderFieldType.INTEGER_OCTAL,
 	});
 
 	public static readonly ownerUserId: UstarHeaderField<number> = UstarHeaderField.frozen({
 		name: 'ownerUserId',
 		offset: 108,
 		size: 8,
-		type: UstarHeaderFieldType.INTEGER_OCTAL
+		type: UstarHeaderFieldType.INTEGER_OCTAL,
 	});
 
 	public static readonly groupUserId: UstarHeaderField<number> = UstarHeaderField.frozen({
 		name: 'groupUserId',
 		offset: 116,
 		size: 8,
-		type: UstarHeaderFieldType.INTEGER_OCTAL
+		type: UstarHeaderFieldType.INTEGER_OCTAL,
 	});
 
 	public static readonly fileSize: UstarHeaderField<number> = UstarHeaderField.frozen({
 		name: 'fileSize',
 		offset: 124,
 		size: 12,
-		type: UstarHeaderFieldType.INTEGER_OCTAL
+		type: UstarHeaderFieldType.INTEGER_OCTAL,
 	});
 
 	public static readonly lastModified: UstarHeaderField<number> = UstarHeaderField.frozen({
 		name: 'lastModified',
 		offset: 136,
 		size: 12,
-		type: UstarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP
+		type: UstarHeaderFieldType.INTEGER_OCTAL_TIMESTAMP,
 	});
 
 	public static readonly headerChecksum: UstarHeaderField<number> = UstarHeaderField.frozen({
 		name: 'headerChecksum',
 		offset: 148,
 		size: 8,
-		type: UstarHeaderFieldType.INTEGER_OCTAL
+		type: UstarHeaderFieldType.INTEGER_OCTAL,
 	});
 
 	public static readonly typeFlag: UstarHeaderField<string> = UstarHeaderField.frozen({
 		name: 'typeFlag',
 		offset: 156,
 		size: 1,
-		type: UstarHeaderFieldType.ASCII
+		type: UstarHeaderFieldType.ASCII,
 	});
 
 	public static readonly linkedFileName: UstarHeaderField<string> = UstarHeaderField.frozen({
 		name: 'linkedFileName',
 		offset: 157,
 		size: 100,
-		type: UstarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END,
 	});
 
 	// =====================================================================
@@ -119,7 +119,7 @@ export class UstarHeaderField<T> implements UstarHeaderFieldLike {
 		offset: 257,
 		size: 6,
 		type: UstarHeaderFieldType.ASCII,
-		constantValue: Constants.USTAR_INDICATOR_VALUE
+		constantValue: Constants.USTAR_INDICATOR_VALUE,
 	});
 
 	public static readonly ustarVersion: UstarHeaderField<string> = UstarHeaderField.frozen({
@@ -127,42 +127,42 @@ export class UstarHeaderField<T> implements UstarHeaderFieldLike {
 		offset: 263,
 		size: 2,
 		type: UstarHeaderFieldType.ASCII,
-		constantValue: Constants.USTAR_VERSION_VALUE
+		constantValue: Constants.USTAR_VERSION_VALUE,
 	});
 
 	public static readonly ownerUserName: UstarHeaderField<string> = UstarHeaderField.frozen({
 		name: 'ownerUserName',
 		offset: 265,
 		size: 32,
-		type: UstarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END,
 	});
 
 	public static readonly ownerGroupName: UstarHeaderField<string> = UstarHeaderField.frozen({
 		name: 'ownerGroupName',
 		offset: 297,
 		size: 32,
-		type: UstarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END,
 	});
 
 	public static readonly deviceMajorNumber: UstarHeaderField<string> = UstarHeaderField.frozen({
 		name: 'deviceMajorNumber',
 		offset: 329,
 		size: 8,
-		type: UstarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END,
 	});
 
 	public static readonly deviceMinorNumber: UstarHeaderField<string> = UstarHeaderField.frozen({
 		name: 'deviceMinorNumber',
 		offset: 337,
 		size: 8,
-		type: UstarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END,
 	});
 
 	public static readonly fileNamePrefix: UstarHeaderField<string> = UstarHeaderField.frozen({
 		name: 'fileNamePrefix',
 		offset: 345,
 		size: 155,
-		type: UstarHeaderFieldType.ASCII_PADDED_END
+		type: UstarHeaderFieldType.ASCII_PADDED_END,
 	});
 
 	public static all(): UstarHeaderField<any>[] {
@@ -182,12 +182,12 @@ export class UstarHeaderField<T> implements UstarHeaderFieldLike {
 			UstarHeaderField.ownerGroupName,
 			UstarHeaderField.deviceMajorNumber,
 			UstarHeaderField.deviceMinorNumber,
-			UstarHeaderField.fileNamePrefix
+			UstarHeaderField.fileNamePrefix,
 		];
 	}
 
 	public static checksumSet(): UstarHeaderField<any>[] {
-		return UstarHeaderField.all().filter(v => v !== UstarHeaderField.headerChecksum);
+		return UstarHeaderField.all().filter((v) => v !== UstarHeaderField.headerChecksum);
 	}
 
 	// =====================================================================
@@ -257,14 +257,16 @@ export class UstarHeaderField<T> implements UstarHeaderFieldLike {
 	 */
 	public writeTo(output: Uint8Array, headerOffset: number, value: T): boolean {
 		headerOffset = Math.max(headerOffset, 0);
-		
+
 		const valueBytes = this.serialize(value);
 		const valueByteLength = valueBytes.byteLength;
 		const absoluteOffset = headerOffset + this.offset;
 
-		if (valueByteLength > 0
-			&& TarUtility.isUint8Array(output)
-			&& output.byteLength >= (absoluteOffset + valueByteLength)) {
+		if (
+			valueByteLength > 0 &&
+			TarUtility.isUint8Array(output) &&
+			output.byteLength >= absoluteOffset + valueByteLength
+		) {
 			output.set(valueBytes, absoluteOffset);
 			return true;
 		}

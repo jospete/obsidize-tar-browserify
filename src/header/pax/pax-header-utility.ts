@@ -11,7 +11,7 @@ export namespace PaxHeaderUtility {
 		PaxHeaderKey.PATH,
 		PaxHeaderKey.SIZE,
 		PaxHeaderKey.USER_ID,
-		PaxHeaderKey.USER_NAME
+		PaxHeaderKey.USER_NAME,
 	];
 
 	export function isKnownHeaderKey(key: string): boolean {

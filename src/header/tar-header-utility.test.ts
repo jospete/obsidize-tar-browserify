@@ -1,14 +1,14 @@
 import { TarHeaderUtility } from './tar-header-utility';
 import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicator-type';
 
-const {isTarHeaderLinkIndicatorTypePax} = TarHeaderUtility;
+const { isTarHeaderLinkIndicatorTypePax } = TarHeaderUtility;
 
 describe('TarHeaderUtility', () => {
 	describe('isTarHeaderLinkIndicatorTypePax', () => {
 		it('should return true for global pax header type', () => {
 			expect(isTarHeaderLinkIndicatorTypePax(UstarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER)).toBe(true);
 		});
-		
+
 		it('should return true for local pax header type', () => {
 			expect(isTarHeaderLinkIndicatorTypePax(UstarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER)).toBe(true);
 		});

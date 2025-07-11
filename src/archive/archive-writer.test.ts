@@ -7,7 +7,7 @@ describe('ArchiveWriter', () => {
 	it('should be creatable', () => {
 		const writer = new ArchiveWriter();
 		expect(writer).toBeTruthy();
-	});	
+	});
 
 	describe('addEntryWith()', () => {
 		it('includes the given entry in generated output', async () => {
@@ -144,11 +144,11 @@ describe('ArchiveWriter', () => {
 				.addTextFile('another file.txt', 'this is a file with white-space in the name');
 			expect(writer.entries.length).toBe(2);
 
-			writer.removeEntriesWhere(v => / /.test(v.fileName));
+			writer.removeEntriesWhere((v) => / /.test(v.fileName));
 			expect(writer.entries.length).toBe(1);
 
 			// doing it again should have no effect
-			writer.removeEntriesWhere(v => / /.test(v.fileName));
+			writer.removeEntriesWhere((v) => / /.test(v.fileName));
 			expect(writer.entries.length).toBe(1);
 		});
 	});
@@ -158,11 +158,11 @@ describe('ArchiveWriter', () => {
 			const writer = new ArchiveWriter()
 				.addTextFile('sample1.txt', 'this is a file')
 				.addTextFile('another file.txt', 'this is a file with white-space in the name');
-			
+
 			const entry1Spy = jest.spyOn(writer.entries[0].header, 'clean');
 			const entry2Spy = jest.spyOn(writer.entries[0].header, 'clean');
 			writer.cleanAllHeaders();
-			
+
 			expect(entry1Spy).toHaveBeenCalledTimes(1);
 			expect(entry2Spy).toHaveBeenCalledTimes(1);
 		});

@@ -15,7 +15,7 @@ export interface TarHeaderOptions {
 /**
  * Facade over a backing Uint8Array buffer to consume/edit header data
  * at a specific location in the buffer.
- * 
+ *
  * Does not perform any mutations or reads on creation, and
  * lazy loads/sets data via getters and setters.
  */
@@ -26,7 +26,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	private mIsGlobal: boolean;
 
 	constructor(options: TarHeaderOptions) {
-		const {ustar, pax, preamble, isPaxGlobal} = options;
+		const { ustar, pax, preamble, isPaxGlobal } = options;
 		this.ustar = ustar;
 		this.pax = pax;
 		this.mPreamble = preamble;
@@ -35,7 +35,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public static isTarHeader(value: any): boolean {
-		return !!(value && (value instanceof TarHeader));
+		return !!(value && value instanceof TarHeader);
 	}
 
 	/**
@@ -60,7 +60,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 			pax = PaxHeader.fromAttributes(paxRequiredAttributes);
 		}
 
-		return new TarHeader({ustar, pax});
+		return new TarHeader({ ustar, pax });
 	}
 
 	/**
@@ -73,9 +73,9 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 
 		return TarHeader.fromAttributes(attributes).toUint8Array();
 	}
-	
+
 	private static collectPaxRequiredAttributes(
-		attrs: UstarHeaderLike | Partial<UstarHeaderLike>
+		attrs: UstarHeaderLike | Partial<UstarHeaderLike>,
 	): Partial<PaxHeaderAttributes> | null {
 		if (TarUtility.isObject(attrs)) {
 			let collected: Partial<PaxHeaderAttributes> = {};
@@ -83,7 +83,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 			if (attrs.fileName && attrs.fileName.length > UstarHeaderField.fileName.size) {
 				collected.path = attrs.fileName;
 			}
-	
+
 			if (Object.keys(collected).length > 0) {
 				return collected;
 			}
@@ -94,13 +94,13 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 
 	private static splitBaseFileName(fileName: string): string[] {
 		let offset = fileName.lastIndexOf('/');
-		
+
 		if (offset >= 0) {
 			return [fileName.substring(0, offset), fileName.substring(offset + 1)];
 		}
 
 		offset = fileName.lastIndexOf('\\');
-		
+
 		if (offset >= 0) {
 			return [fileName.substring(0, offset), fileName.substring(offset + 1)];
 		}
@@ -215,9 +215,9 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	/**
 	 * Removes any unknown or un-standardized keys from
 	 * the PAX portion of this header (if one exists).
-	 * 
+	 *
 	 * See also `PaxHeader.clean()`.
-	 * 
+	 *
 	 * @returns `this` for operation chaining
 	 */
 	public clean(): this {
@@ -228,7 +228,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	/**
 	 * Ensures that things such as checksum values are
 	 * synchronized with the current underlying header states.
-	 * 
+	 *
 	 * @returns `this` for operation chaining
 	 */
 	private normalize(): this {
@@ -241,7 +241,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	 */
 	public toUint8Array(): Uint8Array {
 		this.normalize();
-		
+
 		const isPax = !!(this.isPaxHeader && this.pax && this.preamble);
 
 		if (!isPax) {
@@ -267,8 +267,8 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public toJSON(): Record<string, unknown> {
-		const {pax, preamble, ustar} = this;
-		return {preamble, pax, ustar};
+		const { pax, preamble, ustar } = this;
+		return { preamble, pax, ustar };
 	}
 
 	private trySyncPaxHeader(): void {
@@ -287,12 +287,11 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 			fileName,
 			typeFlag,
 			lastModified,
-			fileSize
+			fileSize,
 		};
 
 		if (this.mPreamble) {
 			this.mPreamble.update(preambleAttrs);
-
 		} else {
 			this.mPreamble = new UstarHeader(preambleAttrs);
 		}

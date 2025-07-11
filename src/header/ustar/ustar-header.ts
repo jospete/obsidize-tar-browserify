@@ -8,7 +8,7 @@ import { UstarHeaderLinkIndicatorType } from './ustar-header-link-indicator-type
 /**
  * Facade over a backing Uint8Array buffer to consume/edit header data
  * at a specific location in the buffer.
- * 
+ *
  * Does not perform any mutations or reads on creation, and
  * lazy loads/sets data via getters and setters.
  */
@@ -20,7 +20,7 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public static isUstarHeader(value: any): boolean {
-		return !!(value && (value instanceof UstarHeader));
+		return !!(value && value instanceof UstarHeader);
 	}
 
 	/**
@@ -41,7 +41,7 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 	/**
 	 * Parses out a UstarHeader instance from the given input buffer, at the given offset.
 	 * The given offset must be a multiple of SECTOR_SIZE.
-	 * 
+	 *
 	 * If the sector at the given offset is not marked with a ustar indicator,
 	 * this will return null.
 	 */
@@ -76,7 +76,7 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 			ownerGroupName: '',
 			deviceMajorNumber: '00',
 			deviceMinorNumber: '00',
-			fileNamePrefix: ''
+			fileNamePrefix: '',
 		};
 	}
 
@@ -255,7 +255,7 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 
 		return {
 			attributes,
-			buffer
+			buffer,
 		};
 	}
 }

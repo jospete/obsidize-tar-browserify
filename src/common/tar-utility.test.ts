@@ -20,9 +20,7 @@ const {
 	getDebugBufferJson,
 } = TarUtility;
 
-const {
-	SECTOR_SIZE
-} = Constants;
+const { SECTOR_SIZE } = Constants;
 
 const staticDateTime = 1632419077000;
 const staticDateTimeEncoded = 1632419077;
@@ -52,14 +50,13 @@ describe('TarUtility', () => {
 		});
 
 		it('does not modify values with no trailing zeros', () => {
-
 			const paths = [
 				'./test/path/to\u0000\u0000/a/file',
 				'\0\u0000./test/path/to\u0000\0/a/file',
-				'./test/path/to/a/file'
+				'./test/path/to/a/file',
 			];
 
-			paths.forEach(path => {
+			paths.forEach((path) => {
 				expect(removeTrailingZeros(path)).toBe(path);
 			});
 		});
@@ -135,7 +132,7 @@ describe('TarUtility', () => {
 			const a = new Uint8Array(0);
 			const b = new Uint8Array(0);
 			let result: Uint8Array | null = null;
-			expect(() => result = concatUint8Arrays(a, b)).not.toThrowError();
+			expect(() => (result = concatUint8Arrays(a, b))).not.toThrowError();
 			expect(result!.byteLength).toBe(0);
 		});
 	});

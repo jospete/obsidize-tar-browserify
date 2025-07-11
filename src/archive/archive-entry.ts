@@ -16,7 +16,7 @@ export interface ArchiveEntryOptions {
 
 /**
  * Container for metadata and content of a tarball entry.
- * 
+ *
  * Here, we consider an "entry" to be a tuple of:
  * 1. The parsed USTAR header sector content (AKA TarHeader)
  * 2. The aggregate of the proceeding file content sectors, based on the header's file size attribute
@@ -29,7 +29,7 @@ export class ArchiveEntry implements UstarHeaderLike, TarSerializable {
 	private mContext: ArchiveContext | null;
 
 	constructor(options: ArchiveEntryOptions = {}) {
-		let {header, headerAttributes, headerByteLength, content, offset, context} = options;
+		let { header, headerAttributes, headerByteLength, content, offset, context } = options;
 
 		if (!header) header = TarHeader.fromAttributes(headerAttributes || {});
 		if (!content) content = null;
@@ -194,18 +194,22 @@ export class ArchiveEntry implements UstarHeaderLike, TarSerializable {
 	/**
 	 * Only necessary if this entry was extracted from an async buffer, since the entry
 	 * does not hold the content of async buffers by default.
-	 * 
+	 *
 	 * If the entry was extracted synchronously, its content will be available via the "content" property.
-	 * 
+	 *
 	 * Do not use this on entries that have not been parsed from a source buffer,
 	 * otherwise it will very likely return garbage data.
-	 * 
+	 *
 	 * @param buffer - the source to read content from
 	 * @param offset - the _relative_ offset of the content to read;
 	 * 					setting this to 42 will start reading at the 42nd byte index within the content block
 	 * @param length - the number of bytes to read after the offset
 	 */
-	public async readContentFrom(buffer: AsyncUint8ArrayLike, offset: number = 0, length: number = 0): Promise<Uint8Array> {
+	public async readContentFrom(
+		buffer: AsyncUint8ArrayLike,
+		offset: number = 0,
+		length: number = 0,
+	): Promise<Uint8Array> {
 		const fileSize = this.fileSize;
 		const contentStartIndex = this.sourceOffset + this.sourceHeaderByteLength;
 		const contentEndIndex = contentStartIndex + fileSize;
@@ -242,9 +246,7 @@ export class ArchiveEntry implements UstarHeaderLike, TarSerializable {
 		const isFile = this.isFile();
 		const isDirectory = this.isDirectory();
 		const type = isFile ? 'file' : isDirectory ? 'directory' : 'complex';
-		const contentType = content
-			? ('Uint8Array[' + content.byteLength + ']')
-			: 'null';
+		const contentType = content ? 'Uint8Array[' + content.byteLength + ']' : 'null';
 
 		return {
 			name,
@@ -252,7 +254,7 @@ export class ArchiveEntry implements UstarHeaderLike, TarSerializable {
 			type,
 			header,
 			contentType,
-			content: TarUtility.getDebugHexString(content)
+			content: TarUtility.getDebugHexString(content),
 		};
 	}
 }

@@ -22,7 +22,7 @@ describe('UstarHeader', () => {
 		const header1 = UstarHeader.fromAttributes({
 			fileName: 'Test File.txt',
 			fileSize: 50000,
-			fileMode: 450
+			fileMode: 450,
 		});
 
 		const headerBuffer1 = UstarHeader.serializeAttributes(header1);
@@ -53,7 +53,7 @@ describe('UstarHeader', () => {
 			const fileMode = 511;
 			const header = new UstarHeader();
 
-			header.update({fileMode});
+			header.update({ fileMode });
 
 			const headerBytes = header.toUint8Array();
 			const bufferText = TarUtility.decodeString(UstarHeaderField.fileMode.slice(headerBytes));
@@ -99,21 +99,23 @@ describe('UstarHeader', () => {
 
 	describe('isPaxHeader()', () => {
 		it('should return true if the indicator is global extended type', () => {
-			const header = UstarHeader.fromAttributes({typeFlag: UstarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER});
+			const header = UstarHeader.fromAttributes({
+				typeFlag: UstarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER,
+			});
 			expect(header.isPaxHeader).toBe(true);
 			expect(header.isGlobalPaxHeader).toBe(true);
 			expect(header.isLocalPaxHeader).toBe(false);
 		});
 
 		it('should return true if the indicator is local extended type', () => {
-			const header = UstarHeader.fromAttributes({typeFlag: UstarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER});
+			const header = UstarHeader.fromAttributes({ typeFlag: UstarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER });
 			expect(header.isPaxHeader).toBe(true);
 			expect(header.isGlobalPaxHeader).toBe(false);
 			expect(header.isLocalPaxHeader).toBe(true);
 		});
 
 		it('should return false if the indicator is not a pax header type', () => {
-			const header = UstarHeader.fromAttributes({typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE});
+			const header = UstarHeader.fromAttributes({ typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE });
 			expect(header.isPaxHeader).toBe(false);
 			expect(header.isGlobalPaxHeader).toBe(false);
 			expect(header.isLocalPaxHeader).toBe(false);
