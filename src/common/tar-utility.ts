@@ -4,11 +4,6 @@ export interface TarSerializable {
 	toUint8Array(): Uint8Array;
 }
 
-export interface DebugBufferJsonObject {
-	byteLength: number;
-	content: string;
-}
-
 export namespace TarUtility {
 	export function isNumber(value: any): value is number {
 		return typeof value === 'number' && !Number.isNaN(value);
@@ -109,7 +104,7 @@ export namespace TarUtility {
 			.join(' ');
 	}
 
-	export function getDebugBufferJson(v: Uint8Array | null | undefined): DebugBufferJsonObject {
+	export function getDebugBufferJson(v: Uint8Array | null | undefined) {
 		return {
 			byteLength: v?.byteLength ?? 0,
 			content: TarUtility.getDebugHexString(v),
