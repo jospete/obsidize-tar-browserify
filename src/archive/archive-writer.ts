@@ -58,7 +58,6 @@ export class ArchiveWriter implements TarSerializable {
 
 	/**
 	 * Convenience for appending a new entry to the existing `entries` array.
-	 * Uses `TarEntry.from()` on the given parameters to create the entry.
 	 * @returns `this` for operation chaining
 	 */
 	public addEntryWith(header: UstarHeaderLike | Partial<UstarHeaderLike>, content?: Uint8Array): this {
@@ -122,7 +121,9 @@ export class ArchiveWriter implements TarSerializable {
 
 	/**
 	 * Convenience option for cleaning the header of each listed entry.
-	 * See also `TarHeader.clean()`.
+	 * When headers are "cleaned", unknown PAX properties will be removed
+	 * (e.g. unwanted MacOS "quarantine" headers), and USTAR fields
+	 * will be normalized (if necessary).
 	 */
 	public cleanAllHeaders(): this {
 		for (const entry of this.entries) {

@@ -7,6 +7,7 @@ import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-
 
 export interface TarEntryOptions {
 	header?: TarHeader;
+	headerByteLength?: number;
 	content?: Uint8Array | null;
 	offset?: number;
 	context?: ArchiveContext | null;
@@ -20,33 +21,17 @@ export interface TarEntryOptions {
  * 2. The aggregate of the proceeding file content sectors, based on the header's file size attribute
  */
 export class TarEntry implements UstarHeaderLike, TarSerializable {
-
-	protected mHeader: TarHeader;
-	protected mContent: Uint8Array | null;
-	protected mOffset: number;
-	protected mContext: ArchiveContext | null;
+	private mHeader: TarHeader;
+	private mHeaderByteLength: number;
+	private mContent: Uint8Array | null;
+	private mOffset: number;
+	private mContext: ArchiveContext | null;
 
 	constructor(options: TarEntryOptions = {}) {
-		this.initialize(options);
-	}
-
-	public static isTarEntry(v: any): boolean {
-		return !!(v && v instanceof TarEntry);
-	}
-
-	/**
-	 * Convenience parser
-	 * @param attrs - partial header data POJO
-	 * @param content - content of the entry (if it is a file)
-	 */
-	public static from(attrs: UstarHeaderLike | Partial<UstarHeaderLike>, content: Uint8Array | null = null): TarEntry {
-		return new TarEntry({header: TarHeader.from(attrs), content});
-	}
-
-	protected initialize(options: TarEntryOptions): this {
-		let {header, content, offset, context} = options;
+		let {header, headerByteLength, content, offset, context} = options;
 
 		if (!header) header = TarHeader.seeded();
+		if (!headerByteLength) headerByteLength = 0;
 		if (!content) content = null;
 		if (!offset) offset = 0;
 		if (!context) context = null;
@@ -59,11 +44,23 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 		}
 
 		this.mHeader = header;
+		this.mHeaderByteLength = headerByteLength;
 		this.mContent = content;
 		this.mOffset = offset;
 		this.mContext = context;
+	}
 
-		return this;
+	public static isTarEntry(v: any): boolean {
+		return !!(v && v instanceof TarEntry);
+	}
+
+	/**
+	 * Convenience parser
+	 * @param attrs - partial header data POJO
+	 * @param content - content of the entry (if it is a file)
+	 */
+	public static from(attrs: Partial<UstarHeaderLike>, content: Uint8Array | null = null): TarEntry {
+		return new TarEntry({header: TarHeader.from(attrs), content});
 	}
 
 	// =================================================================
@@ -140,7 +137,8 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 
 	/**
 	 * The header metadata parsed out for this entry.
-	 * See TarHeaderFieldDefinition for details.
+	 * If you are attempting to read the content of this entry,
+	 * do not modify this instance.
 	 */
 	public get header(): TarHeader {
 		return this.mHeader;
@@ -156,20 +154,28 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 	}
 
 	/**
+	 * The starting absolute index (inclusive) in the source buffer that this entry was parsed from.
+	 * Returns zero by default if this was not parsed by a source buffer.
+	 */
+	public get sourceOffset(): number {
+		return this.mOffset;
+	}
+
+	/**
+	 * The size in bytes of the header in the source buffer that this entry was parsed from.
+	 * Returns zero by default if this was not parsed by a source buffer.
+	 */
+	public get sourceHeaderByteLength(): number {
+		return this.mHeaderByteLength;
+	}
+
+	/**
 	 * The context (if any) from which this entry was parsed.
 	 * The context will include global data about things such as
 	 * the origin of the archive and global pax headers.
 	 */
 	public get sourceContext(): ArchiveContext | null | undefined {
 		return this.mContext;
-	}
-
-	/**
-	 * The starting absolute index (inclusive) in the source buffer that this entry was parsed from.
-	 * Returns zero by default if this was not parsed by a source buffer.
-	 */
-	public get sourceOffset(): number {
-		return this.mOffset;
 	}
 
 	public isDirectory(): boolean {
@@ -196,11 +202,14 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 	 * does not hold the content of async buffers by default.
 	 * 
 	 * If the entry was extracted synchronously, its content will be available via the "content" property.
+	 * 
+	 * Do not use this on entries that have not been parsed from a source buffer,
+	 * otherwise it will very likely return garbage data.
 	 */
 	public async readContentFrom(buffer: AsyncUint8ArrayLike, offset: number = 0, length: number = 0): Promise<Uint8Array> {
 		const fileSize = this.fileSize;
-		const headerByteLength = this.header.toUint8Array().byteLength;
-		const contentStartIndex = headerByteLength + this.mOffset;
+		const headerByteLength = this.sourceHeaderByteLength;
+		const contentStartIndex = headerByteLength + this.sourceOffset;
 		const contentEndIndex = contentStartIndex + fileSize;
 		const normalizedOffset = TarUtility.clamp(offset, 0, fileSize) + contentStartIndex;
 		const bytesRemaining = Math.max(0, contentEndIndex - normalizedOffset);

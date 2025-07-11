@@ -64,24 +64,17 @@ export class PaxTarHeaderSegment implements TarSerializable {
 	}
 
 	private static findNextLengthEndIndex(bytes: Uint8Array, offset: number): number {
-		const NONE = -1;
-
 		let lengthEnd = offset + 1;
-		let found = false;
 
-		while (lengthEnd < bytes.byteLength && !found) {
+		while (lengthEnd < bytes.byteLength) {
 			if (bytes[lengthEnd] === ASCII_SPACE) {
-				found = true;
+				return lengthEnd;
 			} else {
 				lengthEnd += 1;
 			}
 		}
 
-		if (!found) {
-			return NONE;
-		}
-
-		return lengthEnd;
+		return -1;
 	}
 
 	public get key(): string {
