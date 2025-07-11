@@ -16,8 +16,8 @@ export class Archive extends ArchiveWriter {
 	 * Parses an Archive instance from the given buffer, with all entries read into memory.
 	 * The buffer should come from a complete, uncompressed tar file.
 	 */
-	public static async extract(buffer: AsyncUint8ArrayIteratorInput): Promise<Archive> {
-		const reader = ArchiveReader.withInput(buffer);
+	public static async extract(input: AsyncUint8ArrayIteratorInput): Promise<Archive> {
+		const reader = ArchiveReader.withInput(input);
 		const entries = await reader.readAllEntries();
 		return new Archive(entries);
 	}
@@ -26,7 +26,7 @@ export class Archive extends ArchiveWriter {
 	 * Iterate over entries in-place from a given source buffer.
 	 * The buffer should come from a complete, uncompressed tar file.
 	 */
-	public static read(buffer: AsyncUint8ArrayIteratorInput): AsyncIterable<ArchiveEntry> {
-		return ArchiveReader.withInput(buffer);
+	public static read(input: AsyncUint8ArrayIteratorInput): AsyncIterable<ArchiveEntry> {
+		return ArchiveReader.withInput(input);
 	}
 }
