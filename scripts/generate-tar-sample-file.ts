@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-import { mkdirpSync, readFileSync, writeFileSync } from 'fs-extra';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { Archive } from '../dist';
 
 async function main() {
@@ -9,7 +9,7 @@ async function main() {
 	const archive = await Archive.extract(sampleTarBuffer);
 	const fileContent = Buffer.from(archive.toUint8Array());
 
-	mkdirpSync('./tmp');
+	if (!existsSync('./tmp')) mkdirSync('./tmp');
 	writeFileSync('./tmp/tarball-serialize-test.tar', fileContent);
 }
 
