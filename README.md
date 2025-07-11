@@ -4,8 +4,8 @@ Simple utility for packing and unpacking tar files in the browser.
 
 Highlights:
 
+- Zero dependencies
 - No node-based requires/imports (fully compatible in browser)
-- Only one dependency (`tslib` to play nice with typescript projects)
 - Inline extraction tools (examples below)
 - Builder pattern for creating tarball files in-memory (examples below)
 - Supports PAX header reading/writing

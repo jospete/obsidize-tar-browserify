@@ -63,9 +63,6 @@
 		"url": "https://github.com/jospete/obsidize-tar-browserify/issues"
 	},
 	"homepage": "https://github.com/jospete/obsidize-tar-browserify#readme",
-	"dependencies": {
-		"tslib": "^2.8.1"
-	},
 	"devDependencies": {
 		"@babel/core": "7.26.0",
 		"@babel/preset-env": "7.26.0",
