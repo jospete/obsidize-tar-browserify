@@ -12,13 +12,15 @@ const { isUint8Array } = TarUtility;
 
 describe('TarEntry', () => {
 	it('has an option to check if an entry is a directory', () => {
-		const directory = TarEntry.from({ typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY });
+		const directory = new TarEntry({
+			headerAttributes: { typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY }
+		});
 		expect(TarEntry.isTarEntry(directory)).toBe(true);
 		expect(directory.isDirectory()).toBe(true);
 	});
 
 	it('implements the TarHeader interface with conveinence accessors', () => {
-		const header = TarHeader.from({
+		const header = TarHeader.fromAttributes({
 			fileMode: 1,
 			fileSize: 2,
 			ownerUserId: 3,
@@ -63,17 +65,25 @@ describe('TarEntry', () => {
 			const rawEntry = new TarEntry();
 			expect(() => JSON.stringify(rawEntry)).not.toThrow();
 	
-			const fileWithContent = TarEntry.from({}, Uint8Array.from(range(100)));
+			const fileWithContent = new TarEntry({
+				content: Uint8Array.from(range(100))
+			});
 			expect(() => JSON.stringify(fileWithContent)).not.toThrow();
 		});
 
 		it('should indicate when an entry is a directory', () => {
-			const entry = TarEntry.from({typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY}, Uint8Array.from(range(100)));
+			const entry = new TarEntry({
+				headerAttributes: {typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY},
+				content: Uint8Array.from(range(100))
+			});
 			expect(entry.toJSON().type).toBe('directory');
 		});
 
 		it('should indicate when an entry is not a directory or file', () => {
-			const entry = TarEntry.from({typeFlag: UstarHeaderLinkIndicatorType.FIFO}, Uint8Array.from(range(100)));
+			const entry = new TarEntry({
+				headerAttributes: {typeFlag: UstarHeaderLinkIndicatorType.FIFO},
+				content: Uint8Array.from(range(100))
+			});
 			expect(entry.toJSON().type).toBe('complex');
 		});
 	});
@@ -92,8 +102,10 @@ describe('TarEntry', () => {
 
 			const offset = 12;
 			const length = 42;
-			const header = TarHeader.from({ fileName: 'Test File', fileSize: 80 });
-			const entry = new TarEntry({header, headerByteLength: HEADER_SIZE});
+			const entry = new TarEntry({
+				headerAttributes: { fileName: 'Test File', fileSize: 80 },
+				headerByteLength: HEADER_SIZE
+			});
 			const result = await entry.readContentFrom(asyncBuffer, offset, length);
 
 			expect(isUint8Array(result)).toBe(true);
@@ -114,8 +126,10 @@ describe('TarEntry', () => {
 				read: async (offset, length) => testBuffer.slice(offset, offset + length)
 			};
 
-			const header = TarHeader.from({ fileName: 'Test File', fileSize: 80 });
-			const entry = new TarEntry({header, headerByteLength: HEADER_SIZE});
+			const entry = new TarEntry({
+				headerAttributes: { fileName: 'Test File', fileSize: 80 },
+				headerByteLength: HEADER_SIZE
+			});
 			const result = await entry.readContentFrom(asyncBuffer);
 
 			expect(isUint8Array(result)).toBe(true);
@@ -127,16 +141,24 @@ describe('TarEntry', () => {
 
 	describe('toUint8Array()', () => {
 		it('works for directories', () => {
-			const entry = TarEntry.from({ fileName: 'some-directory', typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY });
+			const entry = new TarEntry({
+				headerAttributes: {
+					fileName: 'some-directory',
+					typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
+				}
+			});
 			const bytes = entry.toUint8Array();
 			expect(bytes.byteLength).toBe(Constants.HEADER_SIZE);
 		});
 
 		it('should include the content value if the entry is a file and the content exists on the entry instance', () => {
-			const entry = TarEntry.from({
-				fileName: 'some-directory',
-				typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
-			}, Uint8Array.from([1, 2, 3, 4]));
+			const entry = new TarEntry({
+				headerAttributes: {
+					fileName: 'some-directory',
+					typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY
+				},
+				content: Uint8Array.from([1, 2, 3, 4])
+			});
 			const bytes = entry.toUint8Array();
 			expect(bytes.byteLength).toBe(Constants.SECTOR_SIZE * 2);
 		});

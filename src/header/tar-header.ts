@@ -39,23 +39,16 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	/**
-	 * @returns A new `TarHeader` instance populated with the content returned by `defaultValues()`
-	 */
-	public static seeded(): TarHeader {
-		return TarHeader.from({});
-	}
-
-	/**
 	 * @returns A new `TarHeader` instance based on the given attributes (if they are a POJO).
 	 * Note that if the given value is already a TarHeader instance, this will return it as-is.
 	 */
-	public static from(attrs: Partial<UstarHeaderLike>): TarHeader {
-		if (TarHeader.isTarHeader(attrs)) {
-			return attrs as TarHeader;
+	public static fromAttributes(attributes: Partial<UstarHeaderLike>): TarHeader {
+		if (TarHeader.isTarHeader(attributes)) {
+			return attributes as TarHeader;
 		}
 
-		const ustar = new UstarHeader(attrs);
-		const paxRequiredAttributes = TarHeader.collectPaxRequiredAttributes(attrs);
+		const ustar = new UstarHeader(attributes);
+		const paxRequiredAttributes = TarHeader.collectPaxRequiredAttributes(attributes);
 		let pax: PaxTarHeader | undefined;
 
 		if (paxRequiredAttributes) {
@@ -73,12 +66,12 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	/**
 	 * Short-hand for constructing a new `TarHeader` and immediately calling `toUint8Array()` on it
 	 */
-	public static serialize(attrs: UstarHeaderLike | Partial<UstarHeaderLike>): Uint8Array {
-		if (TarHeader.isTarHeader(attrs)) {
-			return (attrs as TarHeader).toUint8Array();
+	public static serializeAttributes(attributes: Partial<UstarHeaderLike>): Uint8Array {
+		if (TarHeader.isTarHeader(attributes)) {
+			return (attributes as TarHeader).toUint8Array();
 		}
 
-		return TarHeader.from(attrs).toUint8Array();
+		return TarHeader.fromAttributes(attributes).toUint8Array();
 	}
 	
 	private static collectPaxRequiredAttributes(

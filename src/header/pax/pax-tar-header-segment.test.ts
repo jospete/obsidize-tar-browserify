@@ -95,7 +95,7 @@ describe('PaxTarHeaderSegment', () => {
 			// 92 characters + 7 metadata characters will give us 99, which should force a rollover into the 100s when length field is added
 			const value = '81a8d3ff17623fd7dda3a3729cc6bb02e___compsci_01_v1_Advice_for_Unhappy_Programmers_v3_mstr.txt';
 			const serializedBuffer = PaxTarHeaderSegment.serialize(key, value);
-			const deserializedHeader = PaxTarHeaderSegment.tryParse(serializedBuffer);
+			const deserializedHeader = PaxTarHeaderSegment.deserialize(serializedBuffer);
 
 			expect(deserializedHeader).toBeTruthy();
 			expect(deserializedHeader!.key).toBe(key);
@@ -103,18 +103,18 @@ describe('PaxTarHeaderSegment', () => {
 		});
 	});
 
-	describe('tryParse()', () => {
+	describe('deserialize()', () => {
 		it('should return null if it is not given a valid Uint8Array', () => {
 			const invalidParameter: any = {potato: true};
-			expect(PaxTarHeaderSegment.tryParse(invalidParameter)).toBe(null);
+			expect(PaxTarHeaderSegment.deserialize(invalidParameter)).toBe(null);
 		});
 
 		it('should return null if the buffer it is given is malformed', () => {
 			const garbageBuffer1 = Uint8Array.from(range(5));
-			expect(PaxTarHeaderSegment.tryParse(garbageBuffer1)).toBe(null);
+			expect(PaxTarHeaderSegment.deserialize(garbageBuffer1)).toBe(null);
 
 			const garbageBuffer2 = new TextEncoder().encode('abc 123');
-			expect(PaxTarHeaderSegment.tryParse(garbageBuffer2)).toBe(null);
+			expect(PaxTarHeaderSegment.deserialize(garbageBuffer2)).toBe(null);
 		});
 	});
 

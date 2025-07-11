@@ -18,7 +18,7 @@ const createPaxHeaderBuffer = (
 	paxAttrs: Partial<PaxTarHeaderAttributes>,
 	global?: boolean
 ): Uint8Array => {
-	const actualHeader = UstarHeader.from(headerAttrs);
+	const actualHeader = UstarHeader.fromAttributes(headerAttrs);
 	const paxHeader = PaxTarHeader.fromAttributes(paxAttrs);
 	const combinedHeader = new TarHeader({ustar: actualHeader, pax: paxHeader, isPaxGlobal: global});
 	return combinedHeader.toUint8Array();
@@ -41,7 +41,7 @@ describe('ArchiveReader', () => {
 
 	it('should correctly parse pax headers', async () => {
 		const buffer = base64ToUint8Array(PAX_tarballSampleBase64);
-		const entries = await ArchiveReader.wrap(buffer).readAllEntries();
+		const entries = await ArchiveReader.withInput(buffer).readAllEntries();
 		const files = entries.filter(v => v.isFile());
 		expect(files.length).toBeGreaterThan(0);
 		const paxEntry = entries.find(v => !!v?.header?.pax);
@@ -71,11 +71,11 @@ describe('ArchiveReader', () => {
 		const contentLength = Constants.SECTOR_SIZE + 1;
 		const content = Uint8Array.from(range(contentLength));
 
-		const header = TarHeader.from({
+		const header = TarHeader.serializeAttributes({
 			fileName: 'truncated.bin',
 			typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE,
 			fileSize: contentLength
-		}).toUint8Array();
+		});
 
 		const buffer = TarUtility.concatUint8Arrays(header, content);
 		const bufferSource = new InMemoryAsyncUint8Array(buffer);
@@ -95,11 +95,11 @@ describe('ArchiveReader', () => {
 		const contentLength = Constants.SECTOR_SIZE;
 		const content = Uint8Array.from(range(contentLength));
 
-		const header = TarHeader.from({
+		const header = TarHeader.serializeAttributes({
 			fileName: 'truncated.bin',
 			typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE,
 			fileSize: contentLength
-		}).toUint8Array();
+		});
 
 		const buffer = TarUtility.concatUint8Arrays(header, content);
 		const bufferSource = new InMemoryAsyncUint8Array(buffer);
@@ -183,11 +183,11 @@ describe('ArchiveReader', () => {
 		}
 	});
 
-	describe('wrap()', () => {
-		it('should use async-like structures as is', async () => {
+	describe('withInput()', () => {
+		it('should use async-like structures as is', () => {
 			const buffer = Uint8Array.from([1, 2, 3, 4]);
 			const bufferSource = new InMemoryAsyncUint8Array(buffer);
-			const reader = await ArchiveReader.wrap(bufferSource);
+			const reader = ArchiveReader.withInput(bufferSource);
 			expect(reader.source).toBe(bufferSource);
 		});
 	});

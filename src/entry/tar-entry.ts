@@ -7,6 +7,7 @@ import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-
 
 export interface TarEntryOptions {
 	header?: TarHeader;
+	headerAttributes?: Partial<UstarHeaderLike>;
 	headerByteLength?: number;
 	content?: Uint8Array | null;
 	offset?: number;
@@ -28,9 +29,9 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 	private mContext: ArchiveContext | null;
 
 	constructor(options: TarEntryOptions = {}) {
-		let {header, headerByteLength, content, offset, context} = options;
+		let {header, headerAttributes, headerByteLength, content, offset, context} = options;
 
-		if (!header) header = TarHeader.seeded();
+		if (!header) header = TarHeader.fromAttributes(headerAttributes || {});
 		if (!headerByteLength) headerByteLength = 0;
 		if (!content) content = null;
 		if (!offset) offset = 0;
@@ -52,15 +53,6 @@ export class TarEntry implements UstarHeaderLike, TarSerializable {
 
 	public static isTarEntry(v: any): boolean {
 		return !!(v && v instanceof TarEntry);
-	}
-
-	/**
-	 * Convenience parser
-	 * @param attrs - partial header data POJO
-	 * @param content - content of the entry (if it is a file)
-	 */
-	public static from(attrs: Partial<UstarHeaderLike>, content: Uint8Array | null = null): TarEntry {
-		return new TarEntry({header: TarHeader.from(attrs), content});
 	}
 
 	// =================================================================

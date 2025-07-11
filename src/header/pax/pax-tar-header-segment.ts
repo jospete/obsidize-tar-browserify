@@ -34,7 +34,7 @@ export class PaxTarHeaderSegment implements TarSerializable {
 		return TarUtility.encodeString(segment);
 	}
 
-	public static tryParse(bytes: Uint8Array, offset: number = 0): PaxTarHeaderSegment | null {
+	public static deserialize(bytes: Uint8Array, offset: number = 0): PaxTarHeaderSegment | null {
 		if (!TarUtility.isUint8Array(bytes)) {
 			return null;
 		}

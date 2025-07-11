@@ -34,7 +34,7 @@ describe('TarHeaderField', () => {
 
 	describe('isUstarSector()', () => {
 		it('returns true if the buffer contains a ustar indicator', () => {
-			const testHeaderBuffer = UstarHeader.serialize(null as any);
+			const testHeaderBuffer = UstarHeader.serializeAttributes(null as any);
 			expect(isUstarSector(testHeaderBuffer)).toBe(true);
 		});
 
@@ -45,7 +45,7 @@ describe('TarHeaderField', () => {
 
 		it('allows for non-standard padding after ustar indicator header data', () => {
 			const targetOffset = ustarIndicator.offset;
-			const testHeaderBuffer = UstarHeader.serialize(null as any);
+			const testHeaderBuffer = UstarHeader.serializeAttributes(null as any);
 			const baseValue = USTAR_TAG;
 
 			const assertValidHeader = (value: string, isValid: boolean) => {

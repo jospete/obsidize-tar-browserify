@@ -11,10 +11,39 @@ describe('UstarHeader', () => {
 		expect(() => JSON.stringify(header)).not.toThrow();
 	});
 
-	describe('from()', () => {
+	it('populates missing fields with sensible defaults', () => {
+		const header = new UstarHeader();
+		expect(header).not.toBeFalsy();
+		expect(header.fileMode).toBe(Constants.FILE_MODE_DEFAULT);
+		expect(header.typeFlag).toBe(UstarHeaderLinkIndicatorType.NORMAL_FILE);
+	});
+
+	it('consistently encodes and decodes the same header buffer', () => {
+		const header1 = UstarHeader.fromAttributes({
+			fileName: 'Test File.txt',
+			fileSize: 50000,
+			fileMode: 450
+		});
+
+		const headerBuffer1 = UstarHeader.serializeAttributes(header1);
+		expect(TarUtility.isUint8Array(headerBuffer1)).toBe(true);
+		expect(headerBuffer1.byteLength).toBe(Constants.HEADER_SIZE);
+
+		const header2 = UstarHeader.deserialize(headerBuffer1)!;
+		const headerBuffer2 = header2.toUint8Array();
+		expect(headerBuffer2).toEqual(headerBuffer1);
+
+		// We should be able to serialize and deserialize the same header multiple times without any data loss.
+		const header3 = UstarHeader.deserialize(headerBuffer2)!;
+		expect(header3.fileName).toBe(header1.fileName);
+		expect(header3.fileSize).toBe(header1.fileSize);
+		expect(header3.fileMode).toBe(header1.fileMode);
+	});
+
+	describe('fromAttributes()', () => {
 		it('returns the input value as-is if it is already a UstarHeader instance', () => {
 			const header = new UstarHeader();
-			const parsedHeader = UstarHeader.from(header);
+			const parsedHeader = UstarHeader.fromAttributes(header);
 			expect(parsedHeader).toBe(header);
 		});
 	});
@@ -34,40 +63,15 @@ describe('UstarHeader', () => {
 		});
 	});
 
-	describe('normalize()', () => {
-		it('populates missing fields with sensible defaults', () => {
-			const header = new UstarHeader();
-			expect(header).not.toBeFalsy();
-			expect(header.fileMode).toBe(Constants.FILE_MODE_DEFAULT);
-			expect(header.typeFlag).toBe(UstarHeaderLinkIndicatorType.NORMAL_FILE);
-		});
-
-		it('consistently encodes and decodes the same header buffer', () => {
-			const header1 = UstarHeader.from({
-				fileName: 'Test File.txt',
-				fileSize: 50000,
-				fileMode: 450
-			});
-	
-			const headerBuffer1 = UstarHeader.serialize(header1);
-			expect(TarUtility.isUint8Array(headerBuffer1)).toBe(true);
-			expect(headerBuffer1.byteLength).toBe(Constants.HEADER_SIZE);
-	
-			const header2 = UstarHeader.deserialize(headerBuffer1);
-			const headerBuffer2 = header2.toUint8Array();
-			expect(headerBuffer2).toEqual(headerBuffer1);
-	
-			// We should be able to serialize and deserialize the same header multiple times without any data loss.
-			const header3 = UstarHeader.deserialize(headerBuffer2);
-			expect(header3.fileName).toBe(header1.fileName);
-			expect(header3.fileSize).toBe(header1.fileSize);
-			expect(header3.fileMode).toBe(header1.fileMode);
+	describe('deserialize()', () => {
+		it('should return null if the input is not a valid ustar sector', () => {
+			expect(UstarHeader.deserialize(new Uint8Array())).toBe(null);
 		});
 	});
 
 	describe('findNextUstarSectorOffset()', () => {
 		it('returns the offset of the next header sector', () => {
-			const testHeaderBuffer = UstarHeader.serialize(null as any);
+			const testHeaderBuffer = UstarHeader.serializeAttributes(null as any);
 			expect(TarHeaderUtility.findNextUstarSectorOffset(testHeaderBuffer)).toBe(0);
 		});
 
@@ -78,7 +82,7 @@ describe('UstarHeader', () => {
 		it('uses the given offset when it is provided', () => {
 			const padLength = Constants.SECTOR_SIZE * 2;
 			const paddingBuffer = new Uint8Array(padLength);
-			const testHeaderBuffer = UstarHeader.serialize(null as any);
+			const testHeaderBuffer = UstarHeader.serializeAttributes(null as any);
 			const combinedBuffer = TarUtility.concatUint8Arrays(paddingBuffer, testHeaderBuffer);
 
 			expect(TarHeaderUtility.findNextUstarSectorOffset(combinedBuffer)).toBe(padLength);
@@ -87,7 +91,7 @@ describe('UstarHeader', () => {
 		});
 
 		it('snaps negative offsets to zero', () => {
-			const testHeaderBuffer = UstarHeader.serialize(null as any);
+			const testHeaderBuffer = UstarHeader.serializeAttributes(null as any);
 			expect(TarHeaderUtility.findNextUstarSectorOffset(testHeaderBuffer, -1)).toBe(0);
 			expect(TarHeaderUtility.findNextUstarSectorOffset(testHeaderBuffer, -123456)).toBe(0);
 		});
@@ -95,21 +99,21 @@ describe('UstarHeader', () => {
 
 	describe('isPaxHeader()', () => {
 		it('should return true if the indicator is global extended type', () => {
-			const header = UstarHeader.from({typeFlag: UstarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER});
+			const header = UstarHeader.fromAttributes({typeFlag: UstarHeaderLinkIndicatorType.GLOBAL_EXTENDED_HEADER});
 			expect(header.isPaxHeader).toBe(true);
 			expect(header.isGlobalPaxHeader).toBe(true);
 			expect(header.isLocalPaxHeader).toBe(false);
 		});
 
 		it('should return true if the indicator is local extended type', () => {
-			const header = UstarHeader.from({typeFlag: UstarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER});
+			const header = UstarHeader.fromAttributes({typeFlag: UstarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER});
 			expect(header.isPaxHeader).toBe(true);
 			expect(header.isGlobalPaxHeader).toBe(false);
 			expect(header.isLocalPaxHeader).toBe(true);
 		});
 
 		it('should return false if the indicator is not a pax header type', () => {
-			const header = UstarHeader.from({typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE});
+			const header = UstarHeader.fromAttributes({typeFlag: UstarHeaderLinkIndicatorType.NORMAL_FILE});
 			expect(header.isPaxHeader).toBe(false);
 			expect(header.isGlobalPaxHeader).toBe(false);
 			expect(header.isLocalPaxHeader).toBe(false);
