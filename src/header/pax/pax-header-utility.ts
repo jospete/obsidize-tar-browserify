@@ -1,4 +1,4 @@
-import { PaxHeaderKey } from './pax-header-key';
+import { PaxHeaderKey } from './pax-header-key.ts';
 
 export namespace PaxHeaderUtility {
 	const knownKeys: string[] = [

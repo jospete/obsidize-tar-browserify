@@ -1,7 +1,7 @@
-import { UstarHeaderField } from '../header/ustar/ustar-header-field';
-import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
-import { ArchiveReader } from './archive-reader';
-import { ArchiveWriter } from './archive-writer';
+import { UstarHeaderField } from '../header/ustar/ustar-header-field.ts';
+import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type.ts';
+import { ArchiveReader } from './archive-reader.ts';
+import { ArchiveWriter } from './archive-writer.ts';
 
 describe('ArchiveWriter', () => {
 	it('should be creatable', () => {

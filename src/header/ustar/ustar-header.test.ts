@@ -1,9 +1,9 @@
-import { Constants } from '../../common/constants';
-import { TarUtility } from '../../common/tar-utility';
-import { TarHeaderUtility } from '../tar-header-utility';
-import { UstarHeader } from './ustar-header';
-import { UstarHeaderField } from './ustar-header-field';
-import { UstarHeaderLinkIndicatorType } from './ustar-header-link-indicator-type';
+import { Constants } from '../../common/constants.ts';
+import { TarUtility } from '../../common/tar-utility.ts';
+import { TarHeaderUtility } from '../tar-header-utility.ts';
+import { UstarHeaderField } from './ustar-header-field.ts';
+import { UstarHeaderLinkIndicatorType } from './ustar-header-link-indicator-type.ts';
+import { UstarHeader } from './ustar-header.ts';
 
 describe('UstarHeader', () => {
 	it('can be safely stringified', () => {

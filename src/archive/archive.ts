@@ -1,7 +1,7 @@
-import { AsyncUint8ArrayIteratorInput } from '../common/async-uint8-array-iterator';
-import { ArchiveEntry } from './archive-entry';
-import { ArchiveReader } from './archive-reader';
-import { ArchiveWriter } from './archive-writer';
+import { AsyncUint8ArrayIteratorInput } from '../common/async-uint8-array-iterator.ts';
+import { ArchiveEntry } from './archive-entry.ts';
+import { ArchiveReader } from './archive-reader.ts';
+import { ArchiveWriter } from './archive-writer.ts';
 
 /**
  * Main entry point for extracting and creating tarballs.

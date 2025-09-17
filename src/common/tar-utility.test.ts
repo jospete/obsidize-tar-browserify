@@ -1,5 +1,5 @@
-import { Constants } from './constants';
-import { TarUtility } from './tar-utility';
+import { Constants } from './constants.ts';
+import { TarUtility } from './tar-utility.ts';
 
 const {
 	ustarTimeToDate,

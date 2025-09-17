@@ -1,6 +1,6 @@
-import { Constants } from '../../common/constants';
-import { TarUtility } from '../../common/tar-utility';
-import { UstarHeaderFieldType } from './ustar-header-field-type';
+import { Constants } from '../../common/constants.ts';
+import { TarUtility } from '../../common/tar-utility.ts';
+import { UstarHeaderFieldType } from './ustar-header-field-type.ts';
 
 /**
  * Generalized transformation interface for header fields.

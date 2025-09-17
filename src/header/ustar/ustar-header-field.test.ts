@@ -1,10 +1,10 @@
-import { Constants } from '../../common/constants';
-import { TarUtility } from '../../common/tar-utility';
-import { range } from '../../test/test-util';
-import { TarHeaderUtility } from '../tar-header-utility';
-import { UstarHeader } from './ustar-header';
-import { UstarHeaderField } from './ustar-header-field';
-import { UstarHeaderFieldType } from './ustar-header-field-type';
+import { Constants } from '../../common/constants.ts';
+import { TarUtility } from '../../common/tar-utility.ts';
+import { range } from '../../test/test-util.ts';
+import { TarHeaderUtility } from '../tar-header-utility.ts';
+import { UstarHeaderFieldType } from './ustar-header-field-type.ts';
+import { UstarHeaderField } from './ustar-header-field.ts';
+import { UstarHeader } from './ustar-header.ts';
 
 const { encodeString, sanitizeDateTimeAsUstar } = TarUtility;
 

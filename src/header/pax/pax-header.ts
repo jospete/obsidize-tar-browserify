@@ -1,9 +1,9 @@
-import { Constants } from '../../common/constants';
-import { TarSerializable, TarUtility } from '../../common/tar-utility';
-import { UstarHeaderField } from '../ustar/ustar-header-field';
-import { PaxHeaderKey } from './pax-header-key';
-import { PaxHeaderSegment } from './pax-header-segment';
-import { PaxHeaderUtility } from './pax-header-utility';
+import { Constants } from '../../common/constants.ts';
+import { TarSerializable, TarUtility } from '../../common/tar-utility.ts';
+import { UstarHeaderField } from '../ustar/ustar-header-field.ts';
+import { PaxHeaderKey } from './pax-header-key.ts';
+import { PaxHeaderSegment } from './pax-header-segment.ts';
+import { PaxHeaderUtility } from './pax-header-utility.ts';
 
 /**
  * Object of key-value pairs for raw PAX attributes to populate a `PaxHeader` instance with.

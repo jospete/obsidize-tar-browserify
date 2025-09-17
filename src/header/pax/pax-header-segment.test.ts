@@ -1,7 +1,7 @@
-import { TarUtility } from '../../common/tar-utility';
-import { hexToUint8Array, range } from '../../test/test-util';
-import { PaxHeaderKey } from './pax-header-key';
-import { PaxHeaderSegment } from './pax-header-segment';
+import { TarUtility } from '../../common/tar-utility.ts';
+import { hexToUint8Array, range } from '../../test/test-util.ts';
+import { PaxHeaderKey } from './pax-header-key.ts';
+import { PaxHeaderSegment } from './pax-header-segment.ts';
 
 interface PaxHeaderTestMetadata {
 	hex: string;

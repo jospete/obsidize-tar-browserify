@@ -1,6 +1,6 @@
-import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from './async-uint8-array';
-import { Constants } from './constants';
-import { TarUtility } from './tar-utility';
+import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from './async-uint8-array.ts';
+import { Constants } from './constants.ts';
+import { TarUtility } from './tar-utility.ts';
 
 /**
  * Read result when `AsyncUint8ArrayIterator.next()` succeeds.

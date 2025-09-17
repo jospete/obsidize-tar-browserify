@@ -1,9 +1,9 @@
-import { Constants } from '../../common/constants';
-import { TarSerializable, TarUtility } from '../../common/tar-utility';
-import { TarHeaderUtility } from '../tar-header-utility';
-import { UstarHeaderField } from './ustar-header-field';
-import { UstarHeaderLike } from './ustar-header-like';
-import { UstarHeaderLinkIndicatorType } from './ustar-header-link-indicator-type';
+import { Constants } from '../../common/constants.ts';
+import { TarSerializable, TarUtility } from '../../common/tar-utility.ts';
+import { TarHeaderUtility } from '../tar-header-utility.ts';
+import { UstarHeaderField } from './ustar-header-field.ts';
+import { UstarHeaderLike } from './ustar-header-like.ts';
+import { UstarHeaderLinkIndicatorType } from './ustar-header-link-indicator-type.ts';
 
 /**
  * Facade over a backing Uint8Array buffer to consume/edit header data

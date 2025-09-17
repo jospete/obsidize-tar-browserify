@@ -1,11 +1,11 @@
-import { ArchiveContext } from '../common/archive-context';
-import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array';
-import { Constants } from '../common/constants';
-import { TarUtility } from '../common/tar-utility';
-import { TarHeader } from '../header/tar-header';
-import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
-import { range } from '../test/test-util';
-import { ArchiveEntry } from './archive-entry';
+import { ArchiveContext } from '../common/archive-context.ts';
+import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array.ts';
+import { Constants } from '../common/constants.ts';
+import { TarUtility } from '../common/tar-utility.ts';
+import { TarHeader } from '../header/tar-header.ts';
+import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type.ts';
+import { range } from '../test/test-util.ts';
+import { ArchiveEntry } from './archive-entry.ts';
 
 const { HEADER_SIZE } = Constants;
 const { isUint8Array } = TarUtility;

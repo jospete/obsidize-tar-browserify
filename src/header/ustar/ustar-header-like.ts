@@ -1,4 +1,4 @@
-import { UstarHeaderLinkIndicatorType } from './ustar-header-link-indicator-type';
+import { UstarHeaderLinkIndicatorType } from './ustar-header-link-indicator-type.ts';
 
 /**
  * Core content parsed from a tar header sector.

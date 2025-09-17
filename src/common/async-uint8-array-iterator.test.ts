@@ -1,5 +1,5 @@
-import { InMemoryAsyncUint8Array } from './async-uint8-array';
-import { AsyncUint8ArrayIterator } from './async-uint8-array-iterator';
+import { AsyncUint8ArrayIterator } from './async-uint8-array-iterator.ts';
+import { InMemoryAsyncUint8Array } from './async-uint8-array.ts';
 
 describe('AsyncUint8ArrayIterator', () => {
 	const createFromBuffer = (buffer: Uint8Array = new Uint8Array(0)) => {
