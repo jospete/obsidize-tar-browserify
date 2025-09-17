@@ -1,4 +1,4 @@
-import { UstarHeaderFieldTransformType } from './ustar-header-field-transform';
+import { UstarHeaderFieldTransformType } from './ustar-header-field-transform.ts';
 
 describe('UstarHeaderFieldTransform', () => {
 	describe('TarHeaderFieldTransformType', () => {

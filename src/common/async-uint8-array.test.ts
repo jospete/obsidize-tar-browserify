@@ -1,5 +1,5 @@
-import { InMemoryAsyncUint8Array } from './async-uint8-array';
-import { Constants } from './constants';
+import { InMemoryAsyncUint8Array } from './async-uint8-array.ts';
+import { Constants } from './constants.ts';
 
 describe('AsyncUint8ArrayLike', () => {
 	describe('InMemoryAsyncUint8Array', () => {

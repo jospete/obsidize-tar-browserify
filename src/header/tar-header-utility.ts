@@ -1,7 +1,7 @@
-import { Constants } from '../common/constants';
-import { TarUtility } from '../common/tar-utility';
-import { UstarHeaderField } from './ustar/ustar-header-field';
-import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicator-type';
+import { Constants } from '../common/constants.ts';
+import { TarUtility } from '../common/tar-utility.ts';
+import { UstarHeaderField } from './ustar/ustar-header-field.ts';
+import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicator-type.ts';
 
 export namespace TarHeaderUtility {
 	export const CHECKSUM_SEED_STRING = ''.padStart(UstarHeaderField.headerChecksum.size, ' ');

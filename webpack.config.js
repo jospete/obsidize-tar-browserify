@@ -7,14 +7,17 @@ const baseConfig = {
 	module: {
 		rules: [
 			{
-				test: /\.(ts|tsx)$/,
 				use: 'ts-loader',
-				exclude: [/node_modules/, /\.test\.ts$/, /\.mock\.ts$/, /src\/test\//],
+				test: /\.(ts|tsx)$/,
+				exclude: [/node_modules/, /\.test\.ts$/, /\.mock\.ts$/, /src\/test\//, /dist/],
 			},
 		],
 	},
 	resolve: {
 		extensions: ['.ts'],
+		extensionAlias: {
+        '.js': ['.js', '.ts'],
+    	},
 	},
 };
 

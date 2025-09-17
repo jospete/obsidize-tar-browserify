@@ -1,6 +1,6 @@
 import { gzip } from 'pako';
-import { Archive, ArchiveEntry, AsyncUint8ArrayLike, TarUtility } from './index';
-import { fileStructures, tarballSampleBase64, totalFileCount } from './test/generated/tarball-test-content';
+import { Archive, ArchiveEntry, AsyncUint8ArrayLike, TarUtility } from './index.ts';
+import { fileStructures, tarballSampleBase64, totalFileCount } from './test/generated/tarball-test-content.ts';
 
 import {
 	fileStructures as PAX_fileStructures,
@@ -150,7 +150,7 @@ describe('Global Tests', () => {
 					.addBinaryFile('Nested1/Nested2/supersecret.bin', Uint8Array.from([6, 7, 8, 9]))
 					.toUint8Array();
 
-				const gzBuffer = gzip(tarBuffer);
+				const gzBuffer = gzip(tarBuffer) as BlobPart;
 				const fileToSend = new File([gzBuffer], 'my-awesome-new-file.tar.gz');
 				expect(fileToSend).toBeTruthy();
 			});
@@ -167,7 +167,7 @@ describe('Global Tests', () => {
 					.addTextFile('new text file.txt', 'this was added to the original tar file!')
 					.toUint8Array();
 
-				const updatedGzBuffer = gzip(updatedTarBuffer);
+				const updatedGzBuffer = gzip(updatedTarBuffer) as BlobPart;
 				const fileToSend = new File([updatedGzBuffer], 'my-awesome-edited-file.tar.gz');
 				expect(fileToSend).toBeTruthy();
 			});

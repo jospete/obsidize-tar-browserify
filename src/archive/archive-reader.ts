@@ -1,13 +1,13 @@
-import { ArchiveContext } from '../common/archive-context';
-import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array';
-import { AsyncUint8ArrayIterator, AsyncUint8ArrayIteratorInput } from '../common/async-uint8-array-iterator';
-import { Constants } from '../common/constants';
-import { TarUtility } from '../common/tar-utility';
-import { PaxHeader } from '../header/pax/pax-header';
-import { TarHeader } from '../header/tar-header';
-import { TarHeaderUtility } from '../header/tar-header-utility';
-import { UstarHeader } from '../header/ustar/ustar-header';
-import { ArchiveEntry } from './archive-entry';
+import type { ArchiveContext } from '../common/archive-context.ts';
+import { AsyncUint8ArrayIterator, AsyncUint8ArrayIteratorInput } from '../common/async-uint8-array-iterator.ts';
+import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array.ts';
+import { Constants } from '../common/constants.ts';
+import { TarUtility } from '../common/tar-utility.ts';
+import { PaxHeader } from '../header/pax/pax-header.ts';
+import { TarHeaderUtility } from '../header/tar-header-utility.ts';
+import { TarHeader } from '../header/tar-header.ts';
+import { UstarHeader } from '../header/ustar/ustar-header.ts';
+import { ArchiveEntry } from './archive-entry.ts';
 
 const MAX_LOADED_BYTES = Constants.SECTOR_SIZE * 100000; // ~50Mb
 

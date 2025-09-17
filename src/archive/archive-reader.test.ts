@@ -1,20 +1,20 @@
-import { ArchiveContext } from '../common/archive-context';
-import { InMemoryAsyncUint8Array } from '../common/async-uint8-array';
-import { AsyncUint8ArrayIterator } from '../common/async-uint8-array-iterator';
-import { Constants } from '../common/constants';
-import { TarUtility } from '../common/tar-utility';
-import { PaxHeader, PaxHeaderAttributes } from '../header/pax/pax-header';
-import { PaxHeaderKey } from '../header/pax/pax-header-key';
-import { TarHeader } from '../header/tar-header';
-import { UstarHeader } from '../header/ustar/ustar-header';
-import { UstarHeaderLike } from '../header/ustar/ustar-header-like';
-import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
+import { ArchiveContext } from '../common/archive-context.ts';
+import { AsyncUint8ArrayIterator } from '../common/async-uint8-array-iterator.ts';
+import { InMemoryAsyncUint8Array } from '../common/async-uint8-array.ts';
+import { Constants } from '../common/constants.ts';
+import { TarUtility } from '../common/tar-utility.ts';
+import { PaxHeaderKey } from '../header/pax/pax-header-key.ts';
+import { PaxHeader, PaxHeaderAttributes } from '../header/pax/pax-header.ts';
+import { TarHeader } from '../header/tar-header.ts';
+import { UstarHeaderLike } from '../header/ustar/ustar-header-like.ts';
+import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type.ts';
+import { UstarHeader } from '../header/ustar/ustar-header.ts';
 import {
 	tarballSampleBase64 as PAX_tarballSampleBase64,
 	totalFileCount as PAX_totalFileCount,
-} from '../test/generated/pax-header-test-content';
-import { base64ToUint8Array, range } from '../test/test-util';
-import { ArchiveReader, ArchiveReadError } from './archive-reader';
+} from '../test/generated/pax-header-test-content.ts';
+import { base64ToUint8Array, range } from '../test/test-util.ts';
+import { ArchiveReader, ArchiveReadError } from './archive-reader.ts';
 
 const createPaxHeaderBuffer = (
 	headerAttrs: Partial<UstarHeaderLike>,

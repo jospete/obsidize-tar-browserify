@@ -1,8 +1,8 @@
-import { Constants } from '../common/constants';
-import { TarSerializable, TarUtility } from '../common/tar-utility';
-import { UstarHeaderLike } from '../header/ustar/ustar-header-like';
-import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
-import { ArchiveEntry } from './archive-entry';
+import { Constants } from '../common/constants.ts';
+import { TarSerializable, TarUtility } from '../common/tar-utility.ts';
+import { UstarHeaderLike } from '../header/ustar/ustar-header-like.ts';
+import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type.ts';
+import { ArchiveEntry } from './archive-entry.ts';
 
 export type ArchiveEntryPredicate = (entry: ArchiveEntry) => boolean;
 

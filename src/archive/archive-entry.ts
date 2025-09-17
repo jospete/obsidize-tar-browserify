@@ -1,9 +1,9 @@
-import { ArchiveContext } from '../common/archive-context';
-import { AsyncUint8ArrayLike } from '../common/async-uint8-array';
-import { TarSerializable, TarUtility } from '../common/tar-utility';
-import { TarHeader } from '../header/tar-header';
-import { UstarHeaderLike } from '../header/ustar/ustar-header-like';
-import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type';
+import { ArchiveContext } from '../common/archive-context.ts';
+import { AsyncUint8ArrayLike } from '../common/async-uint8-array.ts';
+import { TarSerializable, TarUtility } from '../common/tar-utility.ts';
+import { TarHeader } from '../header/tar-header.ts';
+import { UstarHeaderLike } from '../header/ustar/ustar-header-like.ts';
+import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type.ts';
 
 export interface ArchiveEntryOptions {
 	header?: TarHeader;

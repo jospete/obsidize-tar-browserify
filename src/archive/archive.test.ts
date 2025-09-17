@@ -1,7 +1,7 @@
-import { fileStructures, tarballSampleBase64 } from '../test/generated/tarball-test-content';
-import { base64ToUint8Array } from '../test/test-util';
-import { Archive } from './archive';
-import { ArchiveReader } from './archive-reader';
+import { fileStructures, tarballSampleBase64 } from '../test/generated/tarball-test-content.ts';
+import { base64ToUint8Array } from '../test/test-util.ts';
+import { ArchiveReader } from './archive-reader.ts';
+import { Archive } from './archive.ts';
 
 describe('Archive', () => {
 	it('can safely be stringified when an invalid buffer is given', () => {

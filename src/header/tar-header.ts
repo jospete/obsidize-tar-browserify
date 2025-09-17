@@ -1,9 +1,9 @@
-import { TarSerializable, TarUtility } from '../common/tar-utility';
-import { PaxHeader, PaxHeaderAttributes } from './pax/pax-header';
-import { UstarHeader } from './ustar/ustar-header';
-import { UstarHeaderField } from './ustar/ustar-header-field';
-import { UstarHeaderLike } from './ustar/ustar-header-like';
-import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicator-type';
+import { TarSerializable, TarUtility } from '../common/tar-utility.ts';
+import { PaxHeader, PaxHeaderAttributes } from './pax/pax-header.ts';
+import { UstarHeaderField } from './ustar/ustar-header-field.ts';
+import { UstarHeaderLike } from './ustar/ustar-header-like.ts';
+import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicator-type.ts';
+import { UstarHeader } from './ustar/ustar-header.ts';
 
 export interface TarHeaderOptions {
 	ustar: UstarHeader;

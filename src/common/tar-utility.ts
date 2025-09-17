@@ -1,4 +1,4 @@
-import { Constants } from './constants';
+import { Constants } from './constants.ts';
 
 export interface TarSerializable {
 	toUint8Array(): Uint8Array;

@@ -1,8 +1,8 @@
-import { Constants } from '../../common/constants';
-import { TarUtility } from '../../common/tar-utility';
-import { UstarHeaderFieldTransform, UstarHeaderFieldTransformType } from './ustar-header-field-transform';
-import { UstarHeaderFieldType } from './ustar-header-field-type';
-import { UstarHeaderLike } from './ustar-header-like';
+import { Constants } from '../../common/constants.ts';
+import { TarUtility } from '../../common/tar-utility.ts';
+import { UstarHeaderFieldTransform, UstarHeaderFieldTransformType } from './ustar-header-field-transform.ts';
+import { UstarHeaderFieldType } from './ustar-header-field-type.ts';
+import { UstarHeaderLike } from './ustar-header-like.ts';
 
 /**
  * Metadata about a single field for a tar header.

@@ -1,9 +1,9 @@
-import { Constants } from '../common/constants';
-import { TarUtility } from '../common/tar-utility';
-import { TarHeader } from '../header/tar-header';
-import { TarHeaderUtility } from './tar-header-utility';
-import { UstarHeader } from './ustar/ustar-header';
-import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicator-type';
+import { Constants } from '../common/constants.ts';
+import { TarUtility } from '../common/tar-utility.ts';
+import { TarHeader } from '../header/tar-header.ts';
+import { TarHeaderUtility } from './tar-header-utility.ts';
+import { UstarHeaderLinkIndicatorType } from './ustar/ustar-header-link-indicator-type.ts';
+import { UstarHeader } from './ustar/ustar-header.ts';
 
 describe('TarHeader', () => {
 	describe('from()', () => {
