@@ -1,5 +1,5 @@
 import type { ArchiveContext } from '../common/archive-context.ts';
-import { AsyncUint8ArrayIterator, AsyncUint8ArrayIteratorInput } from '../common/async-uint8-array-iterator.ts';
+import { AsyncUint8ArrayIterator, AsyncUint8ArrayIteratorInput, AsyncUint8ArrayIteratorOptions } from '../common/async-uint8-array-iterator.ts';
 import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array.ts';
 import { Constants } from '../common/constants.ts';
 import { TarUtility } from '../common/tar-utility.ts';
@@ -16,6 +16,8 @@ interface TarHeaderParseResult {
 	headerOffset: number;
 	contentOffset: number;
 }
+
+export type ArchiveReaderInputOptions = Partial<AsyncUint8ArrayIteratorOptions>;
 
 /**
  * Errors that will be thrown if the reader encounters an invalid data layout
@@ -51,8 +53,8 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		this.mHasSyncInput = this.bufferIterator.input instanceof InMemoryAsyncUint8Array;
 	}
 
-	public static withInput(input: AsyncUint8ArrayIteratorInput): ArchiveReader {
-		return new ArchiveReader(new AsyncUint8ArrayIterator(input));
+	public static withInput(input: AsyncUint8ArrayIteratorInput, options?: ArchiveReaderInputOptions): ArchiveReader {
+		return new ArchiveReader(new AsyncUint8ArrayIterator(input, options));
 	}
 
 	[Symbol.asyncIterator](): AsyncIterableIterator<ArchiveEntry> {
