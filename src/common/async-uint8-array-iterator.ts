@@ -40,17 +40,17 @@ export interface AsyncUint8ArrayIteratorOptions {
 	blockSize: number;
 }
 
+const MIN_BLOCK_SIZE = Constants.SECTOR_SIZE;
+const MAX_BLOCK_SIZE = Constants.SECTOR_SIZE * 10000 * 4; // ~20MB
+
 function sanitizeOptions(options: Partial<AsyncUint8ArrayIteratorOptions>): AsyncUint8ArrayIteratorOptions {
 	return Object.assign(
 		{
-			blockSize: Constants.SECTOR_SIZE * 16, // 8Kb
+			blockSize: MAX_BLOCK_SIZE / 2,
 		},
 		options,
 	);
 }
-
-const MIN_BLOCK_SIZE = Constants.SECTOR_SIZE;
-const MAX_BLOCK_SIZE = Constants.SECTOR_SIZE * 10000;
 
 /**
  * Generalized abstraction for pulling in raw octet data, whether its

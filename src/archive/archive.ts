@@ -1,6 +1,6 @@
 import { AsyncUint8ArrayIteratorInput } from '../common/async-uint8-array-iterator.ts';
 import { ArchiveEntry } from './archive-entry.ts';
-import { ArchiveReader } from './archive-reader.ts';
+import { ArchiveReader, ArchiveReaderInputOptions } from './archive-reader.ts';
 import { ArchiveWriter } from './archive-writer.ts';
 
 /**
@@ -26,7 +26,7 @@ export class Archive extends ArchiveWriter {
 	 * Iterate over entries in-place from a given source buffer.
 	 * The buffer should come from a complete, uncompressed tar file.
 	 */
-	public static read(input: AsyncUint8ArrayIteratorInput): AsyncIterable<ArchiveEntry> {
-		return ArchiveReader.withInput(input);
+	public static read(input: AsyncUint8ArrayIteratorInput, options?: ArchiveReaderInputOptions): AsyncIterable<ArchiveEntry> {
+		return ArchiveReader.withInput(input, options);
 	}
 }
