@@ -14,8 +14,8 @@
 		"rewriteRelativeImportExtensions": true,
 		"outDir": "./dist",
 		"rootDir": "src",
-		"target": "es2020",
-		"lib": ["es2020"]
+		"target": "es2022",
+		"lib": ["es2022"]
 	},
 	"include": ["src/**/*.ts"],
 	"exclude": ["node_modules/", "tests/", "scripts/", "docs/", "src/test/", "src/**/*.test.ts", "dist/"]
