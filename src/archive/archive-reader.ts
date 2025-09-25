@@ -1,5 +1,9 @@
 import type { ArchiveContext } from '../common/archive-context.ts';
-import { AsyncUint8ArrayIterator, AsyncUint8ArrayIteratorInput, AsyncUint8ArrayIteratorOptions } from '../common/async-uint8-array-iterator.ts';
+import {
+	AsyncUint8ArrayIterator,
+	AsyncUint8ArrayIteratorInput,
+	AsyncUint8ArrayIteratorOptions,
+} from '../common/async-uint8-array-iterator.ts';
 import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array.ts';
 import { Constants } from '../common/constants.ts';
 import { TarUtility } from '../common/tar-utility.ts';

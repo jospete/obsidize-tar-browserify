@@ -26,7 +26,10 @@ export class Archive extends ArchiveWriter {
 	 * Iterate over entries in-place from a given source buffer.
 	 * The buffer should come from a complete, uncompressed tar file.
 	 */
-	public static read(input: AsyncUint8ArrayIteratorInput, options?: ArchiveReaderInputOptions): AsyncIterable<ArchiveEntry> {
+	public static read(
+		input: AsyncUint8ArrayIteratorInput,
+		options?: ArchiveReaderInputOptions,
+	): AsyncIterable<ArchiveEntry> {
 		return ArchiveReader.withInput(input, options);
 	}
 }
