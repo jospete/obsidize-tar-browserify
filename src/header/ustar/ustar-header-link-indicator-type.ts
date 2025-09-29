@@ -34,4 +34,9 @@ export enum UstarHeaderLinkIndicatorType {
 	 * Extended header with meta data for the next file in the archive (POSIX.1-2001)
 	 */
 	LOCAL_EXTENDED_HEADER = 'x',
+
+	/**
+	 * GNU tar special snowflake header
+	 */
+	LONG_LINK_HEADER = 'L',
 }

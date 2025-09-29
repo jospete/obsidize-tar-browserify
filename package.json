@@ -38,7 +38,8 @@
 		"test:unpack:repack:postbuild": "tsx ./scripts/test-unpack-repack.ts",
 		"test:unpack:repack": "run-s build test:unpack:repack:postbuild",
 		"test:pax:single:postbuild": "tsx ./scripts/test-pax-single-file.ts",
-		"test:pax:single": "run-s build test:pax:single:postbuild"
+		"test:pax:single": "run-s build test:pax:single:postbuild",
+		"test:unpack:node": "tsx ./scripts/test-node-download.ts"
 	},
 	"repository": {
 		"type": "git",
