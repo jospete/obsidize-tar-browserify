@@ -270,16 +270,27 @@ export class ArchiveEntry implements UstarHeaderLike, ArchiveEntryLike, TarSeria
 	 * include the underlying content by default.
 	 */
 	public toJSON(): Record<string, unknown> {
-		const { header, fileName: name, fileSize: size, content } = this;
+		const {
+			header,
+			fileName: name,
+			fileSize: size,
+			content,
+			sourceOffset: offset,
+			sourceHeaderByteLength
+		} = this;
+
 		const isFile = this.isFile();
 		const isDirectory = this.isDirectory();
 		const type = isFile ? 'file' : isDirectory ? 'directory' : 'complex';
 		const contentType = content ? 'Uint8Array[' + content.byteLength + ']' : 'null';
+		const byteLength = sourceHeaderByteLength + size;
 
 		return {
 			name,
 			size,
 			type,
+			offset,
+			byteLength,
 			header,
 			contentType,
 			content: TarUtility.getDebugHexString(content),

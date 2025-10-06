@@ -299,9 +299,9 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		}
 
 		// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
-		headerOffset = nextOffset;
+		const ustarHeaderOffset = nextOffset;
 
-		const headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
+		const headerBuffer = this.getBufferCacheSlice(ustarHeaderOffset, ustarHeaderOffset + Constants.HEADER_SIZE);
 		ustarHeader = UstarHeader.deserialize(headerBuffer)!;
 		nextOffset = TarUtility.advanceSectorOffsetUnclamped(nextOffset);
 
@@ -346,10 +346,10 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 			throw ArchiveReadError.ERR_MISSING_HEADER_SEGMENT;
 		}
 
-		// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
-		headerOffset = nextOffset;
+		// The _actual_ header is AFTER the long-link header, so need to do the header parse song and dance one more time
+		const ustarHeaderOffset = nextOffset;
 
-		const headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
+		const headerBuffer = this.getBufferCacheSlice(ustarHeaderOffset, ustarHeaderOffset + Constants.HEADER_SIZE);
 		ustarHeader = UstarHeader.deserialize(headerBuffer)!;
 		nextOffset = TarUtility.advanceSectorOffsetUnclamped(nextOffset);
 
