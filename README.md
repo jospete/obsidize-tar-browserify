@@ -115,14 +115,12 @@ async function readBigTarFile() {
       continue;
     }
 
-    let chunk = await entry.readNextContentChunk();
 	let totalBytesRead = 0;
 
-    while (chunk) {
-      // TODO: do something interesting with the data chunk
+	for await (const chunk of entry.getContentChunks()) {
 	  totalBytesRead += chunk.byteLength;
-	  chunk = await entry.readNextContentChunk(); // try to load the next chunk
-    }
+      // TODO: do something interesting with the data chunk
+	}
   }
 }
 

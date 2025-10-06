@@ -1,3 +1,4 @@
+export { ArchiveEntryAsyncContentIterator } from './archive/archive-entry-async-content-iterator.ts';
 export { ArchiveEntry, ArchiveEntryOptions } from './archive/archive-entry.ts';
 export { ArchiveReader, ArchiveReaderInputOptions, ArchiveReadError } from './archive/archive-reader.ts';
 export { ArchiveEntryPredicate, ArchiveWriter } from './archive/archive-writer.ts';

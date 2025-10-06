@@ -6,6 +6,7 @@ export interface ArchiveEntryLike {
 	readonly header: TarHeader;
 	readonly sourceOffset: number;
 	readonly sourceHeaderByteLength: number;
+	readNextContentChunk(): Promise<Uint8Array | null>;
 }
 
 export interface ArchiveContext {

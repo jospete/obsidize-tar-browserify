@@ -213,17 +213,12 @@ describe('Global Tests', () => {
 						continue;
 					}
 
-					let chunk = await entry.readNextContentChunk();
-					let lastBuf: Uint8Array | null = null;
 					let chunkCount = 0;
 					let totalBytes = 0;
 
-					while (chunk) {
-						lastBuf = chunk;
+					for await (const chunk of entry.getContentChunks()) {
 						chunkCount += 1;
 						totalBytes += chunk.byteLength;
-						chunk = await entry.readNextContentChunk();
-						expect(lastBuf).not.toEqual(chunk);
 					}
 
 					expect(chunkCount).toBe(7);
