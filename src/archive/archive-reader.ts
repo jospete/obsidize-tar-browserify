@@ -1,4 +1,4 @@
-import type { ArchiveContext } from '../common/archive-context.ts';
+import type { ArchiveContext, ArchiveEntryLike } from '../common/archive-context.ts';
 import {
 	AsyncUint8ArrayIterator,
 	AsyncUint8ArrayIteratorInput,
@@ -91,6 +91,34 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		}
 
 		return { done: true, value: null };
+	}
+
+	public async tryLoadNextEntryContentChunk(entry: ArchiveEntryLike): Promise<Uint8Array | null> {
+		if (entry.sourceContext !== this) {
+			return null;
+		}
+
+		const currentOffset = this.bufferIterator.currentOffset;
+		const minContentOffset = entry.sourceOffset + entry.sourceHeaderByteLength;
+		const maxContentOffset = minContentOffset + entry.header.fileSize;
+
+		if (currentOffset < minContentOffset || currentOffset > maxContentOffset) {
+			return null;
+		}
+
+		if (!this.mBufferCache) {
+			if (!(await this.loadNextChunk())) {
+				return null;
+			}
+		}
+
+		const result = this.mBufferCache;
+
+		if (result && result.byteLength + currentOffset < maxContentOffset) {
+			this.clearBufferCache();
+		}
+
+		return result?.slice(0, Math.max(0, maxContentOffset - currentOffset)) ?? null;
 	}
 
 	private clearBufferCache(): void {
@@ -186,8 +214,12 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		let ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(this.mBufferCache, this.mOffset);
 
 		// Find next ustar marker
-		while (ustarOffset < 0 && this.mBufferCache!.byteLength < MAX_LOADED_BYTES && (await this.loadNextChunk())) {
+		while (ustarOffset < 0 && (await this.loadNextChunk())) {
 			ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(this.mBufferCache, this.mOffset);
+			
+			if (ustarOffset < 0 && this.mBufferCache!.byteLength >= MAX_LOADED_BYTES) {
+				this.clearBufferCache();
+			}
 		}
 
 		// No header marker found and we ran out of bytes to load, terminate
