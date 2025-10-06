@@ -99,4 +99,11 @@ describe('TarHeader', () => {
 			expect(truncatedName).toBe(fileNameTruncated);
 		});
 	});
+
+	describe('isLongLinkHeader', () => {
+		it('should return false when the header does not have long-link content', () => {
+			const header = TarHeader.fromAttributes({});
+			expect(header.isLongLinkHeader).toBe(false);
+		});
+	});
 });
