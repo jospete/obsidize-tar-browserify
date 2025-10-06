@@ -1,6 +1,6 @@
 {
 	"name": "@obsidize/tar-browserify",
-	"version": "6.2.0",
+	"version": "6.3.0",
 	"description": "Browser-based tar utility for packing and unpacking tar files (stream-capable)",
 	"main": "./index.js",
 	"module": "./index.js",

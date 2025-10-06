@@ -225,7 +225,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 			offset: absoluteEntryOffset,
 			headerByteLength,
 			content,
-			context
+			context,
 		});
 	}
 
@@ -270,7 +270,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		return {
 			header: new TarHeader({ ustar: ustarHeader }),
 			headerOffset: headerOffset,
-			contentOffset: nextOffset
+			contentOffset: nextOffset,
 		};
 	}
 
@@ -318,7 +318,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		return {
 			header,
 			headerOffset: headerOffset,
-			contentOffset: nextOffset
+			contentOffset: nextOffset,
 		};
 	}
 
@@ -362,7 +362,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		return {
 			header,
 			headerOffset: headerOffset,
-			contentOffset: nextOffset
+			contentOffset: nextOffset,
 		};
 	}
 }

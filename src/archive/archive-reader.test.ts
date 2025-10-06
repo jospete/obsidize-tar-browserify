@@ -10,9 +10,7 @@ import { TarHeader } from '../header/tar-header.ts';
 import { UstarHeaderLike } from '../header/ustar/ustar-header-like.ts';
 import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type.ts';
 import { UstarHeader } from '../header/ustar/ustar-header.ts';
-import {
-	tarballSampleBase64 as LongLink_tarballSampleBase64,
-} from '../test/generated/long-link-header-test-content.ts';
+import { tarballSampleBase64 as LongLink_tarballSampleBase64 } from '../test/generated/long-link-header-test-content.ts';
 import {
 	tarballSampleBase64 as PAX_tarballSampleBase64,
 	totalFileCount as PAX_totalFileCount,
@@ -42,7 +40,7 @@ const createLongLinkHeaderBuffer = (
 		fileSize: longLinkAttrs.fileName.length,
 		typeFlag: UstarHeaderLinkIndicatorType.LONG_LINK_HEADER,
 	});
-	
+
 	const p2 = new Uint8Array(Constants.SECTOR_SIZE);
 	p2.set(new TextEncoder().encode(longLinkAttrs.fileName), 0);
 
