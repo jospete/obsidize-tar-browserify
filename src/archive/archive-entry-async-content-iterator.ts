@@ -2,14 +2,13 @@ import { ArchiveEntryLike } from '../common/archive-context.ts';
 
 /**
  * Light wrapper around the `ArchiveEntry` class.
- * 
+ *
  * This streamlines reading file content chunks in an async iterator format,
  * so this data can be consumed in the same fashion as the other
  * pieces that this tar module provides.
  */
 export class ArchiveEntryAsyncContentIterator implements AsyncIterableIterator<Uint8Array> {
-	constructor(private readonly entry: ArchiveEntryLike) {
-	}
+	constructor(private readonly entry: ArchiveEntryLike) {}
 
 	[Symbol.asyncIterator](): AsyncIterableIterator<Uint8Array> {
 		return this;

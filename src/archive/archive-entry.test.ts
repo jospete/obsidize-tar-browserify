@@ -184,7 +184,7 @@ describe('ArchiveEntry', () => {
 					return null;
 				},
 			};
-			
+
 			const spy = jest.spyOn(context, 'tryLoadNextEntryContentChunk');
 			const entry = new ArchiveEntry({ context });
 			const result = await entry.readNextContentChunk();

@@ -223,7 +223,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		// Find next ustar marker
 		while (ustarOffset < 0 && (await this.loadNextChunk())) {
 			ustarOffset = TarHeaderUtility.findNextUstarSectorOffset(this.mBufferCache, this.mOffset);
-			
+
 			if (ustarOffset < 0 && this.mBufferCache!.byteLength >= MAX_LOADED_BYTES) {
 				this.clearBufferCache();
 			}

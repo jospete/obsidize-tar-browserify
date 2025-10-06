@@ -206,7 +206,7 @@ describe('ArchiveReader', () => {
 			expect(reader.source).toBe(bufferSource);
 		});
 	});
-	
+
 	describe('tryLoadNextEntryContentChunk()', () => {
 		it('should ignore requests from entries that it did not create', async () => {
 			const buffer = Uint8Array.from([1, 2, 3, 4]);
@@ -225,8 +225,10 @@ describe('ArchiveReader', () => {
 					tarBuffer.slice(offset, offset + length),
 			};
 
-			const reader = new ArchiveReader(new AsyncUint8ArrayIterator(customAsyncBuffer, { blockSize: Constants.SECTOR_SIZE }));
-			const {value: entry1} = await reader.next();
+			const reader = new ArchiveReader(
+				new AsyncUint8ArrayIterator(customAsyncBuffer, { blockSize: Constants.SECTOR_SIZE }),
+			);
+			const { value: entry1 } = await reader.next();
 			await reader.next(); // advance cursor beyond entry 1's content
 			const outOfBounds = await reader.tryLoadNextEntryContentChunk(entry1);
 			expect(outOfBounds).toBe(null);
@@ -241,7 +243,7 @@ describe('ArchiveReader', () => {
 			};
 
 			const reader = new ArchiveReader(new AsyncUint8ArrayIterator(customAsyncBuffer));
-			const {value: entry1} = await reader.next();
+			const { value: entry1 } = await reader.next();
 			let drain = await reader.next();
 
 			while (!drain.done) {

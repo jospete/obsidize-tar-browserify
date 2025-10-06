@@ -195,7 +195,7 @@ export class ArchiveEntry implements UstarHeaderLike, ArchiveEntryLike, TarSeria
 	/**
 	 * Builds on top of `readNextContentChunk()` and creates an async iterator
 	 * to consume these data chunks from.
-	 * 
+	 *
 	 * @returns an async iterator to consume file content chunks from
 	 */
 	public getContentChunks(): ArchiveEntryAsyncContentIterator {
@@ -205,10 +205,10 @@ export class ArchiveEntry implements UstarHeaderLike, ArchiveEntryLike, TarSeria
 	/**
 	 * Reads the next chunk of data for the content of this entry from
 	 * the assigned source context.
-	 * 
+	 *
 	 * This is only applicable in async contexts, where the entry content
 	 * is not already available via the `content` property.
-	 * 
+	 *
 	 * @returns The next byte array chunk if one exists, or null if there are no content bytes left
 	 * (or the current source context is out of range of this entry)
 	 */
@@ -224,7 +224,7 @@ export class ArchiveEntry implements UstarHeaderLike, ArchiveEntryLike, TarSeria
 	 *
 	 * Do not use this on entries that have not been parsed from a source buffer,
 	 * otherwise it will very likely return garbage data.
-	 * 
+	 *
 	 * Prefer to use `readNextContentChunk` over this when possible, as using this during
 	 * archive read iteration can cause double-loading of the same data and reduce performance.
 	 *
