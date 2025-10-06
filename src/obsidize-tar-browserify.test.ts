@@ -5,8 +5,8 @@ import { fileStructures, tarballSampleBase64, totalFileCount } from './test/gene
 import {
 	fileStructures as PAX_fileStructures,
 	tarballSampleBase64 as PAX_tarballSampleBase64,
-} from './test/generated/pax-header-test-content';
-import { base64ToUint8Array } from './test/test-util';
+} from './test/generated/pax-header-test-content.ts';
+import { base64ToUint8Array } from './test/test-util.ts';
 
 const { isUint8Array } = TarUtility;
 

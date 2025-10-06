@@ -1,6 +1,6 @@
 import { ArchiveContext } from '../common/archive-context.ts';
 import { AsyncUint8ArrayIterator } from '../common/async-uint8-array-iterator.ts';
-import { InMemoryAsyncUint8Array } from '../common/async-uint8-array.ts';
+import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array.ts';
 import { Constants } from '../common/constants.ts';
 import { TarUtility } from '../common/tar-utility.ts';
 import { PaxHeaderKey } from '../header/pax/pax-header-key.ts';
@@ -13,6 +13,7 @@ import {
 	tarballSampleBase64 as PAX_tarballSampleBase64,
 	totalFileCount as PAX_totalFileCount,
 } from '../test/generated/pax-header-test-content.ts';
+import { tarballSampleBase64 } from '../test/generated/tarball-test-content.ts';
 import { base64ToUint8Array, range } from '../test/test-util.ts';
 import { ArchiveEntry } from './archive-entry.ts';
 import { ArchiveReader, ArchiveReadError } from './archive-reader.ts';
@@ -205,5 +206,29 @@ describe('ArchiveReader', () => {
 			const result = await reader.tryLoadNextEntryContentChunk(entry);
 			expect(result).toBe(null);
 		});
+		
+		it('should return the next chunk of content data if the reader offset is within the content bounds', () => {
+			// TODO: implement
+		});
+		
+		it('should return a partial chunk if the reader is at an uneven offset at the end of the content', () => {
+			// TODO: implement
+		});
+
+		it('should return null if the reader offset is outside of the content bounds', async () => {
+			const tarBuffer = base64ToUint8Array(tarballSampleBase64);
+			const customAsyncBuffer: AsyncUint8ArrayLike = {
+				byteLength: tarBuffer.length,
+				read: async (offset: number, length: number): Promise<Uint8Array> =>
+					tarBuffer.slice(offset, offset + length),
+			};
+
+			const reader = new ArchiveReader(new AsyncUint8ArrayIterator(customAsyncBuffer, { blockSize: Constants.SECTOR_SIZE }));
+			const {value: entry1} = await reader.next();
+			await reader.next(); // advance cursor beyond entry 1's content
+			const outOfBounds = await reader.tryLoadNextEntryContentChunk(entry1);
+			expect(outOfBounds).toBe(null);
+		});
 	});
+
 });

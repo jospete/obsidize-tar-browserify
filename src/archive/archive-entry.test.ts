@@ -176,14 +176,21 @@ describe('ArchiveEntry', () => {
 	});
 
 	describe('readNextContentChunk()', () => {
-		it('should return the next chunk of content data if the reader offset is within the content bounds', () => {
-			// TODO: implement
-		});
-		it('should return a partial chunk if the reader is at an uneven offset at the end of the content', () => {
-			// TODO: implement
-		});
-		it('should return null if the reader offset is outside of the content bounds', () => {
-			// TODO: implement
+		it('should call into the source context to retrieve the data chunk', async () => {
+			const context: ArchiveContext = {
+				source: new InMemoryAsyncUint8Array(new Uint8Array(0)),
+				globalPaxHeaders: [],
+				async tryLoadNextEntryContentChunk(entry) {
+					return null;
+				},
+			};
+			
+			const spy = jest.spyOn(context, 'tryLoadNextEntryContentChunk');
+			const entry = new ArchiveEntry({ context });
+			const result = await entry.readNextContentChunk();
+
+			expect(result).toBe(null);
+			expect(spy).toHaveBeenCalledTimes(1);
 		});
 	});
 });
