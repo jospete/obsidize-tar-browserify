@@ -1,5 +1,5 @@
 import { gzip } from 'pako';
-import { Archive, ArchiveEntry, AsyncUint8ArrayLike, TarUtility } from './index.ts';
+import { Archive, ArchiveEntry, AsyncUint8ArrayLike, Constants, TarUtility } from './index.ts';
 import { fileStructures, tarballSampleBase64, totalFileCount } from './test/generated/tarball-test-content.ts';
 
 import {
@@ -208,20 +208,30 @@ describe('Global Tests', () => {
 						tarBuffer.slice(offset, offset + length),
 				};
 
-				for await (const entry of Archive.read(customAsyncBuffer)) {
-					if (!entry.isFile()) {
+				for await (const entry of Archive.read(customAsyncBuffer, { blockSize: Constants.SECTOR_SIZE })) {
+					if (!entry.isFile() || !entry.fileName.endsWith('package.json')) {
 						continue;
 					}
 
 					let chunk = await entry.readNextContentChunk();
-					let count = 0;
+					let lastBuf: Uint8Array | null = null;
+					let chunkCount = 0;
+					let totalBytes = 0;
 
 					while (chunk) {
-						count += 1;
+						lastBuf = chunk;
+						chunkCount += 1;
+						totalBytes += chunk.byteLength;
 						chunk = await entry.readNextContentChunk();
+						expect(lastBuf).not.toEqual(chunk);
 					}
 
-					expect(count).toBe(1);
+					expect(chunkCount).toBe(7);
+					expect(totalBytes).toBe(entry.fileSize);
+					expect(entry.fileSize).toBe(2888);
+					expect(entry.fileSize % Constants.SECTOR_SIZE).not.toBe(0);
+
+					break;
 				}
 			});
 		});
