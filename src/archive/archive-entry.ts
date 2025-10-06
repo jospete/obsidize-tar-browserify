@@ -4,6 +4,7 @@ import { TarSerializable, TarUtility } from '../common/tar-utility.ts';
 import { TarHeader } from '../header/tar-header.ts';
 import { UstarHeaderLike } from '../header/ustar/ustar-header-like.ts';
 import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type.ts';
+import { ArchiveEntryAsyncContentIterator } from './archive-entry-async-content-iterator.ts';
 
 export interface ArchiveEntryOptions {
 	header?: TarHeader;
@@ -189,6 +190,16 @@ export class ArchiveEntry implements UstarHeaderLike, ArchiveEntryLike, TarSeria
 	 */
 	public text(): string {
 		return TarUtility.decodeString(this.content!);
+	}
+
+	/**
+	 * Builds on top of `readNextContentChunk()` and creates an async iterator
+	 * to consume these data chunks from.
+	 * 
+	 * @returns an async iterator to consume file content chunks from
+	 */
+	public getContentChunks(): ArchiveEntryAsyncContentIterator {
+		return new ArchiveEntryAsyncContentIterator(this);
 	}
 
 	/**
