@@ -13,6 +13,7 @@ import { TarHeader } from '../header/tar-header.ts';
 import { UstarHeader } from '../header/ustar/ustar-header.ts';
 import { ArchiveEntry } from './archive-entry.ts';
 
+// Max amount of data allowed to be pulled into memory at once during archive reads
 const MAX_LOADED_BYTES = Constants.SECTOR_SIZE * 100000; // ~50Mb
 
 interface TarHeaderParseResult {
@@ -107,9 +108,10 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		}
 
 		if (!this.mBufferCache) {
-			if (!(await this.loadNextChunk())) {
-				return null;
-			}
+			// normally the result of this should be checked, but
+			// it is essentially guaranteed to succeed due to the previous
+			// bounds check in this function.
+			await this.loadNextChunk();
 		}
 
 		const sliceSize = Math.max(0, maxContentOffset - currentOffset);
