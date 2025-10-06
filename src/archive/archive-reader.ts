@@ -188,7 +188,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		}
 
 		const context = this;
-		const absoluteCacheOffset = this.bufferIterator.currentOffset - (this.mBufferCache?.byteLength ?? 0);
+		const absoluteCacheOffset = this.bufferIterator.currentOffset - this.mBufferCache!.byteLength;
 		const { header, headerOffset, contentOffset } = headerParseResult;
 		const headerByteLength = contentOffset - headerOffset;
 		const contentEnd = contentOffset + header.fileSize;

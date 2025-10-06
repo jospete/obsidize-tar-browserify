@@ -3,6 +3,7 @@ import { AsyncUint8ArrayIterator } from '../common/async-uint8-array-iterator.ts
 import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array.ts';
 import { Constants } from '../common/constants.ts';
 import { TarUtility } from '../common/tar-utility.ts';
+import { LongLinkHeaderAttributes } from '../header/long-link/long-link-header.ts';
 import { PaxHeaderKey } from '../header/pax/pax-header-key.ts';
 import { PaxHeader, PaxHeaderAttributes } from '../header/pax/pax-header.ts';
 import { TarHeader } from '../header/tar-header.ts';
@@ -30,6 +31,34 @@ const createPaxHeaderBuffer = (
 	const paxHeader = PaxHeader.fromAttributes(paxAttrs);
 	const combinedHeader = new TarHeader({ ustar: actualHeader, pax: paxHeader, isPaxGlobal: global });
 	return combinedHeader.toUint8Array();
+};
+
+const createLongLinkHeaderBuffer = (
+	headerAttrs: Partial<UstarHeaderLike>,
+	longLinkAttrs: LongLinkHeaderAttributes,
+): Uint8Array => {
+	const p1 = UstarHeader.serializeAttributes({
+		fileName: Constants.LONG_LINK_FILE_NAME,
+		fileSize: longLinkAttrs.fileName.length,
+		typeFlag: UstarHeaderLinkIndicatorType.LONG_LINK_HEADER,
+	});
+	
+	const p2 = new Uint8Array(Constants.SECTOR_SIZE);
+	p2.set(new TextEncoder().encode(longLinkAttrs.fileName), 0);
+
+	const p3 = UstarHeader.serializeAttributes(headerAttrs);
+	const output = new Uint8Array(p1.byteLength + p2.byteLength + p3.byteLength);
+	let offset = 0;
+
+	output.set(p1, offset);
+	offset += p1.byteLength;
+
+	output.set(p2, offset);
+	offset += p2.byteLength;
+
+	output.set(p3, offset);
+
+	return output;
 };
 
 describe('ArchiveReader', () => {
@@ -197,6 +226,53 @@ describe('ArchiveReader', () => {
 			fail('readAllEntries should not succeed for malformed input');
 		} catch (e) {
 			expect(e).toBe(ArchiveReadError.ERR_HEADER_MISSING_POST_PAX_SEGMENT);
+		}
+	});
+
+	it('should blow up on malformed long-link header entries', async () => {
+		const headerAttrs: Partial<UstarHeaderLike> = {
+			fileName: 'Some Global Garbage',
+			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY,
+		};
+		const longLinkAttrs: LongLinkHeaderAttributes = {
+			fileName: 'some-long-link-file-with-way-too-many-characters/and/a/path/to/some/garbage.txt',
+		};
+
+		const longLinkBuffer = createLongLinkHeaderBuffer(headerAttrs, longLinkAttrs);
+		const corruptedBuffer = longLinkBuffer.slice(0, longLinkBuffer.byteLength - Constants.SECTOR_SIZE + 5);
+		const bufferSource = new InMemoryAsyncUint8Array(corruptedBuffer);
+		const iterator = new AsyncUint8ArrayIterator(bufferSource);
+		const reader = new ArchiveReader(iterator);
+
+		try {
+			await reader.readAllEntries();
+			fail('readAllEntries should not succeed for malformed input');
+		} catch (e) {
+			expect(e).toBe(ArchiveReadError.ERR_MIN_BUFFER_LENGTH_NOT_MET);
+		}
+	});
+
+	it('should blow up on missing long-link header parts', async () => {
+		const headerAttrs: Partial<UstarHeaderLike> = {
+			fileName: 'Some Local Garbage',
+			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY,
+		};
+		const longLinkAttrs: LongLinkHeaderAttributes = {
+			fileName: 'some-long-link-file-with-way-too-many-characters/and/a/path/to/some/garbage.txt',
+		};
+
+		const longLinkBuffer = createLongLinkHeaderBuffer(headerAttrs, longLinkAttrs);
+		longLinkBuffer.set(range(Constants.HEADER_SIZE), longLinkBuffer.byteLength - Constants.HEADER_SIZE);
+
+		const bufferSource = new InMemoryAsyncUint8Array(longLinkBuffer);
+		const iterator = new AsyncUint8ArrayIterator(bufferSource);
+		const reader = new ArchiveReader(iterator);
+
+		try {
+			await reader.readAllEntries();
+			fail('readAllEntries should not succeed for malformed input');
+		} catch (e) {
+			expect(e).toBe(ArchiveReadError.ERR_MISSING_HEADER_SEGMENT);
 		}
 	});
 
