@@ -188,6 +188,16 @@ describe('ArchiveReader', () => {
 		}
 	});
 
+	it('should purge the in-memory cache when it goes over the max threshold during header marker searches', async () => {
+		const size = Constants.SECTOR_SIZE * 100001;
+		const buffer = new Uint8Array(size);
+		const bufferSource = new InMemoryAsyncUint8Array(buffer);
+		const reader = ArchiveReader.withInput(bufferSource);
+		const spy = jest.spyOn<any, any>(reader, 'clearBufferCache');
+		await reader.readAllEntries();
+		expect(spy).toHaveBeenCalledTimes(3);
+	});
+
 	describe('withInput()', () => {
 		it('should use async-like structures as is', () => {
 			const buffer = Uint8Array.from([1, 2, 3, 4]);
@@ -206,14 +216,6 @@ describe('ArchiveReader', () => {
 			const result = await reader.tryLoadNextEntryContentChunk(entry);
 			expect(result).toBe(null);
 		});
-		
-		it('should return the next chunk of content data if the reader offset is within the content bounds', () => {
-			// TODO: implement
-		});
-		
-		it('should return a partial chunk if the reader is at an uneven offset at the end of the content', () => {
-			// TODO: implement
-		});
 
 		it('should return null if the reader offset is outside of the content bounds', async () => {
 			const tarBuffer = base64ToUint8Array(tarballSampleBase64);
@@ -229,6 +231,25 @@ describe('ArchiveReader', () => {
 			const outOfBounds = await reader.tryLoadNextEntryContentChunk(entry1);
 			expect(outOfBounds).toBe(null);
 		});
-	});
 
+		it('should return null if the reader cannot load any more data from the input source', async () => {
+			const tarBuffer = base64ToUint8Array(tarballSampleBase64);
+			const customAsyncBuffer: AsyncUint8ArrayLike = {
+				byteLength: tarBuffer.length,
+				read: async (offset: number, length: number): Promise<Uint8Array> =>
+					tarBuffer.slice(offset, offset + length),
+			};
+
+			const reader = new ArchiveReader(new AsyncUint8ArrayIterator(customAsyncBuffer));
+			const {value: entry1} = await reader.next();
+			let drain = await reader.next();
+
+			while (!drain.done) {
+				drain = await reader.next();
+			}
+
+			const outOfBounds = await reader.tryLoadNextEntryContentChunk(entry1);
+			expect(outOfBounds).toBe(null);
+		});
+	});
 });

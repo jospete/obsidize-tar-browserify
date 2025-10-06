@@ -195,6 +195,9 @@ export class ArchiveEntry implements UstarHeaderLike, ArchiveEntryLike, TarSeria
 	 * Reads the next chunk of data for the content of this entry from
 	 * the assigned source context.
 	 * 
+	 * This is only applicable in async contexts, where the entry content
+	 * is not already available via the `content` property.
+	 * 
 	 * @returns The next byte array chunk if one exists, or null if there are no content bytes left
 	 * (or the current source context is out of range of this entry)
 	 */

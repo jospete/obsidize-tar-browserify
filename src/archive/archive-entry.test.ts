@@ -192,5 +192,11 @@ describe('ArchiveEntry', () => {
 			expect(result).toBe(null);
 			expect(spy).toHaveBeenCalledTimes(1);
 		});
+
+		it('should return null when the entry has no proper source context', async () => {
+			const entry = new ArchiveEntry();
+			const result = await entry.readNextContentChunk();
+			expect(result).toBe(null);
+		});
 	});
 });
