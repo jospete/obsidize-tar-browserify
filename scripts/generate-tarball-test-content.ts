@@ -58,7 +58,6 @@ async function exportTestAssets(tarballContent: Buffer, files: string[], outputF
 	const tarballSampleBase64 = tarballContent.toString('base64');
 	const totalFileCount = fileStructures.reduce((count, globPaths) => count + globPaths.length, 0);
 	const output = createOutputContent({ totalFileCount, fileStructures, tarballSampleBase64 });
-
 	writeFileSync(outputPath, output, 'utf8');
 	console.log('generated output at ' + outputPath + ' for files: ', files);
 }
@@ -74,14 +73,22 @@ async function generateTarSampleTwo() {
 	const tarFilePath = './dev-assets/pax-tgz-sample/packed/test.tar';
 	const unpackedPath = './dev-assets/pax-tgz-sample/unpacked';
 	const tarballContent = readFileSync(tarFilePath);
-	mkdirpSync('./tmp');
+	mkdirpSync(unpackedPath);
 	await extract({file: tarFilePath, cwd: unpackedPath});
 	await exportTestAssets(tarballContent, ['**/*'], 'pax-header-test-content.ts', unpackedPath);
+}
+
+async function generateTarSampleThree() {
+	const tarFilePath = './dev-assets/long-link-sample/packed/long-link-sample.tar';
+	const unpackedPath = './dev-assets/long-link-sample/unpacked';
+	const tarballContent = readFileSync(tarFilePath);
+	await exportTestAssets(tarballContent, ['**/*'], 'long-link-header-test-content.ts', unpackedPath);
 }
 
 async function main() {
 	await generateTarSampleOne();
 	await generateTarSampleTwo();
+	await generateTarSampleThree();
 }
 
 main().catch(console.error);

@@ -10,6 +10,9 @@ import { UstarHeaderLike } from '../header/ustar/ustar-header-like.ts';
 import { UstarHeaderLinkIndicatorType } from '../header/ustar/ustar-header-link-indicator-type.ts';
 import { UstarHeader } from '../header/ustar/ustar-header.ts';
 import {
+	tarballSampleBase64 as LongLink_tarballSampleBase64,
+} from '../test/generated/long-link-header-test-content.ts';
+import {
 	tarballSampleBase64 as PAX_tarballSampleBase64,
 	totalFileCount as PAX_totalFileCount,
 } from '../test/generated/pax-header-test-content.ts';
@@ -51,6 +54,15 @@ describe('ArchiveReader', () => {
 		expect(files.length).toBeGreaterThan(0);
 		const paxEntry = entries.find((v) => !!v?.header?.pax);
 		expect(paxEntry).toBeTruthy();
+	});
+
+	it('should correctly parse long-link headers', async () => {
+		const buffer = base64ToUint8Array(LongLink_tarballSampleBase64);
+		const entries = await ArchiveReader.withInput(buffer).readAllEntries();
+		const files = entries.filter((v) => v.isFile());
+		expect(files.length).toBeGreaterThan(0);
+		const longLinkEntry = entries.find((v) => v?.header?.isLongLinkHeader);
+		expect(longLinkEntry).toBeTruthy();
 	});
 
 	it('should be able to parse from buffer sources with a small chunk size', async () => {
