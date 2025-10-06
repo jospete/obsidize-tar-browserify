@@ -1,4 +1,4 @@
-import { ArchiveContext } from '../common/archive-context.ts';
+import { ArchiveContext, ArchiveEntryLike } from '../common/archive-context.ts';
 import { AsyncUint8ArrayLike } from '../common/async-uint8-array.ts';
 import { TarSerializable, TarUtility } from '../common/tar-utility.ts';
 import { TarHeader } from '../header/tar-header.ts';
@@ -21,7 +21,7 @@ export interface ArchiveEntryOptions {
  * 1. The parsed USTAR header sector content (AKA TarHeader)
  * 2. The aggregate of the proceeding file content sectors, based on the header's file size attribute
  */
-export class ArchiveEntry implements UstarHeaderLike, TarSerializable {
+export class ArchiveEntry implements UstarHeaderLike, ArchiveEntryLike, TarSerializable {
 	private mHeader: TarHeader;
 	private mHeaderByteLength: number;
 	private mContent: Uint8Array | null;
@@ -192,6 +192,17 @@ export class ArchiveEntry implements UstarHeaderLike, TarSerializable {
 	}
 
 	/**
+	 * Reads the next chunk of data for the content of this entry from
+	 * the assigned source context.
+	 * 
+	 * @returns The next byte array chunk if one exists, or null if there are no content bytes left
+	 * (or the current source context is out of range of this entry)
+	 */
+	public async readNextContentChunk(): Promise<Uint8Array | null> {
+		return this.sourceContext?.tryLoadNextEntryContentChunk(this) ?? null;
+	}
+
+	/**
 	 * Only necessary if this entry was extracted from an async buffer, since the entry
 	 * does not hold the content of async buffers by default.
 	 *
@@ -199,6 +210,9 @@ export class ArchiveEntry implements UstarHeaderLike, TarSerializable {
 	 *
 	 * Do not use this on entries that have not been parsed from a source buffer,
 	 * otherwise it will very likely return garbage data.
+	 * 
+	 * Prefer to use `readNextContentChunk` over this when possible, as using this during
+	 * archive read iteration can cause double-loading of the same data and reduce performance.
 	 *
 	 * @param buffer - the source to read content from
 	 * @param offset - the _relative_ offset of the content to read;

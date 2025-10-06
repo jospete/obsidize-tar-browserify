@@ -14,6 +14,7 @@ import {
 	totalFileCount as PAX_totalFileCount,
 } from '../test/generated/pax-header-test-content.ts';
 import { base64ToUint8Array, range } from '../test/test-util.ts';
+import { ArchiveEntry } from './archive-entry.ts';
 import { ArchiveReader, ArchiveReadError } from './archive-reader.ts';
 
 const createPaxHeaderBuffer = (
@@ -192,6 +193,17 @@ describe('ArchiveReader', () => {
 			const bufferSource = new InMemoryAsyncUint8Array(buffer);
 			const reader = ArchiveReader.withInput(bufferSource);
 			expect(reader.source).toBe(bufferSource);
+		});
+	});
+	
+	describe('tryLoadNextEntryContentChunk()', () => {
+		it('should ignore requests from entries that it did not create', async () => {
+			const buffer = Uint8Array.from([1, 2, 3, 4]);
+			const bufferSource = new InMemoryAsyncUint8Array(buffer);
+			const reader = ArchiveReader.withInput(bufferSource);
+			const entry = new ArchiveEntry({ context: null });
+			const result = await reader.tryLoadNextEntryContentChunk(entry);
+			expect(result).toBe(null);
 		});
 	});
 });

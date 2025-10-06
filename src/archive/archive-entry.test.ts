@@ -166,9 +166,24 @@ describe('ArchiveEntry', () => {
 			const context: ArchiveContext = {
 				source: new InMemoryAsyncUint8Array(new Uint8Array(0)),
 				globalPaxHeaders: [],
+				async tryLoadNextEntryContentChunk(entry) {
+					return null;
+				},
 			};
 			const entry = new ArchiveEntry({ context });
 			expect(entry.sourceContext).toBe(context);
+		});
+	});
+
+	describe('readNextContentChunk()', () => {
+		it('should return the next chunk of content data if the reader offset is within the content bounds', () => {
+			// TODO: implement
+		});
+		it('should return a partial chunk if the reader is at an uneven offset at the end of the content', () => {
+			// TODO: implement
+		});
+		it('should return null if the reader offset is outside of the content bounds', () => {
+			// TODO: implement
 		});
 	});
 });
