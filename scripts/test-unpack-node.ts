@@ -74,26 +74,16 @@ async function listAllEntries(asyncBuffer: AsyncUint8ArrayLike) {
 
 async function findFirstLongLinkEntry(asyncBuffer: AsyncUint8ArrayLike) {
 	let entryCount = 0;
-	let previousEntry: ArchiveEntry | null = null;
 
 	for await (const entry of Archive.read(asyncBuffer)) {
 		entryCount += 1;
 		logEntry(entry, entryCount);
 
-		if (previousEntry?.fileName !== '././@LongLink') {
-			previousEntry = entry;
-			continue;
+		if (entry.header.isLongLinkHeader) {
+			console.log(`found long-link header at entry ${entryCount}!`);
+			writeFileSync(join(workingDir, `longlink-${entryCount}.json`), JSON.stringify(entry, null, '\t'));
+			break;
 		}
-
-		console.log(`reading meta content from offset ${previousEntry.sourceOffset.toString(16).toUpperCase()}`);
-		console.log(`meta header length is ${previousEntry.sourceHeaderByteLength}`);
-		previousEntry['mContent'] = await previousEntry.readContentFrom(asyncBuffer);
-
-		writeFileSync(join(workingDir, `longlink-${entryCount}-prev.json`), JSON.stringify(previousEntry, null, '\t'));
-		writeFileSync(join(workingDir, `longlink-${entryCount}-curr.json`), JSON.stringify(entry, null, '\t'));
-
-		console.log(`meta content text = '${previousEntry.text()}'`);
-		break;
 	}
 }
 

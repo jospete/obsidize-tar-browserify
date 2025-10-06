@@ -209,6 +209,10 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 		return this.preamble?.isLocalPaxHeader ?? false;
 	}
 
+	public get isLongLinkHeader(): boolean {
+		return this.preamble?.isLongLinkHeader ?? false;
+	}
+
 	public get isFileHeader(): boolean {
 		return this.ustar.isFileHeader;
 	}
@@ -272,8 +276,8 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public toJSON(): Record<string, unknown> {
-		const { pax, preamble, ustar } = this;
-		return { preamble, pax, ustar };
+		const { pax, preamble, longLink, ustar } = this;
+		return { preamble, pax, longLink, ustar };
 	}
 
 	private trySyncPaxHeader(): void {

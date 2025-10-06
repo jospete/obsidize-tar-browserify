@@ -255,36 +255,34 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		let headerOffset = ustarOffset;
 		let headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
 		let ustarHeader = UstarHeader.deserialize(headerBuffer)!;
-		let header = new TarHeader({ ustar: ustarHeader });
 
 		// Advance cursor to process potential PAX header or entry content
 		let nextOffset = TarUtility.advanceSectorOffset(headerOffset, this.mBufferCache!.byteLength);
 
 		if (ustarHeader.isPaxHeader) {
-			return this.parseNextPaxHeader(header, ustarHeader, headerOffset, nextOffset);
+			return this.parseNextPaxHeader(ustarHeader, headerOffset, nextOffset);
 		}
 
 		if (ustarHeader.isLongLinkHeader) {
-			return this.parseNextLongLinkHeader(header, ustarHeader, headerOffset, nextOffset);
+			return this.parseNextLongLinkHeader(ustarHeader, headerOffset, nextOffset);
 		}
 
 		return {
-			header,
+			header: new TarHeader({ ustar: ustarHeader }),
 			headerOffset: headerOffset,
 			contentOffset: nextOffset
 		};
 	}
 
 	private async parseNextPaxHeader(
-		header: TarHeader,
 		ustarHeader: UstarHeader,
 		headerOffset: number,
 		nextOffset: number,
 	): Promise<TarHeaderParseResult | null> {
 		// Make sure we've buffered the pax header region and the next sector after that (next sector contains the _actual_ header)
-		const paxHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(header.fileSize);
+		const paxHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(ustarHeader.fileSize);
 		const requiredBufferSize = paxHeaderSectorEnd + Constants.HEADER_SIZE;
-		const isGlobalPax = header.isGlobalPaxHeader;
+		const isGlobalPax = ustarHeader.isGlobalPaxHeader;
 		const preambleHeader = ustarHeader;
 
 		if (!(await this.tryRequireBufferSize(requiredBufferSize))) {
@@ -307,7 +305,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		ustarHeader = UstarHeader.deserialize(headerBuffer)!;
 		nextOffset = TarUtility.advanceSectorOffsetUnclamped(nextOffset);
 
-		header = new TarHeader({
+		const header = new TarHeader({
 			ustar: ustarHeader,
 			pax: paxHeader,
 			preamble: preambleHeader,
@@ -325,13 +323,12 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 	}
 
 	private async parseNextLongLinkHeader(
-		header: TarHeader,
 		ustarHeader: UstarHeader,
+		headerOffset: number,
 		nextOffset: number,
-		headerOffset: number
 	): Promise<TarHeaderParseResult | null> {
 		// Make sure we've buffered the long-link header region and the next sector after that (next sector contains the _actual_ header)
-		const longLinkHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(header.fileSize);
+		const longLinkHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(ustarHeader.fileSize);
 		const requiredBufferSize = longLinkHeaderSectorEnd + Constants.HEADER_SIZE;
 		const preambleHeader = ustarHeader;
 
@@ -339,7 +336,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 			throw ArchiveReadError.ERR_MIN_BUFFER_LENGTH_NOT_MET;
 		}
 
-		const longLinkPathBuffer = this.getBufferCacheSlice(nextOffset, nextOffset + header.fileSize);
+		const longLinkPathBuffer = this.getBufferCacheSlice(nextOffset, nextOffset + ustarHeader.fileSize);
 		const longLinkPath = TarUtility.decodeString(longLinkPathBuffer);
 		const longLinkHeader = new LongLinkHeader({ fileName: longLinkPath });
 
@@ -356,7 +353,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		ustarHeader = UstarHeader.deserialize(headerBuffer)!;
 		nextOffset = TarUtility.advanceSectorOffsetUnclamped(nextOffset);
 
-		header = new TarHeader({
+		const header = new TarHeader({
 			ustar: ustarHeader,
 			longLink: longLinkHeader,
 			preamble: preambleHeader,
