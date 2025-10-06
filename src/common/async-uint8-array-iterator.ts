@@ -109,7 +109,7 @@ export class AsyncUint8ArrayIterator implements AsyncUint8ArrayIteratorLike {
 
 		const targetLength = Math.min(this.blockSize, length - offset);
 		const buffer = await source.read(offset, targetLength);
-		this.mOffset += targetLength;
+		this.mOffset += buffer.byteLength;
 
 		return { done: false, value: { source, buffer, offset } };
 	}

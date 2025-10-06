@@ -94,7 +94,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 	}
 
 	public async tryLoadNextEntryContentChunk(entry: ArchiveEntryLike): Promise<Uint8Array | null> {
-		if (entry.sourceContext !== this) {
+		if (entry.sourceContext !== this || entry.header.fileSize <= 0) {
 			return null;
 		}
 
@@ -102,7 +102,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		const minContentOffset = entry.sourceOffset + entry.sourceHeaderByteLength;
 		const maxContentOffset = minContentOffset + entry.header.fileSize;
 
-		if (currentOffset < minContentOffset || currentOffset > maxContentOffset) {
+		if (currentOffset < minContentOffset || currentOffset >= maxContentOffset) {
 			return null;
 		}
 
@@ -112,13 +112,18 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 			}
 		}
 
-		const result = this.mBufferCache;
+		const sliceSize = Math.max(0, maxContentOffset - currentOffset);
+		let result = this.mBufferCache!.slice(this.mOffset);
 
-		if (result && result.byteLength + currentOffset < maxContentOffset) {
+		if (sliceSize < result!.byteLength) {
+			result = result!.slice(0, sliceSize);
+			this.mBufferCache = this.mBufferCache!.slice(this.mOffset + sliceSize);
+			this.mOffset = 0;
+		} else {
 			this.clearBufferCache();
 		}
 
-		return result?.slice(0, Math.max(0, maxContentOffset - currentOffset)) ?? null;
+		return result;
 	}
 
 	private clearBufferCache(): void {
