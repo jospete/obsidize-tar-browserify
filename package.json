@@ -87,7 +87,7 @@
 		"ts-loader": "^9.5.4",
 		"ts-node": "^10.9.2",
 		"tsx": "^4.20.3",
-		"typedoc": "0.23.24",
+		"typedoc": "^0.28.13",
 		"typescript": "^5.9.2",
 		"webpack": "^5.101.3",
 		"webpack-cli": "^6.0.1",
