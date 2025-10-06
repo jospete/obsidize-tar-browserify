@@ -1,8 +1,12 @@
+import { config } from 'dotenv';
 import { closeSync, existsSync, openSync, readSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ungzip } from 'pako';
 import { Archive, ArchiveEntry, AsyncUint8ArrayLike } from '../dist';
 import { mkdirpSync } from './utility';
+
+// Load environment variables
+config();
 
 const enum OperationMode {
 	DEFAULT = 'default',
@@ -15,7 +19,8 @@ const tarGzFilePath = join(workingDir, 'node.tar.gz');
 const tarFilePath = join(workingDir, 'node.tar');
 
 async function main() {
-	const [ mode ] = process.argv.slice(2);
+	const mode = process.env.TEST_UNPACK_NODE_MODE;
+	console.log(`loaded mode = ${mode}`);
 
 	if (!existsSync(tarFilePath)) {
 		mkdirpSync(workingDir);
@@ -31,19 +36,20 @@ async function main() {
 	const asyncBuffer: AsyncUint8ArrayLike = {
 		byteLength: statSync(tarFilePath).size,
 		read: async (offset: number, length: number): Promise<Uint8Array> => {
-			const bytesRead = readSync(tarFd, readBuffer, 0, length , offset);
+			const bytesRead = readSync(tarFd, readBuffer, 0, length, offset);
+			console.log(`async-buffer-read [${offset} - ${offset + length}) :: ${length} bytes requested, ${bytesRead} bytes read`);
 			return readBuffer.slice(0, bytesRead);
 		}
 	};
 
 	try {
 		switch (mode) {
-		case OperationMode.FIND_FIRST_LONG_LINK:
-			await findFirstLongLinkEntry(asyncBuffer);
-			break;
-		default:
-			await listAllEntries(asyncBuffer);
-			break;
+			case OperationMode.FIND_FIRST_LONG_LINK:
+				await findFirstLongLinkEntry(asyncBuffer);
+				break;
+			default:
+				await listAllEntries(asyncBuffer);
+				break;
 		}
 	} catch (e) {
 		console.error(`mode ${mode} failed`, e);
@@ -52,12 +58,17 @@ async function main() {
 	closeSync(tarFd);
 }
 
+function logEntry(entry: ArchiveEntry, entryCount: number) {
+	const prefix = `entry ${entryCount} (${entry.fileSize} bytes)`.padEnd(32, ' ');
+	console.log(`${prefix} ${entry.fileName}`);
+}
+
 async function listAllEntries(asyncBuffer: AsyncUint8ArrayLike) {
 	let entryCount = 0;
 
 	for await (const entry of Archive.read(asyncBuffer)) {
 		entryCount += 1;
-		console.log(`entry ${entryCount} (${entry.fileSize} bytes) ${entry.fileName}`);
+		logEntry(entry, entryCount);
 	}
 }
 
@@ -67,15 +78,21 @@ async function findFirstLongLinkEntry(asyncBuffer: AsyncUint8ArrayLike) {
 
 	for await (const entry of Archive.read(asyncBuffer)) {
 		entryCount += 1;
-		console.log(`got entry ${entryCount} ${entry.fileName} ${entry.fileSize} bytes`);
+		logEntry(entry, entryCount);
 
 		if (previousEntry?.fileName !== '././@LongLink') {
 			previousEntry = entry;
 			continue;
 		}
 
+		console.log(`reading meta content from offset ${previousEntry.sourceOffset.toString(16).toUpperCase()}`);
+		console.log(`meta header length is ${previousEntry.sourceHeaderByteLength}`);
+		previousEntry['mContent'] = await previousEntry.readContentFrom(asyncBuffer);
+
 		writeFileSync(join(workingDir, `longlink-${entryCount}-prev.json`), JSON.stringify(previousEntry, null, '\t'));
 		writeFileSync(join(workingDir, `longlink-${entryCount}-curr.json`), JSON.stringify(entry, null, '\t'));
+
+		console.log(`meta content text = '${previousEntry.text()}'`);
 		break;
 	}
 }

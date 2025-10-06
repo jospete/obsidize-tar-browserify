@@ -179,10 +179,11 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		}
 
 		const context = this;
+		const absoluteCacheOffset = this.bufferIterator.currentOffset - (this.mBufferCache?.byteLength ?? 0);
 		const { header, headerOffset, contentOffset } = headerParseResult;
 		const headerByteLength = contentOffset - headerOffset;
 		const contentEnd = contentOffset + header.fileSize;
-		const offset = headerOffset;
+		const absoluteEntryOffset = headerOffset + absoluteCacheOffset;
 
 		// `contentEnd` may not be an even division of SECTOR_SIZE, so
 		// round up to the nearest sector start point after the content end.
@@ -210,7 +211,13 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 			this.mOffset = nextSectorStart;
 		}
 
-		return new ArchiveEntry({ header, offset, headerByteLength, content, context });
+		return new ArchiveEntry({
+			header,
+			offset: absoluteEntryOffset,
+			headerByteLength,
+			content,
+			context
+		});
 	}
 
 	private async tryParseNextHeader(): Promise<TarHeaderParseResult | null> {
@@ -280,6 +287,10 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 			}
 		}
 
-		return { header, headerOffset, contentOffset: nextOffset };
+		return {
+			header,
+			headerOffset: headerOffset,
+			contentOffset: nextOffset
+		};
 	}
 }
