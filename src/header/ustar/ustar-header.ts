@@ -216,6 +216,11 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 		return this.typeFlag === UstarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
 	}
 
+	public get isLongLinkHeader(): boolean {
+		return this.typeFlag === UstarHeaderLinkIndicatorType.LONG_LINK_HEADER
+			&& this.fileName === Constants.LONG_LINK_FILE_NAME;
+	}
+
 	public get isFileHeader(): boolean {
 		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeFile(this.typeFlag);
 	}

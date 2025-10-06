@@ -1,4 +1,5 @@
 import { TarSerializable, TarUtility } from '../common/tar-utility.ts';
+import { LongLinkHeader } from './long-link/long-link-header.ts';
 import { PaxHeader, PaxHeaderAttributes } from './pax/pax-header.ts';
 import { UstarHeaderField } from './ustar/ustar-header-field.ts';
 import { UstarHeaderLike } from './ustar/ustar-header-like.ts';
@@ -8,6 +9,7 @@ import { UstarHeader } from './ustar/ustar-header.ts';
 export interface TarHeaderOptions {
 	ustar: UstarHeader;
 	pax?: PaxHeader;
+	longLink?: LongLinkHeader;
 	preamble?: UstarHeader;
 	isPaxGlobal?: boolean;
 }
@@ -22,13 +24,16 @@ export interface TarHeaderOptions {
 export class TarHeader implements UstarHeaderLike, TarSerializable {
 	public readonly ustar: UstarHeader;
 	public readonly pax: PaxHeader | undefined;
+	public readonly longLink: LongLinkHeader | undefined;
+
 	private mPreamble: UstarHeader | undefined;
 	private mIsGlobal: boolean;
 
 	constructor(options: TarHeaderOptions) {
-		const { ustar, pax, preamble, isPaxGlobal } = options;
+		const { ustar, pax, longLink, preamble, isPaxGlobal } = options;
 		this.ustar = ustar;
 		this.pax = pax;
+		this.longLink = longLink;
 		this.mPreamble = preamble;
 		this.mIsGlobal = !!isPaxGlobal;
 		this.trySyncPaxHeader();
@@ -113,7 +118,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public get fileName(): string {
-		return this.pax?.path || this.ustar.fileName;
+		return this.pax?.path || this.longLink?.fileName || this.ustar.fileName;
 	}
 
 	public get fileMode(): number {

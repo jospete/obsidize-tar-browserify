@@ -7,6 +7,7 @@ import {
 import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array.ts';
 import { Constants } from '../common/constants.ts';
 import { TarUtility } from '../common/tar-utility.ts';
+import { LongLinkHeader } from '../header/long-link/long-link-header.ts';
 import { PaxHeader } from '../header/pax/pax-header.ts';
 import { TarHeaderUtility } from '../header/tar-header-utility.ts';
 import { TarHeader } from '../header/tar-header.ts';
@@ -43,6 +44,14 @@ export enum ArchiveReadError {
 	 * due to the third and final segment not appearing in the input data stream.
 	 */
 	ERR_HEADER_MISSING_POST_PAX_SEGMENT = 'ERR_HEADER_MISSING_POST_PAX_SEGMENT',
+	/**
+	 * Generic "ran out of data" error.
+	 */
+	ERR_MIN_BUFFER_LENGTH_NOT_MET = 'ERR_MIN_BUFFER_LENGTH_NOT_MET',
+	/**
+	 * Generic error thrown when a header marker is expected but not found.
+	 */
+	ERR_MISSING_HEADER_SEGMENT = 'ERR_MISSING_HEADER_SEGMENT',
 }
 
 /**
@@ -252,40 +261,106 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		let nextOffset = TarUtility.advanceSectorOffset(headerOffset, this.mBufferCache!.byteLength);
 
 		if (ustarHeader.isPaxHeader) {
-			// Make sure we've buffered the pax header region and the next sector after that (next sector contains the _actual_ header)
-			const paxHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(header.fileSize);
-			const requiredBufferSize = paxHeaderSectorEnd + Constants.HEADER_SIZE;
-			const isGlobalPax = header.isGlobalPaxHeader;
-			const preambleHeader = ustarHeader;
-
-			if (!(await this.tryRequireBufferSize(requiredBufferSize))) {
-				throw ArchiveReadError.ERR_HEADER_PAX_MIN_BUFFER_LENGTH_NOT_MET;
-			}
-
-			// Parse the pax header out from the next sector
-			const paxHeader = PaxHeader.deserialize(this.mBufferCache!, nextOffset);
-			nextOffset = paxHeaderSectorEnd;
-
-			if (!TarHeaderUtility.isUstarSector(this.mBufferCache!, nextOffset)) {
-				throw ArchiveReadError.ERR_HEADER_MISSING_POST_PAX_SEGMENT;
-			}
-
-			// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
-			headerOffset = nextOffset;
-			headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
-			ustarHeader = UstarHeader.deserialize(headerBuffer)!;
-			nextOffset = TarUtility.advanceSectorOffsetUnclamped(nextOffset);
-
-			header = new TarHeader({
-				ustar: ustarHeader,
-				pax: paxHeader,
-				preamble: preambleHeader,
-			});
-
-			if (isGlobalPax) {
-				this.mGlobalPaxHeaders.push(header);
-			}
+			return this.parseNextPaxHeader(header, ustarHeader, headerOffset, nextOffset);
 		}
+
+		if (ustarHeader.isLongLinkHeader) {
+			return this.parseNextLongLinkHeader(header, ustarHeader, headerOffset, nextOffset);
+		}
+
+		return {
+			header,
+			headerOffset: headerOffset,
+			contentOffset: nextOffset
+		};
+	}
+
+	private async parseNextPaxHeader(
+		header: TarHeader,
+		ustarHeader: UstarHeader,
+		headerOffset: number,
+		nextOffset: number,
+	): Promise<TarHeaderParseResult | null> {
+		// Make sure we've buffered the pax header region and the next sector after that (next sector contains the _actual_ header)
+		const paxHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(header.fileSize);
+		const requiredBufferSize = paxHeaderSectorEnd + Constants.HEADER_SIZE;
+		const isGlobalPax = header.isGlobalPaxHeader;
+		const preambleHeader = ustarHeader;
+
+		if (!(await this.tryRequireBufferSize(requiredBufferSize))) {
+			throw ArchiveReadError.ERR_HEADER_PAX_MIN_BUFFER_LENGTH_NOT_MET;
+		}
+
+		// Parse the pax header out from the next sector
+		const paxHeader = PaxHeader.deserialize(this.mBufferCache!, nextOffset);
+
+		nextOffset = paxHeaderSectorEnd;
+
+		if (!TarHeaderUtility.isUstarSector(this.mBufferCache!, nextOffset)) {
+			throw ArchiveReadError.ERR_HEADER_MISSING_POST_PAX_SEGMENT;
+		}
+
+		// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
+		headerOffset = nextOffset;
+
+		const headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
+		ustarHeader = UstarHeader.deserialize(headerBuffer)!;
+		nextOffset = TarUtility.advanceSectorOffsetUnclamped(nextOffset);
+
+		header = new TarHeader({
+			ustar: ustarHeader,
+			pax: paxHeader,
+			preamble: preambleHeader,
+		});
+
+		if (isGlobalPax) {
+			this.mGlobalPaxHeaders.push(header);
+		}
+
+		return {
+			header,
+			headerOffset: headerOffset,
+			contentOffset: nextOffset
+		};
+	}
+
+	private async parseNextLongLinkHeader(
+		header: TarHeader,
+		ustarHeader: UstarHeader,
+		nextOffset: number,
+		headerOffset: number
+	): Promise<TarHeaderParseResult | null> {
+		// Make sure we've buffered the long-link header region and the next sector after that (next sector contains the _actual_ header)
+		const longLinkHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(header.fileSize);
+		const requiredBufferSize = longLinkHeaderSectorEnd + Constants.HEADER_SIZE;
+		const preambleHeader = ustarHeader;
+
+		if (!(await this.tryRequireBufferSize(requiredBufferSize))) {
+			throw ArchiveReadError.ERR_MIN_BUFFER_LENGTH_NOT_MET;
+		}
+
+		const longLinkPathBuffer = this.getBufferCacheSlice(nextOffset, nextOffset + header.fileSize);
+		const longLinkPath = TarUtility.decodeString(longLinkPathBuffer);
+		const longLinkHeader = new LongLinkHeader({ fileName: longLinkPath });
+
+		nextOffset = longLinkHeaderSectorEnd;
+
+		if (!TarHeaderUtility.isUstarSector(this.mBufferCache!, nextOffset)) {
+			throw ArchiveReadError.ERR_MISSING_HEADER_SEGMENT;
+		}
+
+		// The _actual_ header is AFTER the pax header, so need to do the header parse song and dance one more time
+		headerOffset = nextOffset;
+
+		const headerBuffer = this.getBufferCacheSlice(headerOffset, headerOffset + Constants.HEADER_SIZE);
+		ustarHeader = UstarHeader.deserialize(headerBuffer)!;
+		nextOffset = TarUtility.advanceSectorOffsetUnclamped(nextOffset);
+
+		header = new TarHeader({
+			ustar: ustarHeader,
+			longLink: longLinkHeader,
+			preamble: preambleHeader,
+		});
 
 		return {
 			header,
