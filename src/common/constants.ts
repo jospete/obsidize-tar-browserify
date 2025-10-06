@@ -8,4 +8,5 @@ export namespace Constants {
 	export const FILE_MODE_DEFAULT = 511; // '777' octal
 	export const TERMINAL_PADDING_SIZE = SECTOR_SIZE * 2;
 	export const PAX_HEADER_PREFIX = 'PaxHeader';
+	export const LONG_LINK_FILE_NAME = '././@LongLink';
 }
