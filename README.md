@@ -30,17 +30,17 @@ import { ungzip } from 'pako';
 import { Archive } from '@obsidize/tar-browserify';
 
 async function readTarFile() {
-  const response = await fetch('url/to/some/file.tar.gz');
-  const gzBuffer = await response.arrayBuffer();
-  const tarBuffer = ungzip(gzBuffer);
+	const response = await fetch('url/to/some/file.tar.gz');
+	const gzBuffer = await response.arrayBuffer();
+	const tarBuffer = ungzip(gzBuffer);
 
-  for await (const entry of Archive.read(tarBuffer)) {
-    if (entry.isFile()) {
-      console.log(`read tar file: ${entry.fileName} with content length ${entry.content!.byteLength}`);
-      console.log(`file text contents: ${entry.text()}`);
-      // TODO: do something interesting with the file
-    }
-  }
+	for await (const entry of Archive.read(tarBuffer)) {
+		if (entry.isFile()) {
+			console.log(`read tar file: ${entry.fileName} with content length ${entry.content!.byteLength}`);
+			console.log(`file text contents: ${entry.text()}`);
+			// TODO: do something interesting with the file
+		}
+	}
 }
 
 readTarFile().catch(console.error);
@@ -53,18 +53,18 @@ import { gzip } from 'pako';
 import { Archive } from '@obsidize/tar-browserify';
 
 async function writeTarFile() {
-  const tarBuffer = new Archive()
-    .addDirectory('MyStuff')
-    .addTextFile('MyStuff/todo.txt', 'This is my TODO list')
-    .addBinaryFile('MyStuff/some-raw-file.obj', Uint8Array.from([1, 2, 3, 4, 5]))
-    .addDirectory('Nested1')
-    .addDirectory('Nested1/Nested2')
-    .addBinaryFile('Nested1/Nested2/supersecret.bin', Uint8Array.from([6, 7, 8, 9]))
-    .toUint8Array();
+	const tarBuffer = new Archive()
+		.addDirectory('MyStuff')
+		.addTextFile('MyStuff/todo.txt', 'This is my TODO list')
+		.addBinaryFile('MyStuff/some-raw-file.obj', Uint8Array.from([1, 2, 3, 4, 5]))
+		.addDirectory('Nested1')
+		.addDirectory('Nested1/Nested2')
+		.addBinaryFile('Nested1/Nested2/supersecret.bin', Uint8Array.from([6, 7, 8, 9]))
+		.toUint8Array();
 
-  const gzBuffer = gzip(tarBuffer);
-  const fileToSend = new File([gzBuffer], 'my-awesome-new-file.tar.gz');
-  // TODO: send the new file somewhere
+	const gzBuffer = gzip(tarBuffer);
+	const fileToSend = new File([gzBuffer], 'my-awesome-new-file.tar.gz');
+	// TODO: send the new file somewhere
 }
 
 writeTarFile().catch(console.error);
@@ -77,20 +77,20 @@ import { gzip, ungzip } from 'pako';
 import { Archive } from '@obsidize/tar-browserify';
 
 async function modifyTarFile() {
-  const response = await fetch('url/to/some/file.tar.gz');
-  const gzBuffer = await response.arrayBuffer();
-  const tarBuffer = ungzip(gzBuffer);
-  const archive = await Archive.extract(tarBuffer);
+	const response = await fetch('url/to/some/file.tar.gz');
+	const gzBuffer = await response.arrayBuffer();
+	const tarBuffer = ungzip(gzBuffer);
+	const archive = await Archive.extract(tarBuffer);
 
-  const updatedTarBuffer = archive
-    .removeEntriesWhere(entry => /unwanted\-file\-name\.txt/.test(entry.fileName))
-    .cleanAllHeaders() // remove unwanted metadata
-    .addTextFile('new text file.txt', 'this was added to the original tar file!')
-    .toUint8Array();
+	const updatedTarBuffer = archive
+		.removeEntriesWhere((entry) => /unwanted\-file\-name\.txt/.test(entry.fileName))
+		.cleanAllHeaders() // remove unwanted metadata
+		.addTextFile('new text file.txt', 'this was added to the original tar file!')
+		.toUint8Array();
 
-  const updatedGzBuffer = gzip(updatedTarBuffer);
-  const fileToSend = new File([updatedGzBuffer], 'my-awesome-edited-file.tar.gz');
-  // TODO: send the modified file somewhere
+	const updatedGzBuffer = gzip(updatedTarBuffer);
+	const fileToSend = new File([updatedGzBuffer], 'my-awesome-edited-file.tar.gz');
+	// TODO: send the modified file somewhere
 }
 
 modifyTarFile().catch(console.error);
@@ -115,13 +115,11 @@ async function readBigTarFile() {
       continue;
     }
 
-    let offset = 0; // offset into this entry's file content
-    let chunkSize = 1024; // read 1Kb at a time
+    let chunk = await entry.readNextContentChunk();
 
-    while (offset < entry.fileSize) {
-      const fileChunk = await entry.readContentFrom(customAsyncBuffer, offset, chunkSize);
-      offset += fileChunk.byteLength;
-      // TODO: do something interesting with the file data
+    while (chunk) {
+      // TODO: do something interesting with the file content data chunk
+	  chunk = await entry.readNextContentChunk(); // try to load the next chunk
     }
   }
 }

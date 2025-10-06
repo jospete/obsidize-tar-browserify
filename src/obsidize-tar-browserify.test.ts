@@ -198,5 +198,32 @@ describe('Global Tests', () => {
 				}
 			});
 		});
+
+		describe('v6.2 big read example', () => {
+			it('should be runnable', async () => {
+				const tarBuffer = base64ToUint8Array(tarballSampleBase64);
+				const customAsyncBuffer: AsyncUint8ArrayLike = {
+					byteLength: tarBuffer.length,
+					read: async (offset: number, length: number): Promise<Uint8Array> =>
+						tarBuffer.slice(offset, offset + length),
+				};
+
+				for await (const entry of Archive.read(customAsyncBuffer)) {
+					if (!entry.isFile()) {
+						continue;
+					}
+
+					let chunk = await entry.readNextContentChunk();
+					let count = 0;
+
+					while (chunk) {
+						count += 1;
+						chunk = await entry.readNextContentChunk();
+					}
+
+					expect(count).toBe(1);
+				}
+			});
+		});
 	});
 });
