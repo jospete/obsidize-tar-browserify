@@ -204,6 +204,14 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 		this.mValueMap.fileNamePrefix = value;
 	}
 
+	public get isFileHeader(): boolean {
+		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeFile(this.typeFlag);
+	}
+
+	public get isDirectoryHeader(): boolean {
+		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeDirectory(this.typeFlag);
+	}
+
 	public get isPaxHeader(): boolean {
 		return this.isLocalPaxHeader || this.isGlobalPaxHeader;
 	}
@@ -216,19 +224,17 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 		return this.typeFlag === UstarHeaderLinkIndicatorType.LOCAL_EXTENDED_HEADER;
 	}
 
-	public get isLongLinkHeader(): boolean {
-		return (
-			this.typeFlag === UstarHeaderLinkIndicatorType.LONG_LINK_HEADER &&
-			this.fileName === Constants.LONG_LINK_FILE_NAME
-		);
+	public get isGnuLongHeader(): boolean {
+		return this.isGnuLongLinkPathHeader || this.isGnuLongPathHeader;
 	}
 
-	public get isFileHeader(): boolean {
-		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeFile(this.typeFlag);
+	public get isGnuLongLinkPathHeader(): boolean {
+		return this.typeFlag === UstarHeaderLinkIndicatorType.GNU_LONG_LINK_PATH_HEADER;
 	}
 
-	public get isDirectoryHeader(): boolean {
-		return TarHeaderUtility.isTarHeaderLinkIndicatorTypeDirectory(this.typeFlag);
+	public get isGnuLongPathHeader(): boolean {
+		return this.typeFlag === UstarHeaderLinkIndicatorType.GNU_LONG_PATH_HEADER
+			|| this.typeFlag === UstarHeaderLinkIndicatorType.GNU_LONG_PATH_HEADER_ALT1;
 	}
 
 	public update(attributes: Partial<UstarHeaderLike>): this {

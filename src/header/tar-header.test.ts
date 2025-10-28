@@ -100,10 +100,17 @@ describe('TarHeader', () => {
 		});
 	});
 
-	describe('isLongLinkHeader', () => {
+	describe('isGnuLongPathHeader', () => {
+		it('should return false when the header does not have long-path content', () => {
+			const header = TarHeader.fromAttributes({});
+			expect(header.isGnuLongPathHeader).toBe(false);
+		});
+	});
+
+	describe('isGnuLongLinkPathHeader', () => {
 		it('should return false when the header does not have long-link content', () => {
 			const header = TarHeader.fromAttributes({});
-			expect(header.isLongLinkHeader).toBe(false);
+			expect(header.isGnuLongLinkPathHeader).toBe(false);
 		});
 	});
 });
