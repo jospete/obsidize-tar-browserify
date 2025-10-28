@@ -3,7 +3,7 @@ import { AsyncUint8ArrayIterator } from '../common/async-uint8-array-iterator.ts
 import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array.ts';
 import { Constants } from '../common/constants.ts';
 import { TarUtility } from '../common/tar-utility.ts';
-import { LongLinkHeaderAttributes } from '../header/long-link/long-link-header.ts';
+import { GnuHeaderAttributes } from '../header/gnu/gnu-header.ts';
 import { PaxHeaderKey } from '../header/pax/pax-header-key.ts';
 import { PaxHeader, PaxHeaderAttributes } from '../header/pax/pax-header.ts';
 import { TarHeader } from '../header/tar-header.ts';
@@ -31,18 +31,23 @@ const createPaxHeaderBuffer = (
 	return combinedHeader.toUint8Array();
 };
 
-const createLongLinkHeaderBuffer = (
+const createGnuLongHeaderBuffer = (
 	headerAttrs: Partial<UstarHeaderLike>,
-	longLinkAttrs: LongLinkHeaderAttributes,
+	gnuAttrs: GnuHeaderAttributes,
 ): Uint8Array => {
+	const isLinkPath = !!gnuAttrs.longLinkPath;
+	const headerValue = isLinkPath ? gnuAttrs.longLinkPath : gnuAttrs.longPath;
+
 	const p1 = UstarHeader.serializeAttributes({
-		fileName: Constants.LONG_LINK_FILE_NAME,
-		fileSize: longLinkAttrs.fileName.length,
-		typeFlag: UstarHeaderLinkIndicatorType.LONG_LINK_HEADER,
+		ustarIndicator: Constants.GNU_INDICATOR_VALUE,
+		fileName: Constants.GNU_LONG_LINK_FILE_NAME,
+		fileSize: headerValue!.length,
+		typeFlag: isLinkPath ? UstarHeaderLinkIndicatorType.GNU_LONG_LINK_PATH_HEADER
+			: UstarHeaderLinkIndicatorType.GNU_LONG_PATH_HEADER,
 	});
 
 	const p2 = new Uint8Array(Constants.SECTOR_SIZE);
-	p2.set(new TextEncoder().encode(longLinkAttrs.fileName), 0);
+	p2.set(new TextEncoder().encode(headerValue), 0);
 
 	const p3 = UstarHeader.serializeAttributes(headerAttrs);
 	const output = new Uint8Array(p1.byteLength + p2.byteLength + p3.byteLength);
@@ -83,13 +88,33 @@ describe('ArchiveReader', () => {
 		expect(paxEntry).toBeTruthy();
 	});
 
-	it('should correctly parse long-link headers', async () => {
+	it('should correctly parse GNU long-path headers', async () => {
 		const buffer = base64ToUint8Array(LongLink_tarballSampleBase64);
 		const entries = await ArchiveReader.withInput(buffer).readAllEntries();
 		const files = entries.filter((v) => v.isFile());
 		expect(files.length).toBeGreaterThan(0);
-		const longLinkEntry = entries.find((v) => v?.header?.isLongLinkHeader);
+		const longLinkEntry = entries.find((v) => v?.header?.isGnuLongPathHeader);
 		expect(longLinkEntry).toBeTruthy();
+	});
+
+	it('should correctly parse GNU long-link-path headers', async () => {
+		// FIXME: This should use an actual tarball sample with long-link-path headers
+		const headerAttrs: Partial<UstarHeaderLike> = {
+			fileName: 'Some Local Garbage',
+			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY,
+		};
+		const longLinkAttrs: GnuHeaderAttributes = {
+			longLinkPath: 'some-long-link-file-with-way-too-many-characters/and/a/path/to/some/garbage.txt',
+		};
+
+		const headerBuffer = createGnuLongHeaderBuffer(headerAttrs, longLinkAttrs);
+		const buffer = new Uint8Array(headerBuffer.byteLength + (Constants.SECTOR_SIZE * 2));
+		buffer.set(headerBuffer, 0);
+
+		const [entry] = await ArchiveReader.withInput(buffer).readAllEntries();
+		expect(entry).toBeTruthy();
+		expect(entry.header.gnu?.longLinkPath).toBeTruthy();
+		expect(entry.header.isGnuLongLinkPathHeader).toBe(true);
 	});
 
 	it('should be able to parse from buffer sources with a small chunk size', async () => {
@@ -232,11 +257,11 @@ describe('ArchiveReader', () => {
 			fileName: 'Some Global Garbage',
 			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY,
 		};
-		const longLinkAttrs: LongLinkHeaderAttributes = {
-			fileName: 'some-long-link-file-with-way-too-many-characters/and/a/path/to/some/garbage.txt',
+		const longLinkAttrs: GnuHeaderAttributes = {
+			longPath: 'some-long-file-with-way-too-many-characters/and/a/path/to/some/garbage.txt',
 		};
 
-		const longLinkBuffer = createLongLinkHeaderBuffer(headerAttrs, longLinkAttrs);
+		const longLinkBuffer = createGnuLongHeaderBuffer(headerAttrs, longLinkAttrs);
 		const corruptedBuffer = longLinkBuffer.slice(0, longLinkBuffer.byteLength - Constants.SECTOR_SIZE + 5);
 		const bufferSource = new InMemoryAsyncUint8Array(corruptedBuffer);
 		const iterator = new AsyncUint8ArrayIterator(bufferSource);
@@ -255,11 +280,11 @@ describe('ArchiveReader', () => {
 			fileName: 'Some Local Garbage',
 			typeFlag: UstarHeaderLinkIndicatorType.DIRECTORY,
 		};
-		const longLinkAttrs: LongLinkHeaderAttributes = {
-			fileName: 'some-long-link-file-with-way-too-many-characters/and/a/path/to/some/garbage.txt',
+		const longLinkAttrs: GnuHeaderAttributes = {
+			longLinkPath: 'some-long-link-file-with-way-too-many-characters/and/a/path/to/some/garbage.txt',
 		};
 
-		const longLinkBuffer = createLongLinkHeaderBuffer(headerAttrs, longLinkAttrs);
+		const longLinkBuffer = createGnuLongHeaderBuffer(headerAttrs, longLinkAttrs);
 		longLinkBuffer.set(range(Constants.HEADER_SIZE), longLinkBuffer.byteLength - Constants.HEADER_SIZE);
 
 		const bufferSource = new InMemoryAsyncUint8Array(longLinkBuffer);

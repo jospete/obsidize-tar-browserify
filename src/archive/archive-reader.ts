@@ -7,7 +7,7 @@ import {
 import { AsyncUint8ArrayLike, InMemoryAsyncUint8Array } from '../common/async-uint8-array.ts';
 import { Constants } from '../common/constants.ts';
 import { TarUtility } from '../common/tar-utility.ts';
-import { LongLinkHeader } from '../header/long-link/long-link-header.ts';
+import { GnuHeader } from '../header/gnu/gnu-header.ts';
 import { PaxHeader } from '../header/pax/pax-header.ts';
 import { TarHeaderUtility } from '../header/tar-header-utility.ts';
 import { TarHeader } from '../header/tar-header.ts';
@@ -263,8 +263,8 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 			return this.parseNextPaxHeader(ustarHeader, headerOffset, nextOffset);
 		}
 
-		if (ustarHeader.isLongLinkHeader) {
-			return this.parseNextLongLinkHeader(ustarHeader, headerOffset, nextOffset);
+		if (ustarHeader.isGnuLongHeader) {
+			return this.parseNextGnuLongHeader(ustarHeader, headerOffset, nextOffset);
 		}
 
 		return {
@@ -322,25 +322,29 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 		};
 	}
 
-	private async parseNextLongLinkHeader(
+	private async parseNextGnuLongHeader(
 		ustarHeader: UstarHeader,
 		headerOffset: number,
 		nextOffset: number,
 	): Promise<TarHeaderParseResult | null> {
 		// Make sure we've buffered the long-link header region and the next sector after that (next sector contains the _actual_ header)
-		const longLinkHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(ustarHeader.fileSize);
-		const requiredBufferSize = longLinkHeaderSectorEnd + Constants.HEADER_SIZE;
+		const gnuHeaderSectorEnd = nextOffset + TarUtility.roundUpSectorOffset(ustarHeader.fileSize);
+		const requiredBufferSize = gnuHeaderSectorEnd + Constants.HEADER_SIZE;
 		const preambleHeader = ustarHeader;
 
 		if (!(await this.tryRequireBufferSize(requiredBufferSize))) {
 			throw ArchiveReadError.ERR_MIN_BUFFER_LENGTH_NOT_MET;
 		}
 
-		const longLinkPathBuffer = this.getBufferCacheSlice(nextOffset, nextOffset + ustarHeader.fileSize);
-		const longLinkPath = TarUtility.decodeString(longLinkPathBuffer);
-		const longLinkHeader = new LongLinkHeader({ fileName: longLinkPath });
+		const gnuDataBuffer = this.getBufferCacheSlice(nextOffset, nextOffset + ustarHeader.fileSize);
+		const headerValue = TarUtility.decodeString(gnuDataBuffer);
 
-		nextOffset = longLinkHeaderSectorEnd;
+		const gnuHeader = new GnuHeader({
+			longPath: ustarHeader.isGnuLongPathHeader ? headerValue : undefined,
+			longLinkPath: ustarHeader.isGnuLongLinkPathHeader ? headerValue : undefined,
+		});
+
+		nextOffset = gnuHeaderSectorEnd;
 
 		if (!TarHeaderUtility.isUstarSector(this.mBufferCache!, nextOffset)) {
 			throw ArchiveReadError.ERR_MISSING_HEADER_SEGMENT;
@@ -355,7 +359,7 @@ export class ArchiveReader implements ArchiveContext, AsyncIterableIterator<Arch
 
 		const header = new TarHeader({
 			ustar: ustarHeader,
-			longLink: longLinkHeader,
+			gnu: gnuHeader,
 			preamble: preambleHeader,
 		});
 

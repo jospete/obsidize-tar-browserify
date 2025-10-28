@@ -36,7 +36,9 @@ export enum UstarHeaderLinkIndicatorType {
 	LOCAL_EXTENDED_HEADER = 'x',
 
 	/**
-	 * GNU tar special snowflake header
+	 * GNU special snowflake tar header types
 	 */
-	LONG_LINK_HEADER = 'L',
+	GNU_LONG_LINK_PATH_HEADER = 'K',
+	GNU_LONG_PATH_HEADER = 'L',
+	GNU_LONG_PATH_HEADER_ALT1 = 'N'
 }

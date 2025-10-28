@@ -10,7 +10,8 @@ config();
 
 const enum OperationMode {
 	DEFAULT = 'default',
-	FIND_FIRST_LONG_LINK = 'firstLongLink'
+	FIND_FIRST_GNU_LONG_PATH = 'firstGnuLongPath',
+	FIND_FIRST_GNU_LONG_LINK_PATH = 'firstGnuLongLinkPath',
 }
 
 const downloadFileUrl = 'https://nodejs.org/dist/v22.20.0/node-v22.20.0-linux-x64.tar.gz';
@@ -44,8 +45,11 @@ async function main() {
 
 	try {
 		switch (mode) {
-			case OperationMode.FIND_FIRST_LONG_LINK:
-				await findFirstLongLinkEntry(asyncBuffer);
+			case OperationMode.FIND_FIRST_GNU_LONG_PATH:
+				await findFirstLongPathEntry(asyncBuffer);
+				break;
+			case OperationMode.FIND_FIRST_GNU_LONG_LINK_PATH:
+				await findFirstLongLinkPathEntry(asyncBuffer);
 				break;
 			default:
 				await listAllEntries(asyncBuffer);
@@ -58,8 +62,15 @@ async function main() {
 	closeSync(tarFd);
 }
 
+function getEntryType(entry: ArchiveEntry): string {
+	if (entry.header.pax) return 'PAX';
+	if (entry.header.gnu) return 'GNU';
+	return 'USTAR';
+}
+
 function logEntry(entry: ArchiveEntry, entryCount: number) {
-	const prefix = `entry ${entryCount} (${entry.fileSize} bytes)`.padEnd(32, ' ');
+	const entryType = getEntryType(entry).padEnd(6, ' ');
+	const prefix = `entry ${entryCount} ${entryType} (${entry.fileSize} bytes)`.padEnd(32, ' ');
 	console.log(`${prefix} ${entry.fileName}`);
 }
 
@@ -72,16 +83,24 @@ async function listAllEntries(asyncBuffer: AsyncUint8ArrayLike) {
 	}
 }
 
-async function findFirstLongLinkEntry(asyncBuffer: AsyncUint8ArrayLike) {
+async function findFirstLongPathEntry(asyncBuffer: AsyncUint8ArrayLike) {
+	return await findFirstEntry('long-path', asyncBuffer, (entry) => entry.header.isGnuLongPathHeader);
+}
+
+async function findFirstLongLinkPathEntry(asyncBuffer: AsyncUint8ArrayLike) {
+	return await findFirstEntry('long-link-path', asyncBuffer, (entry) => entry.header.isGnuLongLinkPathHeader);
+}
+
+async function findFirstEntry(tag: string, asyncBuffer: AsyncUint8ArrayLike, predicate: (entry: ArchiveEntry) => boolean) {
 	let entryCount = 0;
 
 	for await (const entry of Archive.read(asyncBuffer)) {
 		entryCount += 1;
 		logEntry(entry, entryCount);
 
-		if (entry.header.isLongLinkHeader) {
-			console.log(`found long-link header at entry ${entryCount}!`);
-			writeFileSync(join(workingDir, `longlink-${entryCount}.json`), JSON.stringify(entry, null, '\t'));
+		if (predicate(entry)) {
+			console.log(`found ${tag} header at entry ${entryCount}!`);
+			writeFileSync(join(workingDir, `${tag}-header-${entryCount}.json`), JSON.stringify(entry, null, '\t'));
 			break;
 		}
 	}

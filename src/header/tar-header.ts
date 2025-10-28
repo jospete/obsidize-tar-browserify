@@ -1,5 +1,5 @@
 import { TarSerializable, TarUtility } from '../common/tar-utility.ts';
-import { LongLinkHeader } from './long-link/long-link-header.ts';
+import { GnuHeader } from './gnu/gnu-header.ts';
 import { PaxHeader, PaxHeaderAttributes } from './pax/pax-header.ts';
 import { UstarHeaderField } from './ustar/ustar-header-field.ts';
 import { UstarHeaderLike } from './ustar/ustar-header-like.ts';
@@ -9,7 +9,7 @@ import { UstarHeader } from './ustar/ustar-header.ts';
 export interface TarHeaderOptions {
 	ustar: UstarHeader;
 	pax?: PaxHeader;
-	longLink?: LongLinkHeader;
+	gnu?: GnuHeader;
 	preamble?: UstarHeader;
 	isPaxGlobal?: boolean;
 }
@@ -24,16 +24,16 @@ export interface TarHeaderOptions {
 export class TarHeader implements UstarHeaderLike, TarSerializable {
 	public readonly ustar: UstarHeader;
 	public readonly pax: PaxHeader | undefined;
-	public readonly longLink: LongLinkHeader | undefined;
+	public readonly gnu: GnuHeader | undefined;
 
 	private mPreamble: UstarHeader | undefined;
 	private mIsGlobal: boolean;
 
 	constructor(options: TarHeaderOptions) {
-		const { ustar, pax, longLink, preamble, isPaxGlobal } = options;
+		const { ustar, pax, gnu, preamble, isPaxGlobal } = options;
 		this.ustar = ustar;
 		this.pax = pax;
-		this.longLink = longLink;
+		this.gnu = gnu;
 		this.mPreamble = preamble;
 		this.mIsGlobal = !!isPaxGlobal;
 		this.trySyncPaxHeader();
@@ -118,7 +118,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public get fileName(): string {
-		return this.pax?.path || this.longLink?.fileName || this.ustar.fileName;
+		return this.pax?.path || this.gnu?.longPath || this.ustar.fileName;
 	}
 
 	public get fileMode(): number {
@@ -146,7 +146,7 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public get linkedFileName(): string {
-		return this.pax?.linkPath || this.ustar.linkedFileName;
+		return this.pax?.linkPath || this.gnu?.longLinkPath || this.ustar.linkedFileName;
 	}
 
 	public get typeFlag(): UstarHeaderLinkIndicatorType {
@@ -181,6 +181,14 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 		return this.ustar.fileNamePrefix;
 	}
 
+	public get isFileHeader(): boolean {
+		return this.ustar.isFileHeader;
+	}
+
+	public get isDirectoryHeader(): boolean {
+		return this.ustar.isDirectoryHeader;
+	}
+
 	public get isPaxHeader(): boolean {
 		return this.isLocalPaxHeader || this.isGlobalPaxHeader;
 	}
@@ -209,16 +217,28 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 		return this.preamble?.isLocalPaxHeader ?? false;
 	}
 
-	public get isLongLinkHeader(): boolean {
-		return this.preamble?.isLongLinkHeader ?? false;
+	public get isGnuLongPathHeader(): boolean {
+		return this.isGnuLongPathPreHeader || this.isGnuLongPathPostHeader;
 	}
 
-	public get isFileHeader(): boolean {
-		return this.ustar.isFileHeader;
+	public get isGnuLongLinkPathHeader(): boolean {
+		return this.isGnuLongLinkPathPreHeader || this.isGnuLongLinkPathPostHeader;
 	}
 
-	public get isDirectoryHeader(): boolean {
-		return this.ustar.isDirectoryHeader;
+	public get isGnuLongPathPreHeader(): boolean {
+		return this.ustar.isGnuLongPathHeader;
+	}
+
+	public get isGnuLongLinkPathPreHeader(): boolean {
+		return this.ustar.isGnuLongLinkPathHeader;
+	}
+
+	public get isGnuLongPathPostHeader(): boolean {
+		return this.preamble?.isGnuLongPathHeader ?? false;
+	}
+
+	public get isGnuLongLinkPathPostHeader(): boolean {
+		return this.preamble?.isGnuLongLinkPathHeader ?? false;
 	}
 
 	/**
@@ -276,8 +296,8 @@ export class TarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public toJSON(): Record<string, unknown> {
-		const { pax, preamble, longLink, ustar } = this;
-		return { preamble, pax, longLink, ustar };
+		const { pax, preamble, gnu, ustar } = this;
+		return { preamble, pax, gnu, ustar };
 	}
 
 	private trySyncPaxHeader(): void {
