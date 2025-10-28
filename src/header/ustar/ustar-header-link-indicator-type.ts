@@ -40,5 +40,5 @@ export enum UstarHeaderLinkIndicatorType {
 	 */
 	GNU_LONG_LINK_PATH_HEADER = 'K',
 	GNU_LONG_PATH_HEADER = 'L',
-	GNU_LONG_PATH_HEADER_ALT1 = 'N'
+	GNU_LONG_PATH_HEADER_ALT1 = 'N',
 }

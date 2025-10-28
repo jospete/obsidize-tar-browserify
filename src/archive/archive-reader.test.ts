@@ -42,7 +42,8 @@ const createGnuLongHeaderBuffer = (
 		ustarIndicator: Constants.GNU_INDICATOR_VALUE,
 		fileName: Constants.GNU_LONG_LINK_FILE_NAME,
 		fileSize: headerValue!.length,
-		typeFlag: isLinkPath ? UstarHeaderLinkIndicatorType.GNU_LONG_LINK_PATH_HEADER
+		typeFlag: isLinkPath
+			? UstarHeaderLinkIndicatorType.GNU_LONG_LINK_PATH_HEADER
 			: UstarHeaderLinkIndicatorType.GNU_LONG_PATH_HEADER,
 	});
 
@@ -108,7 +109,7 @@ describe('ArchiveReader', () => {
 		};
 
 		const headerBuffer = createGnuLongHeaderBuffer(headerAttrs, longLinkAttrs);
-		const buffer = new Uint8Array(headerBuffer.byteLength + (Constants.SECTOR_SIZE * 2));
+		const buffer = new Uint8Array(headerBuffer.byteLength + Constants.SECTOR_SIZE * 2);
 		buffer.set(headerBuffer, 0);
 
 		const [entry] = await ArchiveReader.withInput(buffer).readAllEntries();

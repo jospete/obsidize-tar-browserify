@@ -233,8 +233,10 @@ export class UstarHeader implements UstarHeaderLike, TarSerializable {
 	}
 
 	public get isGnuLongPathHeader(): boolean {
-		return this.typeFlag === UstarHeaderLinkIndicatorType.GNU_LONG_PATH_HEADER
-			|| this.typeFlag === UstarHeaderLinkIndicatorType.GNU_LONG_PATH_HEADER_ALT1;
+		return (
+			this.typeFlag === UstarHeaderLinkIndicatorType.GNU_LONG_PATH_HEADER ||
+			this.typeFlag === UstarHeaderLinkIndicatorType.GNU_LONG_PATH_HEADER_ALT1
+		);
 	}
 
 	public update(attributes: Partial<UstarHeaderLike>): this {
