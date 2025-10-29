@@ -2,16 +2,23 @@
 	"name": "@obsidize/tar-browserify",
 	"version": "6.3.1",
 	"description": "Browser-based tar utility for packing and unpacking tar files (stream-capable)",
-	"main": "./index.js",
-	"module": "./index.js",
-	"types": "./index.d.ts",
-	"typings": "./index.d.ts",
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs",
+			"types": "./dist/index.d.ts"
+		}
+	},
 	"scripts": {
 		"test": "jest",
 		"format": "prettier ./src --write",
 		"build:clean": "rimraf ./dist",
 		"build:tsc": "tsc",
-		"build:webpack": "webpack --config webpack.config.js",
+		"build:webpack": "webpack --config webpack.config.cjs",
 		"copy:assets": "tsx ./scripts/copy-build-assets.ts",
 		"build": "run-s build:clean build:tsc build:webpack copy:assets",
 		"coverage:clean": "rimraf ./coverage",
