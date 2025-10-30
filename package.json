@@ -11,7 +11,7 @@
 		"format": "prettier ./src --write",
 		"build:clean": "rimraf ./dist",
 		"build:tsc": "tsc",
-		"build:webpack": "webpack --config webpack.config.js",
+		"build:webpack": "webpack --config webpack.config.cjs",
 		"copy:assets": "tsx ./scripts/copy-build-assets.ts",
 		"build": "run-s build:clean build:tsc build:webpack copy:assets",
 		"coverage:clean": "rimraf ./coverage",
